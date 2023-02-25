@@ -2,83 +2,50 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\DynamicMain;
+use App\Models\DynamicValue;
 use Illuminate\Http\Request;
 
 class DynamicValueController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
+    public function index($id)
     {
-        //
+        $masters = DynamicMain::where('id', $id)->first();
+        return view('master.value', compact('masters'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
+    public function store(Request $request, $id)
     {
-        //
+        $unique = DynamicValue::where(['parent_id' => $id, 'name' => $request->name])->first();
+        if ($unique) {
+            return redirect()->back()->with('error', 'Value Already Exists');
+        }
+        $value = DynamicValue::create([
+            'name' => $request->name,
+            'parent_id' => $id,
+        ]);
+        if ($value) {
+            return redirect()->back()->with('status', 'Value Added Succesfully');
+        }
     }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function edit($id)
     {
-        //
+        $master = DynamicValue::where('id', $id)->first();
+        // dd($master->main);
+        return view('master.value', ['master' => $master, 'masters' => false]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function update(Request $request, $id)
     {
-        //
-    }
+        $unique = DynamicValue::where(['name'=>$request->name,'parent_id'=>$request->parent_id])->first();
+        if ($unique) {
+            return redirect()->back()->with('error', 'Master Already Exist');
+        }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
+        $master = DynamicValue::find($id)->update(['name' => $request->name]);
+        if ($master) {
+            return redirect()->back()->with('status', 'Master Added Successfully');
+        }
+        return redirect()->back()->with('error','Something Went Wrong');
     }
 }

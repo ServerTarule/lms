@@ -19,4 +19,14 @@ class Employee extends Model
         'designation_id',
         'profile_img',
     ];
+
+    public function user()
+    {
+        return $this->belongsTo('App\Models\User');
+    }
+
+    public function designation()
+    {
+        return $this->belongsTo('App\Models\Designation');
+    }
 }

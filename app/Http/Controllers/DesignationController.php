@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Designation;
 use Illuminate\Http\Request;
 
 class DesignationController extends Controller
@@ -13,7 +14,8 @@ class DesignationController extends Controller
      */
     public function index()
     {
-        //
+        $designations = Designation::all();
+        return view('designation.index',compact('designations'));
     }
 
     /**
@@ -34,7 +36,21 @@ class DesignationController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $unique = Designation::where('name',$request->name)->first();
+        if($unique){
+        return redirect()->back()->with('error','Designation Already Exist');
+
+        }
+        $designation = Designation::create([
+            'name'=> $request->name,
+        ]);
+
+        if($designation){
+
+        return redirect()->back()->with('status','Designation Added Successfully');
+        }
+
+        return redirect()->back()->with('error','Something went wrong');
     }
 
     /**
@@ -56,7 +72,8 @@ class DesignationController extends Controller
      */
     public function edit($id)
     {
-        //
+        $designation=Designation::where('id',$id)->first();
+        return view('designation.index',['designation'=> $designation,'designations'=> false]);
     }
 
     /**
@@ -68,7 +85,19 @@ class DesignationController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+
+        $unique = Designation::where('name',$request->name)->first();
+        if($unique){
+        return redirect()->back()->with('error','Designation Already Exist');
+        }
+
+        $designation = Designation::find($id)->update(['name'=>$request->name]);
+        if($designation){
+        return redirect()->route('designation')->with('status','Designation Updated Successfully');
+
+        }
+        return redirect()->back()->with('error','Something went wrong');
+
     }
 
     /**

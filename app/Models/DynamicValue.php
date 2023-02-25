@@ -13,4 +13,5 @@ class DynamicValue extends Model
         'parent_id',
 
     ];
+
 }

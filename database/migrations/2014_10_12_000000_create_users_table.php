@@ -21,6 +21,7 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->bigInteger('status')->default('1');
+            $table->unsignedBigInteger('master_id');
             $table->rememberToken();
             $table->softDeletes();
             $table->timestamps();

@@ -13,4 +13,9 @@ class DynamicMain extends Model
         'master',
 
     ];
+
+    public function value(){
+        return $this->hasMany(DynamicValue::class,'parent_id');
+    }
+
 }
