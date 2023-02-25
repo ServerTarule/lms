@@ -23,6 +23,7 @@ return new class extends Migration
             $table->date('doj');
             $table->string('alternate_contact');
             $table->unsignedBigInteger('designation_id');
+            $table->unsignedBigInteger('master_id');
             $table->string('profile_img');
             $table->softDeletes();
             $table->foreign('designation_id')
