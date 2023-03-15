@@ -1,4 +1,3 @@
-
 @extends('layout.app')
 @section('title', 'Master')
 @section('content')

@@ -33,7 +33,7 @@
       </div>  -->
     <div class="wrapper">
         <header class="main-header">
-            <a href="home.php" class="logo">
+            <a href="/dashboard" class="logo">
                 <span class="logo-mini">
                     <img src="assets/dist/img/mini-logo.png" alt="">
                 </span>
@@ -147,17 +147,17 @@
                     </li>
                     <li class="treeview">
                         <a href="#">
-                            <i class="fa fa-shopping-cart"></i><span>Lead Managment</span>
+                            <i class="fa fa-shopping-cart"></i><span>Lead Management</span>
                             <span class="pull-right-container">
                                 <i class="fa fa-angle-left pull-right"></i>
                             </span>
                         </a>
                         <ul class="treeview-menu">
-                            <li><a href="viewLeadForm.php">Add/Edit Lead </a></li>
-                            <li><a href="LeadStatus.php">First Calling</a></li>
-                            <li><a href="FollowUp.php">Lead Follow Up</a></li>
-                            <li><a href="LeadStatus.php">Master Data</a></li>
-                            <li><a href="UploadExcel.php">Upload Data</a></li>
+                            <li><a href="/leadstatus">Add/Edit Lead </a></li>
+                            <li><a href="/leadcalls">First Calling</a></li>
+                            <li><a href="/leadassignment">Lead Follow Up</a></li>
+                            <li><a href="/leadstatus">Master Data</a></li>
+                            <li><a href="/leadupload">Upload Data</a></li>
                         </ul>
                     </li>
                     <li class="treeview">
@@ -194,8 +194,8 @@
                     <i class="fa fa-dashboard"></i>
                 </div>
                 <div class="header-title">
-                    <h1>CRM Admin @yield('title')</h1>
-                    <small>Very detailed & featured admin.</small>
+                    <h1>@yield('title')</h1>
+                    <small>@yield('subtitle')</small>
                 </div>
             </section>
             <section class="content">

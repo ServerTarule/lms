@@ -6,6 +6,7 @@ use App\Http\Controllers\DesignationController;
 use App\Http\Controllers\DynamicController;
 use App\Http\Controllers\DynamicValueController;
 use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\LeadController;
 use App\Http\Controllers\LeaveController;
 use App\Http\Controllers\MasterController;
 use App\Http\Controllers\PermissionController;
@@ -85,6 +86,12 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/master', [DynamicController::class, 'store'])->name('master')->middleware('can:create master');
     Route::get('/master/{id}', [DynamicController::class, 'edit'])->name('master/{id}')->middleware('can:update master');
     Route::post('/master/{id}', [DynamicController::class, 'update'])->name('master/{id}')->middleware('can:update master');
+
+    //Lead
+    Route::get('/leadstatus', [LeadController::class, 'status'])->name('lead')->middleware('can:read lead');
+    Route::get('/leadcalls', [LeadController::class, 'call'])->name('lead')->middleware('can:read lead');
+    Route::get('/leadassignment', [LeadController::class, 'assignment'])->name('lead')->middleware('can:read lead');
+    Route::get('/leadupload', [LeadController::class, 'upload'])->name('lead')->middleware('can:read lead');
 
     // Masters value
     Route::get('/dynamic/{id}', [DynamicValueController::class, 'index'])->name('/dynamic/{id}')->middleware('can:read master');
