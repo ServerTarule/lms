@@ -1,16 +1,19 @@
 <?php
 
+use App\Http\Controllers\CityController;
 use App\Http\Controllers\CustomAuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DesignationController;
-use App\Http\Controllers\DynamicController;
-use App\Http\Controllers\DynamicValueController;
+use App\Http\Controllers\MasterController;
+use App\Http\Controllers\DynamicMasterController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\LeadController;
 use App\Http\Controllers\LeaveController;
-use App\Http\Controllers\MasterController;
+use App\Http\Controllers\MainMasterController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\RuleRegulationController;
+use App\Http\Controllers\StateController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -56,7 +59,6 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/state', [RoleController::class, 'assign'])->name('assign')->middleware('can:assign role');
     Route::get('/city', [RoleController::class, 'assign'])->name('assign')->middleware('can:assign role');
 
-
     //Permission
     Route::get('/permission', [PermissionController::class, 'index'])->name('permission')->middleware('can:read role');
     Route::get('/permission/{id}', [PermissionController::class, 'edit'])->name('permission/{id}')->middleware('can:update role');
@@ -82,10 +84,25 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/designation/{id}', [DesignationController::class, 'update'])->name('designation/{id}')->middleware('can:update designation');
 
     // Masters
-    Route::get('/master', [DynamicController::class, 'index'])->name('master')->middleware('can:read master');
-    Route::post('/master', [DynamicController::class, 'store'])->name('master')->middleware('can:create master');
-    Route::get('/master/{id}', [DynamicController::class, 'edit'])->name('master/{id}')->middleware('can:update master');
-    Route::post('/master/{id}', [DynamicController::class, 'update'])->name('master/{id}')->middleware('can:update master');
+    Route::get('/master', [MasterController::class, 'index'])->name('master')->middleware('can:read master');
+    Route::post('/master', [MasterController::class, 'store'])->name('master')->middleware('can:create master');
+    Route::get('/master/{id}', [MasterController::class, 'edit'])->name('master/{id}')->middleware('can:update master');
+    Route::post('/master/{id}', [MasterController::class, 'update'])->name('master/{id}')->middleware('can:update master');
+
+    // Main Master
+    Route::get('/master/main/{id}', [MainMasterController::class, 'index'])->name('/master/main/{id}')->middleware('can:read master');
+    Route::post('/master/main/{id}', [MainMasterController::class, 'store'])->name('/master/main/{id}')->middleware('can:create master');
+    Route::get('/master/main/edit/{id}', [MainMasterController::class, 'remove'])->name('/master/main/edit/{id}')->middleware('can:delete master');
+
+    // Dynamic Master
+    Route::get('/dynamic/{id}', [DynamicMasterController::class, 'index'])->name('/dynamic/{id}')->middleware('can:read master');
+    Route::post('/dynamic/{id}', [DynamicMasterController::class, 'store'])->name('/dynamic/{id}')->middleware('can:create master');
+    Route::get('/dynamic/edit/{id}', [DynamicMasterController::class, 'edit'])->name('/dynamic/edit/{id}')->middleware('can:update master');
+    Route::post('/dynamic/edit/{id}', [DynamicMasterController::class, 'update'])->name('/dynamic/edit/{id}')->middleware('can:update master');
+
+    //Rule and Regulations
+    Route::get('/rulesregulations', [RuleRegulationController::class, 'index'])->name('/rulesregulations')->middleware('can:read master');
+    Route::get('/condition', [RuleRegulationController::class, 'show'])->name('/rulesregulations')->middleware('can:read master');
 
     //Lead
     Route::get('/leadstatus', [LeadController::class, 'index'])->name('leads')->middleware('can:read lead');
@@ -93,19 +110,11 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/leadassignment', [LeadController::class, 'assignment'])->name('leads')->middleware('can:read lead');
     Route::get('/leadupload', [LeadController::class, 'upload'])->name('leads')->middleware('can:read lead');
 
-    // Masters value
-    Route::get('/dynamic/{id}', [DynamicValueController::class, 'index'])->name('/dynamic/{id}')->middleware('can:read master');
-    Route::post('/dynamic/{id}', [DynamicValueController::class, 'store'])->name('/dynamic/{id}')->middleware('can:create master');
-    Route::get('/dynamic/edit/{id}', [DynamicValueController::class, 'edit'])->name('/dynamic/edit/{id}')->middleware('can:update master');
-    Route::post('/dynamic/edit/{id}', [DynamicValueController::class, 'update'])->name('/dynamic/edit/{id}')->middleware('can:update master');
+    //State
+    Route::get('/states', [StateController::class, 'index'])->name('states')->middleware('can:read lead');
 
-    // Masters Main
-    Route::get('/master/main/{id}', [MasterController::class, 'index'])->name('/master/main/{id}')->middleware('can:read master');
-    Route::post('/master/main/{id}', [MasterController::class, 'store'])->name('/master/main/{id}')->middleware('can:create master');
-    Route::get('/master/main/edit/{id}', [MasterController::class, 'remove'])->name('/master/main/edit/{id}')->middleware('can:delete master');
-
-
-
+    //City
+    Route::get('/cities', [CityController::class, 'index'])->name('cities')->middleware('can:read lead');
 
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/logout', [CustomAuthController::class, 'logout'])->name('logout');

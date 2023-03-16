@@ -15,7 +15,6 @@
                     <div class="panel-body">
                         <div class="row">
                             <div class="col-md-4"></div>
-
                             <div class="col-md-4">
                                 <div class="text-right">
                                     <form action="/master" method="post">

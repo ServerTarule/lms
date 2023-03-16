@@ -92,6 +92,7 @@
                                     <td>{{$lead->casestatus}}</td>
                                     <td>{{$lead->receiveddate}}</td>
                                     <td>{{$lead->created_at}}</td>
+                                    <td></td>
                             @endforeach
                             </tbody>
                         </table>

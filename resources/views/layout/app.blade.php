@@ -102,12 +102,12 @@
                         <ul class="treeview-menu">
                             <li><a href="/master">Create Master</a></li>
                             @livewire('dynamics')
-                            <li><a href="/state">State</a></li>
-                            <li><a href="/city">City</a></li>
+                            <li><a href="/states">State</a></li>
+                            <li><a href="/cities">City</a></li>
                             <li><a href="location.php">Location</a></li>
                             <li><a href="CentreDetails.php">Center Details</a></li>
-                            <li><a href="Leadandcenterassigning.php">Lead & Center Assigning Rules</a></li>
-                            <li><a href="ruleandregulation.php">Rules & Regulations</a></li>
+{{--                            <li><a href="Leadandcenterassigning.php">Lead & Center Assigning Rules</a></li>--}}
+                            <li><a href="/rulesregulations">Rules & Regulations</a></li>
                             <li><a href="lead-conditions.php">Lead Conditions</a></li>
                             <li><a href="TemplateMaster.php">Template Master</a></li>
                             <li><a href="AddMenu.php">Add Menu</a></li>

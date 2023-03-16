@@ -13,41 +13,6 @@
                 </div>
                 @if ($mains)
                     <div class="panel-body">
-                        <div class="row">
-                            <div class="col-md-4"></div>
-
-                            <div class="col-md-4">
-                                <div class="text-right">
-                                    <form action="/master/main/{{$master_id}}" method="post">
-                                        @csrf
-                                        <div class="row">
-                                            <div class="col-md-12 form-group AUTHORITY">
-                                                <select name="master" id="">
-                                                    <option value="">Please Select User</option>
-                                                    @foreach ($employee as $emp)
-                                                    <option value="{{$emp->id}}">{{$emp->name}}</option>
-                                                    @endforeach
-                                                </select>
-
-                                                <div>
-                                                    <button type="submit" class="btn btn-add">Create</button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </form>
-                                </div>
-                                @if (session('error'))
-                                    <span class="alert danger">{{ session('error') }}</span>
-                                @endif
-                                @if (session('status'))
-                                    <span class="alert success">{{ session('status') }}</span>
-                                @endif
-
-                            </div>
-                            <div class="col-md-4">
-
-                            </div>
-                        </div>
                         <div class="table-responsive">
                             <table id="dataTableExample1" class="table table-bordered table-striped table-hover">
                                 <thead>
@@ -55,7 +20,6 @@
                                         <th>S. No.</th>
                                         <th>Name</th>
                                         <th>Create Date</th>
-                                        {{-- <th>Modify</th> --}}
                                         <th>Remove</th>
                                     </tr>
                                 </thead>

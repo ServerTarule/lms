@@ -6,12 +6,14 @@ use App\Models\DynamicMain;
 use App\Models\DynamicValue;
 use Illuminate\Http\Request;
 
-class DynamicValueController extends Controller
+class DynamicMasterController extends Controller
 {
     public function index($id)
     {
-        $masters = DynamicMain::where('id', $id)->first();
-        return view('master.value', compact('masters'));
+        $master =DynamicMain::where('id', $id)->first();
+        $dynamicmasters = DynamicValue::where('parent_id', $id)->get();
+        //dd($dynamicmasters);
+        return view('dynamicmaster.index', compact('dynamicmasters', 'master'));
     }
 
     public function store(Request $request, $id)
@@ -25,7 +27,7 @@ class DynamicValueController extends Controller
             'parent_id' => $id,
         ]);
         if ($value) {
-            return redirect()->back()->with('status', 'Value Added Succesfully');
+            return redirect()->back()->with('status', 'Value Added Successfully');
         }
     }
     public function edit($id)
