@@ -74,9 +74,25 @@
                                 </th>
                             </tr>
                             </thead>
-
                             <tbody>
-
+                            @foreach ($leads as $lead)
+                                <tr>
+                                    <td>{{$lead->id}}</td>
+                                    <td>{{$lead->lead_id}}</td>
+                                    <td>{{$lead->name}}</td>
+                                    <td>{{$lead->email}}</td>
+                                    <td>{{$lead->mobileno}}</td>
+                                    <td>{{$lead->master1}}</td>
+                                    <td>{{$lead->master2}}</td>
+                                    <td>{{$lead->master3}}</td>
+                                    <td>{{$lead->treatmenttype}}</td>
+                                    <td>{{$lead->casetype}}</td>
+                                    <td>{{$lead->socialintegration}}</td>
+                                    <td>{{$lead->location}}</td>
+                                    <td>{{$lead->casestatus}}</td>
+                                    <td>{{$lead->receiveddate}}</td>
+                                    <td>{{$lead->created_at}}</td>
+                            @endforeach
                             </tbody>
                         </table>
                     </div>

@@ -1,5 +1,5 @@
 @extends('layout.app')
 @section('title','Assign Role')
-@section('conent')
+@section('content')
 
 @endsection

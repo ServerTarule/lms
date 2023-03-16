@@ -2,26 +2,28 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Lead;
+
 class LeadController extends Controller
 {
-    public function status()
+    public function index()
     {
-        return view('lead.leadstatus');
+        return view('leads.index', ['leads' => Lead::all()]);
     }
 
     public function call()
     {
-        return view('lead.leadcalls');
+        return view('leads.leadcalls');
     }
 
     public function assignment()
     {
-        return view('lead.leadassignment');
+        return view('leads.leadassignment');
     }
 
     public function upload()
     {
-        return view('lead.leadupload');
+        return view('leads.leadupload');
     }
 
 

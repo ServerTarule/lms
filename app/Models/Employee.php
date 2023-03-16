@@ -29,4 +29,9 @@ class Employee extends Model
     {
         return $this->belongsTo('App\Models\Designation');
     }
+
+    // Relationship With Leads
+    public function leads() {
+        return $this->hasMany(Lead::class, 'lead_id');
+    }
 }

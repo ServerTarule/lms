@@ -88,10 +88,10 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/master/{id}', [DynamicController::class, 'update'])->name('master/{id}')->middleware('can:update master');
 
     //Lead
-    Route::get('/leadstatus', [LeadController::class, 'status'])->name('lead')->middleware('can:read lead');
-    Route::get('/leadcalls', [LeadController::class, 'call'])->name('lead')->middleware('can:read lead');
-    Route::get('/leadassignment', [LeadController::class, 'assignment'])->name('lead')->middleware('can:read lead');
-    Route::get('/leadupload', [LeadController::class, 'upload'])->name('lead')->middleware('can:read lead');
+    Route::get('/leadstatus', [LeadController::class, 'index'])->name('leads')->middleware('can:read lead');
+    Route::get('/leadcalls', [LeadController::class, 'call'])->name('leads')->middleware('can:read lead');
+    Route::get('/leadassignment', [LeadController::class, 'assignment'])->name('leads')->middleware('can:read lead');
+    Route::get('/leadupload', [LeadController::class, 'upload'])->name('leads')->middleware('can:read lead');
 
     // Masters value
     Route::get('/dynamic/{id}', [DynamicValueController::class, 'index'])->name('/dynamic/{id}')->middleware('can:read master');
