@@ -5,6 +5,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <!-- <meta name="viewport" content="width=device-width, initial-scale=1"> -->
+    <meta name="csrf-token" content="{{ csrf_token() }}" >
     <title>CRM Admin | @yield('title')</title>
     <link rel="shortcut icon" href="{{ asset('assets/dist/img/mini-logo.png') }}" type="image/x-icon">
     <link href="{{ asset('assets/plugins/jquery-ui-1.12.1/jquery-ui.min.css') }}" rel="stylesheet" type="text/css" />
@@ -35,10 +36,10 @@
         <header class="main-header">
             <a href="/dashboard" class="logo">
                 <span class="logo-mini">
-                    <img src="assets/dist/img/mini-logo.png" alt="">
+                    <img src="{{ asset('assets/dist/img/mini-logo.png') }}" alt="">
                 </span>
                 <span class="logo-lg">
-                    <img src="assets/dist/img/logo.png" alt="">
+                    <img src="{{ asset('assets/dist/img/logo.png') }}" alt="">
                 </span>
             </a>
             <nav class="navbar navbar-static-top">
@@ -63,7 +64,7 @@
                         <!-- user -->
                         <li class="dropdown dropdown-user">
                             <a class="dropdown-toggle" data-toggle="dropdown">
-                                <img src="assets/dist/img/avatar5.png" class="img-circle" width="45" height="45"
+                                <img src="{{ asset('assets/dist/img/avatar5.png') }}" class="img-circle" width="45" height="45"
                                     alt="user"></a>
                             <ul class="dropdown-menu">
                                 <li>
@@ -102,19 +103,20 @@
                         <ul class="treeview-menu">
                             <li><a href="/master">Create Master</a></li>
                             @livewire('dynamics')
-                            <li><a href="/states">State</a></li>
-                            <li><a href="/cities">City</a></li>
-                            <li><a href="location.php">Location</a></li>
-                            <li><a href="CentreDetails.php">Center Details</a></li>
+{{--                            <li><a href="/actions">Action Type</a></li>--}}
+{{--                            <li><a href="/states">State</a></li>--}}
+{{--                            <li><a href="/cities">City</a></li>--}}
+{{--                            <li><a href="location.php">Location</a></li>--}}
+{{--                            <li><a href="CentreDetails.php">Center Details</a></li>--}}
 {{--                            <li><a href="Leadandcenterassigning.php">Lead & Center Assigning Rules</a></li>--}}
-                            <li><a href="/rulesregulations">Rules & Regulations</a></li>
-                            <li><a href="lead-conditions.php">Lead Conditions</a></li>
-                            <li><a href="TemplateMaster.php">Template Master</a></li>
-                            <li><a href="AddMenu.php">Add Menu</a></li>
-                            <li><a href="Submenu.php">Sub Menu</a></li>
-                            <li><a href="SocialIntegration.php">Social Integration</a></li>
-                            <li><a href="/designation">Create Designation</a></li>
-                            <li><a href="Grant_authority.php">Permission</a></li>
+                            <li><a href="/rules">Rules & Regulations</a></li>
+{{--                            <li><a href="lead-conditions.php">Lead Conditions</a></li>--}}
+{{--                            <li><a href="TemplateMaster.php">Template Master</a></li>--}}
+{{--                            <li><a href="AddMenu.php">Add Menu</a></li>--}}
+{{--                            <li><a href="Submenu.php">Sub Menu</a></li>--}}
+{{--                            <li><a href="SocialIntegration.php">Social Integration</a></li>--}}
+{{--                            <li><a href="/designation">Create Designation</a></li>--}}
+{{--                            <li><a href="Grant_authority.php">Permission</a></li>--}}
                         </ul>
                     </li>
                     <li class="treeview">
@@ -153,7 +155,7 @@
                             </span>
                         </a>
                         <ul class="treeview-menu">
-                            <li><a href="/leadstatus">Add/Edit Lead </a></li>
+                            <li><a href="/leads">Leads</a></li>
                             <li><a href="/leadcalls">First Calling</a></li>
                             <li><a href="/leadassignment">Lead Follow Up</a></li>
                             <li><a href="/leadstatus">Master Data</a></li>
@@ -222,6 +224,208 @@
     <script src="http://lasik.tarule.in/ckeditor/samples/js/sample.js"></script>
     <script src="http://lasik.tarule.in/ckeditor/styles.js"></script>
     <script src="http://lasik.tarule.in/ckeditor/ckeditor.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('.table').DataTable({
+                aLengthMenu: [
+                    [50, 100, 200, 500, -1],
+                    [50, 100, 200, 500, "All"]
+                ],
+                'iDisplayLength': 100,
+                scrollX: true,
+                responsive: true,
+                "scrollY": 400,
+                "scrollCollapse": true,
+                fixedColumns: {
+                    leftColumns: 4
+                }
+            });
+
+
+
+            // let ruleMasterData = $('#ruleMasters').val();
+            //
+            // if (ruleMasterData != undefined) {
+            //     $.each(JSON.parse(ruleMasterData), function( key, value ) {
+            //         console.log('id: ' + value.id + ' | name: ' +value.name);
+            //         console.log($('#ruleMaster_'+value.id).val());
+            //         console.log($('#ruleCondition_'+value.id).val());
+            //     });
+            // }
+
+            // $("#addRow").click(function () {
+            //     var count = $("#count").val();
+            //     count = parseInt(count) + 1;
+            //     var html;
+            //     html += '<tr>';
+            //     html += '<td>' + count + '</td>';
+            //     html += '<td>';
+            //     html += '<select class="form-control">';
+            //     html += '<option selected disabled>-- Select Condition --</option>';
+            //     html += '<option>Treatment Type</option>';
+            //     html += '<option>Case Type</option>';
+            //     html += '<option>Case Status</option>';
+            //     html += '<option>Location</option>';
+            //     html += '<option>State </option>';
+            //     html += '<option>City</option>';
+            //     html += '<option>Master 1</option>';
+            //     html += '<option>Master 2</option>';
+            //     html += '<option>Master 3</option>';
+            //     html += '</select>';
+            //     html += '</td>';
+            //     html += '<td><button class="fa fa-minus btn btn-sm btn-danger removeRow" onclick="$(this).parent().parent().remove();"></button></td>';
+            //     html += '</tr>';
+            //     $("#count").val(count);
+            //     $("#initial").after(html);
+            // });
+
+            // $("#ruleNameNext").click(function(){
+            //     $("ruleNameForm").submit(); // Submit the form
+            // });
+        });
+    </script>
+    <script>
+
+
+        $("#ruleConditionSubmit").click(function(){
+
+            let jsonObject = [];
+            // jsonObject['rule'] = $("#ruleName").val();
+            let ruleMasterData = $('#ruleMasters').val();
+            $.each(JSON.parse(ruleMasterData), function (key, value) {
+                let item = {}
+                item ["master"] = value.id;
+
+                let masterValues = [];
+
+                $('#ruleMaster_' + value.id + ' :selected').each(function (i, sel) {
+                    if ($(sel).val() != "--Select Condition--") {
+                        masterValues.push($(sel).val());
+                    }
+                });
+                item ["masterValues"] = masterValues;
+                $('#ruleCondition_' + value.id + ' :selected').each(function (i, sel) {
+                    if ($(sel).val() != "--Select Condition--") {
+                        item ["ruleOperation"] = $(sel).val();
+                    }
+                });
+
+                jsonObject.push(item);
+
+            });
+            console.log(jsonObject);
+            let CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+            $.ajax({
+                /* the route pointing to the post function */
+                url: '/conditions/store',
+                type: 'POST',
+                /* send the csrf-token and the input to the controller */
+                // data: {_token: CSRF_TOKEN, 'ruleData':JSON.stringify(jsonObject)},
+                data: {'ruleData':JSON.stringify(jsonObject)},
+                // data: $(this).serialize(),
+                dataType: 'JSON',
+                /* remind that 'data' is the response of the AjaxController */
+                success: function (data) {
+                    console.log(data);
+                    // window.location.href = "/rules";
+                },
+                failure: function (data) {
+                    console.log(data);
+                }
+            });
+        });
+
+    </script>
+    {{--<script>
+         $(function () {
+            // $("ruleConditionForm").on("submit", function (e) {
+             $("#ruleConditionSubmit").click(function(e) {
+                e.preventDefault();
+                let jsonObject = [];
+                jsonObject['rule'] = $("#ruleName").val();
+                let ruleMasterData = $('#ruleMasters').val();
+                $.each(JSON.parse(ruleMasterData), function (key, value) {
+                    let item = {}
+                    item ["master"] = value.id;
+
+                    let masterValues = [];
+
+                    $('#ruleMaster_' + value.id + ' :selected').each(function (i, sel) {
+                        if ($(sel).val() != "--Select Condition--") {
+                            masterValues.push($(sel).val());
+                        }
+                    });
+                    item ["masterValues"] = masterValues;
+                    $('#ruleCondition_' + value.id + ' :selected').each(function (i, sel) {
+                        if ($(sel).val() != "--Select Condition--") {
+                            item ["ruleOperation"] = $(sel).val();
+                        }
+                    });
+
+                    jsonObject.push(item);
+
+                });
+
+                console.log(JSON.stringify(jsonObject));
+
+                 $.ajaxSetup({
+                     headers: {
+                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+                         'Content-Type': 'application/json'
+                     },
+                     data: {
+                         _token: $('meta[name="csrf-token"]').attr('content')
+                     }
+                 });
+                $.ajax({
+                    url:'/rules/create/condition',
+                    dataType: 'json', // what to expect back from the server
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    data: JSON.stringify(jsonObject),
+                    type: "POST",
+                    success:(data) => {
+                        console.log(data);
+                    },
+                    failure:(data) => {
+                        console.log(data);
+                    }
+                });
+            });
+         });
+
+
+        /*
+
+        master
+            values
+                operation
+        master
+            values
+                operation
+
+         */
+
+        // $("#ruleConditionSubmit").click( function () {
+        //     let ruleMasterData = $('#ruleMasters').val();
+        //     $.each(JSON.parse(ruleMasterData), function( key, value ) {
+        //         console.log('id: ' + value.id + ' | name: ' +value.name);
+        //         $('#ruleMaster_'+value.id+' :selected').each(function(i, sel){
+        //             console.log( $(sel).val() );
+        //         });
+        //         $('#ruleCondition_'+value.id+' :selected').each(function(i, sel){
+        //             console.log( $(sel).val() );
+        //         });
+        //     });
+        // });
+
+    </script>--}}
     <script>
         CKEDITOR.replace("Comments", {
             height: 200
@@ -308,24 +512,7 @@
         }
         dash();
     </script>
-    <script>
-        $(document).ready(function() {
-            $('.table').DataTable({
-                aLengthMenu: [
-                    [50, 100, 200, 500, -1],
-                    [50, 100, 200, 500, "All"]
-                ],
-                'iDisplayLength': 100,
-                scrollX: true,
-                responsive: true,
-                "scrollY": 400,
-                "scrollCollapse": true,
-                fixedColumns: {
-                    leftColumns: 4
-                }
-            });
-        });
-    </script>
+
 </body>
 
 </html>

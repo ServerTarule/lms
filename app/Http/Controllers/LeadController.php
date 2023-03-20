@@ -3,12 +3,25 @@
 namespace App\Http\Controllers;
 
 use App\Models\Lead;
+use App\Models\State;
+use Illuminate\Http\Request;
 
 class LeadController extends Controller
 {
     public function index()
     {
-        return view('leads.index', ['leads' => Lead::all()]);
+        $leads = Lead::all();
+        return view('leads.index', compact('leads'));
+    }
+
+    public function create()
+    {
+        $states = State::all();
+        return view('leads.create', compact('states'));
+    }
+
+    public function store(Request $request) {
+        dd($request);
     }
 
     public function call()

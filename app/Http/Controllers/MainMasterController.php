@@ -13,7 +13,6 @@ class MainMasterController extends Controller
 
         $master =DynamicMain::where('id', $id)->first();
         $mainmasters = DynamicValue::where('parent_id', $id)->get();
-        //dd($dynamicmasters);
         return view('mainmaster.index', compact('mainmasters', 'master'));
 
 

@@ -3,9 +3,11 @@
 namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\ActionType;
 use App\Models\City;
 use App\Models\Lead;
 use App\Models\State;
+use App\Models\User;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -17,14 +19,15 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        // \App\Models\User::factory(10)->create();
+//        User::factory(10)->create();
 
-//         \App\Models\User::factory()->create([
-//             'name' => 'Test User',
-//             'email' => 'test@example.com',
-//         ]);
+/*         User::factory()->create([
+             'name' => 'Test User',
+             'email' => 'test@example.com',
+         ]);*/
 
 //        Lead::factory(100)->create();
+
 /*        $states = [
             ['name' => 'Andhra Pradesh'],
             ['name' => 'Arunachal Pradesh'],
@@ -68,7 +71,7 @@ class DatabaseSeeder extends Seeder
             State::create($state);
         }*/
 
-        $cities = [
+        /*$cities = [
             ['name' => 'Amaravati', 'state_id' => '1'],
             ['name' => 'Visakhapatnam', 'state_id' => '1'],
             ['name' => 'Itanagar', 'state_id' => '2'],
@@ -81,7 +84,9 @@ class DatabaseSeeder extends Seeder
 
         foreach ($cities as $key => $city) {
             City::create($city);
-        }
+        }*/
+
+        ActionType::factory(20)->create();
 
     }
 }

@@ -17,7 +17,7 @@
                     <div class="text-center">
                         <a onclick="document.getElementById('modal-18').classList.toggle('transformX-0');" class="btn btn-primary btn-sm"><i class="fa fa-eye"></i> Filter</a>
                         <a href="#" class="btn btn-success btn-sm" data-toggle="modal" data-target="#upload"><i class="fa fa-upload"></i> Bulk Upload</a>
-                        <a href="addleadform.php" class="btn btn-info btn-sm"><i class="fa fa-plus"></i> Add lead</a>
+                        <a href="/leads/create" class="btn btn-info btn-sm"><i class="fa fa-plus"></i> Add lead</a>
 
                     </div>
                     <div class="table-responsive">

@@ -4,17 +4,17 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class DynamicMain extends Model
 {
     use HasFactory;
     protected $fillable = [
         'name',
-        'master',
-
+        'master' //flag if it is a main master or dynamic master
     ];
 
-    public function value(){
+    public function values() : HasMany {
         return $this->hasMany(DynamicValue::class,'parent_id');
     }
 

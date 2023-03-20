@@ -46,7 +46,7 @@
                                     <td>{{$city->id}}</td>
                                     <td>{{$city->state->name}}</td>
                                     <td>{{$city->name}}</td>
-                                    <td>{{$city->created_at}}</td>
+                                    <td>{{ \Carbon\Carbon::parse($city->created_at)->format('d/m/Y') }}</td>
                                     <td></td>
                                     <td></td>
                             @endforeach

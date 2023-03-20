@@ -63,7 +63,7 @@
                                 <tbody>
                                     @foreach ($masters as $master)
                                         <tr>
-                                            <td>{{ $master->id }}</td>
+                                            <td>{{ $loop->iteration }}</td>
                                             <td>{{ $master->name }}</td>
                                             <td>@if($master->master == 1)
                                                 Main Master
@@ -116,15 +116,12 @@
                             @if (session('status'))
                                 <span class="alert success">{{ session('status') }}</span>
                             @endif
-
                         </div>
                         <div class="col-md-4">
-
                         </div>
                     </div>
                 @endif
             </div>
         </div>
     </div>
-
 @endsection

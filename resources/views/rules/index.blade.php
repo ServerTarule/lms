@@ -8,13 +8,13 @@
                 <div class="panel-heading">
                     <div class="btn-group" id="buttonexport">
                         <a href="#">
-                            <h4>STATUS</h4>
+                            <h4>Status</h4>
                         </a>
                     </div>
                 </div>
                 <div class="panel-body">
                     <div class="text-right">
-                        <a class="btn btn-exp btn-sm" href="/condition"><i class="fa fa-plus"></i> Add
+                        <a class="btn btn-exp btn-sm" href="/rules/create"><i class="fa fa-plus"></i> Add
                             Condition</a>
                     </div>
                     <div class="table-responsive">

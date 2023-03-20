@@ -44,7 +44,7 @@
                             <tbody>
                             @foreach ($mainmasters as $mainmaster)
                                 <tr>
-                                    <td>{{ $mainmaster->id }}</td>
+                                    <td>{{ $loop->iteration }}</td>
                                     <td>{{ $mainmaster->name }}</td>
                                     <td>{{ \Carbon\Carbon::parse($mainmaster->created_at)->format('d/m/Y') }}
                                     </td>
