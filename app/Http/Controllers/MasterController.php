@@ -49,4 +49,10 @@ class MasterController extends Controller
             return redirect()->route('master')->with('status','Master Added Successfully');
         }
     }
+
+    public function delete($id){
+        $master=DynamicMain::where('id',$id)->first();
+        return view('master.index',['master'=>$master,'masters'=> false]);
+    }
+
 }
