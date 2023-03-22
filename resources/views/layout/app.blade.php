@@ -104,8 +104,9 @@
                             @livewire('dynamics')
                             <li><a href="/states">State</a></li>
                             <li><a href="/cities">City</a></li>
+                            <li><a href="/doctors">Doctors</a></li>
                             <li><a href="location.php">Location</a></li>
-                            <li><a href="CentreDetails.php">Center Details</a></li>
+                            <li><a href="/centers">Center Details</a></li>
 {{--                            <li><a href="Leadandcenterassigning.php">Lead & Center Assigning Rules</a></li>--}}
                             <li><a href="/rulesregulations">Rules & Regulations</a></li>
                             <li><a href="lead-conditions.php">Lead Conditions</a></li>
