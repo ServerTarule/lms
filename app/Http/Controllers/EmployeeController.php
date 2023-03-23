@@ -19,7 +19,6 @@ class EmployeeController extends Controller
     public function index()
     {
         $employee=Employee::all();
-        // dd($employee);
         $user=User::all();
         $role=Role::all();
         $designation=Designation::all();

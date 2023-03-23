@@ -1,9 +1,12 @@
 <?php
 
+use App\Http\Controllers\ActionTypeController;
 use App\Http\Controllers\CityController;
+use App\Http\Controllers\ConditionsController;
 use App\Http\Controllers\CustomAuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DesignationController;
+use App\Http\Controllers\DoctorController;
 use App\Http\Controllers\MasterController;
 use App\Http\Controllers\DynamicMasterController;
 use App\Http\Controllers\EmployeeController;
@@ -12,7 +15,7 @@ use App\Http\Controllers\LeaveController;
 use App\Http\Controllers\MainMasterController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\RoleController;
-use App\Http\Controllers\RuleRegulationController;
+use App\Http\Controllers\RulesController;
 use App\Http\Controllers\StateController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -104,22 +107,19 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/rules', [RulesController::class, 'index'])->name('rules.index')->middleware('can:read master');
     Route::get('/rules/create', [RulesController::class, 'create'])->name('rules.create')->middleware('can:read master');
     Route::post('/rules/store', [RulesController::class, 'store'])->name('rules.store')->middleware('can:read master');
-
 //    Route::post('/rules/create', [RulesController::class, 'createrule'])->name('rules.create.post')->middleware('can:read master');
 
     //Conditions
     Route::get('/conditions/create', [ConditionsController::class, 'create'])->name('conditions.create')->middleware('can:read master');
     Route::post('/conditions/store', [ConditionsController::class, 'store'])->name('conditions.store')->middleware('can:read master');
+//    Route::get('/rules/create/condition', [RulesController::class, 'createcondition'])->name('rules.create.condition')->middleware('can:read master');
 
-
-    Route::get('/rules/create/condition', [RulesController::class, 'createcondition'])->name('rules.create.condition')->middleware('can:read master');
     //Lead
-    Route::get('/leads', [LeadController::class, 'index'])->name('leads')->middleware('can:read lead');
-    Route::get('/leads/create', [LeadController::class, 'create'])->name('leads')->middleware('can:read lead');
-    Route::post('/leads', [LeadController::class, 'store'])->name('leads')->middleware('can:read lead');
+    Route::get('/leads', [LeadController::class, 'index'])->name('leads.index')->middleware('can:read lead');
+    Route::get('/leads/create', [LeadController::class, 'create'])->name('leads.create')->middleware('can:read lead');
+    Route::post('/leads/store', [LeadController::class, 'store'])->name('leads.store')->middleware('can:read lead');
 
-
-    Route::get('/leadcalls', [LeadController::class, 'call'])->name('leads')->middleware('can:read lead');
+    Route::get('/leads/call', [LeadController::class, 'call'])->name('leads.call')->middleware('can:read lead');
     Route::get('/leadassignment', [LeadController::class, 'assignment'])->name('leads')->middleware('can:read lead');
     Route::get('/leadupload', [LeadController::class, 'upload'])->name('leads')->middleware('can:read lead');
 

@@ -27,9 +27,9 @@
                                 <th scope="col">
                                     S.No.
                                 </th>
-                                <th scope="col">
-                                    <a>Lead Id</a>
-                                </th>
+{{--                                <th scope="col">--}}
+{{--                                    <a>Lead Id</a>--}}
+{{--                                </th>--}}
                                 <th scope="col">
                                     <a>Name</a>
                                 </th>
@@ -38,30 +38,6 @@
                                 </th>
                                 <th scope="col">
                                     <a>Mobile No</a>
-                                </th>
-                                <th scope="col">
-                                    <a>Master 1</a>
-                                </th>
-                                <th scope="col">
-                                    <a>Master 2</a>
-                                </th>
-                                <th scope="col">
-                                    <a>Master 3</a>
-                                </th>
-                                <th scope="col">
-                                    <a>Treatment Type</a>
-                                </th>
-                                <th scope="col">
-                                    <a>Case Type</a>
-                                </th>
-                                <th scope="col">
-                                    <a>Social Integration</a>
-                                </th>
-                                <th scope="col">
-                                    <a>Location</a>
-                                </th>
-                                <th scope="col">
-                                    <a>Case Status</a>
                                 </th>
                                 <th scope="col">
                                     <a>Received Date</a>
@@ -77,22 +53,17 @@
                             <tbody>
                             @foreach ($leads as $lead)
                                 <tr>
-                                    <td>{{$lead->id}}</td>
-                                    <td>{{$lead->lead_id}}</td>
+                                    <td>{{ $loop->iteration }}</td>
+{{--                                    <td>{{$lead->lead_id}}</td>--}}
                                     <td>{{$lead->name}}</td>
                                     <td>{{$lead->email}}</td>
                                     <td>{{$lead->mobileno}}</td>
-                                    <td>{{$lead->master1}}</td>
-                                    <td>{{$lead->master2}}</td>
-                                    <td>{{$lead->master3}}</td>
-                                    <td>{{$lead->treatmenttype}}</td>
-                                    <td>{{$lead->casetype}}</td>
-                                    <td>{{$lead->socialintegration}}</td>
-                                    <td>{{$lead->location}}</td>
-                                    <td>{{$lead->casestatus}}</td>
-                                    <td>{{$lead->receiveddate}}</td>
-                                    <td>{{$lead->created_at}}</td>
-                                    <td></td>
+                                    <td>{{ \Carbon\Carbon::parse($lead->receiveddate)->format('d/m/Y')}}</td>
+                                    <td>{{ \Carbon\Carbon::parse($lead->created_at)->format('d/m/Y')}}</td>
+                                    <td>
+                                        <a href="/leads/{{$lead->id}}" class="btn-xs btn-info"> <i
+                                                class="fa fa-edit"></i> </a>
+                                    </td>
                             @endforeach
                             </tbody>
                         </table>

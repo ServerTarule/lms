@@ -6,8 +6,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <!-- <meta name="viewport" content="width=device-width, initial-scale=1"> -->
     <meta name="csrf-token" content="{{ csrf_token() }}" >
-    <title>CRM Admin | @yield('title')</title>
-    <link rel="shortcut icon" href="{{ asset('assets/dist/img/mini-logo.png') }}" type="image/x-icon">
+{{--    <title>CRM Admin | @yield('title')</title>--}}
+{{--    <link rel="shortcut icon" href="{{ asset('assets/dist/img/mini-logo.png') }}" type="image/x-icon">--}}
     <link href="{{ asset('assets/plugins/jquery-ui-1.12.1/jquery-ui.min.css') }}" rel="stylesheet" type="text/css" />
     <link href="{{ asset('assets/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet" type="text/css" />
     <link href="{{ asset('assets/plugins/lobipanel/lobipanel.min.css') }}" rel="stylesheet" type="text/css" />
@@ -109,7 +109,7 @@
 {{--                            <li><a href="location.php">Location</a></li>--}}
 {{--                            <li><a href="CentreDetails.php">Center Details</a></li>--}}
 {{--                            <li><a href="Leadandcenterassigning.php">Lead & Center Assigning Rules</a></li>--}}
-                            <li><a href="/rules">Rules & Regulations</a></li>
+{{--                            <li><a href="/rules">Rules & Regulations</a></li>--}}
 {{--                            <li><a href="lead-conditions.php">Lead Conditions</a></li>--}}
 {{--                            <li><a href="TemplateMaster.php">Template Master</a></li>--}}
 {{--                            <li><a href="AddMenu.php">Add Menu</a></li>--}}
@@ -119,6 +119,19 @@
 {{--                            <li><a href="Grant_authority.php">Permission</a></li>--}}
                         </ul>
                     </li>
+
+                    <li class="treeview">
+                        <a href="#">
+                            <i class="fa fa-shopping-basket"></i><span>Rules & Regulations</span>
+                            <span class="pull-right-container">
+                                <i class="fa fa-angle-left pull-right"></i>
+                            </span>
+                        </a>
+                        <ul class="treeview-menu">
+                            <li><a href="/rules">Rules</a></li>
+                        </ul>
+                    </li>
+
                     <li class="treeview">
                         <a href="#">
                             <i class="fa fa-shopping-basket"></i><span>Employee Managment</span>
@@ -156,7 +169,7 @@
                         </a>
                         <ul class="treeview-menu">
                             <li><a href="/leads">Leads</a></li>
-                            <li><a href="/leadcalls">First Calling</a></li>
+                            <li><a href="/leads/call">First Calling</a></li>
                             <li><a href="/leadassignment">Lead Follow Up</a></li>
                             <li><a href="/leadstatus">Master Data</a></li>
                             <li><a href="/leadupload">Upload Data</a></li>
@@ -286,34 +299,184 @@
     </script>
     <script>
 
+        $("#addRow").click(function (e) {
+            e.preventDefault();
+            let count = $("#ruleMasterRowCount").val();
+            console.log(count);
+            let nextCount = parseInt(count) + 1;
+            console.log(nextCount);
+            // $("#initial_"+count+"").after(`<tr id="initial_`+nextCount+`"><td>`+nextCount+`</td><td><select class="form-control" name="ruleMaster_`+nextCount+`" id="ruleMaster_`+nextCount+`"><option selected disabled>-- Select Condition --</option></select></td><td><button id="removeRow" class="fa fa-minus btn btn-sm btn-danger removeRow" onclick="$(this).parent().parent().remove();"></button></td></tr>`);
+            $("#initial_"+count+"").after(`<tr id="initial_`+nextCount+`"><td>`+nextCount+`</td><td><select class="form-control" name="ruleMaster_`+nextCount+`" id="ruleMaster_`+nextCount+`"><option selected disabled>-- Select Condition --</option></select></td><td></td></tr>`);
+            // $("#initial_"+count+"").after(`<tr id="initial_`+nextCount+`"><td>`+nextCount+`</td><td><select class="form-control" name="ruleMaster_`+nextCount+`" id="ruleMaster_`+nextCount+`"><option selected disabled>-- Select Condition --</option></select></td><td><button id="removeRow" class="fa fa-minus btn btn-sm btn-danger removeRow" onclick="$('#addRow').prop('disabled', false); let count = $('#ruleMasterRowCount').val(); let previousCount = parseInt(count) - 1; $('#ruleMasterRowCount').val(previousCount); $(this).parent().parent().remove();"></button></td></tr>`);
+            // $("#initial_"+count+"").after(`<tr id="initial_`+nextCount+`"><td>`+nextCount+`</td><td><select class="form-control" name="ruleMaster_`+nextCount+`" id="ruleMaster_`+nextCount+`"><option selected disabled>-- Select Condition --</option></select></td><td><button id="removeRow" class="fa fa-minus btn btn-sm btn-danger removeRow""></button></td></tr>`);
+            $("#ruleMaster_"+nextCount+"").append(`@foreach($masters as $master) <option value="{{ $master -> id }}">{{ $master -> name }}</option> @endforeach`);
+            $("#ruleMasterRowCount").val(nextCount);
+
+            $("#removeRow").prop("disabled", false);
+            $("#addRow").prop("disabled", false);
+
+            if ($("#ruleMasterRowCount").val() == 5) {
+                $("#addRow").prop("disabled", true);
+            }
+        });
+
+        $("#removeRow").click(function (e) {
+            e.preventDefault();
+            let count = $("#ruleMasterRowCount").val();
+            $("#initial_"+count+"").remove();
+            let previousCount = parseInt(count) - 1;
+            $("#ruleMasterRowCount").val(previousCount);
+
+            $("#removeRow").prop("disabled", false);
+            $("#addRow").prop("disabled", false);
+
+            if ($("#ruleMasterRowCount").val() == 1) {
+                $("#removeRow").prop("disabled", true);
+            }
+
+        });
+
+        // {
+        //     "Actors": [
+        //     {
+        //         "name": "Tom Cruise",
+        //         "age": 56,
+        //         "Born At": "Syracuse, NY",
+        //         "Birthdate": "July 3, 1962",
+        //         "photo": "https://jsonformatter.org/img/tom-cruise.jpg",
+        //         "wife": null,
+        //         "weight": 67.5,
+        //         "hasChildren": true,
+        //         "hasGreyHair": false,
+        //         "children": [
+        //             "Suri",
+        //             "Isabella Jane",
+        //             "Connor"
+        //         ]
+        //     }
+        // }
+
+        // $("#ruleConditionSubmit").click(function(){
+        //
+        //     //let jsonObject = new Object();
+        //     let jsonObject = [];
+        //     // jsonObject.name = $('#ruleName').val();
+        //     // let ruleName = $('#ruleName').val();
+        //     let ruleMasterData = $('#ruleMasters').val();
+        //     let items = [];
+        //     $.each(JSON.parse(ruleMasterData), function (key, value) {
+        //         // item ["master"] = value.id;
+        //
+        //         let itemValue = {};
+        //         //let master = []
+        //         let masterValues = [];
+        //         let masterOperations = [];
+        //
+        //         //master.push(value.id);
+        //         itemValue ["master"] = value.id;
+        //         $('#ruleMaster_' + value.id + ' :selected').each(function (i, sel) {
+        //             masterValues.push($(sel).val());
+        //         });
+        //         itemValue ["masterValues"] = masterValues;
+        //         $('#ruleCondition_' + value.id + ' :selected').each(function (i, sel) {
+        //             masterOperations.push($(sel).val());
+        //         });
+        //         itemValue ["masterOperations"] = masterOperations;
+        //
+        //         items.push(itemValue);
+        //
+        //     });
+        //     //jsonObject.masters = item;
+        //     jsonObject.push(items)
+        //     console.log(JSON.stringify(items));
+        //     // let CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
+        //     // $.ajaxSetup({
+        //     //     headers: {
+        //     //         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        //     //     }
+        //     // });
+        //     // $.ajax({
+        //     //     /* the route pointing to the post function */
+        //     //     url: '/conditions/store',
+        //     //     type: 'POST',
+        //     //     /* send the csrf-token and the input to the controller */
+        //     //     // data: {_token: CSRF_TOKEN, 'ruleData':JSON.stringify(jsonObject)},
+        //     //     data: {_token: CSRF_TOKEN, 'ruleName': ruleName, 'ruleData':JSON.stringify(jsonObject)},
+        //     //     // data: $(this).serialize(),
+        //     //     dataType: 'JSON',
+        //     //     /* remind that 'data' is the response of the AjaxController */
+        //     //     success: function (data) {
+        //     //         console.log(data);
+        //     //         window.location.href = "/rules";
+        //     //     },
+        //     //     failure: function (data) {
+        //     //         console.log(data);
+        //     //     }
+        //     // });
+        // });
 
         $("#ruleConditionSubmit").click(function(){
+        //WORKING
+        //     let jsonObject = [];
+        //     let ruleName = $('#ruleName').val();
+        //     let ruleMasterData = $('#ruleMasters').val();
+        //     $.each(JSON.parse(ruleMasterData), function (key, value) {
+        //         let item = {}
+        //         item ["master"] = value.id;
+        //
+        //         let masterValues = [];
+        //
+        //         $('#ruleMaster_' + value.id + ' :selected').each(function (i, sel) {
+        //             if ($(sel).val() != "--Select Condition--") {
+        //                 masterValues.push($(sel).val());
+        //             }
+        //         });
+        //         item ["masterValues"] = masterValues;
+        //         $('#ruleCondition_' + value.id + ' :selected').each(function (i, sel) {
+        //             if ($(sel).val() != "--Select Condition--") {
+        //                 item ["ruleOperation"] = $(sel).val();
+        //             }
+        //         });
+        //
+        //         jsonObject.push(item);
+        //
+        //     });
+        //     console.log(JSON.stringify(jsonObject));
+            // WORKING
 
-            let jsonObject = [];
-            // jsonObject['rule'] = $("#ruleName").val();
-            let ruleMasterData = $('#ruleMasters').val();
-            $.each(JSON.parse(ruleMasterData), function (key, value) {
-                let item = {}
-                item ["master"] = value.id;
+                //let jsonObject = new Object();
+                //let jsonObject = [];
+                // jsonObject.name = $('#ruleName').val();
+                let ruleName = $('#ruleName').val();
+                let ruleMasterData = $('#ruleMasters').val();
+                let items = [];
+                $.each(JSON.parse(ruleMasterData), function (key, value) {
+                    // item ["master"] = value.id;
 
-                let masterValues = [];
+                    let itemValue = {};
+                    let master = []
+                    let masterValues = [];
+                    let masterOperations = [];
 
-                $('#ruleMaster_' + value.id + ' :selected').each(function (i, sel) {
-                    if ($(sel).val() != "--Select Condition--") {
+                    master.push(value.id);
+                    itemValue ["master"] = master;
+                    $('#ruleMaster_' + value.id + ' :selected').each(function (i, sel) {
                         masterValues.push($(sel).val());
-                    }
-                });
-                item ["masterValues"] = masterValues;
-                $('#ruleCondition_' + value.id + ' :selected').each(function (i, sel) {
-                    if ($(sel).val() != "--Select Condition--") {
-                        item ["ruleOperation"] = $(sel).val();
-                    }
-                });
+                    });
+                    itemValue ["masterValues"] = masterValues;
+                    $('#ruleCondition_' + value.id + ' :selected').each(function (i, sel) {
+                        masterOperations.push($(sel).val());
+                    });
+                    itemValue ["masterOperations"] = masterOperations;
 
-                jsonObject.push(item);
+                    items.push(itemValue);
 
-            });
-            console.log(jsonObject);
+                });
+                //jsonObject.masters = item;
+                //jsonObject.push(items)
+                // console.log(JSON.stringify(items));
+
+
             let CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
             $.ajaxSetup({
                 headers: {
@@ -326,13 +489,90 @@
                 type: 'POST',
                 /* send the csrf-token and the input to the controller */
                 // data: {_token: CSRF_TOKEN, 'ruleData':JSON.stringify(jsonObject)},
-                data: {'ruleData':JSON.stringify(jsonObject)},
+                    data: {_token: CSRF_TOKEN, 'ruleName': ruleName, 'ruleData':JSON.stringify(items)},
                 // data: $(this).serialize(),
                 dataType: 'JSON',
                 /* remind that 'data' is the response of the AjaxController */
                 success: function (data) {
                     console.log(data);
-                    // window.location.href = "/rules";
+                    window.location.href = "/rules";
+                },
+                failure: function (data) {
+                    console.log(data);
+                }
+            });
+        });
+
+        $("#leadMasterSubmit").click(function(){
+
+            let leadMastersData = $('#leadMasters').val();
+
+            let name = $('#name').val();
+            let email = $('#email').val();
+            let mobileno = $('#mobileno').val();
+            let altmobileno = $('#altmobileno').val();
+            let receiveddate = $('#receiveddate').val();
+            let remark = $('#remark').val();
+            let items = [];
+            $.each(JSON.parse(leadMastersData), function (key, value) {
+
+                let itemValue = {};
+                // let master = []
+                // let masterValues = [];
+                let masterOperations = [];
+
+                // master.push(value.id);
+                itemValue ["master"] = value.id;
+                // $('#ruleMaster_' + value.id + ' :selected').each(function (i, sel) {
+                //     masterValues.push($(sel).val());
+                // });
+                let $masterValue = $('#leadMaster_' + value.id + ' :selected').val();
+                if ($masterValue != "-- Select Condition --") {
+                    itemValue ["masterValue"] = $masterValue;
+                } else {
+                    itemValue ["masterValue"] = 25;
+                }
+                // $('#ruleCondition_' + value.id + ' :selected').each(function (i, sel) {
+                //     masterOperations.push($(sel).val());
+                // });
+                // itemValue ["masterOperations"] = masterOperations;
+
+                items.push(itemValue);
+
+            });
+            //jsonObject.masters = item;
+            //jsonObject.push(items)
+            // console.log(JSON.stringify(items));
+
+
+            let CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+            $.ajax({
+                /* the route pointing to the post function */
+                url: '/leads/store',
+                type: 'POST',
+                /* send the csrf-token and the input to the controller */
+                // data: {_token: CSRF_TOKEN, 'ruleData':JSON.stringify(jsonObject)},
+                data: {
+                    _token: CSRF_TOKEN,
+                    'name': name,
+                    'email': email,
+                    'mobileno': mobileno,
+                    'altmobileno': altmobileno,
+                    'receiveddate': receiveddate,
+                    'remark': remark,
+                    'leadMasterData':JSON.stringify(items)
+                },
+                // data: $(this).serialize(),
+                dataType: 'JSON',
+                /* remind that 'data' is the response of the AjaxController */
+                success: function (data) {
+                    console.log(data);
+                    window.location.href = "/leads";
                 },
                 failure: function (data) {
                     console.log(data);

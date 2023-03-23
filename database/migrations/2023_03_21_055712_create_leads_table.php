@@ -15,20 +15,18 @@ return new class extends Migration
     {
         Schema::create('leads', function (Blueprint $table) {
             $table->id();
-            $table->string('lead_id');
             $table->string('name');
             $table->string('email');
             $table->string('mobileno');
-            $table->string('master1');
-            $table->string('master2');
-            $table->string('master3');
-            $table->string('treatmenttype');
-            $table->string('casetype');
-            $table->string('socialintegration');
-            $table->string('location');
-            $table->string('casestatus');
+            $table->string('altmobileno')->nullable();
             $table->dateTime('receiveddate');
+            $table->longText('remark')->nullable();
+            $table->unsignedBigInteger('employee_id')->nullable()->constrained();
             $table->timestamps();
+            $table->foreign('employee_id')
+                ->references('id')
+                ->on('employees')
+                ->onDelete('cascade');
         });
     }
 

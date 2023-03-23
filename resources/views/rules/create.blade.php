@@ -41,16 +41,17 @@
     {{--                                    <input type="hidden" class="hdncityid" value="0" name="hdncityid"/>--}}
                                     </div>
                                     <div class="form-group">
+                                        <input type="hidden" name="ruleMasterRowCount" id="ruleMasterRowCount" value="1">
                                         <table class="table table-bordered table-striped">
                                             <tr>
                                                 <th>S.No.</th>
                                                 <th>Title</th>
                                                 <th>Action</th>
                                             </tr>
-                                            <tr id="initial">
+                                            <tr id="initial_1">
                                                 <td>1</td>
                                                 <td>
-                                                    <select class="form-control" name="ruleMaster" id="ruleMaster">
+                                                    <select class="form-control" name="ruleMaster_1" id="ruleMaster_1">
                                                         <option selected disabled>-- Select Condition --</option>
                                                         @foreach($masters as $master)
                                                         <option value="{{ $master -> id }}">{{ $master -> name }}</option>
@@ -58,7 +59,8 @@
                                                     </select>
                                                 </td>
                                                 <td>
-                                                    <button class="fa fa-plus btn btn-sm btn-primary" id="addRow"></button>
+                                                    <button id="addRow" class="fa fa-plus btn btn-sm btn-primary" ></button>
+                                                    <button id="removeRow" class="fa fa-minus btn btn-sm btn-danger" disabled></button>
                                                 </td>
                                             </tr>
                                         </table>

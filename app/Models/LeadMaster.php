@@ -5,22 +5,28 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class DynamicValue extends Model
+class LeadMaster extends Model
 {
     use HasFactory;
+
+    protected $table = 'leadmasters';
+
     protected $fillable = [
-        'name',
-        'parent_id',
+        'lead_id',
+        'master_id',
+        'mastervalue_id'
     ];
+
+    public function lead() : BelongsTo {
+        return $this->belongsTo(Lead::class);
+    }
 
     public function master() : BelongsTo {
         return $this->belongsTo(DynamicMain::class);
     }
 
-    public function ruleconditions() : HasMany {
-        return $this->hasMany(RuleCondition::class,'mastervalue_id');
+    public function mastervalue() : BelongsTo {
+        return $this->belongsTo(DynamicValue::class);
     }
-
 }

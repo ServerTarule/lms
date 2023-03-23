@@ -5,6 +5,7 @@ namespace Database\Seeders;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use App\Models\ActionType;
 use App\Models\City;
+use App\Models\Employee;
 use App\Models\Lead;
 use App\Models\State;
 use App\Models\User;
@@ -86,7 +87,21 @@ class DatabaseSeeder extends Seeder
             City::create($city);
         }*/
 
-        ActionType::factory(20)->create();
+//        ActionType::factory(20)->create();
+
+//        Employee::factory(5)->create();
+
+        //User::factory(10)->create();
+
+
+
+        for ($i = 1; $i <= 3; $i++) {
+            Employee::factory()->create(
+                [
+                    'user_id' => $i
+                ]
+            );
+        }
 
     }
 }

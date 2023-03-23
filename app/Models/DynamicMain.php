@@ -18,4 +18,8 @@ class DynamicMain extends Model
         return $this->hasMany(DynamicValue::class,'parent_id');
     }
 
+    public function ruleconditions() : HasMany {
+        return $this->hasMany(RuleCondition::class,'master_id');
+    }
+
 }

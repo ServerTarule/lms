@@ -17,22 +17,21 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('contact');
-            $table->unsignedBigInteger('role_id');
             $table->unsignedBigInteger('user_id');
             $table->date('dob');
             $table->date('doj');
             $table->string('alternate_contact');
             $table->unsignedBigInteger('designation_id');
-            $table->unsignedBigInteger('master_id');
             $table->string('profile_img');
+            $table->timestamps('lead_assigned_at');
             $table->softDeletes();
-            $table->foreign('designation_id')
-                ->references('id')
-                ->on('designations')
-                ->onDelete('cascade');
             $table->foreign('user_Id')
                 ->references('id')
                 ->on('users')
+                ->onDelete('cascade');
+            $table->foreign('designation_id')
+                ->references('id')
+                ->on('designations')
                 ->onDelete('cascade');
             $table->timestamps();
         });

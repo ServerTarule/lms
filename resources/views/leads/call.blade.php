@@ -42,10 +42,10 @@
                                         <a>Left Days</a>
                                     </th>
                                     <th scope="col">
-                                        <a>Case Status</a>
+                                        <a>Lead Status</a>
                                     </th>
                                     <th scope="col">
-                                        <a>CaseType</a>
+                                        <a>Lead Type</a>
                                     </th>
                                     <th scope="col">
                                         <a>Received Date</a>
@@ -88,9 +88,32 @@
                                     </th>
                                 </tr>
                                 </thead>
-
                                 <tbody>
+                                @foreach ($leads as $lead)
+                                    <tr>
+                                        <td>{{ $loop->iteration }}</td>
+                                        <td></td>
+                                        <td>{{ $lead->employee->name }}</td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td>{{ $lead->received_dt }}</td>
+                                        <td></td>
+                                        <td>{{ $lead->name }}</td>
+                                        <td>{{ $lead->mobileno }}</td>
+                                        <td>{{ $lead->altmobileno }}</td>
+                                        <td>{{ $lead->email }}</td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td>{{ $lead->remark }}</td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
 
+                                @endforeach
                                 </tbody>
                             </table>
                         </div>

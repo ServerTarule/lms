@@ -70,8 +70,7 @@
                                             @else
                                                 Dynamic Master
                                             @endif</td>
-                                            <td>{{ \Carbon\Carbon::parse($master->created_at)->format('d/m/Y') }}
-                                            </td>
+                                            <td>{{ \Carbon\Carbon::parse($master->created_at)->format('d/m/Y') }}</td>
                                             <td>
                                                 <a href="/master/{{$master->id}}" class="btn-xs btn-info"> <i
                                                         class="fa fa-edit"></i> </a>
