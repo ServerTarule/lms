@@ -19,6 +19,7 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\RulesController;
 use App\Http\Controllers\StateController;
 use App\Http\Controllers\CenterController;
+use App\Http\Controllers\TemplateController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -149,6 +150,11 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/logout', [CustomAuthController::class, 'logout'])->name('logout');
+
+    // Template Master
+    Route::get('/template', [TemplateController::class, 'index'])->name('template');
+
+
 });
 
 

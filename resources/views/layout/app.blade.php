@@ -116,7 +116,7 @@
 {{--                            <li><a href="Leadandcenterassigning.php">Lead & Center Assigning Rules</a></li>--}}
 {{--                            <li><a href="/rules">Rules & Regulations</a></li>--}}
 {{--                            <li><a href="lead-conditions.php">Lead Conditions</a></li>--}}
-{{--                            <li><a href="TemplateMaster.php">Template Master</a></li>--}}
+                            <li><a href="/template">Template Master</a></li>
 {{--                            <li><a href="AddMenu.php">Add Menu</a></li>--}}
 {{--                            <li><a href="Submenu.php">Sub Menu</a></li>--}}
 {{--                            <li><a href="SocialIntegration.php">Social Integration</a></li>--}}
