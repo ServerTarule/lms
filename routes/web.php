@@ -17,6 +17,7 @@ use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\RulesController;
 use App\Http\Controllers\StateController;
+use App\Http\Controllers\CenterController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -134,6 +135,10 @@ Route::middleware(['auth'])->group(function () {
     //Doctors
     Route::get('/doctors', [DoctorController::class, 'index'])->name('doctors');//->middleware('can:read doctor');
     Route::post('/addDoctors', [DoctorController::class, 'addDoctors'])->name('addDoctors');//->middleware('can:create doctor');
+
+    // Centers
+    Route::get('/centers', [CenterController::class, 'index'])->name('centers');//->middleware('can:read employee');
+    Route::post('/addCenter', [CenterController::class, 'addCenter'])->name('addCenter');//->middleware('can:create doctor');
 
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/logout', [CustomAuthController::class, 'logout'])->name('logout');
