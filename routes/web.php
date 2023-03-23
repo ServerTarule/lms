@@ -115,7 +115,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/conditions/store', [ConditionsController::class, 'store'])->name('conditions.store')->middleware('can:read master');
 //    Route::get('/rules/create/condition', [RulesController::class, 'createcondition'])->name('rules.create.condition')->middleware('can:read master');
 
-    //Lead
+    //Leads
     Route::get('/leads', [LeadController::class, 'index'])->name('leads.index')->middleware('can:read lead');
     Route::get('/leads/create', [LeadController::class, 'create'])->name('leads.create')->middleware('can:read lead');
     Route::post('/leads/store', [LeadController::class, 'store'])->name('leads.store')->middleware('can:read lead');
