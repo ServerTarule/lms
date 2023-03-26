@@ -13,19 +13,19 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('dynamic_values', function (Blueprint $table) {
+        Schema::create('employeerules', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->unsignedBigInteger('parent_id');
-            $table->unsignedBigInteger('dependent_id')->nullable()->constrained();
+            $table->unsignedBigInteger('employee_id');
+            $table->unsignedBigInteger('rule_id');
+            $table->string('status');
             $table->timestamps();
-            $table->foreign('parent_id')
-            ->references('id')
-            ->on('dynamic_mains')
-            ->onDelete('cascade');
-            $table->foreign('dependent_id')
+            $table->foreign('employee_id')
                 ->references('id')
-                ->on('dynamic_mains')
+                ->on('employees')
+                ->onDelete('cascade');
+            $table->foreign('rule_id')
+                ->references('id')
+                ->on('rules')
                 ->onDelete('cascade');
         });
     }
@@ -37,6 +37,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('dynamic_values');
+        Schema::dropIfExists('employeerule');
     }
 };

@@ -80,8 +80,8 @@ class LeadController extends Controller
         foreach ($leads as $lead) {
 //            Log::info($lead->leadmasters->master);
             foreach ($lead->leadmasters as $lm) {
-                Log::info($lm->master);
-                Log::info($lm->mastervalue);
+                //Log::info($lm->master);
+                //Log::info($lm->mastervalue);
             }
 //            Log::info($lead->leadmasters->mastervalue->name);
         }

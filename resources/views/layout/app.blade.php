@@ -148,7 +148,7 @@
                         <ul class="treeview-menu">
                             <li><a href="/employee">Employee Details</a></li>
                             <li><a href="/leave">Employee Leaves</a></li>
-                            <!-- <li><a href="Employee_authority.php">Employee Permissions</a></li> -->
+                            <li><a href="/employees/permissions">Employee Permissions</a></li>
                         </ul>
                     </li>
                     <li class="treeview">
@@ -584,6 +584,46 @@
                 }
             });
         });
+
+        $("#mastersTab").click(function(){
+
+            let employeeId = $('#employeeId').val();
+            let CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
+
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+
+            $.ajax({
+                /* the route pointing to the post function */
+                url: '/employees/permissions/'+ employeeId + '/masters',
+                type: 'GET',
+                /* send the csrf-token and the input to the controller */
+                // data: {_token: CSRF_TOKEN, 'ruleData':JSON.stringify(jsonObject)},
+                data: {
+                    _token: CSRF_TOKEN,
+                },
+                dataType: 'JSON',
+                /* remind that 'data' is the response of the AjaxController */
+                success: function (data) {
+                    let allMasters = data['masters'];
+                    $("#permissionsTab").removeClass("active");
+                    $("#masterTab").addClass("active");
+                },
+                failure: function (data) {
+                    console.log(data);
+                }
+            });
+        });
+
+        $("#employeePermissionSubmit").click(function(){
+            console.log("Clicked!");
+        });
+
+
+
 
     </script>
     {{--<script>

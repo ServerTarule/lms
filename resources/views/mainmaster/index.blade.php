@@ -16,6 +16,42 @@
                         <form action="/dynamic/{{ $master->id }}" method="post">
                             @csrf
                             <div class="row">
+                                @if($leadStatuses)
+                                    @if( count($leadStatuses) != 0 )
+                                        <div class="form-group col-sm-2">
+                                            <label>Select Lead Status<span class="required"> * </span></label>
+                                        </div>
+                                        <div class="form-group col-sm-2">
+                                            <select class="form-control" name="leadStatusMasterId" id="leadStatusMasterId">
+                                                <option disabled>-- Select Lead Status --</option>
+{{--                                                @php--}}
+{{--                                                    $values = $master->values()->get();--}}
+{{--                                                @endphp--}}
+                                                @foreach($leadStatuses as $leadStatus)
+                                                    <option value="{{ $leadStatus->id }}">{{ $leadStatus->name }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    @endif
+                                @endif
+                                @if($states)
+                                    @if( count($states) != 0 )
+                                        <div class="form-group col-sm-2">
+                                            <label>Select State<span class="required"> * </span></label>
+                                        </div>
+                                        <div class="form-group col-sm-2">
+                                            <select class="form-control" name="stateMasterId" id="stateMasterId">
+                                                <option disabled>-- Select State --</option>
+{{--                                                @php--}}
+{{--                                                    $values = $master->values()->get();--}}
+{{--                                                @endphp--}}
+                                                @foreach($states as $state)
+                                                    <option value="{{ $state->id }}">{{ $state->name }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    @endif
+                                @endif
                                 <div class="form-group col-sm-2">
                                     <label>Name<span class="required"> * </span></label>
                                 </div>

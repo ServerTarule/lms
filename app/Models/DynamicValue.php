@@ -13,9 +13,14 @@ class DynamicValue extends Model
     protected $fillable = [
         'name',
         'parent_id',
+        'dependent_id'
     ];
 
     public function master() : BelongsTo {
+        return $this->belongsTo(DynamicMain::class);
+    }
+
+    public function dependent() : BelongsTo {
         return $this->belongsTo(DynamicMain::class);
     }
 

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\DynamicMain;
 use App\Models\DynamicValue;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class DynamicMasterController extends Controller
 {
@@ -22,9 +23,23 @@ class DynamicMasterController extends Controller
         if ($unique) {
             return redirect()->back()->with('error', 'Value Already Exists');
         }
+        $dependentId = null;
+
+        //Log::info($request->leadStatusMasterId);
+        //Log::info($request->leadStatusId);
+
+        if ($request->leadStatusMasterId != null) {
+            $dependentId = $request->leadStatusMasterId;
+        }
+
+        if ($request->stateMasterId != null) {
+            $dependentId = $request->stateMasterId;
+        }
+
         $value = DynamicValue::create([
             'name' => $request->name,
             'parent_id' => $id,
+            'dependent_id' => $dependentId
         ]);
         if ($value) {
             return redirect()->back()->with('status', 'Value Added Successfully');

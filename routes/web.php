@@ -14,6 +14,7 @@ use App\Http\Controllers\LeadController;
 use App\Http\Controllers\LeaveController;
 use App\Http\Controllers\MainMasterController;
 use App\Http\Controllers\PermissionController;
+use App\Http\Controllers\PermissionsController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\RulesController;
 use App\Http\Controllers\StateController;
@@ -64,8 +65,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/city', [RoleController::class, 'assign'])->name('assign')->middleware('can:assign role');
 
     //Permission
-    Route::get('/permission', [PermissionController::class, 'index'])->name('permission')->middleware('can:read role');
-    Route::get('/permission/{id}', [PermissionController::class, 'edit'])->name('permission/{id}')->middleware('can:update role');
+//    Route::get('/permission', [PermissionController::class, 'index'])->name('permission')->middleware('can:read role');
+//    Route::get('/permission/{id}', [PermissionController::class, 'edit'])->name('permission/{id}')->middleware('can:update role');
 
     // Employee
     Route::get('/employee', [EmployeeController::class, 'index'])->name('employee')->middleware('can:read employee');
@@ -73,6 +74,12 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/createemployee', [EmployeeController::class, 'store'])->name('createemployee')->middleware('can:create employee');
     Route::post('/updateemployee', [EmployeeController::class, 'update'])->name('updateemployee')->middleware('can:update employee');
     Route::get('/employee/{id}', [EmployeeController::class, 'edit'])->name('employee/{id}')->middleware('can:update employee');
+
+    //Permissions
+    Route::get('/employees/permissions', [PermissionsController::class, 'index'])->name('permissions.index')->middleware('can:read employee');
+    Route::get('/employees/permissions/{id}', [PermissionsController::class, 'edit'])->name('permissions.edit')->middleware('can:read employee');
+    Route::post('/employees/permissions/{id}', [PermissionsController::class, 'update'])->name('permissions.update')->middleware('can:read employee');
+    Route::get('/employees/permissions/{id}/masters', [PermissionsController::class, 'masterindex'])->name('permissions.masterindex')->middleware('can:read employee');
 
     // Leave
     Route::get('/leave', [LeaveController::class, 'index'])->name('leave')->middleware('can:read leave');
