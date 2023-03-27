@@ -63,6 +63,24 @@ class LeaveController extends Controller
 
     }
 
+    public function viewDetailedLeave($id){
+
+        $getLeaveUserDetails = viewleaveModel::where('id', $id)->get();
+  
+
+         if($getLeaveUserDetails){
+            
+        
+        return view('leave.viewDeatils',compact( 'getLeaveUserDetails'));
+
+        }else{
+            return redirect('/leave')->with('error','Please try again later');
+        }
+        
+
+    }
+
+
     /**
      * Display the specified resource.
      *

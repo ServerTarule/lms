@@ -87,6 +87,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/addleave', [LeaveController::class, 'create'])->name('addleave')->middleware('can:create leave');
     Route::post('/createleave', [LeaveController::class, 'store'])->name('createleave')->middleware('can:create leave');
     Route::post('/updateleave', [LeaveController::class, 'update'])->name('updateleave')->middleware('can:update leave');
+    Route::get('/viewLeave/{id}', [LeaveController::class, 'viewDetailedLeave'])->name('viewLeave/{id}')->middleware('can:update leave');
     Route::post('/leave/{id}', [LeaveController::class, 'edit'])->name('leave/{id}')->middleware('can:update leave');
 
     // Designation
