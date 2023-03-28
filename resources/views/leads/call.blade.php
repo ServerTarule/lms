@@ -93,7 +93,7 @@
                                     <tr>
                                         <td>{{ $loop->iteration }}</td>
                                         <td></td>
-                                        <td>{{ $lead->employee->name }}</td>
+                                        <td> @if($lead->employee) {{ $lead->employee->name }} @endif</td>
                                         <td></td>
                                         <td></td>
                                         <td></td>

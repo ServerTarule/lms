@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('lead_id');
             $table->unsignedBigInteger('master_id');
-            $table->unsignedBigInteger('mastervalue_id');
+            $table->unsignedBigInteger('mastervalue_id')->nullable()->constrained();
             $table->foreign('lead_id')
                 ->references('id')
                 ->on('leads')

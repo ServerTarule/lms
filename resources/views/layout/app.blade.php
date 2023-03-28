@@ -304,6 +304,11 @@
     </script>
     <script>
 
+        function handleChange(cb) {
+            console.log("Changed, new value = " + cb.checked);
+            $(cb).attr('value', cb.checked);
+        }
+
         $("#addRow").click(function (e) {
             e.preventDefault();
             let count = $("#ruleMasterRowCount").val();
@@ -535,7 +540,7 @@
                 if ($masterValue != "-- Select Condition --") {
                     itemValue ["masterValue"] = $masterValue;
                 } else {
-                    itemValue ["masterValue"] = 25;
+                    itemValue ["masterValue"] = null;
                 }
                 // $('#ruleCondition_' + value.id + ' :selected').each(function (i, sel) {
                 //     masterOperations.push($(sel).val());
@@ -619,11 +624,59 @@
         });
 
         $("#employeePermissionSubmit").click(function(){
-            console.log("Clicked!");
+
+
+            //Rules
+
+            let employeeId = $("#employeeId").val();
+            let rules = $("#employeePermissionRules").val();
+
+            let items = [];
+            $.each(JSON.parse(rules), function (key, value) {
+
+                let itemValue = {};
+                itemValue ["rule"] = value.id;
+                // console.log(value.id);
+                let $ruleStatus = $('#rule_' + value.id).val();
+                itemValue ["ruleStatus"] = $ruleStatus;
+                // console.log($ruleStatus);
+                items.push(itemValue);
+
+            });
+
+            //jsonObject.masters = item;
+            //jsonObject.push(items)
+            // console.log(JSON.stringify(items));
+
+
+            let CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+            $.ajax({
+                /* the route pointing to the post function */
+                url: '/employees/permissions/'+employeeId,
+                type: 'POST',
+                /* send the csrf-token and the input to the controller */
+                // data: {_token: CSRF_TOKEN, 'ruleData':JSON.stringify(jsonObject)},
+                data: {
+                    _token: CSRF_TOKEN,
+                    'employeeId': employeeId,
+                    'rulesDate':JSON.stringify(items)
+                },
+                dataType: 'JSON',
+                /* remind that 'data' is the response of the AjaxController */
+                success: function (data) {
+                    console.log(data);
+                    window.location.href = "/employees/permissions";
+                },
+                failure: function (data) {
+                    console.log(data);
+                }
+            });
         });
-
-
-
 
     </script>
     {{--<script>

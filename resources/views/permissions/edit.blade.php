@@ -16,6 +16,7 @@
 {{--                    <form method="post" action="/employees/permissions/{{ $employeeId }}" id="employeePermissionsForm">--}}
 {{--                        @csrf--}}
                         <div class="col-xs-12 col-sm-12 col-md-12 m-b-20">
+                            <input id="employeeId" name="employeeId" value="{{ $employeeId }}" type="hidden">
                             <ul class="nav nav-tabs">
                                 <li class="active"><a href="#tab1" data-toggle="tab">All</a></li>
     {{--                            <li><a href="#tab2" data-toggle="tab">Master</a></li>--}}
@@ -26,6 +27,7 @@
                                 <li><a href="#tab6" data-toggle="tab">Other Management</a></li>
     {{--                            <li><a href="#tab7" data-toggle="tab">Rules</a></li>--}}
                                 <li><a href="#rulesTab" data-toggle="tab">Rules</a></li>
+                                <li><a href="#holidayTab" data-toggle="tab">Holiday Working Hours</a></li>
                             </ul>
                             <div class="tab-content">
                                 <div class="tab-pane fade in active" id="tab1">
@@ -43,174 +45,174 @@
                                                 </tr>
                                                 </thead>
                                                 <tbody>
-                                                <tr>
-                                                    <td>1</td>
-                                                    <td>Master</td>
-                                                    <td>
-                                                        <label class="switch">
-                                                            <input type="checkbox" checked />
-                                                            <span class="slider round"></span>
-                                                        </label>
-                                                    </td>
-                                                    <td>
-                                                        <label class="switch">
-                                                            <input type="checkbox" />
-                                                            <span class="slider round"></span>
-                                                        </label>
-                                                    </td>
-                                                    <td>
-                                                        <label class="switch">
-                                                            <input type="checkbox" />
-                                                            <span class="slider round"></span>
-                                                        </label>
-                                                    </td>
-                                                    <td>
-                                                        <label class="switch">
-                                                            <input type="checkbox" checked />
-                                                            <span class="slider round"></span>
-                                                        </label>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>2</td>
-                                                    <td>Employee Management</td>
-                                                    <td>
-                                                        <label class="switch">
-                                                            <input type="checkbox" />
-                                                            <span class="slider round"></span>
-                                                        </label>
-                                                    </td>
-                                                    <td>
-                                                        <label class="switch">
-                                                            <input type="checkbox" checked />
-                                                            <span class="slider round"></span>
-                                                        </label>
-                                                    </td>
-                                                    <td>
-                                                        <label class="switch">
-                                                            <input type="checkbox" checked />
-                                                            <span class="slider round"></span>
-                                                        </label>
-                                                    </td>
-                                                    <td>
-                                                        <label class="switch">
-                                                            <input type="checkbox" />
-                                                            <span class="slider round"></span>
-                                                        </label>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>3</td>
-                                                    <td>Lead Management</td>
-                                                    <td>
-                                                        <label class="switch">
-                                                            <input type="checkbox" />
-                                                            <span class="slider round"></span>
-                                                        </label>
-                                                    </td>
-                                                    <td>
-                                                        <label class="switch">
-                                                            <input type="checkbox" checked />
-                                                            <span class="slider round"></span>
-                                                        </label>
-                                                    </td>
-                                                    <td>
-                                                        <label class="switch">
-                                                            <input type="checkbox" checked />
-                                                            <span class="slider round"></span>
-                                                        </label>
-                                                    </td>
-                                                    <td>
-                                                        <label class="switch">
-                                                            <input type="checkbox" />
-                                                            <span class="slider round"></span>
-                                                        </label>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>4</td>
-                                                    <td>SMS/Email Management</td>
-                                                    <td>
-                                                        <label class="switch">
-                                                            <input type="checkbox" />
-                                                            <span class="slider round"></span>
-                                                        </label>
-                                                    </td>
-                                                    <td>
-                                                        <label class="switch">
-                                                            <input type="checkbox" checked />
-                                                            <span class="slider round"></span>
-                                                        </label>
-                                                    </td>
-                                                    <td>
-                                                        <label class="switch">
-                                                            <input type="checkbox" checked />
-                                                            <span class="slider round"></span>
-                                                        </label>
-                                                    </td>
-                                                    <td>
-                                                        <label class="switch">
-                                                            <input type="checkbox" />
-                                                            <span class="slider round"></span>
-                                                        </label>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>5</td>
-                                                    <td>Other Management</td>
-                                                    <td>
-                                                        <label class="switch">
-                                                            <input type="checkbox" />
-                                                            <span class="slider round"></span>
-                                                        </label>
-                                                    </td>
-                                                    <td>
-                                                        <label class="switch">
-                                                            <input type="checkbox" checked />
-                                                            <span class="slider round"></span>
-                                                        </label>
-                                                    </td>
-                                                    <td>
-                                                        <label class="switch">
-                                                            <input type="checkbox" checked />
-                                                            <span class="slider round"></span>
-                                                        </label>
-                                                    </td>
-                                                    <td>
-                                                        <label class="switch">
-                                                            <input type="checkbox" />
-                                                            <span class="slider round"></span>
-                                                        </label>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>6</td>
-                                                    <td>Rules</td>
-                                                    <td>
-                                                        <label class="switch">
-                                                            <input type="checkbox" />
-                                                            <span class="slider round"></span>
-                                                        </label>
-                                                    </td>
-                                                    <td>
-                                                        <label class="switch">
-                                                            <input type="checkbox" checked />
-                                                            <span class="slider round"></span>
-                                                        </label>
-                                                    </td>
-                                                    <td>
-                                                        <label class="switch">
-                                                            <input type="checkbox" checked />
-                                                            <span class="slider round"></span>
-                                                        </label>
-                                                    </td>
-                                                    <td>
-                                                        <label class="switch">
-                                                            <input type="checkbox" />
-                                                            <span class="slider round"></span>
-                                                        </label>
-                                                    </td>
-                                                </tr>
+{{--                                                <tr>--}}
+{{--                                                    <td>1</td>--}}
+{{--                                                    <td>Master</td>--}}
+{{--                                                    <td>--}}
+{{--                                                        <label class="switch">--}}
+{{--                                                            <input type="checkbox" checked />--}}
+{{--                                                            <span class="slider round"></span>--}}
+{{--                                                        </label>--}}
+{{--                                                    </td>--}}
+{{--                                                    <td>--}}
+{{--                                                        <label class="switch">--}}
+{{--                                                            <input type="checkbox" />--}}
+{{--                                                            <span class="slider round"></span>--}}
+{{--                                                        </label>--}}
+{{--                                                    </td>--}}
+{{--                                                    <td>--}}
+{{--                                                        <label class="switch">--}}
+{{--                                                            <input type="checkbox" />--}}
+{{--                                                            <span class="slider round"></span>--}}
+{{--                                                        </label>--}}
+{{--                                                    </td>--}}
+{{--                                                    <td>--}}
+{{--                                                        <label class="switch">--}}
+{{--                                                            <input type="checkbox" checked />--}}
+{{--                                                            <span class="slider round"></span>--}}
+{{--                                                        </label>--}}
+{{--                                                    </td>--}}
+{{--                                                </tr>--}}
+{{--                                                <tr>--}}
+{{--                                                    <td>2</td>--}}
+{{--                                                    <td>Employee Management</td>--}}
+{{--                                                    <td>--}}
+{{--                                                        <label class="switch">--}}
+{{--                                                            <input type="checkbox" />--}}
+{{--                                                            <span class="slider round"></span>--}}
+{{--                                                        </label>--}}
+{{--                                                    </td>--}}
+{{--                                                    <td>--}}
+{{--                                                        <label class="switch">--}}
+{{--                                                            <input type="checkbox" checked />--}}
+{{--                                                            <span class="slider round"></span>--}}
+{{--                                                        </label>--}}
+{{--                                                    </td>--}}
+{{--                                                    <td>--}}
+{{--                                                        <label class="switch">--}}
+{{--                                                            <input type="checkbox" checked />--}}
+{{--                                                            <span class="slider round"></span>--}}
+{{--                                                        </label>--}}
+{{--                                                    </td>--}}
+{{--                                                    <td>--}}
+{{--                                                        <label class="switch">--}}
+{{--                                                            <input type="checkbox" />--}}
+{{--                                                            <span class="slider round"></span>--}}
+{{--                                                        </label>--}}
+{{--                                                    </td>--}}
+{{--                                                </tr>--}}
+{{--                                                <tr>--}}
+{{--                                                    <td>3</td>--}}
+{{--                                                    <td>Lead Management</td>--}}
+{{--                                                    <td>--}}
+{{--                                                        <label class="switch">--}}
+{{--                                                            <input type="checkbox" />--}}
+{{--                                                            <span class="slider round"></span>--}}
+{{--                                                        </label>--}}
+{{--                                                    </td>--}}
+{{--                                                    <td>--}}
+{{--                                                        <label class="switch">--}}
+{{--                                                            <input type="checkbox" checked />--}}
+{{--                                                            <span class="slider round"></span>--}}
+{{--                                                        </label>--}}
+{{--                                                    </td>--}}
+{{--                                                    <td>--}}
+{{--                                                        <label class="switch">--}}
+{{--                                                            <input type="checkbox" checked />--}}
+{{--                                                            <span class="slider round"></span>--}}
+{{--                                                        </label>--}}
+{{--                                                    </td>--}}
+{{--                                                    <td>--}}
+{{--                                                        <label class="switch">--}}
+{{--                                                            <input type="checkbox" />--}}
+{{--                                                            <span class="slider round"></span>--}}
+{{--                                                        </label>--}}
+{{--                                                    </td>--}}
+{{--                                                </tr>--}}
+{{--                                                <tr>--}}
+{{--                                                    <td>4</td>--}}
+{{--                                                    <td>SMS/Email Management</td>--}}
+{{--                                                    <td>--}}
+{{--                                                        <label class="switch">--}}
+{{--                                                            <input type="checkbox" />--}}
+{{--                                                            <span class="slider round"></span>--}}
+{{--                                                        </label>--}}
+{{--                                                    </td>--}}
+{{--                                                    <td>--}}
+{{--                                                        <label class="switch">--}}
+{{--                                                            <input type="checkbox" checked />--}}
+{{--                                                            <span class="slider round"></span>--}}
+{{--                                                        </label>--}}
+{{--                                                    </td>--}}
+{{--                                                    <td>--}}
+{{--                                                        <label class="switch">--}}
+{{--                                                            <input type="checkbox" checked />--}}
+{{--                                                            <span class="slider round"></span>--}}
+{{--                                                        </label>--}}
+{{--                                                    </td>--}}
+{{--                                                    <td>--}}
+{{--                                                        <label class="switch">--}}
+{{--                                                            <input type="checkbox" />--}}
+{{--                                                            <span class="slider round"></span>--}}
+{{--                                                        </label>--}}
+{{--                                                    </td>--}}
+{{--                                                </tr>--}}
+{{--                                                <tr>--}}
+{{--                                                    <td>5</td>--}}
+{{--                                                    <td>Other Management</td>--}}
+{{--                                                    <td>--}}
+{{--                                                        <label class="switch">--}}
+{{--                                                            <input type="checkbox" />--}}
+{{--                                                            <span class="slider round"></span>--}}
+{{--                                                        </label>--}}
+{{--                                                    </td>--}}
+{{--                                                    <td>--}}
+{{--                                                        <label class="switch">--}}
+{{--                                                            <input type="checkbox" checked />--}}
+{{--                                                            <span class="slider round"></span>--}}
+{{--                                                        </label>--}}
+{{--                                                    </td>--}}
+{{--                                                    <td>--}}
+{{--                                                        <label class="switch">--}}
+{{--                                                            <input type="checkbox" checked />--}}
+{{--                                                            <span class="slider round"></span>--}}
+{{--                                                        </label>--}}
+{{--                                                    </td>--}}
+{{--                                                    <td>--}}
+{{--                                                        <label class="switch">--}}
+{{--                                                            <input type="checkbox" />--}}
+{{--                                                            <span class="slider round"></span>--}}
+{{--                                                        </label>--}}
+{{--                                                    </td>--}}
+{{--                                                </tr>--}}
+{{--                                                <tr>--}}
+{{--                                                    <td>6</td>--}}
+{{--                                                    <td>Rules</td>--}}
+{{--                                                    <td>--}}
+{{--                                                        <label class="switch">--}}
+{{--                                                            <input type="checkbox" />--}}
+{{--                                                            <span class="slider round"></span>--}}
+{{--                                                        </label>--}}
+{{--                                                    </td>--}}
+{{--                                                    <td>--}}
+{{--                                                        <label class="switch">--}}
+{{--                                                            <input type="checkbox" checked />--}}
+{{--                                                            <span class="slider round"></span>--}}
+{{--                                                        </label>--}}
+{{--                                                    </td>--}}
+{{--                                                    <td>--}}
+{{--                                                        <label class="switch">--}}
+{{--                                                            <input type="checkbox" checked />--}}
+{{--                                                            <span class="slider round"></span>--}}
+{{--                                                        </label>--}}
+{{--                                                    </td>--}}
+{{--                                                    <td>--}}
+{{--                                                        <label class="switch">--}}
+{{--                                                            <input type="checkbox" />--}}
+{{--                                                            <span class="slider round"></span>--}}
+{{--                                                        </label>--}}
+{{--                                                    </td>--}}
+{{--                                                </tr>--}}
                                                 </tbody>
                                             </table>
                                         </div>
@@ -1095,13 +1097,72 @@
                                                             <td>{{ $rule->name }}</td>
                                                             <td>
                                                                 <label class="switch">
-                                                                    <input id="rule_{{ $rule->id }}" type="checkbox" checked />
+                                                                    @php
+                                                                        $ruleStatus = 'false';
+                                                                        $employeeRule = App\Models\EmployeeRule::where(['employee_id' => $employeeId, 'rule_id' => $rule->id])->first();
+                                                                        if (!is_null($employeeRule)) {
+                                                                            $ruleStatus = $employeeRule->status;
+                                                                        }
+                                                                    @endphp
+                                                                    <input id="test_{{ $rule->id }}" value="{{ $ruleStatus }}" type="hidden">
+                                                                    <input id="rule_{{ $rule->id }}" type="checkbox" value="{{ $ruleStatus }}" onchange="handleChange(this);" @checked( $ruleStatus === 'true') />
                                                                     <span class="slider round"></span>
                                                                 </label>
                                                             </td>
                                                         </tr>
                                                     @endforeach
                                                 @endif
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tab-pane fade" id="holidayTab">
+                                    <div class="panel-body">
+                                        <div class="table-responsive">
+                                            <table class="table table-bordered table-striped table-hover">
+                                                <thead>
+                                                <tr class="info">
+                                                    <th>S. No.</th>
+                                                    <th>Time of Day</th>
+                                                    <th>Time Frame</th>
+                                                    <th>Apply</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                <tr>
+                                                    <td>1</td>
+                                                    <td>Morning</td>
+                                                    <td>9AM - 12PM</td>
+                                                    <td>
+                                                        <label class="switch">
+                                                            <input type="checkbox" />
+                                                            <span class="slider round"></span>
+                                                        </label>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>2</td>
+                                                    <td>Afternoon</td>
+                                                    <td>12PM - 3PM</td>
+                                                    <td>
+                                                        <label class="switch">
+                                                            <input type="checkbox" />
+                                                            <span class="slider round"></span>
+                                                        </label>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>3</td>
+                                                    <td>Evening</td>
+                                                    <td>3PM - 6PM</td>
+                                                    <td>
+                                                        <label class="switch">
+                                                            <input type="checkbox" />
+                                                            <span class="slider round"></span>
+                                                        </label>
+                                                    </td>
+                                                </tr>
                                                 </tbody>
                                             </table>
                                         </div>

@@ -50,6 +50,7 @@
                                             id="receiveddate"
                                             name="receivedDate"
                                             placeholder="Enter Received Date"
+                                            value="{{ now()->setTimezone('T')->format('Y-m-dTh:m') }}"
                                             type="datetime-local"
                                         />
                                     </div>
@@ -72,7 +73,7 @@
                                 <fieldset>
                                     @foreach($masters as $master)
                                         <div class="form-group col-sm-3">
-                                            <label>{{ $master->name }}<span class="required"> * </span></label>
+                                            <label>{{ $master->name }}{{--<span class="required"> * </span>--}}</label>
                                             <select class="form-control" name="leadMaster" id="leadMaster_{{ $master -> id }}">
                                                 <option>-- Select Condition --</option>
                                                 @php
