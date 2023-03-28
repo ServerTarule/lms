@@ -66,22 +66,11 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($centers as $center)
+                                @foreach ($templateMaster as $template)
                                     <tr>
-                                        <td>{{ $center->id }}</td>
-                                        <td>{{$center->centerDetails }}</td>
-                                        <td>{{ $center->mobile }}</td>
-                                        <td>{{ $center->alternateMobile }}</td>
-                                        <td>
-                                            {{$center->state}}
-                                        </td>
-                                        <td>
-                                            {{$center->city}}
-                                        </td>
-                                        <td>{{$center->ownerName}}</td>
-                                        <td>{{$center->EmailId}}</td>
-                                        <td>{{$center->created_at}}</td>
-
+                                        <td>{{ $template->id }}</td>
+                                        <td>{{$template->centerDetails }}</td>
+                                        <td>{{ $template->mobile }}</td>
                                         
                                         <td>
                                             {{-- <a data-toggle="modal" data-target="#edititem" class="btn-xs btn-info"> <i

@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\viewleaveModel;
+
 
 class LeaveController extends Controller
 {
@@ -14,6 +16,9 @@ class LeaveController extends Controller
     public function index()
     {
         //
+        $leaveData = viewleaveModel::all();
+        
+        return view('leave.index',compact( 'leaveData'));
     }
 
     /**
@@ -21,9 +26,26 @@ class LeaveController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(Request $request)
     {
         //
+        $createLeave=viewleaveModel::create([
+            'employeeName'=>$request->leaveEmpyoeeName,
+            'fromDate'=>$request->fromDate,
+            'endDate'=>$request->endDate,
+            'startTime'=>$request->startTime,
+            'endTime'=>$request->endTime,
+            'upComingLeaves'=>"1",
+            'leaveType'=>$request->leaveType,
+            'leaveDescription'=>$request->leaveDescription,
+            
+        ]);
+        if($createLeave){
+            return redirect('/leave')->with('status','Leave added successfully');
+
+        }
+        return redirect('/leave')->with('error','Please try again later');
+
     }
 
     /**
@@ -35,7 +57,29 @@ class LeaveController extends Controller
     public function store(Request $request)
     {
         //
+
+        
+    
+
     }
+
+    public function viewDetailedLeave($id){
+
+        $getLeaveUserDetails = viewleaveModel::where('id', $id)->get();
+  
+
+         if($getLeaveUserDetails){
+            
+        
+        return view('leave.viewDeatils',compact( 'getLeaveUserDetails'));
+
+        }else{
+            return redirect('/leave')->with('error','Please try again later');
+        }
+        
+
+    }
+
 
     /**
      * Display the specified resource.
