@@ -9,6 +9,7 @@ use App\Models\Employee;
 use App\Models\EmployeeRule;
 use App\Models\Lead;
 use App\Models\LeadMaster;
+use App\Models\Rule;
 use App\Models\RuleCondition;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -39,22 +40,128 @@ class AssignLead
      */
     public function handle(LeadReceived $event): void
     {
+
         $lead = $event->lead;
         $leadId = $lead->id;
 
         Log::info('*** Lead ***');
         Log::info($leadId);
 
-        $leadMaster = LeadMaster::where('lead_id', $leadId)->where('mastervalue_id', '<>', null)->get();
-        Log::info('*** Lead Master ***');
-        Log::info($leadMaster);
+        $leadMasters = LeadMaster::where('lead_id', $leadId)->where('mastervalue_id', '<>', null)->orderBy('master_id', 'asc')->get();
+        Log::info("**** Lead Masters - Master Values ****");
+        Log::info($leadMasters);
 
+        $leadMasterKV = array();
+        foreach ($leadMasters as $lm) {
+            $leadMasterKV[$lm->master_id] = $lm->mastervalue_id;
+        }
+        Log::info("**** Lead Masters - Master Values ****");
+        Log::info($leadMasterKV);
 
+        $ruleIdsMatchingLeadMaster = array();
+        foreach ($leadMasters as $leadMaster) {
+            $matchCase = ['master_id' => $leadMaster->master_id, 'mastervalue_id' => $leadMaster->mastervalue_id];
+            $ruleConditionsMatchingWithMasters = RuleCondition::where($matchCase)->get();
+            foreach ($ruleConditionsMatchingWithMasters as $ruleConditionMatchingWithMasters) {
+                $ruleIdsMatchingLeadMaster[] = $ruleConditionMatchingWithMasters->rule_id;
+            }
+        }
 
+        $uniqueRuleIdsMatchingLeadMaster = collect($ruleIdsMatchingLeadMaster)->unique();
+        Log::info($uniqueRuleIdsMatchingLeadMaster);
 
+//        $ruleConditionsMatchingLeadMaster = array();
+        foreach ($uniqueRuleIdsMatchingLeadMaster as $ruleId) {
+            $ruleConditions = RuleCondition::where('rule_id', $ruleId)->get();
+            $ruleConditionsCount = count($ruleConditions);
+            Log::info($ruleConditionsCount);
+//            Log::info($ruleConditions);
 
+            foreach ($ruleConditions as $ruleCondition) {
+                $ruleEligible = array();
+                Log::info($ruleCondition);
+                foreach ($leadMasterKV as $key => $value) {
+//                    Log::info("Key: " . $key . " Value: " . $value);
+                    if ($ruleCondition->master_id == $key && $ruleCondition->mastervalue_id == $value) {
+                        if ($ruleConditionsCount == 1) {
+                            $ruleEligible[] = 'TRUE';
+                            break;
+                        } else {
+                            //MORE THAN 1 RULE CONDITION
+                            $ruleEligible[] = 'TRUE';
+                            if (!is_null($ruleCondition->condition)) {
+                                $ruleEligible[] = strtoupper($ruleCondition->condition);;
+                            }
+                        }
+                    } else {
+//                        //NO RULE CONDITION MATCH
+                        $ruleEligible[] = 'FALSE';
+                        $ruleEligible[] = 'NA';
+                    }
+                }
+                Log::info($ruleEligible);
+            }
+        }
 
+//        foreach ($ruleConditionsMatchingLeadMaster as $ruleConditionMatchingLeadMaster) {
+//            Log::info($ruleConditionMatchingLeadMaster);
+//
+//            foreach ($leadMasterKV as $k => $v) {
+//                if ($ruleConditionMatchingLeadMaster->master_id)
+//            }
+//
+//            foreach ($leadMasterKV as $k => $v) {
+//                Log::info('Master: ' . $k . ' , MasterValue: ' . $v);
+//                foreach ($leadEligibleRuleConditions as $ruleCondition) {
+////                    $matchCase = ['rule_id' => $value, 'master_id' => $k, 'mastervalue_id' => $v];
+//                    $matchCase = ['rule_id' => $value];
+//                    Log::info('*** Match Case ***');
+//                    Log::info($matchCase);
+//                    Log::info('*** Rule Condition matching with Match Case ***');
+//                    $rc = RuleCondition::where($matchCase)->first();
+//                    Log::info($rc);
+//                    if (!is_null($rc)) {
+////                        $condition = $rc->condition;
+//                        Log::info(true . ' ' . null);
+//                        if (!is_null($rc->condition)) {
+////                            $rcMatch[true] = $rc->condition;
+//                            Log::info(true . ' ' . $rc->condition);
+//                        } else {
+//                            Log::info(true . ' ' . null);
+//                        }
+//                    } else {
+//                        Log::info();
+//                    }
+//                }
+//            }
+//
+//        }
+//
 
+//        $leadApplicableRules = array();
+//        $leadEligibleRuleConditionsParkedForEvaluations = [];
+
+//        foreach ($leadMasters as $leadMaster) {
+//            Log::info("\n");
+//            Log::info('*** Lead Master ***');
+//            Log::info($leadMaster);
+//            $match = ['master_id' => $leadMaster->master_id, 'mastervalue_id' => $leadMaster->mastervalue_id];
+//            $ruleConditions = RuleCondition::where($match)->rule();
+//
+//            Log::info('*** Matching Rule Conditions ***');
+//            foreach ($ruleConditions as $ruleCondition) {
+//                Log::info($ruleCondition);
+//                if (is_null($ruleCondition->condition)) {
+//                    $ruleConditionCount = RuleCondition::where('rule_id', $ruleCondition->rule_id)->count();
+//                    if ($ruleConditionCount == 1) {
+//                        $leadApplicableRules = $ruleCondition->rule_id;
+//                    }
+//                } else {
+//
+//                }
+//            }
+//
+//        }
 
 //
 //        // For a lead, get list of all masters and master values
@@ -130,8 +237,6 @@ class AssignLead
 //            Log::info($rcMatch);
 //
 //        }
-
-
 
         /*
         Log::info('\n *** Working');
