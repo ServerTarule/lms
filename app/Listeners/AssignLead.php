@@ -44,19 +44,19 @@ class AssignLead
         $lead = $event->lead;
         $leadId = $lead->id;
 
-        Log::info('*** Lead ***');
-        Log::info($leadId);
+//        Log::info('*** Lead ***');
+//        Log::info($leadId);
 
         $leadMasters = LeadMaster::where('lead_id', $leadId)->where('mastervalue_id', '<>', null)->orderBy('master_id', 'asc')->get();
-        Log::info("**** Lead Masters - Master Values ****");
-        Log::info($leadMasters);
+//        Log::info("**** Lead Masters - Master Values ****");
+//        Log::info($leadMasters);
 
         $leadMasterKV = array();
         foreach ($leadMasters as $lm) {
             $leadMasterKV[$lm->master_id] = $lm->mastervalue_id;
         }
-        Log::info("**** Lead Masters - Master Values ****");
-        Log::info($leadMasterKV);
+//        Log::info("**** Lead Masters - Master Values ****");
+//        Log::info($leadMasterKV);
 
         $ruleIdsMatchingLeadMaster = array();
         foreach ($leadMasters as $leadMaster) {
@@ -68,39 +68,64 @@ class AssignLead
         }
 
         $uniqueRuleIdsMatchingLeadMaster = collect($ruleIdsMatchingLeadMaster)->unique();
-        Log::info($uniqueRuleIdsMatchingLeadMaster);
+//        Log::info($uniqueRuleIdsMatchingLeadMaster);
 
-//        $ruleConditionsMatchingLeadMaster = array();
+        $ruleMatchingLeadMaster = array();
         foreach ($uniqueRuleIdsMatchingLeadMaster as $ruleId) {
             $ruleConditions = RuleCondition::where('rule_id', $ruleId)->get();
             $ruleConditionsCount = count($ruleConditions);
-            Log::info($ruleConditionsCount);
+//            Log::info($ruleConditionsCount);
 //            Log::info($ruleConditions);
-
+            $ruleEvaluation = array();
+            $i = 0;
             foreach ($ruleConditions as $ruleCondition) {
-                $ruleEligible = array();
-                Log::info($ruleCondition);
+                $i++;
+//                $ruleEvaluation = array();
+//                Log::info($ruleCondition);
                 foreach ($leadMasterKV as $key => $value) {
 //                    Log::info("Key: " . $key . " Value: " . $value);
                     if ($ruleCondition->master_id == $key && $ruleCondition->mastervalue_id == $value) {
                         if ($ruleConditionsCount == 1) {
-                            $ruleEligible[] = 'TRUE';
+                            $ruleEvaluation[] = true;
                             break;
                         } else {
                             //MORE THAN 1 RULE CONDITION
-                            $ruleEligible[] = 'TRUE';
+                            $ruleEvaluation[] = true;
                             if (!is_null($ruleCondition->condition)) {
-                                $ruleEligible[] = strtoupper($ruleCondition->condition);;
+                                $ruleEvaluation[] = strtoupper($ruleCondition->condition);
                             }
                         }
                     } else {
 //                        //NO RULE CONDITION MATCH
-                        $ruleEligible[] = 'FALSE';
-                        $ruleEligible[] = 'NA';
+//                        $ruleEligible[] = 'FALSE';
+//                        $ruleEligible[] = 'NA';
                     }
                 }
-                Log::info($ruleEligible);
             }
+//            Log::info('*** Rule Evaluation ***');
+            $ruleEve = implode(" ", $ruleEvaluation);
+            $ruleEve2 = explode(" ", $ruleEve);
+//            Log::info($ruleEve);
+            $lastWordInRuleEvaluation = $ruleEve2[count($ruleEve2)-1];
+            if ($lastWordInRuleEvaluation == "OR" || $lastWordInRuleEvaluation == "AND") {
+                $ruleEve .= ' 0';
+            }
+//            Log::info($ruleEve);
+            $ruleValue=eval("return ($ruleEve);");
+            if ($ruleValue) {
+                $ruleMatchingLeadMaster[] = $ruleId;
+            }
+//            Log::info('RuleValue: ' . $ruleValue);
+        }
+
+//        Log::info('*** Lead Applicable Rules ***');
+//        Log::info(array_values($ruleMatchingLeadMaster));
+
+        $employeeRules = EmployeeRule::wherein('rule_id', array_values($ruleMatchingLeadMaster))->where('status','true')->get();
+        foreach ($employeeRules as $employeeRule) {
+            Lead::where('id', $lead->id)->update(['employee_id' => $employeeRule->employee_id]);
+            $date = date('Y-m-d\TH:i:s.uP', time());
+            Employee::where('id', $employeeRule->employee_id)->update(['lead_assigned_at' => $date]);
         }
 
 //        foreach ($ruleConditionsMatchingLeadMaster as $ruleConditionMatchingLeadMaster) {
