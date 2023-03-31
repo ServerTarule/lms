@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('email');
             $table->string('mobileno');
             $table->string('altmobileno')->nullable();
-            $table->dateTime('receiveddate');
+            $table->dateTime('receiveddate')->default(DB::raw('CURRENT_TIMESTAMP'));
             $table->longText('remark')->nullable();
             $table->unsignedBigInteger('employee_id')->nullable()->constrained();
             $table->timestamps();

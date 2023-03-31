@@ -53,7 +53,7 @@
                                         <td>{{ $leave->employee->name  }}</td>
                                         <td></td>
                                         <td>
-                                            <a href="/leaves/{{ $leave->id }}" class="btn-xs btn-success"> <i class="fa fa-eye"></i>  </a>
+                                            <a href="/leaves/{{ $leave->employee->id }}" class="btn-xs btn-success"> <i class="fa fa-eye"></i>  </a>
                                         </td>
                                         <td>
                                             <a href="/leaves/calendar/{{$leave->employee->id}}" class="btn-xs btn-success"> <i class="fa fa-eye"></i>  </a>

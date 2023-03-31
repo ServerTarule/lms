@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Events\LeadReceived;
+use App\Exports\LeadsExport;
+use App\Imports\LeadsImport;
 use App\Models\DynamicMain;
 use App\Models\DynamicValue;
 use App\Models\Lead;
@@ -14,6 +16,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
+use Maatwebsite\Excel\Facades\Excel;
 use function PHPUnit\Framework\isNull;
 
 class LeadController extends Controller
@@ -141,9 +144,14 @@ class LeadController extends Controller
         return view('leads.leadassignment');
     }
 
-    public function upload()
+    public function upload(Request $request)
     {
-        return view('leads.leadupload');
+        Excel::import(new LeadsImport, $request->file('file')->store('temp'));
+        return back();
+    }
+
+    public function export() {
+        return \Maatwebsite\Excel\Facades\Excel::download(new LeadsExport, 'Leads.xlsx');
     }
 
 

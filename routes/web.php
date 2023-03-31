@@ -132,9 +132,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/leads/create', [LeadController::class, 'create'])->name('leads.create')->middleware('can:read lead');
     Route::post('/leads/store', [LeadController::class, 'store'])->name('leads.store')->middleware('can:read lead');
 
-    Route::get('/leads/call', [LeadController::class, 'call'])->name('leads.call')->middleware('can:read lead');
-    Route::get('/leadassignment', [LeadController::class, 'assignment'])->name('leads')->middleware('can:read lead');
-    Route::get('/leadupload', [LeadController::class, 'upload'])->name('leads')->middleware('can:read lead');
+    Route::get('/leads/call', [LeadController::class, 'call'])->name('leads.call')->middleware('can:read master');
+    Route::post('/leads/upload', [LeadController::class, 'upload'])->name('leads.upload')->middleware('can:read master');
+//    Route::get('/leadassignment', [LeadController::class, 'assignment'])->name('leads')->middleware('can:read lead');
 
     //State
     Route::get('/states', [StateController::class, 'index'])->name('states')->middleware('can:read lead');

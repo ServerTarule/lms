@@ -5,7 +5,7 @@
     <div class="row">
         <div class="col-sm-12">
             <div class="text-right">
-                <a href="viewLeadform.php" class="btn btn-exp btn-sm"><i class="fa fa-eye"></i> View Leads</a>
+                <a href="/leads" class="btn btn-exp btn-sm"><i class="fa fa-eye"></i> View Leads</a>
             </div>
 {{--            <form  method="post" class="form-horizontal" action="/leads">--}}
 {{--                @csrf--}}

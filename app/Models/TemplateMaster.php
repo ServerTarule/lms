@@ -8,12 +8,12 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * App\Models\templateMaster
  *
- * @method static \Illuminate\Database\Eloquent\Builder|templateMaster newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|templateMaster newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|templateMaster query()
+ * @method static \Illuminate\Database\Eloquent\Builder|TemplateMaster newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|TemplateMaster newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|TemplateMaster query()
  * @mixin \Eloquent
  */
-class templateMaster extends Model
+class TemplateMaster extends Model
 {
     protected $table = 'templateMaster';
     use HasFactory;
