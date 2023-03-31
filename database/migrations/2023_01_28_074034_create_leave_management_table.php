@@ -13,13 +13,13 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('leave_management', function (Blueprint $table) {
+        Schema::create('leaves', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('employee_id');
-            $table->date('from_date');
-            $table->date('to_date');
+            $table->datetime('start_time');
+            $table->datetime('end_time');
             $table->string('type');
-            $table->string('description');
+            $table->string('comment');
+            $table->unsignedBigInteger('employee_id');
             $table->softDeletes();
             $table->timestamps();
             $table->foreign('employee_id')

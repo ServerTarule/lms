@@ -116,10 +116,10 @@ class RoleController extends Controller
     $role=Role::find(6)->givePermissionTo('update designation');
     $role=Role::find(6)->givePermissionTo('delete designation');
 
-    $role=Role::find(6)->givePermissionTo('create leave');
-    $role=Role::find(6)->givePermissionTo('read leave');
-    $role=Role::find(6)->givePermissionTo('update leave');
-    $role=Role::find(6)->givePermissionTo('delete leave');
+    $role=Role::find(6)->givePermissionTo('create leaves');
+    $role=Role::find(6)->givePermissionTo('read leaves');
+    $role=Role::find(6)->givePermissionTo('update leaves');
+    $role=Role::find(6)->givePermissionTo('delete leaves');
 
     // // $role=Role::find(6);
 

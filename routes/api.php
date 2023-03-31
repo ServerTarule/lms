@@ -22,7 +22,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::resource('/designation', DesignationController::class);
     Route::resource('/employee', EmployeeController::class);
-    Route::resource('/leave', LeaveManagementController::class);
+    Route::resource('/leaves', LeaveManagementController::class);
     Route::resource('/master/main', DynamicMainController::class);
     Route::resource('/master/value', DynamicValueController::class);
     Route::resource('/value/value', DynamicValueController::class);

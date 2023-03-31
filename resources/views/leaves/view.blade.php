@@ -1,6 +1,6 @@
 @extends('layout.app')
-@section('title', 'Employee Leaves')
-@section('subtitle', 'List of Leaves')
+@section('title', 'View Employee Leaves')
+@section('subtitle', 'List View')
 @section('content')
     <div class="row">
         <div class="col-sm-12">
@@ -8,7 +8,7 @@
                 <div class="panel-heading">
                     <div class="btn-group" id="buttonexport">
                         <a>
-                            <h4>Centres Status</h4>
+                            <h4>Leaves</h4>
                         </a>
                     </div>
                 </div>
@@ -18,46 +18,40 @@
             @if (session('error'))
                 <span style="color:#b10000;">{{ session('error') }}</span>
             @endif
-                <div class="panel-body">
-                    <div class="text-right">
-                        <a class="btn btn-exp btn-sm" data-toggle="modal" data-target="#additem"><i class="fa fa-plus"></i>
-                            Add Leave</a>
-                    </div>
+            <div class="panel-body">
+            <div class="text-right">
+                                 <a class="btn btn-exp btn-sm" href="/leaves">< Back</a>
+                           </div>
                     <div class="table-responsive">
                         <table id="dataTableExample1" class="table table-bordered table-striped table-hover">
-                            <thead>
-                                <tr class="tblheadclr1">
-                                    <th scope="col">
-                                        <a> S.No.</a>
-                                    </th>
-                                    <th scope="col">
-                                        <a>Employee Name</a>
-                                    </th>
-                                    <th scope="col">
-                                        <a>Upcoming Leaves</a>
-                                    </th>
-                                
-                                    <th scope="col">
-                                        <a>List View</a>
-                                    </th>
-                                    <th scope="col">
-                                        <a>Calender View</a>
-                                    </th>
-                                   
-                                </tr>
-                            </thead>
+                        <thead>
+                                    <tr class="info">
+                                       <th>S. No.</th>
+                                        <th>From</th>
+                                       <th>To</th>
+                                       <th>Type</th>
+                                       <th>Description</th>
+                                       <th>No. Of Leaves</th>
+                                      <th>Created Date</th>
+                                       <th>Edit</th>
+                                       <th>Delete</th>
+                                    </tr>
+                                 </thead>
                             <tbody>
-                                @foreach ($leaveData as $leaveDatas)
+                                @foreach ($leaves as $leave)
                                     <tr>
-                                        <td>{{ $leaveDatas->id }}</td>
-                                        <td>{{$leaveDatas->employeeName }}</td>
-                                        <td>{{ $leaveDatas->upComingLeaves }}</td>
-                                        
+                                        <td>{{ $leave->id }}</td>
+                                        <td>{{ $leave->start_time }}</td>
+                                        <td>{{ $leave->end_time }}</td>
+                                        <td>{{ $leave->type }}</td>
+                                        <td>{{ $leave->comment }}</td>
+                                        <td></td>
+                                        <td>{{ \Carbon\Carbon::parse($leave->created_at)->format('d/m/Y') }}</td>
                                         <td>
-                                            <a href="/viewLeave/{{ $leaveDatas->id }}" class="btn-xs btn-success"> <i class="fa fa-eye"></i>  </a>
+                                            <a data-toggle="modal" data-target="#edititem" class="btn-xs btn-info"> <i class="fa fa-pencil"></i>  </a>
                                         </td>
-                                        <td>
-                                            <a href="Calendar-employeeLeave.php" class="btn-xs btn-success"> <i class="fa fa-eye"></i>  </a>
+                                         <td>
+                                            <a class="btn-xs btn-danger"> <i class="fa fa-trash-o"></i>  </a>
                                         </td>
                                         {{-- <td>
                                             <label class="switch">
@@ -71,11 +65,12 @@
 
                         </table>
                     </div>
+
                 </div>
             </div>
         </div>
     </div>
-    <div class="modal fade" id="additem" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal fade" id="edititem" tabindex="-1" role="dialog" aria-hidden="true">
                   <div class="modal-dialog modal-dialog-centered">
                      <div class="modal-content">
                         <div class="modal-header modal-header-primary">

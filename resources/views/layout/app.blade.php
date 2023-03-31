@@ -17,15 +17,29 @@
     <link href="{{ asset('assets/themify-icons/themify-icons.css') }}" rel="stylesheet" type="text/css" />
     <link href="{{ asset('assets/plugins/emojionearea/emojionearea.min.css') }}" rel="stylesheet" type="text/css" />
     <link href="{{ asset('assets/plugins/monthly/monthly.css') }}" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('assets/plugins/fullcalendar/fullcalendar.min.css') }}" rel="stylesheet" type="text/css" />
     <link href="{{ asset('assets/dist/css/stylecrm.css') }}" rel="stylesheet" type="text/css" />
     <link href="http://lasik.tarule.in/css/dataTables.bootstrap.min.css" rel="stylesheet" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:ital,wght@0,200;0,300;0,400;0,600;0,700;0,900;1,200;1,300;1,400;1,600;1,700;1,900&display=swap"
-        rel="stylesheet">
-        @livewireStyles
+    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:ital,wght@0,200;0,300;0,400;0,600;0,700;0,900;1,200;1,300;1,400;1,600;1,700;1,900&display=swap" rel="stylesheet" />
+    @livewireStyles
 
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.5/index.global.min.js'></script>
+{{--    <script>--}}
+
+{{--        document.addEventListener('DOMContentLoaded', function() {--}}
+{{--            var calendarEl = document.getElementById('calendar');--}}
+{{--            var calendar = new FullCalendar.Calendar(calendarEl, {--}}
+{{--                initialView: 'timeGridWeek',--}}
+{{--                slotMinTime: '8:00:00',--}}
+{{--                slotMaxTime: '19:00:00',--}}
+{{--                events: @json($events),--}}
+{{--            });--}}
+{{--            calendar.render();--}}
+{{--        });--}}
+
+{{--    </script>--}}
 </head>
 
 <body class="sidebar-mini  pace-done sidebar-collapse">
@@ -147,7 +161,7 @@
                         </a>
                         <ul class="treeview-menu">
                             <li><a href="/employee">Employee Details</a></li>
-                            <li><a href="/leave">Employee Leaves</a></li>
+                            <li><a href="/leaves">Employee Leaves</a></li>
                             <li><a href="/employees/permissions">Employee Permissions</a></li>
                         </ul>
                     </li>
@@ -242,6 +256,9 @@
     <script src="http://lasik.tarule.in/ckeditor/samples/js/sample.js"></script>
     <script src="http://lasik.tarule.in/ckeditor/styles.js"></script>
     <script src="http://lasik.tarule.in/ckeditor/ckeditor.js"></script>
+{{--    <script src="{{ asset('assets//plugins/fullcalendar/fullcalendar.min.js') }}" type="text/javascript"></script>--}}
+{{--    <script src="{{ asset('assets//plugins/fullcalendar/lib/moment.min.js') }}" type="text/javascript"></script>--}}
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
     <script>
         $(document).ready(function() {
             $('.table').DataTable({
@@ -850,7 +867,6 @@
         }
         dash();
     </script>
-
 </body>
 
 </html>

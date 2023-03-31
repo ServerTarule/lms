@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Employee;
 use Illuminate\Http\Request;
-use App\Models\viewleaveModel;
+use App\Models\Leaves;
 
 
 class LeaveController extends Controller
@@ -15,10 +16,12 @@ class LeaveController extends Controller
      */
     public function index()
     {
-        //
-        $leaveData = viewleaveModel::all();
-        
-        return view('leave.index',compact( 'leaveData'));
+
+        $leaves = Leaves::all();
+        $employees = Employee::all();
+        $events = null;
+
+        return view('leaves.index',compact( 'leaves', 'employees', 'events'));
     }
 
     /**
@@ -26,27 +29,24 @@ class LeaveController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create(Request $request)
-    {
-        //
-        $createLeave=viewleaveModel::create([
-            'employeeName'=>$request->leaveEmpyoeeName,
-            'fromDate'=>$request->fromDate,
-            'endDate'=>$request->endDate,
-            'startTime'=>$request->startTime,
-            'endTime'=>$request->endTime,
-            'upComingLeaves'=>"1",
-            'leaveType'=>$request->leaveType,
-            'leaveDescription'=>$request->leaveDescription,
-            
-        ]);
-        if($createLeave){
-            return redirect('/leave')->with('status','Leave added successfully');
-
-        }
-        return redirect('/leave')->with('error','Please try again later');
-
-    }
+//    public function store(Request $request)
+//    {
+//        //
+//        $createLeave=Leaves::create([
+//            'start_time'=>$request->from,
+//            'end_time'=>$request->to,
+//            'type'=>$request->type,
+//            'comment'=>$request->comment,
+//            'employee_id'=>$request->employeeid
+//
+//        ]);
+//        if($createLeave){
+//            return redirect('/leaves')->with('status','Leave added successfully');
+//
+//        }
+//        return redirect('/leaves')->with('error','Please try again later');
+//
+//    }
 
     /**
      * Store a newly created resource in storage.
@@ -56,28 +56,42 @@ class LeaveController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $createLeave=Leaves::create([
+            'start_time'=>$request->from,
+            'end_time'=>$request->to,
+            'type'=>$request->type,
+            'comment'=>$request->comment,
+            'employee_id'=>$request->employeeid
 
-        
-    
+        ]);
+        if($createLeave){
+            return redirect('/leaves')->with('status','Leave added successfully');
+
+        }
+        return redirect('/leaves')->with('error','Please try again later');
 
     }
 
-    public function viewDetailedLeave($id){
+    public function view($id){
+        $leaves = Leaves::where('employee_id', $id)->get();
+        return view('leaves.view',compact( 'leaves'));
+    }
 
-        $getLeaveUserDetails = viewleaveModel::where('id', $id)->get();
-  
+    public function calendar($id){
 
-         if($getLeaveUserDetails){
-            
-        
-        return view('leave.viewDeatils',compact( 'getLeaveUserDetails'));
+        $events = [];
 
-        }else{
-            return redirect('/leave')->with('error','Please try again later');
+        $leaves = Leaves::where('employee_id', $id)->get();
+
+        foreach ($leaves as $leave) {
+            $events[] = [
+                'title' => $leave->comment,
+                'start' => $leave->start_time,
+                'end' => $leave->end_time,
+            ];
         }
-        
 
+        return view('leaves.calendar', compact('events'));
     }
 
 

@@ -83,12 +83,15 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/employees/permissions/{id}/masters', [PermissionsController::class, 'masterindex'])->name('permissions.masterindex')->middleware('can:read employee');
 
     // Leave
-    Route::get('/leave', [LeaveController::class, 'index'])->name('leave')->middleware('can:read leave');
-    Route::get('/addleave', [LeaveController::class, 'create'])->name('addleave')->middleware('can:create leave');
-    Route::post('/createleave', [LeaveController::class, 'store'])->name('createleave')->middleware('can:create leave');
-    Route::post('/updateleave', [LeaveController::class, 'update'])->name('updateleave')->middleware('can:update leave');
-    Route::get('/viewLeave/{id}', [LeaveController::class, 'viewDetailedLeave'])->name('viewLeave/{id}')->middleware('can:update leave');
-    Route::post('/leave/{id}', [LeaveController::class, 'edit'])->name('leave/{id}')->middleware('can:update leave');
+    Route::get('/leaves', [LeaveController::class, 'index'])->name('leaves.index')->middleware('can:read master');
+    Route::post('/leaves/store', [LeaveController::class, 'store'])->name('leaves.store')->middleware('can:read master');
+    Route::get('/leaves/{id}', [LeaveController::class, 'view'])->name('leaves.view')->middleware('can:read master');
+    Route::get('/leaves/calendar/{id}', [LeaveController::class, 'calendar'])->name('leaves.calendar')->middleware('can:read master');
+
+//    Route::get('/addleave', [LeaveController::class, 'create'])->name('addleave')->middleware('can:create leaves');
+//    Route::post('/createleave', [LeaveController::class, 'store'])->name('createleave')->middleware('can:create leaves');
+//    Route::post('/updateleave', [LeaveController::class, 'update'])->name('updateleave')->middleware('can:update leaves');
+//    Route::post('/leaves/{id}', [LeaveController::class, 'edit'])->name('leaves/{id}')->middleware('can:update leaves');
 
     // Designation
     Route::get('/designation', [DesignationController::class, 'index'])->name('designation')->middleware('can:read designation');
