@@ -80,7 +80,7 @@
                                     <tr>
                                         <td>{{ $loop->iteration }}</td>
                                         <td>{{ $lead->id }}</td>
-                                        <td>{{ $lead->employee->name }}</td>
+                                        <td>@if( !is_null($lead->employee)) {{ $lead->employee->name }} @endif</td>
                                         <td></td>
                                         <td></td>
                                         <td>{{ $lead->received_dt }}</td>
@@ -90,7 +90,7 @@
                                         <td></td>
                                         <td></td>
                                         @foreach($lead['leadmasters'] as $lm)
-                                            <td>@if( !is_null($lm['mastervalue'])) {{ $lm['mastervalue']->name }} @endif </td>
+                                            <td>@if( !is_null($lm['mastervalue'])) {{ $lm['mastervalue']->name }} @endif</td>
                                         @endforeach
                                         <td></td>
                                         <td></td>

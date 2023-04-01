@@ -134,6 +134,7 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/leads/call', [LeadController::class, 'call'])->name('leads.call')->middleware('can:read master');
     Route::post('/leads/upload', [LeadController::class, 'upload'])->name('leads.upload')->middleware('can:read master');
+    Route::get('/leads/export', [LeadController::class, 'export'])->name('leads.export')->middleware('can:read master');
 //    Route::get('/leadassignment', [LeadController::class, 'assignment'])->name('leads')->middleware('can:read lead');
 
     //State

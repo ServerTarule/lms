@@ -103,4 +103,118 @@
             </div>
         </div>
     </div>
+    <div class="md-modal md-effect-18" id="modal-18">
+        <div class="md-content">
+            <div class="panel panel-bd">
+                <div class="panel-heading">
+                    <a onclick="document.getElementById('modal-18').classList.toggle('transformX-0');"class="btn-danger btn-sm float-end"><i class="fa fa-close"></i></a>
+                    <div class="btn-group" id="buttonexport">
+                        <h4>View Leads</h4>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <div>
+                        <div class="row">
+                            <div class="form-group col-sm-6">
+                                <label>Treatment Type</label>
+                                <select class="form-control" id="TreatmentType" name="TreatmentType">
+                                    <option value="">--Select TeatmentType--</option>
+                                    <option value="19">PRK or ASA</option>
+                                    <option value="20">CATARACT</option>
+                                    <option value="21">CONTOURA VISION</option>
+                                    <option value="22">Implantable Contact Lens (ICL)</option>
+                                    <option value="23">LASIK &amp; ICL</option>
+                                    <option value="24">SQUINT</option>
+                                    <option value="25">RELEX SMILE</option>
+                                    <option value="26">LASIK &amp; SQUINT</option>
+                                    <option value="27">PRESBYOPIA</option>
+                                    <option value="28">LASIK</option>
+                                    <option value="29">Blade-Free Lasik</option>
+                                    <option value="30">SBK Lasik</option>
+                                    <option value="31">Not Applicable (NA)</option>
+                                    <option value="32">OTHERS</option>
+                                    <option value="33">C3R Surgery</option>
+                                </select>
+                            </div>
+                            <div class="form-group col-sm-6">
+                                <label>Case Type</label>
+                                <select class="form-control" id="CaseType" name="CaseType">
+                                    <option value="">--Select CaseType--</option>
+                                    <option value="1">Fresh Call</option>
+                                    <option value="2">2nd Option</option>
+                                    <option value="4">Repeated</option>
+                                    <option value="8">3rd Option</option>
+                                </select>
+                            </div>
+                            <div class="form-group col-sm-6">
+                                <label>Source</label>
+                                <select class="form-control" id="Source" name="Source">
+                                    <option value="">--Select Source--</option>
+                                    <option value="1">CALL</option>
+                                    <option value="2">MAIL</option>
+                                    <option value="3">Tawk-To</option>
+                                    <option value="4">Whatsapp</option>
+                                    <option value="5">Reference</option>
+                                    <option value="6">Tawk &amp; Mail</option>
+                                    <option value="7">JustDial</option>
+                                    <option value="8">IVR Call</option>
+                                    <option value="9">SMS Campaign</option>
+                                    <option value="10">Mail Campaign</option>
+                                    <option value="11">Old Case</option>
+                                    <option value="12">Social Media</option>
+                                </select>
+                            </div>
+                            <div class="form-group col-sm-6">
+                                <label>Case Status</label>
+                                <select class="form-control" id="ConnectStatus" name="ConnectStatus">
+                                    <option value="">--Select Case Status--</option>
+                                    <option value="1">Operation Done</option>
+                                    <option value="2">Non connect</option>
+                                    <option value="3">InProcess</option>
+                                    <option value="4">Workup Done</option>
+                                    <option value="8">Case Close</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group col-sm-6">
+                                <label>From Received Date</label>
+                                <input type="text" class="form-control Date ReceivedFromDate hasDatepicker" id="ReceivedFromDate" name="ReceivedFromDate" placeholder="DD/MM/YYYY" autocomplete="off" />
+                            </div>
+                            <div class="form-group col-sm-6">
+                                <label>To Received Date</label>
+                                <input type="text" class="form-control Date ReceivedToDate hasDatepicker" id="ReceivedToDate" name="ReceivedToDate" placeholder="DD/MM/YYYY" autocomplete="off" />
+                            </div>
+                            <div class="form-group col-sm-6">
+                                <label>Master 1 <span class="required"> * </span></label>
+                                <select class="form-control" name="ConnectStatus" multiple>
+                                    <option value="1">jitender</option>
+                                    <option value="2">sagar</option>
+                                </select>
+                            </div>
+                            <div class="form-group col-sm-6">
+                                <label>Master 2 <span class="required"> * </span></label>
+                                <select class="form-control" name="ConnectStatus" multiple>
+                                    <option value="1">abc</option>
+                                    <option value="2">xyz</option>
+                                </select>
+                            </div>
+                            <div class="form-group col-sm-12">
+                                <label>Master 3 <span class="required"> * </span></label>
+                                <select class="form-control" name="ConnectStatus" multiple>
+                                    <option value="1">xyz</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-center">
+                        <a href="#" class="btn btn-primary btn-sm"><i class="fa fa-search"></i> Search</a>
+                        <a href="{{ route('leads.export') }}" class="btn btn-info btn-sm"><i class="fa fa-file"></i> Excel</a>
+                        <a href="#" class="btn btn-default btn-sm"><i class="fa fa-minus"></i> Clear</a>
+                    </div>
+                    <div class="table-responsive">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection

@@ -151,7 +151,7 @@ class LeadController extends Controller
     }
 
     public function export() {
-        return \Maatwebsite\Excel\Facades\Excel::download(new LeadsExport, 'Leads.xlsx');
+        return Excel::download(new LeadsExport, 'Leads.xlsx');
     }
 
 
