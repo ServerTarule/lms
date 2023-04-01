@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Employee;
+use App\Models\Holiday;
 use Illuminate\Http\Request;
 use App\Models\Leaves;
+use Illuminate\Support\Facades\Log;
 
 
 class LeaveController extends Controller
@@ -91,7 +93,17 @@ class LeaveController extends Controller
             ];
         }
 
-        return view('leaves.calendar', compact('events'));
+        $holidays = Holiday::all();
+
+        foreach ($holidays as $holiday) {
+            $events[] = [
+                'title' => $holiday->name,
+                'start' => $holiday->day,
+                'allDay' => true
+            ];
+        }
+
+        return view('leaves.calendar', compact('events', 'holidays'));
     }
 
 

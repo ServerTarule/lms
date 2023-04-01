@@ -7,6 +7,7 @@ use App\Http\Controllers\CustomAuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DesignationController;
 use App\Http\Controllers\DoctorController;
+use App\Http\Controllers\HolidayController;
 use App\Http\Controllers\MasterController;
 use App\Http\Controllers\DynamicMasterController;
 use App\Http\Controllers\EmployeeController;
@@ -115,6 +116,10 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/dynamic/{id}', [DynamicMasterController::class, 'store'])->name('/dynamic/{id}')->middleware('can:create master');
     Route::get('/dynamic/edit/{id}', [DynamicMasterController::class, 'edit'])->name('/dynamic/edit/{id}')->middleware('can:update master');
     Route::post('/dynamic/edit/{id}', [DynamicMasterController::class, 'update'])->name('/dynamic/edit/{id}')->middleware('can:update master');
+
+    //Holidays
+    Route::get('/holidays', [HolidayController::class, 'index'])->name('holidays.index')->middleware('can:read master');
+    Route::post('/holidays/store', [HolidayController::class, 'store'])->name('holidays.store')->middleware('can:read master');
 
     //Rules
     Route::get('/rules', [RulesController::class, 'index'])->name('rules.index')->middleware('can:read master');

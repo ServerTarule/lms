@@ -19,6 +19,7 @@
     <link href="{{ asset('assets/plugins/monthly/monthly.css') }}" rel="stylesheet" type="text/css" />
     <link href="{{ asset('assets/plugins/fullcalendar/fullcalendar.min.css') }}" rel="stylesheet" type="text/css" />
     <link href="{{ asset('assets/dist/css/stylecrm.css') }}" rel="stylesheet" type="text/css" />
+{{--    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.min.css" rel="stylesheet" />--}}
     <link href="http://lasik.tarule.in/css/dataTables.bootstrap.min.css" rel="stylesheet" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -131,6 +132,7 @@
 {{--                            <li><a href="/rules">Rules & Regulations</a></li>--}}
 {{--                            <li><a href="lead-conditions.php">Lead Conditions</a></li>--}}
                             <li><a href="/template">Template Master</a></li>
+                            <li><a href="/holidays">Holidays</a></li>
 {{--                            <li><a href="AddMenu.php">Add Menu</a></li>--}}
 {{--                            <li><a href="Submenu.php">Sub Menu</a></li>--}}
 {{--                            <li><a href="SocialIntegration.php">Social Integration</a></li>--}}
@@ -251,6 +253,7 @@
     <script src="{{ asset('assets//plugins/counterup/jquery.counterup.min.js') }}" type="text/javascript"></script>
     <script src="{{ asset('assets//plugins/monthly/monthly.js') }}" type="text/javascript"></script>
     <script src="{{ asset('assets//dist/js/dashboard.js') }}" type="text/javascript"></script>
+{{--    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js"></script>--}}
     <script src="http://lasik.tarule.in/js/jquery.dataTables.min.js"></script>
     <script src="http://lasik.tarule.in/js/dataTables.bootstrap.min.js"></script>
     <script src="http://lasik.tarule.in/ckeditor/samples/js/sample.js"></script>
@@ -258,9 +261,15 @@
     <script src="http://lasik.tarule.in/ckeditor/ckeditor.js"></script>
 {{--    <script src="{{ asset('assets//plugins/fullcalendar/fullcalendar.min.js') }}" type="text/javascript"></script>--}}
 {{--    <script src="{{ asset('assets//plugins/fullcalendar/lib/moment.min.js') }}" type="text/javascript"></script>--}}
-    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
+{{--    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>--}}
     <script>
         $(document).ready(function() {
+
+            {{--$('#day').datepicker({--}}
+            {{--    format: '{{ config('app.date_format_javascript') }}',--}}
+            {{--    locale: 'en'--}}
+            {{--});--}}
+
             $('.table').DataTable({
                 aLengthMenu: [
                     [50, 100, 200, 500, -1],
@@ -795,7 +804,7 @@
             var myChart = new Chart(ctx, {
                 type: 'bar',
                 data: {
-                    labels: ["Nobemver", "December"],
+                    labels: ["November", "December"],
                     datasets: [{
                         label: "Count",
                         data: [12, 5],
@@ -829,7 +838,7 @@
                 type: 'bar',
                 data: {
                     labels: ["January", "February", "March", "April", "May", "June", "July", "august", "september",
-                        "october", "Nobemver", "December"
+                        "october", "November", "December"
                     ],
                     datasets: [{
                             label: "My First dataset",
