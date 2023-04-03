@@ -1,21 +1,26 @@
 <?php
 
 use App\Http\Controllers\ActionTypeController;
+use App\Http\Controllers\BlogController;
 use App\Http\Controllers\CityController;
+use App\Http\Controllers\CommunicationController;
 use App\Http\Controllers\ConditionsController;
 use App\Http\Controllers\CustomAuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DesignationController;
 use App\Http\Controllers\DoctorController;
 use App\Http\Controllers\HolidayController;
+use App\Http\Controllers\LocationController;
 use App\Http\Controllers\MasterController;
 use App\Http\Controllers\DynamicMasterController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\LeadController;
 use App\Http\Controllers\LeaveController;
 use App\Http\Controllers\MainMasterController;
+use App\Http\Controllers\OccasionController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\PermissionsController;
+use App\Http\Controllers\QuoteController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\RulesController;
 use App\Http\Controllers\StateController;
@@ -117,6 +122,20 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/dynamic/edit/{id}', [DynamicMasterController::class, 'edit'])->name('/dynamic/edit/{id}')->middleware('can:update master');
     Route::post('/dynamic/edit/{id}', [DynamicMasterController::class, 'update'])->name('/dynamic/edit/{id}')->middleware('can:update master');
 
+    //Locations
+    Route::get('/locations', [LocationController::class, 'index'])->name('cities')->middleware('can:read lead');
+
+    //Doctors
+    Route::get('/doctors', [DoctorController::class, 'index'])->name('doctors')->middleware('can:read master');
+    Route::post('/addDoctors', [DoctorController::class, 'addDoctors'])->name('addDoctors')->middleware('can:read master');
+
+    //Centers
+    Route::get('/centers', [CenterController::class, 'index'])->name('centers')->middleware('can:read master');
+    Route::post('/addCenter', [CenterController::class, 'addCenter'])->name('addCenter')->middleware('can:read master');
+
+    //Templates
+    Route::get('/templates', [TemplateController::class, 'index'])->name('templates')->middleware('can:read master');
+
     //Holidays
     Route::get('/holidays', [HolidayController::class, 'index'])->name('holidays.index')->middleware('can:read master');
     Route::post('/holidays/store', [HolidayController::class, 'store'])->name('holidays.store')->middleware('can:read master');
@@ -142,6 +161,15 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/leads/export', [LeadController::class, 'export'])->name('leads.export')->middleware('can:read master');
 //    Route::get('/leadassignment', [LeadController::class, 'assignment'])->name('leads')->middleware('can:read lead');
 
+    //Communications
+    Route::get('/communications', [CommunicationController::class, 'index'])->name('communications.index')->middleware('can:read master');
+
+    //Other Management
+    Route::get('/blogs', [BlogController::class, 'index'])->name('blogs.index')->middleware('can:read master');
+    Route::get('/quotes', [QuoteController::class, 'index'])->name('quotes.index')->middleware('can:read master');
+    Route::get('/occasions', [OccasionController::class, 'index'])->name('occasions.index')->middleware('can:read master');
+
+
     //State
     Route::get('/states', [StateController::class, 'index'])->name('states')->middleware('can:read lead');
 
@@ -150,19 +178,13 @@ Route::middleware(['auth'])->group(function () {
 
     //Action Type
     Route::get('/actions', [ActionTypeController::class, 'index'])->name('actions')->middleware('can:read lead');
-    //Doctors
-    Route::get('/doctors', [DoctorController::class, 'index'])->name('doctors');//->middleware('can:read doctor');
-    Route::post('/addDoctors', [DoctorController::class, 'addDoctors'])->name('addDoctors');//->middleware('can:create doctor');
 
-    // Centers
-    Route::get('/centers', [CenterController::class, 'index'])->name('centers');//->middleware('can:read employee');
-    Route::post('/addCenter', [CenterController::class, 'addCenter'])->name('addCenter');//->middleware('can:create doctor');
+
 
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/logout', [CustomAuthController::class, 'logout'])->name('logout');
 
     // Template Master
-    Route::get('/template', [TemplateController::class, 'index'])->name('template');
 
 
 });

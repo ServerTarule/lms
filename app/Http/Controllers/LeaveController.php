@@ -20,7 +20,15 @@ class LeaveController extends Controller
     {
 
         $leaves = Leaves::all();
-        $employees = Employee::all();
+        $distinctEmployeeIds = Employee::select('id')->distinct()->get();
+        $uniqueEmployees = array();
+
+        foreach ($distinctEmployeeIds as $distinctEmployeeId) {
+            $uniqueEmployees[] = $distinctEmployeeId->id;
+         }
+
+        $employees = Employee::whereIn('id', array_values($uniqueEmployees))->get();
+
         $events = null;
 
         return view('leaves.index',compact( 'leaves', 'employees', 'events'));
@@ -58,6 +66,9 @@ class LeaveController extends Controller
      */
     public function store(Request $request)
     {
+
+        $employeeId = $request->employeeid;
+
         $createLeave=Leaves::create([
             'start_time'=>$request->from,
             'end_time'=>$request->to,
@@ -67,7 +78,7 @@ class LeaveController extends Controller
 
         ]);
         if($createLeave){
-            return redirect('/leaves')->with('status','Leave added successfully');
+            return redirect('/leaves/'.$employeeId)->with('status','Leave added successfully');
 
         }
         return redirect('/leaves')->with('error','Please try again later');

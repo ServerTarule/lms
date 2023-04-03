@@ -13,14 +13,14 @@ return new class extends Migration
      */
     public function up()
     {
-        //
-        Schema::create('templateMaster', function (Blueprint $table) {
+        Schema::create('templates', function (Blueprint $table) {
             $table->id();
-            $table->string('TemplateType');
-            $table->string('TemplateName');
+            $table->string('name');
+            $table->string('type');
+            $table->string('subject');
+            $table->string('content');
             $table->timestamps();
         });
-
     }
 
     /**
@@ -30,6 +30,6 @@ return new class extends Migration
      */
     public function down()
     {
-        //
+        Schema::dropIfExists('template');
     }
 };

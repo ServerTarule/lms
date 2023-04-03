@@ -76,8 +76,8 @@
                                     <option disabled>--Select Condition--</option>
                                     <option value="or">OR</option>
                                     <option value="and">AND</option>
-                                    <option value="union">UNION</option>
-                                    <option value="minus">MINUS</option>
+{{--                                    <option value="union">UNION</option>--}}
+{{--                                    <option value="minus">MINUS</option>--}}
                                 </select>
                             </div>
                         </div>

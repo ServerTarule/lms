@@ -18,9 +18,9 @@ class DoctorController extends Controller
     public function index()
     {
         $doctors = Doctors::all();
-        return view('doctor.index',compact('doctors'));
+        return view('doctors.index',compact('doctors'));
     }
-    
+
     public function addDoctors(Request $request)
     {
         if (!$doctors = Doctors::where(['name' => $request->addDoctor])->first()) {

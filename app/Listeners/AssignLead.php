@@ -106,12 +106,12 @@ class AssignLead
             $ruleEve = implode(" ", $ruleEvaluation);
             $ruleEve2 = explode(" ", $ruleEve);
 //            Log::info($ruleEve);
-            $lastWordInRuleEvaluation = $ruleEve2[count($ruleEve2)-1];
+            $lastWordInRuleEvaluation = $ruleEve2[count($ruleEve2) - 1];
             if ($lastWordInRuleEvaluation == "OR" || $lastWordInRuleEvaluation == "AND") {
                 $ruleEve .= ' 0';
             }
 //            Log::info($ruleEve);
-            $ruleValue=eval("return ($ruleEve);");
+            $ruleValue = eval("return ($ruleEve);");
             if ($ruleValue) {
                 $ruleMatchingLeadMaster[] = $ruleId;
             }
@@ -121,7 +121,7 @@ class AssignLead
 //        Log::info('*** Lead Applicable Rules ***');
 //        Log::info(array_values($ruleMatchingLeadMaster));
 
-        $employeeRules = EmployeeRule::wherein('rule_id', array_values($ruleMatchingLeadMaster))->where('status','true')->get();
+        $employeeRules = EmployeeRule::wherein('rule_id', array_values($ruleMatchingLeadMaster))->where('status', 'true')->get();
         foreach ($employeeRules as $employeeRule) {
             Lead::where('id', $lead->id)->update(['employee_id' => $employeeRule->employee_id]);
             $date = date('Y-m-d\TH:i:s.uP', time());

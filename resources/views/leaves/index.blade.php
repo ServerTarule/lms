@@ -47,16 +47,16 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($leaves as $leave)
+                                @foreach ($employees as $employee)
                                     <tr>
                                         <td>{{ $loop->iteration }}</td>
-                                        <td>{{ $leave->employee->name  }}</td>
+                                        <td>{{ $employee->name  }}</td>
                                         <td></td>
                                         <td>
-                                            <a href="/leaves/{{ $leave->employee->id }}" class="btn-xs btn-success"> <i class="fa fa-eye"></i>  </a>
+                                            <a href="/leaves/{{ $employee->id }}" class="btn-xs btn-success"> <i class="fa fa-eye"></i>  </a>
                                         </td>
                                         <td>
-                                            <a href="/leaves/calendar/{{$leave->employee->id}}" class="btn-xs btn-success"> <i class="fa fa-eye"></i>  </a>
+                                            <a href="/leaves/calendar/{{ $employee->id}}" class="btn-xs btn-success"> <i class="fa fa-eye"></i>  </a>
                                         </td>
                                         {{-- <td>
                                             <label class="switch">

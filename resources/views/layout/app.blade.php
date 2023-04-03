@@ -123,15 +123,15 @@
 {{--                            <li><a href="/cities">City</a></li>--}}
 {{--                            <li><a href="location.php">Location</a></li>--}}
 {{--                            <li><a href="CentreDetails.php">Center Details</a></li>--}}
-                            <li><a href="/states">State</a></li>
-                            <li><a href="/cities">City</a></li>
+{{--                            <li><a href="/states">State</a></li>--}}
+{{--                            <li><a href="/cities">City</a></li>--}}
+                            <li><a href="/locations">Locations</a></li>
                             <li><a href="/doctors">Doctors</a></li>
-                            <li><a href="location.php">Location</a></li>
                             <li><a href="/centers">Center Details</a></li>
 {{--                            <li><a href="Leadandcenterassigning.php">Lead & Center Assigning Rules</a></li>--}}
 {{--                            <li><a href="/rules">Rules & Regulations</a></li>--}}
 {{--                            <li><a href="lead-conditions.php">Lead Conditions</a></li>--}}
-                            <li><a href="/template">Template Master</a></li>
+                            <li><a href="/templates">Templates</a></li>
                             <li><a href="/holidays">Holidays</a></li>
 {{--                            <li><a href="AddMenu.php">Add Menu</a></li>--}}
 {{--                            <li><a href="Submenu.php">Sub Menu</a></li>--}}
@@ -202,7 +202,7 @@
                         </a>
                     </li>
                     <li class="treeview">
-                        <a href="SMS-Email-WhatsApp-send.php">
+                        <a href="/communications">
                             <i class="fa fa-book"></i><span>SMS/Email/WhatsApp Send</span>
                         </a>
                     </li>
@@ -214,9 +214,9 @@
                             </span>
                         </a>
                         <ul class="treeview-menu">
-                            <li><a href="HelpQuesAns.php">Lasik Blogs</a></li>
-                            <li><a href="DailyQuotes.php">Daily Quotes</a></li>
-                            <li><a href="OccasionDetails.php">Occasion Details</a></li>
+                            <li><a href="/blogs">LASIK Blogs</a></li>
+                            <li><a href="/quotes">Daily Quotes</a></li>
+                            <li><a href="/occasions">Occasion Details</a></li>
                         </ul>
                     </li>
 
