@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Communication extends Model
 {
@@ -12,10 +13,23 @@ class Communication extends Model
     protected $table = 'communications';
 
     protected $fillable = [
-        'name',
         'type',
+        'message',
         'subject',
         'content',
-        'schedule'
+        'schedule',
+        'words',
+        'template_id',
+        'rule_id'
     ];
+
+    public function template() : BelongsTo
+    {
+        return $this->belongsTo(Template::class);
+    }
+
+    public function rule() : BelongsTo
+    {
+        return $this->belongsTo(Rule::class);
+    }
 }

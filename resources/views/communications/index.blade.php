@@ -39,13 +39,15 @@
                                 <th scope="col">
                                     <a>Count</a>
                                 </th>
+{{--                                <th scope="col">--}}
+{{--                                    <a>Date</a>--}}
+{{--                                </th>--}}
+{{--                                <th scope="col">--}}
+{{--                                    <a>Time</a>--}}
+{{--                                </th>--}}
                                 <th scope="col">
-                                    <a>Date</a>
+                                    <a>Created Date</a>
                                 </th>
-                                <th scope="col">
-                                    <a>Time</a>
-                                </th>
-
                                 <th scope="col">
                                     <a>Edit</a>
                                 </th>
@@ -55,26 +57,24 @@
                             </tr>
                             </thead>
                             <tbody>
-                            <tr>
-                                <td>1</td>
-                                <td>Rule 1</td>
-                                <td>xyz</td>
-                                <td>SMS</td>
-                                <td>Scheduled</td>
-                                <td><a href="viewTemplate.php">2</a></td>
-                                <td>26/12/2022</td>
-                                <td>08:00AM</td>
-
-                                <td>
-                                    <a data-toggle="modal" data-target="#additem" class="btn-xs btn-info"> <i
-                                            class="fa fa-edit"></i> <span>Edit</span> </a>
-                                </td>
-                                <td>
-                                    <a onclick="return confirm('Are you sure want to delete this?')"
-                                       class="btn-xs btn-info" style="background: red;"> <i class="fa fa-trash-o"></i>
-                                        <span>Delete</span> </a>
-                                </td>
-                            </tr>
+                            @foreach ($communications as $communication)
+                                <tr>
+                                    <td>{{ $loop->iteration }}</td>
+                                    <td>{{ $communication->rule->name }}</td>
+                                    <td>{{ $communication->type }}</td>
+                                    <td>{{ $communication->template->name }}</td>
+                                    <td>{{ $communication->words }}</td>
+                                    <td></td>
+{{--                                    <td></td>--}}
+{{--                                    <td>{{ \Carbon\Carbon::parse($holiday->day)->format('d/m/Y') }}</td>--}}
+                                    <td>{{ \Carbon\Carbon::parse($communication->created_at)->format('d/m/Y') }}</td>
+                                    <td>
+                                        <a data-toggle="modal" data-target="#edititem" class="btn-xs btn-info"> <i class="fa fa-pencil"></i>  </a>
+                                    </td>
+                                    <td>
+                                        <a class="btn-xs btn-danger"> <i class="fa fa-trash-o"></i>  </a>
+                                    </td>
+                            @endforeach
                             </tbody>
                         </table>
                     </div>
@@ -89,101 +89,135 @@
             <div class="modal-content">
                 <div class="modal-header modal-header-primary">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                    <h3><i class="fa fa-plus m-r-5"></i> SMS/Email/WhatsApp Template </h3>
+                    <h3><i class="fa fa-plus m-r-5"></i> SMS/Email/WhatsApp Scheduler</h3>
                 </div>
                 <div class="modal-body">
                     <div class="row">
                         <div class="col-md-12">
-                            <form class="form-horizontal">
+                            <form class="form-horizontal" action="{{ route('communications.store') }}" method="POST">
+                                @csrf
                                 <fieldset>
                                     <div class="col-md-4 form-group">
                                         <label class="control-label">Rule</label>
-                                        <select name="Type" class="form-control">
-                                            <option value="0">--select Rule--</option>
-                                            <option value="0">Rule 1</option>
-                                            <option value="0">Rule 2</option>
+                                        <select name="ruleId" id="ruleId" class="form-control">
+                                            <option>--Select Rule--</option>
+                                            @foreach($rules as $rule)
+                                                <option value="{{ $rule->id }}">{{ $rule->name }}</option>
+                                            @endforeach
                                         </select>
-
                                     </div>
                                     <div class="col-md-4 form-group">
                                         <label class="control-label">Type</label>
-                                        <select name="Type" id="ddlDescription" class="form-control"
-                                                onchange="getVal()">
-                                            <option value="0">--select Type--</option>
-                                            <option value="Email"> Email</option>
-                                            <option value="SMS"> SMS</option>
-                                            <option value="WhatsApp"> WhatsApp</option>
+                                        <select id="communicationTemplateType" name="communicationTemplateType" class="form-control">
+                                            <option value="0">--Select Type--</option>
+                                            <option value="Email">Email</option>
+                                            <option value="SMS">SMS</option>
+                                            <option value="WhatsApp">WhatsApp</option>
                                         </select>
                                     </div>
                                     <div class="col-md-4 form-group">
                                         <label class="control-label">Template</label>
-                                        <select name="Type" class="form-control">
-                                            <option value="0">--select Template--</option>
+                                        <select name="communicationTemplateId" id="communicationTemplateId" class="form-control">
+                                            <option>--Select Template--</option>
+                                            @foreach($templates as $template)
+                                                <option value="{{ $template->id }}">{{ $template->name }}</option>
+                                            @endforeach
                                         </select>
                                     </div>
-
-                                    <div class="col-md-12 form-group">
-                                        <label class="control-label">Suject</label>
-                                        <input type="text" name="" placeholder="Please type here.."
-                                               class="form-control">
+                                    <div class="col-md-12 form-group" id="communicationTemplateSubjectDiv">
+                                        <label class="control-label">Subject</label>
+                                        <input class="form-control" type="text" name="communicationTemplateSubject" id="communicationTemplateSubject" placeholder="Please type here..">
                                     </div>
-                                    <div class="col-md-12 form-group" id="Sms-WhatsApp">
-                                        <label class="control-label" id="control-label">Sms/WhatsApp</label>
-                                        <textarea class="form-control Comments"
-                                                  placeholder="Please type here.."></textarea>
+                                    <div class="col-md-12 form-group" id="communicationTemplateMessageDiv">
+                                        <label class="control-label" id="control-label">SMS/WhatsApp</label>
+                                        <textarea class="form-control" id="communicationTemplateMessage" name="communicationTemplateMessage" placeholder="Please type here.."></textarea>
                                     </div>
-                                    <div class="col-md-12 form-group" id="email">
+                                    <div class="col-md-12 form-group" id="communicationTemplateBodyDiv">
                                         <label class="control-label">Email</label>
-                                        <textarea class="form-control" id="Comments"
-                                                  placeholder="Please type here.."></textarea>
+                                        <textarea class="form-control" id="Comments" name="Comments" placeholder="Please type here.."></textarea>
                                     </div>
                                     <div class="col-md-6 form-group">
-                                        <label class="control-label"><input type="radio" value="scheduled" name="1"/>
-                                            Scheduled</label>
+                                        <label class="control-label"><input type="radio" value="scheduled" id="communicationSchedule" name="schedule"/>Scheduled</label>
                                     </div>
                                     <div class="col-md-6 form-group">
-                                        <label class="control-label"><input type="radio" value="send-now" name="1"/>
-                                            Send Now</label>
-                                    </div>
-                                    <div class="col-md-3 form-group">
-                                        <select name="Type" class="form-control">
-                                            <option value="0">--select--</option>
-                                            <option> Every Month</option>
-                                            <option> Every Week</option>
-                                            <option> Every Second Week</option>
-                                            <option> Daily</option>
-                                        </select>
+                                        <label class="control-label"><input type="radio" value="now" id="communicationNow" name="schedule"/>Send Now</label>
                                     </div>
 
-                                    <div class="col-md-3 form-group">
-                                        <select name="Type" class="form-control">
-                                            <option value="0">--Select Day--</option>
-                                            <option> Sunday</option>
-                                            <option> Monday</option>
-                                            <option> Tuesday</option>
-                                            <option> Wednesday</option>
-                                            <option> Thursday</option>
-                                            <option> Friday</option>
-                                            <option> Saturday</option>
-                                        </select>
+                                    <div id="communicationScheduleDiv">
+
+                                        <div class="col-md-3 form-group">
+                                            <select name="scheduleUnit" id="scheduleUnit" class="form-control">
+                                                <option value="0">--select--</option>
+                                                <option value="DAILY">Daily</option>
+                                                <option value="WEEKLY">Weekly</option>
+{{--                                                <option value="FORTNIGHTLY">Fortnightly</option>--}}
+{{--                                                <option value="MONTHLY">Monthly</option>--}}
+{{--                                                <option value="QUARTERLY">Quarterly</option>--}}
+{{--                                                <option value="HALFYEARLY">Half Yearly</option>--}}
+{{--                                                <option value="YEARLY">Yearly</option>--}}
+                                            </select>
+                                        </div>
+
+                                        <div class="col-md-3 form-group" id="dayOfWeekDiv">
+                                            <select id="dayOfWeek" name="dayOfWeek" class="form-control">
+                                                <option value="NA">--Select Day--</option>
+                                                <option value="1">Monday</option>
+                                                <option value="2">Tuesday</option>
+                                                <option value="3">Wednesday</option>
+                                                <option value="4">Thursday</option>
+                                                <option value="5">Friday</option>
+                                                <option value="6">Saturday</option>
+                                                <option value="0">Sunday</option>
+                                            </select>
+                                        </div>
+
                                     </div>
 
-                                    <div class="col-md-3 form-group">
-                                        <select name="Type" class="form-control">
-                                            <option value="0">--Select Date--</option>
-                                            <option> 1</option>
-                                            <option> 2</option>
-                                            <option> 3</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-3 form-group">
-                                        <input type="time" name="" class="form-control">
+                                    <div id="communicationNowDiv">
+
+                                        <div class="col-md-3 form-group" id="dayOfMonthDiv">
+                                            <select id="dayOfMonth" name="dayOfMonth" class="form-control">
+                                                <option value="NA">--Select Date--</option>
+                                                <option value="1">1</option>
+                                                <option value="2">2</option>
+                                                <option value="3">3</option>
+                                                <option value="4">4</option>
+                                                <option value="5">5</option>
+                                                <option value="6">6</option>
+                                                <option value="7">7</option>
+                                                <option value="8">8</option>
+                                                <option value="9">9</option>
+                                                <option value="10">10</option>
+                                                <option value="11">11</option>
+                                                <option value="12">12</option>
+                                                <option value="13">13</option>
+                                                <option value="13">14</option>
+                                                <option value="15">15</option>
+                                                <option value="16">16</option>
+                                                <option value="17">17</option>
+                                                <option value="18">18</option>
+                                                <option value="19">19</option>
+                                                <option value="20">20</option>
+                                                <option value="21">21</option>
+                                                <option value="22">22</option>
+                                                <option value="23">23</option>
+                                                <option value="24">24</option>
+                                                <option value="25">25</option>
+                                                <option value="26">26</option>
+                                                <option value="27">27</option>
+                                                <option value="28">28</option>
+                                                <option value="29">29</option>
+                                                <option value="30">30</option>
+                                                <option value="31">31</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-3 form-group">
+                                            <input type="time" id="minuteHour" name="minuteHour" class="form-control">
+                                        </div>
                                     </div>
                                     <div class="col-md-12 form-group">
                                         <div>
-                                            <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal">
-                                                Cancel
-                                            </button>
+                                            <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal">Cancel</button>
                                             <button type="submit" class="btn btn-add btn-sm">Save</button>
                                         </div>
                                     </div>

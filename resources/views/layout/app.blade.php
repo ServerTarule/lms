@@ -649,8 +649,65 @@
             });
         });
 
-        $("#employeePermissionSubmit").click(function(){
+        $('select[name="templateType"]').change(function() {
+            if($(this).val() === 'SMS' || $(this).val() === 'WhatsApp') {
+                $("#templateMessageDiv").show();
+                $("#templateSubjectDiv").hide();
+                $("#templateEmailDiv").hide();
+            }
 
+            if($(this).val() === 'Email') {
+                $("#templateMessageDiv").hide();
+                $("#templateSubjectDiv").show();
+                $("#templateEmailDiv").show();
+            }
+        });
+
+        $('select[name="communicationTemplateType"]').change(function() {
+            if($(this).val() === 'SMS' || $(this).val() === 'WhatsApp') {
+                $("#communicationTemplateMessageDiv").show();
+                $("#communicationTemplateSubjectDiv").hide();
+                $("#communicationTemplateBodyDiv").hide();
+            }
+
+            if($(this).val() === 'Email') {
+                $("#communicationTemplateMessageDiv").hide();
+                $("#communicationTemplateSubjectDiv").show();
+                $("#communicationTemplateBodyDiv").show();
+            }
+        });
+
+        $("#communicationSchedule").prop('checked', true);
+
+        $("#communicationSchedule").click(function() {
+            $("#communicationScheduleDiv *").prop('disabled',false);
+            $("#communicationNowDiv *").prop('disabled',false);
+        });
+
+        $("#communicationNow").click(function() {
+            $("#communicationNowDiv *").prop('disabled',true);
+            $("#communicationScheduleDiv *").prop('disabled',true);
+        });
+
+        $('select[name="scheduleUnit"]').change(function() {
+            if($(this).val() === 'DAILY') {
+                // $("#dayOfWeekDiv *, #dayOfMonthDiv *").prop('disabled',false);
+                // $("#dayOfWeekDiv").val('NA').change();
+                // $("#dayOfMonthDiv").val('NA').change();
+                $("#dayOfWeekDiv *, #dayOfMonthDiv *").prop('disabled',true);
+                $("#minuteHour").val("00:00");
+            } else if ($(this).val() === 'WEEKLY') {
+                $("#dayOfWeekDiv *").prop('disabled',false);
+                $("#dayOfMonthDiv *").prop('disabled',true);
+                $("#minuteHour").val("00:00");
+            } else if ($(this).val() === 'MONTHLY') {
+                $("#dayOfWeekDiv *, #dayOfMonthDiv *").prop('disabled',false);
+            } else {
+                $("#dayOfWeekDiv *, #dayOfMonthDiv *").prop('disabled',false);
+            }
+        });
+
+        $("#employeePermissionSubmit").click(function(){
 
             //Rules
 

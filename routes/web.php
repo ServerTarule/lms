@@ -134,7 +134,8 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/addCenter', [CenterController::class, 'addCenter'])->name('addCenter')->middleware('can:read master');
 
     //Templates
-    Route::get('/templates', [TemplateController::class, 'index'])->name('templates')->middleware('can:read master');
+    Route::get('/templates', [TemplateController::class, 'index'])->name('templates.index')->middleware('can:read master');
+    Route::post('/templates/store', [TemplateController::class, 'store'])->name('templates.store')->middleware('can:read master');
 
     //Holidays
     Route::get('/holidays', [HolidayController::class, 'index'])->name('holidays.index')->middleware('can:read master');
@@ -163,6 +164,7 @@ Route::middleware(['auth'])->group(function () {
 
     //Communications
     Route::get('/communications', [CommunicationController::class, 'index'])->name('communications.index')->middleware('can:read master');
+    Route::post('/communications/store', [CommunicationController::class, 'store'])->name('communications.store')->middleware('can:read master');
 
     //Other Management
     Route::get('/blogs', [BlogController::class, 'index'])->name('blogs.index')->middleware('can:read master');

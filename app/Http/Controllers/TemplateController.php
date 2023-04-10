@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use App\Models\Template;
+use Illuminate\Support\Facades\Log;
 
 class TemplateController extends Controller
 {
@@ -14,4 +16,22 @@ class TemplateController extends Controller
 
         return view('templates.index',compact( 'templates'));
     }
+
+    public function store(Request $request) : RedirectResponse {
+
+        Log::info($request);
+
+        $template = Template::create([
+            'type'=>$request->templateType,
+            'name'=>$request->templateName,
+            'message'=>$request->templateMessage,
+            'subject'=>$request->templateEmailSubject,
+            'body'=>$request->Comments,
+        ]);
+
+        $templates = Template::all();
+        return redirect()->route('templates.index', compact('templates'));
+
+    }
+
 }

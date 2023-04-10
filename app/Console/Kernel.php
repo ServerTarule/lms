@@ -3,8 +3,10 @@
 namespace App\Console;
 
 use App\Console\Commands\OpenLeadsAssignment;
+use App\Models\Communication;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+use Illuminate\Support\Facades\Log;
 
 class Kernel extends ConsoleKernel
 {
@@ -21,7 +23,13 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->command('openleadsassignment:cron')->everyMinute();
+
+        $communicationSchedules = Communication::all();
+        foreach ($communicationSchedules as $communicationSchedule) {
+            Log::info($communicationSchedule->schedule);
+            $schedule->command('processcommunicationschedules:cron', [$communicationSchedule])->cron($communicationSchedule->schedule);
+        }
+//        $schedule->command('openleadsassignment:cron')->everyMinute();
     }
 
     /**

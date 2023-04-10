@@ -15,10 +15,11 @@ return new class extends Migration
     {
         Schema::create('templates', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
             $table->string('type');
-            $table->string('subject');
-            $table->string('content');
+            $table->string('name');
+            $table->string('message')->nullable();
+            $table->string('subject')->nullable();
+            $table->string('body')->nullable();
             $table->timestamps();
         });
     }

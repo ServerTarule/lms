@@ -15,11 +15,22 @@ return new class extends Migration
     {
         Schema::create('communications', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
             $table->string('type');
-            $table->string('subject');
-            $table->string('content');
+            $table->string('message')->nullable()->constrained();
+            $table->string('subject')->nullable()->constrained();
+            $table->string('content')->nullable()->constrained();
             $table->string('schedule');
+            $table->string('words');
+            $table->unsignedBigInteger('template_id')->nullable()->constrained();
+            $table->unsignedBigInteger('rule_id')->nullable()->constrained();
+            $table->foreign('template_id')
+                ->references('id')
+                ->on('templates')
+                ->onDelete('cascade');
+            $table->foreign('rule_id')
+                ->references('id')
+                ->on('rules')
+                ->onDelete('cascade');
             $table->timestamps();
         });
     }
