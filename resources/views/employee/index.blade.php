@@ -108,11 +108,8 @@
                                         <td><img height="40px" width="40px" /></td>
 
                                         <td>
-                                            {{-- <a data-toggle="modal" data-target="#edititem" class="btn-xs btn-info"> <i
-                                                    class="fa fa-edit"></i> <span>Edit</span> </a> --}}
-                                                    <a onclick="return confirm('Edit Action cannot perform now ! Site under Development')" class="btn-xs btn-info"> <i
-                                                        class="fa fa-edit"></i> <span>Edit</span> </a>
-                                        </td>
+								            <a data-toggle="modal" data-target="#editEmployee" class="btn-xs btn-info"> <i class="fa fa-edit"></i> <span>Edit</span> </a>
+								        </td>
                                         <td>
                                             <a href=""onclick="if (confirm('are you sure you want to cancel?')) window.location.href='/cancel';                                            "
                                                 class="btn-xs btn-info" style="background: #337ab7;">
@@ -230,4 +227,89 @@
             </div>
         </div>
     </div>
+
+    <div class="modal fade" id="editEmployee" tabindex="-1" role="dialog" aria-hidden="true">
+                  <div class="modal-dialog modal-dialog-centered">
+                     <div class="modal-content">
+                        <div class="modal-header modal-header-primary">
+                           <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                           <h3><i class="fa fa-plus m-r-5"></i> Edit EMPLOYEE </h3>
+                        </div>
+                        <div class="modal-body">
+                           <div class="row">
+                              <div class="col-md-12">
+                                 <form class="form-horizontal">
+                                    <fieldset>
+                                        <!-- <div class="form-group col-sm-12">
+                                         <label>Admin Name <span class="required"> * </span></label>
+                                         <select class="form-control" name="ConnectStatus" multiple>
+                                             <option value="1">jitender</option>
+                                             <option value="2">sagar</option>
+                                         </select>
+                                     </div> -->
+                                       <div class="col-md-6 form-group">
+                                          <label class="control-label">Employee Name   </label>
+                                          <input type="text" placeholder="Enter Employee Name" class="form-control">
+                                       </div>
+                                      
+                                        <div class="col-md-6 form-group">
+                                          <label class="control-label">Mobile Number   </label>
+                                          <input type="text" placeholder="Enter Mobile Number" class="form-control">
+                                       </div>
+                                        <div class="col-md-6 form-group">
+                                          <label class="control-label">User Type</label>
+                                          <input type="text" placeholder="" class="form-control">
+                                       </div>
+                                        <div class="col-md-6 form-group">
+                                          <label class="control-label">Email Id   </label>
+                                          <input type="text" placeholder="Enter Email Id" class="form-control">
+                                       </div>
+                                        <div class="col-md-6 form-group">
+                                          <label class="control-label">Password</label>
+                                          <input type="text" placeholder="Enter Password" class="form-control">
+                                       </div>
+                                        <div class="col-md-6 form-group">
+                                          <label class="control-label">DOB</label>
+                                          <input type="date" placeholder="Enter DOB" class="form-control">
+                                       </div>
+                                        <div class="col-md-6 form-group">
+                                          <label class="control-label">DOJ</label>
+                                          <input type="date" placeholder="DOJ" class="form-control">
+                                       </div>
+                                        <div class="col-md-6 form-group">
+                                          <label class="control-label">Alternate Mobile Number </label>
+                                          <input type="text" placeholder="Alternate Mobile Number" class="form-control">
+                                       </div>
+                                        <div class="col-md-6 form-group">
+                                          <label class="control-label">Designation Type</label>
+                                          <input type="text" placeholder="" class="form-control">
+                                       </div>
+                                        <div class="col-md-6 form-group">
+                                          <label class="control-label">Profile Image  </label>
+                                          <input type="file" class="form-control">
+                                       </div>
+                                    <!--     <div class="col-md-6 form-group">
+                                          <label class="control-label">Max/Per Day</label>
+                                          <input type="text" placeholder="Enter Value" class="form-control">
+                                       </div>
+                                        <div class="col-md-6 form-group">
+                                          <label class="control-label">Max/Per Weekly</label>
+                                          <input type="text" placeholder="Enter Value" class="form-control">
+                                       </div> -->
+                                       <div class="col-md-12 form-group">
+                                          <div>
+                                             <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal">Cancel</button>
+                                             <button type="submit" class="btn btn-add btn-sm">Save</button>
+                                          </div>
+                                       </div>
+                                    </fieldset>
+                                 </form>
+                              </div>
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+               
+               </div>
+
 @endsection
