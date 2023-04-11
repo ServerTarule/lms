@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Communication;
+use App\Models\CommunicationLead;
+use App\Models\Lead;
 use App\Models\Rule;
 use App\Models\Template;
 use Illuminate\Http\RedirectResponse;
@@ -76,5 +78,19 @@ class CommunicationController extends Controller
         $communications = Communication::all();
         return redirect()->route('communications.index', compact('communications'));
 
+    }
+
+    public function leads($id)
+    {
+        $communicationleads = CommunicationLead::where('communication_id',$id)->get();
+//        Log::info($communicationleads);
+        $leads = array();
+        foreach ($communicationleads as $communicationlead) {
+            Log::info($communicationlead);
+            $leads[] = $communicationlead->lead_id;
+        }
+        Log::info($leads);
+        $leads = Lead::wherein('id', array_values($leads))->get();
+        return view('communications.leads', compact('leads'));
     }
 }

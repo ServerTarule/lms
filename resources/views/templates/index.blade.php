@@ -87,7 +87,6 @@
                                         <select id="templateType" name="templateType" class="form-control">
                                             <option value="0">--Select Type--</option>
                                             <option value="Email">Email</option>
-                                            <option value="SMS">SMS</option>
                                             <option value="WhatsApp">WhatsApp</option>
                                         </select>
                                     </div>

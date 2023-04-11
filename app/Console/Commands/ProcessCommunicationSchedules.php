@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Models\Communication;
+use App\Models\CommunicationLead;
 use App\Models\Lead;
 use App\Models\LeadMaster;
 use App\Models\Rule;
@@ -36,13 +37,13 @@ class ProcessCommunicationSchedules extends Command
     {
         $communicationSchedule = $this->argument('communicationSchedule');
         $communicationSchedule = json_decode($communicationSchedule, true);
-        Log::info("*** Communication Schedule ***");
-        Log::info($communicationSchedule);
+//        Log::info("*** Communication Schedule ***");
+//        Log::info($communicationSchedule);
 
         $ruleId = $communicationSchedule['rule_id'];
         $ruleConditions = RuleCondition::where('rule_id', $ruleId)->orderBy('master_id', 'asc')->get();
-        Log::info("*** Rule Conditions ***");
-        Log::info($ruleConditions);
+//        Log::info("*** Rule Conditions ***");
+//        Log::info($ruleConditions);
 
         $leadIdsMatchingRuleCondition = array();
         foreach ($ruleConditions as $ruleCondition) {
@@ -54,15 +55,15 @@ class ProcessCommunicationSchedules extends Command
         }
 
         $uniqueLeadIdsMatchingRuleCondition = collect($leadIdsMatchingRuleCondition)->unique();
-        Log::info("*** Unique Leads Ids ***");
-        Log::info($uniqueLeadIdsMatchingRuleCondition);
+//        Log::info("*** Unique Leads Ids ***");
+//        Log::info($uniqueLeadIdsMatchingRuleCondition);
 
         $leadMatchingRule = array();
         foreach ($uniqueLeadIdsMatchingRuleCondition as $leadId) {
             $leadMasters = LeadMaster::where('lead_id', $leadId)->where('mastervalue_id', '<>', null)->orderBy('master_id', 'asc')->get();
             $leadMastersCount = count($leadMasters);
-            Log::info("*** Lead Master Count ***");
-            Log::info($leadMastersCount);
+//            Log::info("*** Lead Master Count ***");
+//            Log::info($leadMastersCount);
             $leadEvaluation = array();
 
             foreach ($ruleConditions as $ruleCondition) {
@@ -83,43 +84,52 @@ class ProcessCommunicationSchedules extends Command
                 }
             }
 
-            Log::info("*** Lead Evaluation ***");
-            Log::info($leadEvaluation);
+//            Log::info("*** Lead Evaluation ***");
+//            Log::info($leadEvaluation);
             $leadEve = implode(" ", $leadEvaluation);
-            Log::info("*** Lead Evaluation - Implode ***");
-            Log::info($leadEve);
+//            Log::info("*** Lead Evaluation - Implode ***");
+//            Log::info($leadEve);
             $leadEve2 = explode(" ", $leadEve);
-            Log::info("*** Lead Evaluation - Explode ***");
-            Log::info($leadEve2);
+//            Log::info("*** Lead Evaluation - Explode ***");
+//            Log::info($leadEve2);
 
             $lastWordInLeadEvaluation = $leadEve2[count($leadEve2) - 1];
-            Log::info("*** Last word in lead evaluation ***");
-            Log::info($lastWordInLeadEvaluation);
+//            Log::info("*** Last word in lead evaluation ***");
+//            Log::info($lastWordInLeadEvaluation);
             if ($lastWordInLeadEvaluation == "OR" || $lastWordInLeadEvaluation == "AND") {
                 $leadEve .= ' 0';
             }
-            Log::info("*** Lead Evaluation - lead evaluation ***");
-            Log::info($leadEve);
+//            Log::info("*** Lead Evaluation - lead evaluation ***");
+//            Log::info($leadEve);
             $leadValue = eval("return ($leadEve);");
-            Log::info("*** Lead Evaluation - lead value ***");
-            Log::info($leadValue);
+//            Log::info("*** Lead Evaluation - lead value ***");
+//            Log::info($leadValue);
             if ($leadValue) {
                 $leadMatchingRule[] = $leadId;
             }
-            Log::info("*** Lead Evaluation - Matching leads ***");
-            Log::info($leadMatchingRule);
+//            Log::info("*** Lead Evaluation - Matching leads ***");
+//            Log::info($leadMatchingRule);
 
-            if (empty($leadMatchingRule)) {
+        }
 
-                if($communicationSchedule['type'] == 'SMS') {
-                    //SEND SMS HERE
-                } else if ($communicationSchedule['type'] == 'Email') {
-                    //SEND EMAIL HERE
-                } else if ($communicationSchedule['type'] == 'WhatsApp') {
-                    //SEND WHATSAPP HERE
-                }
+        if (!empty($leadMatchingRule)) {
 
+            foreach ($leadMatchingRule as $key => $value) {
+                $employee=CommunicationLead::create([
+                    'communication_id'=>$communicationSchedule['id'],
+                    'rule_id'=>$ruleId,
+                    'lead_id'=>$value
+                ]);
             }
+
+            if($communicationSchedule['type'] == 'SMS') {
+                //SEND SMS HERE
+            } else if ($communicationSchedule['type'] == 'Email') {
+                //SEND EMAIL HERE
+            } else if ($communicationSchedule['type'] == 'WhatsApp') {
+                //SEND WHATSAPP HERE
+            }
+
         }
 //        return Command::SUCCESS;
     }

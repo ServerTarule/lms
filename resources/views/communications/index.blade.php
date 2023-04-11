@@ -1,5 +1,5 @@
 @extends('layout.app')
-@section('title', 'SMS/Email/WhatsApp Schedules')
+@section('title', 'Email/WhatsApp Schedules')
 @section('subtitle', 'List of Schedules')
 @section('content')
     <div class="row">
@@ -64,7 +64,7 @@
                                     <td>{{ $communication->type }}</td>
                                     <td>{{ $communication->template->name }}</td>
                                     <td>{{ $communication->words }}</td>
-                                    <td></td>
+                                    <td><a href="/communications/{{$communication->id}}/leads">{{ $communication->leads()->count() }}</a></td>
 {{--                                    <td></td>--}}
 {{--                                    <td>{{ \Carbon\Carbon::parse($holiday->day)->format('d/m/Y') }}</td>--}}
                                     <td>{{ \Carbon\Carbon::parse($communication->created_at)->format('d/m/Y') }}</td>
@@ -74,6 +74,7 @@
                                     <td>
                                         <a class="btn-xs btn-danger"> <i class="fa fa-trash-o"></i>  </a>
                                     </td>
+                                </tr>
                             @endforeach
                             </tbody>
                         </table>
@@ -111,7 +112,6 @@
                                         <select id="communicationTemplateType" name="communicationTemplateType" class="form-control">
                                             <option value="0">--Select Type--</option>
                                             <option value="Email">Email</option>
-                                            <option value="SMS">SMS</option>
                                             <option value="WhatsApp">WhatsApp</option>
                                         </select>
                                     </div>
@@ -129,7 +129,7 @@
                                         <input class="form-control" type="text" name="communicationTemplateSubject" id="communicationTemplateSubject" placeholder="Please type here..">
                                     </div>
                                     <div class="col-md-12 form-group" id="communicationTemplateMessageDiv">
-                                        <label class="control-label" id="control-label">SMS/WhatsApp</label>
+                                        <label class="control-label" id="control-label">WhatsApp</label>
                                         <textarea class="form-control" id="communicationTemplateMessage" name="communicationTemplateMessage" placeholder="Please type here.."></textarea>
                                     </div>
                                     <div class="col-md-12 form-group" id="communicationTemplateBodyDiv">

@@ -164,6 +164,7 @@ Route::middleware(['auth'])->group(function () {
 
     //Communications
     Route::get('/communications', [CommunicationController::class, 'index'])->name('communications.index')->middleware('can:read master');
+    Route::get('/communications/{id}/leads', [CommunicationController::class, 'leads'])->name('/communications/{id}/leads')->middleware('can:read master');
     Route::post('/communications/store', [CommunicationController::class, 'store'])->name('communications.store')->middleware('can:read master');
 
     //Other Management

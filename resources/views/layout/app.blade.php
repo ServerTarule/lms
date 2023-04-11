@@ -203,7 +203,7 @@
                     </li>
                     <li class="treeview">
                         <a href="/communications">
-                            <i class="fa fa-book"></i><span>SMS/Email/WhatsApp Send</span>
+                            <i class="fa fa-book"></i><span>Email/WhatsApp Send</span>
                         </a>
                     </li>
                     <li class="treeview">
@@ -650,7 +650,7 @@
         });
 
         $('select[name="templateType"]').change(function() {
-            if($(this).val() === 'SMS' || $(this).val() === 'WhatsApp') {
+            if($(this).val() === 'WhatsApp') {
                 $("#templateMessageDiv").show();
                 $("#templateSubjectDiv").hide();
                 $("#templateEmailDiv").hide();
@@ -664,7 +664,7 @@
         });
 
         $('select[name="communicationTemplateType"]').change(function() {
-            if($(this).val() === 'SMS' || $(this).val() === 'WhatsApp') {
+            if($(this).val() === 'WhatsApp') {
                 $("#communicationTemplateMessageDiv").show();
                 $("#communicationTemplateSubjectDiv").hide();
                 $("#communicationTemplateBodyDiv").hide();
