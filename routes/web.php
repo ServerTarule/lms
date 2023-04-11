@@ -153,9 +153,10 @@ Route::middleware(['auth'])->group(function () {
 //    Route::get('/rules/create/condition', [RulesController::class, 'createcondition'])->name('rules.create.condition')->middleware('can:read master');
 
     //Leads
-    Route::get('/leads', [LeadController::class, 'index'])->name('leads.index')->middleware('can:read lead');
-    Route::get('/leads/create', [LeadController::class, 'create'])->name('leads.create')->middleware('can:read lead');
-    Route::post('/leads/store', [LeadController::class, 'store'])->name('leads.store')->middleware('can:read lead');
+    Route::get('/leads', [LeadController::class, 'index'])->name('leads.index')->middleware('can:read master');
+    Route::get('/leads/show/{id}', [LeadController::class, 'show'])->name('leads.show')->middleware('can:read master');
+    Route::get('/leads/create', [LeadController::class, 'create'])->name('leads.create')->middleware('can:read master');
+    Route::post('/leads/store', [LeadController::class, 'store'])->name('leads.store')->middleware('can:read master');
 
     Route::get('/leads/call', [LeadController::class, 'call'])->name('leads.call')->middleware('can:read master');
     Route::post('/leads/upload', [LeadController::class, 'upload'])->name('leads.upload')->middleware('can:read master');

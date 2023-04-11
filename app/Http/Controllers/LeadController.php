@@ -27,6 +27,26 @@ class LeadController extends Controller
         return view('leads.index', compact('leads'));
     }
 
+    public function show($id) : View
+    {
+        $lead = Lead::where('id', $id)->get();
+        $leadmaster = LeadMaster::where('lead_id', $id)->get();
+        $leadKV = array();
+        foreach ($lead as $l) {
+            $leadKV['Name'] = $l->name;
+            $leadKV['Mobile No.'] = $l->mobileno;
+            $leadKV['Alternate Mobile No.'] = $l->altmobileno;
+            $leadKV['Email Id'] = $l->email;
+        }
+        foreach ($leadmaster as $lm) {
+            $leadKV[$lm->master->name] = $lm->mastervalue->name;
+        }
+        foreach ($lead as $l) {
+            $leadKV['Received Date'] = date("d/m/Y", strtotime($l->receiveddate));
+        }
+        return view('leads.show', compact('leadKV'));
+    }
+
     public function create() : View
     {
         $masters = DynamicMain::all();

@@ -26,9 +26,9 @@
                                 <th scope="col">
                                     S.No.
                                 </th>
-{{--                                <th scope="col">--}}
-{{--                                    <a>Lead Id</a>--}}
-{{--                                </th>--}}
+                                <th scope="col">
+                                    <a>Lead Id</a>
+                                </th>
                                 <th scope="col">
                                     <a>Name</a>
                                 </th>
@@ -53,7 +53,7 @@
                             @foreach ($leads as $lead)
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
-{{--                                    <td>{{$lead->lead_id}}</td>--}}
+                                    <td><a href="/leads/show/{{$lead->id}}">PID_{{$lead->id}}</a></td>
                                     <td>{{$lead->name}}</td>
                                     <td>{{$lead->email}}</td>
                                     <td>{{$lead->mobileno}}</td>
