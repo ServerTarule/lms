@@ -126,12 +126,14 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/locations', [LocationController::class, 'index'])->name('cities')->middleware('can:read lead');
 
     //Doctors
-    Route::get('/doctors', [DoctorController::class, 'index'])->name('doctors')->middleware('can:read master');
-    Route::post('/addDoctors', [DoctorController::class, 'addDoctors'])->name('addDoctors')->middleware('can:read master');
+    Route::get('/doctors', [DoctorController::class, 'index'])->name('doctors');//->middleware('can:read master');
+    Route::post('/addDoctors', [DoctorController::class, 'addDoctors'])->name('addDoctors');//->middleware('can:read master');
+    Route::get('/deletedoctors/{id}', [DoctorController::class, 'deletedoctors'])->name('deletedoctors/{id}');//->middleware('can:delete master');
 
     //Centers
     Route::get('/centers', [CenterController::class, 'index'])->name('centers')->middleware('can:read master');
     Route::post('/addCenter', [CenterController::class, 'addCenter'])->name('addCenter')->middleware('can:read master');
+    Route::get('/deletecentres/{id}', [CenterController::class, 'deletecentres'])->name('deletecentres/{id}');//->middleware('can:delete master');
 
     //Templates
     Route::get('/templates', [TemplateController::class, 'index'])->name('templates.index')->middleware('can:read master');

@@ -29,5 +29,20 @@ class DoctorController extends Controller
         }
         return redirect('doctors')->with('error', 'Somethinge went wrong !');
     }
+    public function deletedoctors($id)
+    {
+
+       
+        if (!$doctors =Doctors:: find($id)->firstorfail()->delete()) {
+           
+            return redirect('doctors')->with('status', 'Doctor Deleted Successfully');
+        }
+        return redirect('doctors')->with('error', 'Somethinge went wrong !');
+    
+    }
+
+   
+
+    
 
 }
