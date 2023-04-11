@@ -90,9 +90,10 @@
                                                         class="fa fa-edit"></i> <span>Edit</span> </a>
                                         </td>
                                         <td>
-                                            <a href=""onclick="if (confirm('are you sure you want to cancel?')) window.location.href='/cancel';                                            "
-                                                class="btn-xs btn-info" style="background: #337ab7;">
-                                                <span>Active</span>
+                                        
+                                            <a href="{{ url('/deletecentres', ['id' => $center->id]) }}"
+                                                class="fa fa-trash" >
+                                                
                                             </a>
                                         </td>
                                         {{-- <td>

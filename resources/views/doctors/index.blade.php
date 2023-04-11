@@ -51,10 +51,13 @@
                                                 </a>       
                                             </td>
                                             <td>
-                                                <a onclick="return confirm('Are you sure want to delete this?')"
-                                                    class="btn-xs btn-info" style="background: red;"> <i
-                                                        class="fa fa-trash-o"></i>
-                                                </a>
+                                                
+                                            
+                                            <form action="{{ url('/deletedoctors', ['id' => $doctor->id]) }}" method="GET">
+                                              <input class="btn-xs btn-info"  type="submit" value="Delete" />
+                                             @method('delete')
+                                              @csrf
+                                            </form>
                                             </td>
                             @endforeach
                             </tbody>

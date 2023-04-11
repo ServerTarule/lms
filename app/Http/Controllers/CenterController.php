@@ -39,5 +39,18 @@ class CenterController extends Controller
         return redirect('centers')->with('status', 'Some Error Occured');
     }
 
+    public function deletecentres($id)
+    {
+
+       
+        if ($centres =Center:: find($id)->firstorfail()->delete()) {
+           
+            return redirect('centers')->with('status', 'Centre Deleted Successfully');
+        }
+        return redirect('centers')->with('error', 'Somethinge went wrong !');
+    
+    }
+    
+
 }
 
