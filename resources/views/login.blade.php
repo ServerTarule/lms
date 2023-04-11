@@ -86,16 +86,16 @@
   <script src="http://lasik.tarule.in/ckeditor/samples/js/sample.js"></script>
   <script src="http://lasik.tarule.in/ckeditor/styles.js"></script>
   <script src="http://lasik.tarule.in/ckeditor/ckeditor.js"></script>
-  <script>
-      CKEDITOR.replace("Comments",
-  {
-      height: 200
-  });
-       CKEDITOR.replace("Comments2",
-  {
-      height: 200
-  });
-  </script>
+{{--  <script>--}}
+{{--      CKEDITOR.replace("Comments",--}}
+{{--  {--}}
+{{--      height: 200--}}
+{{--  });--}}
+{{--       CKEDITOR.replace("Comments2",--}}
+{{--  {--}}
+{{--      height: 200--}}
+{{--  });--}}
+{{--  </script>--}}
     <script>
        function dash() {
        var ctx = document.getElementById("singelBarChart");

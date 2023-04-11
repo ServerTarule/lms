@@ -19,9 +19,9 @@
                 <span style="color:#b10000;">{{ session('error') }}</span>
             @endif
             <div class="panel-body">
-            <div class="text-right">
-                                 <a class="btn btn-exp btn-sm" href="/leaves">< Back</a>
-                           </div>
+                <div class="text-right">
+                    <a class="btn btn-exp btn-sm" href="/leaves">< Back</a>
+                </div>
                     <div class="table-responsive">
                         <table id="dataTableExample1" class="table table-bordered table-striped table-hover">
                         <thead>

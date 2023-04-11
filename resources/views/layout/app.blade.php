@@ -155,7 +155,7 @@
 
                     <li class="treeview">
                         <a href="#">
-                            <i class="fa fa-shopping-basket"></i><span>Employee Managment</span>
+                            <i class="fa fa-shopping-basket"></i><span>Employee Management</span>
 
                             <span class="pull-right-container">
                                 <i class="fa fa-angle-left pull-right"></i>
@@ -190,8 +190,8 @@
                         </a>
                         <ul class="treeview-menu">
                             <li><a href="/leads">Leads</a></li>
-                            <li><a href="/leads/call">First Calling</a></li>
-                            <li><a href="/leadassignment">Lead Follow Up</a></li>
+                            <li><a href="/leads/calls">First Calling</a></li>
+                            <li><a href="/leads/followup">Lead Follow Up</a></li>
                             <li><a href="/leadstatus">Master Data</a></li>
                             <li><a href="/leadupload">Upload Data</a></li>
                         </ul>
@@ -334,6 +334,15 @@
             console.log("Changed, new value = " + cb.checked);
             $(cb).attr('value', cb.checked);
         }
+
+        $("#editLeadDetails").click(function(){
+            let leadMasters = <?php echo json_encode($leadMasters) ?>;
+            $.each(leadMasters, function(key, value) {
+                if(value != null) {
+                    $("#leadMaster_"+key+"").val(value);
+                }
+            });
+        });
 
         $("#addRow").click(function (e) {
             e.preventDefault();
@@ -675,6 +684,27 @@
                 $("#communicationTemplateSubjectDiv").show();
                 $("#communicationTemplateBodyDiv").show();
             }
+
+            let templateType = $(this).val();
+            $(".removableTemplate").remove();
+            if(templateType !== 'NA') {
+                $.ajax({
+                    url: '/communications/templates/'+templateType,
+                    type: 'GET',
+                    dataType: 'JSON',
+                    success: function (data) {
+                        let templates = data.template;
+                        templates.forEach(function(template) {
+                            $("#communicationTemplateId").append(`<option class="removableTemplate" value="`+template.id+`">`+template.name+`</option>`);
+                        });
+
+                    },
+                    failure: function (data) {
+                        console.log(data);
+                    }
+                });
+            }
+
         });
 
         $("#communicationSchedule").prop('checked', true);
@@ -759,6 +789,159 @@
                     console.log(data);
                 }
             });
+        });
+
+        $('select[name="communicationTemplateId"]').change(function() {
+
+            let templateId = $(this).val();
+
+            if(templateId !== 'NA') {
+                $.ajax({
+                   url: '/communications/templates/'+templateId,
+                   type: 'GET',
+                   dataType: 'JSON',
+                   success: function (data) {
+                       console.log(data);
+                       if (data.template.type === 'Email') {
+                           $("#communicationTemplateSubject").val(data.template.subject);
+                       } else if (data.template.type === 'WhatsApp') {
+                            $("#communicationTemplateMessage").val(data.template.message)
+                       }
+                   },
+                   failure: function (data) {
+                       console.log(data);
+                   }
+               });
+           }
+        });
+
+        $('select[name="leadEmailTemplateId"]').change(function() {
+
+            let templateId = $(this).val();
+
+            if(templateId !== 'NA') {
+                $.ajax({
+                    url: '/communications/templates/'+templateId,
+                    type: 'GET',
+                    dataType: 'JSON',
+                    success: function (data) {
+                        $("#leadEmailSubject").val(data.template.subject);
+                        $("#leadEmailBody").val(data.template.body);
+                    },
+                    failure: function (data) {
+                        console.log(data);
+                    }
+                });
+            }
+        });
+
+        $('select[name="leadWhatsAppTemplateId"]').change(function() {
+
+            let templateId = $(this).val();
+
+            if(templateId !== 'NA') {
+                $.ajax({
+                    url: '/communications/templates/'+templateId,
+                    type: 'GET',
+                    dataType: 'JSON',
+                    success: function (data) {
+                        $("#leadWhatsAppMessage").val(data.template.message);
+                    },
+                    failure: function (data) {
+                        console.log(data);
+                    }
+                });
+            }
+        });
+
+        // Lead Call Send Email
+        $('#leadSendEmail').click(function() {
+
+            let leadId = $('#leadId').val();
+            let employeeId = $("#leadEmployeeId").val();
+            let templateId = $("#leadEmailTemplateId").val();
+            let emailId = $("#leadEmailId").val();
+            let callStatusId = $("#callStatusId").val();
+            let remark = $("#leadCallRemark").val();
+            let reminderDate = $("#leadNextReminderDate").val();
+
+
+            let CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+
+            if(templateId !== 'NA') {
+                $.ajax({
+                    url: '/leads/calls/'+leadId+'/email',
+                    type: 'POST',
+                    data: {
+                        _token: CSRF_TOKEN,
+                        'leadId': leadId,
+                        'employeeId': employeeId,
+                        'templateId': templateId,
+                        'emailId': emailId,
+                        'type': 'Email',
+                        'callStatusId': callStatusId,
+                        'remark': remark,
+                        'reminderDate': reminderDate
+                    },
+                    dataType: 'JSON',
+                    success: function (data) {
+                        console.log(data);
+                        window.location.href = '/leads/calls/'+leadId;
+                    },
+                    failure: function (data) {
+                        console.log(data);
+                    }
+                });
+            }
+        });
+
+        // Lead Call Send WhatsApp
+        $('#leadSendWhatsApp').click(function() {
+
+            let leadId = $('#leadId').val();
+            let employeeId = $("#leadEmployeeId").val();
+            let templateId = $("#leadWhatsAppTemplateId").val();
+            let mobileno = $("#leadWhatsAppMobileNo").val();
+            let callStatusId = $("#callStatusId").val();
+            let remark = $("#leadCallRemark").val();
+            let reminderDate = $("#leadNextReminderDate").val();
+
+            let CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+
+            if(templateId !== 'NA') {
+                $.ajax({
+                    url: '/leads/calls/'+leadId+'/whatsapp',
+                    type: 'POST',
+                    data: {
+                        _token: CSRF_TOKEN,
+                        'leadId': leadId,
+                        'employeeId': employeeId,
+                        'templateId': templateId,
+                        'mobileno' : mobileno,
+                        'type': 'WhatsApp',
+                        'callStatusId': callStatusId,
+                        'remark': remark,
+                        'reminderDate': reminderDate
+                    },
+                    dataType: 'JSON',
+                    success: function (data) {
+                        window.location.href = '/leads/calls/'+leadId;
+                    },
+                    failure: function (data) {
+                        console.log(data);
+                    }
+                });
+            }
         });
 
     </script>
@@ -848,10 +1031,10 @@
 
     </script>--}}
     <script>
-        CKEDITOR.replace("Comments", {
+        CKEDITOR.replace("communicationTemplateBody", {
             height: 200
         });
-        CKEDITOR.replace("Comments2", {
+        CKEDITOR.replace("templateEmailBody", {
             height: 200
         });
     </script>

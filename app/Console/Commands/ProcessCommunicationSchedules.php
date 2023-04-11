@@ -2,15 +2,18 @@
 
 namespace App\Console\Commands;
 
-use App\Models\Communication;
+use App\Mail\Campaign;
 use App\Models\CommunicationLead;
 use App\Models\Lead;
 use App\Models\LeadMaster;
-use App\Models\Rule;
 use App\Models\RuleCondition;
+use App\Models\Template;
+use App\Notifications\LeadConnect;
 use Illuminate\Console\Command;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-use function Sodium\randombytes_uniform;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Notification;
 
 class ProcessCommunicationSchedules extends Command
 {
@@ -33,12 +36,12 @@ class ProcessCommunicationSchedules extends Command
      *
      * @return int
      */
-    public function handle()
+    public function handle(Request $request)
     {
         $communicationSchedule = $this->argument('communicationSchedule');
         $communicationSchedule = json_decode($communicationSchedule, true);
-//        Log::info("*** Communication Schedule ***");
-//        Log::info($communicationSchedule);
+        Log::info("*** Communication Schedule ***");
+        Log::info($communicationSchedule);
 
         $ruleId = $communicationSchedule['rule_id'];
         $ruleConditions = RuleCondition::where('rule_id', $ruleId)->orderBy('master_id', 'asc')->get();
@@ -125,12 +128,32 @@ class ProcessCommunicationSchedules extends Command
             if($communicationSchedule['type'] == 'SMS') {
                 //SEND SMS HERE
             } else if ($communicationSchedule['type'] == 'Email') {
-                //SEND EMAIL HERE
+
+                $templateId = $communicationSchedule['template_id'];
+                $template = Template::where('id', $templateId)->first();
+
+                foreach ($leadMatchingRule as $key => $value) {
+                    $lead = Lead::where('id', $value)->first();
+                    //TODO Validate email
+                    Log::info($lead->email);
+                    if($lead->email) {
+//                        Mail::to($lead->email)->send(new Campaign($lead->email));
+                        Mail::to($lead->email)->send(new Campaign($template));
+                    }
+                }
+
             } else if ($communicationSchedule['type'] == 'WhatsApp') {
-                //SEND WHATSAPP HERE
+                foreach ($leadMatchingRule as $key => $value) {
+                    $lead = Lead::where('id', $value)->first();
+                    //TODO Validate mobile
+                    if($lead->mobileno) {
+                        Notification::send($lead, new LeadConnect($lead));
+                    }
+                }
             }
 
         }
 //        return Command::SUCCESS;
     }
+
 }

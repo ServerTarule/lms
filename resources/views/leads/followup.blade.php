@@ -1,19 +1,16 @@
 @extends('layout.app')
-@section('title', 'First Calling')
-@section('subtitle', 'List of Calls')
+@section('title', 'Lead Assigning')
+@section('subtitle', 'List of Leads Assigned')
 @section('content')
     <div class="col-sm-12">
         <div class="panel-body">
             <ul class="nav nav-tabs">
-                @foreach($leadStatuses as $leadStatus)
-                    <li @if($loop->first) class="active" @endif><a href="#">{{ $leadStatus->name }}</a></li>
-                @endforeach
-{{--                <li class="active"><a href="LeadStatus.php">All</a></li>--}}
-
-{{--                <li><a href="NonConnect.php">Non Connect</a></li>--}}
-{{--                <li><a href="InProcess.php">In Process</a></li>--}}
-{{--                <li><a href="WorkupDone.php">Workup Done</a></li>--}}
-{{--                <li><a href="CaseClose.php">Case Close</a></li>--}}
+                <li class="active"><a href="LeadStatus.php">All</a></li>
+                <li><a href="OperationDone.php">Operation Done</a></li>
+                <li><a href="NonConnect.php">Non Connect</a></li>
+                <li><a href="InProcess.php">In Process</a></li>
+                <li><a href="WorkupDone.php">Workup Done</a></li>
+                <li><a href="CaseClose.php">Case Close</a></li>
             </ul>
         </div>
         <div class="tab-content">
@@ -62,11 +59,11 @@
                                         <th scope="col">
                                             <a>Center Recommended</a>
                                         </th>
-                                        @foreach($uniqueLeadMasterNames as $leadmaster)
-                                        <th scope="col">
-                                            <a>{{ $leadmaster }}</a>
-                                        </th>
-                                        @endforeach
+{{--                                        @foreach($uniqueLeadMasterNames as $leadmaster)--}}
+{{--                                        <th scope="col">--}}
+{{--                                            <a>{{ $leadmaster }}</a>--}}
+{{--                                        </th>--}}
+{{--                                        @endforeach--}}
                                         <th scope="col">
                                             <a>Latest Remark</a>
                                         </th>
@@ -79,33 +76,35 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                @foreach ($leads as $lead)
-                                    <tr>
-                                        <td>{{ $loop->iteration }}</td>
-                                        <td><a href="/leads/show/{{$lead->id}}">PID_{{ $lead->id }}</a></td>
-                                        <td>@if( !is_null($lead->employee)) {{ $lead->employee->name }} @endif</td>
-                                        <td></td>
-                                        <td></td>
-                                        <td>{{ \Carbon\Carbon::parse($lead->receiveddate)->format('d/m/Y')}}</td>
-                                        <td>{{ $lead->name }}</td>
-                                        <td><a href="/leads/calls/{{$lead->id}}">{{ $lead->mobileno }}</a></td>
-                                        <td>{{ $lead->altmobileno }}</td>
-                                        <td>{{ $lead->email }}</td>
-                                        <td></td>
-                                        @foreach($lead['leadmasters'] as $lm)
-                                            <td>@if( !is_null($lm['mastervalue'])) {{ $lm['mastervalue']->name }} @endif</td>
-                                        @endforeach
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                    </tr>
-                                @endforeach
+{{--                                @foreach ($leads as $lead)--}}
+{{--                                    <tr>--}}
+{{--                                        <td>{{ $loop->iteration }}</td>--}}
+{{--                                        <td><a href="/leads/show/{{$lead->id}}">PID_{{ $lead->id }}</a></td>--}}
+{{--                                        <td>@if( !is_null($lead->employee)) {{ $lead->employee->name }} @endif</td>--}}
+{{--                                        <td></td>--}}
+{{--                                        <td></td>--}}
+{{--                                        <td>{{ \Carbon\Carbon::parse($lead->receiveddate)->format('d/m/Y')}}</td>--}}
+{{--                                        <td>{{ $lead->name }}</td>--}}
+{{--                                        <td>{{ $lead->mobileno }}</td>--}}
+{{--                                        <td>{{ $lead->altmobileno }}</td>--}}
+{{--                                        <td>{{ $lead->email }}</td>--}}
+{{--                                        <td></td>--}}
+{{--                                        @foreach($lead['leadmasters'] as $lm)--}}
+{{--                                            <td>@if( !is_null($lm['mastervalue'])) {{ $lm['mastervalue']->name }} @endif</td>--}}
+{{--                                        @endforeach--}}
+{{--                                        <td></td>--}}
+{{--                                        <td></td>--}}
+{{--                                        <td></td>--}}
+{{--                                    </tr>--}}
+{{--                                @endforeach--}}
                                 </tbody>
                             </table>
                         </div>
                     </div>
                 </div>
             </div>
+
+
         </div>
     </div>
 @endsection

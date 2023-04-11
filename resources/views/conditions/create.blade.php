@@ -85,6 +85,32 @@
                         @endforeach
                     </div>
 
+                <div>
+                    <div class="col-md-1"></div>
+                    <div class="col-md-3">
+                        <div class="panel panel-bd">
+                            <div class="panel-heading">
+                                <div class="btn-group">
+                                    <a>
+                                        <h4>Date Range<span class="required"> * </span></h4>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="panel-body">
+                                <div class="form-group">
+                                    <select class="form-control" name="ruleMasterDateRange" id="ruleMasterDateRange">
+                                        <option value="NA">-- Select Date Range --</option>
+                                        <option value="7">7 Days</option>
+                                        <option value="14">14 Days</option>
+                                        <option value="30">1 Month</option>
+                                        <option value="60">2 Months</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                     <div class="col-sm-12">
                         <div class="form-group">
                             <button type="submit" id="ruleConditionSubmit" class="btn btn-primary btn-sm">Submit</button>

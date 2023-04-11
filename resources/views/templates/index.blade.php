@@ -104,7 +104,7 @@
                                     </div>
                                     <div id="templateEmailDiv" class="col-md-12 form-group">
                                         <label class="control-label">Email</label>
-                                        <textarea class="form-control" id="Comments" name="Comments" placeholder="Please type here.."></textarea>
+                                        <textarea class="form-control" id="templateEmailBody" name="templateEmailBody" placeholder="Please type here.."></textarea>
                                     </div>
 
                                     <div class="col-md-12 form-group">

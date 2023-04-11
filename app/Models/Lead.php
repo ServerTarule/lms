@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Notifications\Notifiable;
 
 /**
  * App\Models\Lead
@@ -44,6 +45,8 @@ class Lead extends Model
 {
     use HasFactory;
 
+    use Notifiable;
+
     protected $fillable = [
         'name',
         'email',
@@ -65,5 +68,15 @@ class Lead extends Model
     public function communications() : BelongsToMany
     {
         return $this->belongsToMany(Communication::class, 'communicationleads', 'lead_id', 'communication_id');
+    }
+
+    public function leadcalls() : HasMany {
+        return $this->hasMany(LeadCall::class,'lead_id');
+    }
+
+    public function routeNotificationForWhatsApp()
+    {
+        $countryPrefix = '91';
+        return $countryPrefix.$this->mobileno;
     }
 }

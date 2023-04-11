@@ -25,6 +25,7 @@ class ConditionsController extends Controller
 //        $masters = DynamicMain::wherein('id', [$masterId,$masterId1,$masterId2])->get(); //Need to use where in when multiple ids are available
 //        $masters = DynamicMain::wherein('id', [$masterId])->get(); //Need to use where in when multiple ids are available
         $masters = DynamicMain::wherein('id', $data)->get(); //Need to use where in when multiple ids are available
+//        $masters=DynamicMain::where('master', '1')->get();
         return view('conditions.create', compact('ruleName','masters'));
 
         /*        $ruleName = $request->query('ruleName');

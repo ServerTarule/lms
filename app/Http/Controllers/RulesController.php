@@ -20,7 +20,7 @@ class RulesController extends Controller
     }
 
     public function create() : View {
-        $masters=DynamicMain::all();
+        $masters=DynamicMain::where('master', '1')->get();
         return view('rules.create',compact('masters'));
     }
 

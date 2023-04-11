@@ -90,7 +90,7 @@
             <div class="modal-content">
                 <div class="modal-header modal-header-primary">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                    <h3><i class="fa fa-plus m-r-5"></i> SMS/Email/WhatsApp Scheduler</h3>
+                    <h3><i class="fa fa-plus m-r-5"></i> Email/WhatsApp Scheduler</h3>
                 </div>
                 <div class="modal-body">
                     <div class="row">
@@ -110,7 +110,7 @@
                                     <div class="col-md-4 form-group">
                                         <label class="control-label">Type</label>
                                         <select id="communicationTemplateType" name="communicationTemplateType" class="form-control">
-                                            <option value="0">--Select Type--</option>
+                                            <option value="NA">--Select Type--</option>
                                             <option value="Email">Email</option>
                                             <option value="WhatsApp">WhatsApp</option>
                                         </select>
@@ -118,10 +118,10 @@
                                     <div class="col-md-4 form-group">
                                         <label class="control-label">Template</label>
                                         <select name="communicationTemplateId" id="communicationTemplateId" class="form-control">
-                                            <option>--Select Template--</option>
-                                            @foreach($templates as $template)
-                                                <option value="{{ $template->id }}">{{ $template->name }}</option>
-                                            @endforeach
+                                            <option value="NA">--Select Template--</option>
+{{--                                            @foreach($templates as $template)--}}
+{{--                                                <option value="{{ $template->id }}">{{ $template->name }}</option>--}}
+{{--                                            @endforeach--}}
                                         </select>
                                     </div>
                                     <div class="col-md-12 form-group" id="communicationTemplateSubjectDiv">
@@ -134,7 +134,7 @@
                                     </div>
                                     <div class="col-md-12 form-group" id="communicationTemplateBodyDiv">
                                         <label class="control-label">Email</label>
-                                        <textarea class="form-control" id="Comments" name="Comments" placeholder="Please type here.."></textarea>
+                                        <textarea class="form-control" id="communicationTemplateBody" name="communicationTemplateBody" placeholder="Please type here.."></textarea>
                                     </div>
                                     <div class="col-md-6 form-group">
                                         <label class="control-label"><input type="radio" value="scheduled" id="communicationSchedule" name="schedule"/>Scheduled</label>

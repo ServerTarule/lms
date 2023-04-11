@@ -45,7 +45,7 @@
                                         <td>{{ $lead->name }}</td>
                                         <td>{{ $lead->mobileno }}</td>
                                         <td>{{ $lead->email }}</td>
-                                        <td>{{ $lead->id }}</td>
+                                        <td><a href="/leads/show/{{$lead->id}}">PID_{{ $lead->id }}</a></td>
                                     </tr>
                                 @endforeach
                                 </tbody>

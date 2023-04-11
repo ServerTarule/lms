@@ -160,7 +160,12 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/leads/create', [LeadController::class, 'create'])->name('leads.create')->middleware('can:read master');
     Route::post('/leads/store', [LeadController::class, 'store'])->name('leads.store')->middleware('can:read master');
 
-    Route::get('/leads/call', [LeadController::class, 'call'])->name('leads.call')->middleware('can:read master');
+    Route::get('/leads/calls', [LeadController::class, 'call'])->name('leads.call')->middleware('can:read master');
+    Route::get('/leads/calls/{id}', [LeadController::class, 'showcall'])->name('leads.showcall')->middleware('can:read master');
+    Route::post('/leads/calls/{id}', [LeadController::class, 'update'])->name('leads.update')->middleware('can:read master');
+    Route::post('/leads/calls/{id}/email', [LeadController::class, 'email'])->name('leads.email')->middleware('can:read master');
+    Route::post('/leads/calls/{id}/whatsapp', [LeadController::class, 'whatsapp'])->name('leads.whatsapp')->middleware('can:read master');
+    Route::get('/leads/followup', [LeadController::class, 'followup'])->name('leads.followup')->middleware('can:read master');
     Route::post('/leads/upload', [LeadController::class, 'upload'])->name('leads.upload')->middleware('can:read master');
     Route::get('/leads/export', [LeadController::class, 'export'])->name('leads.export')->middleware('can:read master');
 //    Route::get('/leadassignment', [LeadController::class, 'assignment'])->name('leads')->middleware('can:read lead');
@@ -168,6 +173,7 @@ Route::middleware(['auth'])->group(function () {
     //Communications
     Route::get('/communications', [CommunicationController::class, 'index'])->name('communications.index')->middleware('can:read master');
     Route::get('/communications/{id}/leads', [CommunicationController::class, 'leads'])->name('/communications/{id}/leads')->middleware('can:read master');
+    Route::get('/communications/templates/{id}', [CommunicationController::class, 'templates'])->name('/communications/templates/{id}')->middleware('can:read master');
     Route::post('/communications/store', [CommunicationController::class, 'store'])->name('communications.store')->middleware('can:read master');
 
     //Other Management
