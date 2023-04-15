@@ -53,11 +53,11 @@ class MainMasterController extends Controller
 
     public function remove($id){
         $employee=Employee::where('id',$id)->delete(['id'=>$id]);
-      //  $employee=Employee::find('id',$id)->delete();
-        echo $employee;
-        // if($employee){
-        //     return redirect()->back()->with('status', 'User Remove From Master Successfully');
-        // }
-        // return redirect()->back()->with('error', 'Something Went Wrong');
+       // $employee=Employee::find('id',$id)->delete();
+      //  echo $employee;
+        if($employee){
+            return redirect()->back()->with('status', 'User Remove From Master Successfully');
+         }
+         return redirect()->back()->with('error', 'Something Went Wrong');
     }
 }
