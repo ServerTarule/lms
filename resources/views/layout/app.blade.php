@@ -102,11 +102,25 @@
         <aside class="main-sidebar">
             <div class="sidebar">
                 <ul class="sidebar-menu">
+                    @livewire('menus')
                     <li class="active">
                         <a href="/"><i class="fa fa-tachometer"></i><span>Dashboard</span>
                             <span class="pull-right-container">
                             </span>
                         </a>
+                    </li>
+                    <li class="treeview">
+                        <a href="#">
+                            <i class="fa fa-users"></i><span>Menu</span>
+                            <span class="pull-right-container">
+                                <i class="fa fa-angle-left pull-right"></i>
+                            </span>
+                        </a>
+                        <ul class="treeview-menu">
+                            <li><a href="/menu">Create Menu</a></li>
+
+                        </ul>
+                        
                     </li>
                     <li class="treeview">
                         <a href="#">
