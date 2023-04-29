@@ -8,8 +8,9 @@ use Illuminate\Http\Request;
 class MenusController extends Controller
 {
     public function index(){
-         $menus=Menu::all();
-        return view('menus.index',compact('menus'));
+        $menus=Menu::all();
+        $menuWithTopPref=Menu::where([])->orderBy('preference','desc')->first();
+        return view('menus.index',compact('menus','menuWithTopPref'));
     }
 
     public function store(Request $request){
@@ -17,19 +18,18 @@ class MenusController extends Controller
         if($unique){
             return redirect()->back()->with('error','Menu with this name or url already Exist');
         }
-         
         $menuData=Menu::create([
             'title'=>$request->title,
             'parent_id'=>$request->parent_id,
             'class'=>$request->class,
             'icon'=>$request->icon,
             'url'=>$request->url,
+            'preference'=>$request->preference
         ]);
         if($menuData){
             return redirect()->back()->with('status','Menu Added Successfully');
         }
         return redirect()->back()->with('error','Something Went Wrong');
-
     }
 
     public function edit($id){
@@ -40,23 +40,22 @@ class MenusController extends Controller
 
     public function update(Request $request, $id){
         $matchThese = [
-            ['title', '=', "asdasdas".$request->title],
+            ['title', '=', $request->title],
             ['id', '<>', $id],
+            ['url', '=', $request->url]
         ];
-        $unique = Menu::where($matchThese)->orWhere('url', '=', $request->url)->first();
-
-        echo "<pre>";print_r($unique);die;
+        $unique = Menu::where($matchThese)->first();
         if($unique){
             return redirect()->back()->with('error','Menu Already Exist');
         }
-
         $master= Menu::find($id)->update(
             [
                 'title'=>$request->title,
                 'class'=>$request->class,
                 'icon'=>$request->icon,
                 'url'=>$request->url,
-                'parent_id'=>$request->parent_id
+                'parent_id'=>$request->parent_id,
+                'preference'=>$request->preference,
             ]
         );
         if($master){

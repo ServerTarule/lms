@@ -33,7 +33,7 @@
                                                 </select>
                                             </div>
                                             <div class="col-md-4 form-group AUTHORITY">
-                                                <input type="number" name="preference" placeholder="Menu Preference" class="form-control" required>
+                                                <input type="number" value="{{$menuWithTopPref->preference+1}}" name="preference" placeholder="Menu Preference" class="form-control" required>
                                             </div>
                                         </div>
                                         <div class="row">
@@ -135,7 +135,7 @@
                                                 <select name="parent_id"  class="form-control" required>
                                                     <option value="0">No Parent</option>
                                                     @foreach ($parentMenus as $parentMenu)
-                                                    <option value="{{ $parentMenu->id }}" selected ="{{$menu->id == $parentMenu->id}}">{{ $parentMenu->title }}</option>
+                                                    <option value="{{ $parentMenu->id }}" {{$menu->parent_id  == $parentMenu->id ? 'selected' : ''}}>{{ $parentMenu->title }}</option>
                                                     @endforeach
                                                 </select>
                                             </div>
