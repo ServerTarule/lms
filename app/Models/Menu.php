@@ -45,6 +45,44 @@ class Menu extends Model
         'preference' 
     ];
 
+    private $descendants = [];
+
+    
+    public function submenus(){
+        return $this->hasMany(Menu::class, 'parent_id');
+    }
+    
+    public function children(){
+        return $this->submenus()->with('children');
+    }
+    
+    public function hasChildren(){
+        if($this->children->count()){
+            return true;
+        }
+        return false;
+    }
+    
+    public function findDescendants(Menu $menu){
+        $this->descendants[] = $menu->id;
+    
+        if($menu->hasChildren()){
+            foreach($menu->children as $child){
+                $this->findDescendants($child);
+            }
+        }
+    }
+
+    public function getDescendants(Menu $menu){
+        $this->findDescendants($menu);
+        return $this->descendants;
+    }
+
+
+
+
+
+
     public function buildMenu($array,$parent_id = 0)
     {
       $menu_html = null;

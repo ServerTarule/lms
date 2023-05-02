@@ -1105,7 +1105,7 @@
                                                                         }
                                                                     @endphp
                                                                     <input id="test_{{ $rule->id }}" value="{{ $ruleStatus }}" type="hidden">
-                                                                    <input id="rule_{{ $rule->id }}" type="checkbox" value="{{ $ruleStatus }}" onchange="handleChange(this);" @checked( $ruleStatus === 'true') />
+                                                                    <input id="rule_{{ $rule->id }}" type="checkbox" value="true" onchange="handleChange(this);" @checked( $ruleStatus === 'true') />
                                                                     <span class="slider round"></span>
                                                                 </label>
                                                             </td>

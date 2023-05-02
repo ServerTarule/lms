@@ -805,7 +805,138 @@
             });
         });
 
-        $('select[name="communicationTemplateId"]').change(function() {
+
+        $(".update-menu-permission").click(function(){
+            processSingleMenuPermissionUpdate(this);
+        });
+
+        function processSingleMenuPermissionUpdate(self) {
+            
+            const datamenuid = $(self).attr("data-menuid");
+            const dataempid = $(self).attr("data-empid");
+            let employeeId = $("#employeeId").val();
+            console.log("---datamenuid--",datamenuid,"===dataempid==",dataempid);
+
+            const add_permission_val =  $('#add_menu_' + datamenuid).val();
+            const edit_permission_val =  $('#edit_menu_' + datamenuid).val();
+            const delete_permission_val =  $('#delete_menu_' + datamenuid).val();
+            const view_permission_val =  $('#view_menu_' + datamenuid).val();
+            const menu_parent_id =  $('#parent_menu_' + datamenuid).val();
+            console.log("--menu_parent_id-",menu_parent_id);
+            const permissionData = {
+                'menu_id':datamenuid,
+                'employee_id':employeeId,
+                'add_permissions':(add_permission_val == 1 || add_permission_val == "true" )?1:0,
+                'edit_permissions':(edit_permission_val == 1 || edit_permission_val == "true" )?1:0,
+                'delete_permissions':(delete_permission_val == 1 || delete_permission_val == "true" )?1:0,
+                'view_permissions':(view_permission_val == 1 || view_permission_val == "true" )?1:0,
+                'parent_id' : menu_parent_id
+            }
+
+            console.log(permissionData);
+            let CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+            $.ajax({
+                /* the route pointing to the post function */
+                url: '/menus/set-single-permissions/'+employeeId,
+                type: 'POST',
+                /* send the csrf-token and the input to the controller */
+                // data: {_token: CSRF_TOKEN, 'ruleData':JSON.stringify(jsonObject)},
+                data: {
+                    _token: CSRF_TOKEN,
+                    'employeeId': employeeId,
+                    // 'rulesDate':JSON.stringify(items)
+                    'permissionData':JSON.stringify(permissionData)
+                },
+                dataType: 'JSON',
+                /* remind that 'data' is the response of the AjaxController */
+                success: function (response) {
+                    if(response?.message) {
+                        alert(response.message);
+                    }
+                    window.location.href = "/permissions/employee-list";
+                },
+                failure: function (data) {
+                    console.log("failure response",data);
+                },
+                done: function (data) {
+                    alert("I am done");
+                },
+
+                error: function (data) {
+                    if(data?.responseText) {
+                        const jsonResp = JSON.parse(data.responseText);
+                        alert(jsonResp.message);
+                        location.reload();
+                    }
+                   
+                }
+            });
+        }
+
+        $("#employeeMenuPermissionbtn").click(function(){
+            // console.log("hello there");
+            let employeeId = $("#employeeId").val();
+            let allPermissions = $("#allPermissions").val();
+            console.log("---allPermissions--",allPermissions);
+            let items = [];
+            $.each(JSON.parse(allPermissions), function (key, value) {
+                let itemValue = {};
+                itemValue ["id"] = value.mId;
+                itemValue ["menu_id"] = value.id;
+                const add_permission_val =  $('#add_menu_' + value.id).val();
+                const edit_permission_val =  $('#edit_menu_' + value.id).val();
+                const delete_permission_val =  $('#delete_menu_' + value.id).val();
+                const view_permission_val =  $('#view_menu_' + value.id).val();
+                const menu_parent_id =  $('#parent_menu_' + value.id).val();
+                itemValue ["add_permissions"] = (add_permission_val == 1 || add_permission_val == "true" )?1:0;
+                itemValue ["edit_permissions"] = (edit_permission_val == 1 || edit_permission_val == "true" )?1:0;
+                itemValue ["delete_permissions"] = (delete_permission_val == 1 || delete_permission_val == "true" )?1:0;
+                itemValue ["view_permissions"] = (view_permission_val == 1 || view_permission_val == "true" )?1:0;
+                itemValue ["parent_id"] = menu_parent_id;
+                items.push(itemValue);
+            });
+            let CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+            $.ajax({
+                /* the route pointing to the post function */
+                url: '/menus/set-all-permissions/'+employeeId,
+                type: 'POST',
+                /* send the csrf-token and the input to the controller */
+                // data: {_token: CSRF_TOKEN, 'ruleData':JSON.stringify(jsonObject)},
+                data: {
+                    _token: CSRF_TOKEN,
+                    'employeeId': employeeId,
+                    // 'rulesDate':JSON.stringify(items)
+                    'permissionsData':JSON.stringify(items)
+                },
+                dataType: 'JSON',
+                /* remind that 'data' is the response of the AjaxController */
+                success: function (data) {
+                    console.log("success response",data);
+                   // window.location.href = "/permissions/employee-list";
+                },
+                error: function (jqXHR, exception) {
+                    const jsonResp = JSON.parse(data.responseText);
+                    alert(jsonResp.message);
+                    location.reload();
+                },
+                failure: function (data) {
+                    console.log("failure response",data);
+                }
+            });
+        });
+
+        
+            $('select[name="communicationTemplateId"]').change(function() {
 
             let templateId = $(this).val();
 

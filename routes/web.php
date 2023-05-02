@@ -125,9 +125,10 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('menus/{id}', [MenusController::class, 'delete'])->name('menus.delete');
 
     // Menu Permission
-    Route::get('/menuspermission', [MenusPermissionController::class, 'index'])->name('menuspermission')->middleware('can:read master');
-    Route::post('/menuspermission', [MenusPermissionController::class, 'store'])->name('menuspermission')->middleware('can:create master');
-    Route::get('/menuspermission/{id}', [MenusPermissionController::class, 'edit'])->name('menuspermission/{id}')->middleware('can:update master');
+    Route::get('/permissions/employee-list', [MenusPermissionController::class, 'index'])->name('menuspermission')->middleware('can:read master');
+    Route::get('/permissions/menu-list/{employeeId}', [MenusPermissionController::class, 'managePermission'])->name('menuspermission')->middleware('can:read master');
+    Route::post('/menus/set-all-permissions/{employeeId}', [MenusPermissionController::class, 'setPermission'])->name('menuspermission/{id}')->middleware('can:update master');
+    Route::post('/menus/set-single-permissions/{employeeId}', [MenusPermissionController::class, 'setSinglePermission'])->name('menuspermission/{id}')->middleware('can:update master');
     Route::post('/menuspermission/{id}', [MenusPermissionController::class, 'update'])->name('menuspermission/{id}')->middleware('can:update master');
     Route::delete('menuspermission/{id}', [MenusPermissionController::class, 'delete'])->name('menuspermission.delete');
 
