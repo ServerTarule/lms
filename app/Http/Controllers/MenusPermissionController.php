@@ -76,8 +76,6 @@ class MenusPermissionController extends Controller
     }
 
 
-
-
     
     private function processSinglePermission($permissionData, $employeeId) {
         $menuId = $permissionData["menu_id"];
