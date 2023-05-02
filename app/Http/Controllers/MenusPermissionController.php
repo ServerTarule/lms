@@ -75,6 +75,10 @@ class MenusPermissionController extends Controller
         return response()->json(['message'=>'Employee menu permissions data updated successfuly.' ]);
     }
 
+
+
+
+    
     private function processSinglePermission($permissionData, $employeeId) {
         $menuId = $permissionData["menu_id"];
         $menu_ids = $this->getMenuHierarchy($menuId);
