@@ -18,7 +18,7 @@ class MenusPermissionController extends Controller
     public function managePermission($employeeId){
         $menuPermissions = DB::table('menus as m')->leftJoin('menu_permissions as mp', 'm.id', '=', 'mp.menu_id')->leftJoin('menus as parM', 'm.parent_id', '=', 'parM.id')
             ->select('m.*','parM.title as parentname', 'mp.id as mId', 'mp.menu_id', 'mp.employee_id', 'mp.add_permission', 'mp.edit_permission', 'mp.view_permission', 'mp.delete_permission', 'mp.created_at as mp_created_at')
-            ->orderBy('preference','asc')->get();
+            ->orderBy('preference','asc')->where('mp.employee_id', $employeeId)->get();
         return view('menus-permissions.edit',compact("menuPermissions","employeeId"));
     }
 
