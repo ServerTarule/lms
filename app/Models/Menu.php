@@ -63,9 +63,11 @@ class Menu extends Model
         return false;
     }
     
-    public function findDescendants(Menu $menu){
-        $this->descendants[] = $menu->id;
-    
+    public function findDescendants(Menu $menu,$currentId=0){
+        if($currentId !=  $menu->id) {
+            $this->descendants[] = $menu->id;
+        }
+     
         if($menu->hasChildren()){
             foreach($menu->children as $child){
                 $this->findDescendants($child);
@@ -73,8 +75,8 @@ class Menu extends Model
         }
     }
 
-    public function getDescendants(Menu $menu){
-        $this->findDescendants($menu);
+    public function getDescendants(Menu $menu, $currentId=0){
+        $this->findDescendants($menu,$currentId);
         return $this->descendants;
     }
 
