@@ -30,7 +30,10 @@ class Rule extends Model
     use HasFactory;
 
     protected $fillable = [
-      'name'/*,
+      'name',
+      'ruletype',
+      'rulefrequency',
+      'ruleschedule'/*,
       'rulecondition_id'*/
     ];
 

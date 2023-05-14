@@ -11,6 +11,7 @@ use App\Http\Controllers\DesignationController;
 use App\Http\Controllers\DoctorController;
 use App\Http\Controllers\HolidayController;
 use App\Http\Controllers\LocationController;
+use App\Http\Controllers\LogController;
 use App\Http\Controllers\MasterController;
 use App\Http\Controllers\DynamicMasterController;
 use App\Http\Controllers\EmployeeController;
@@ -147,6 +148,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/rules', [RulesController::class, 'index'])->name('rules.index')->middleware('can:read master');
     Route::get('/rules/create', [RulesController::class, 'create'])->name('rules.create')->middleware('can:read master');
     Route::post('/rules/store', [RulesController::class, 'store'])->name('rules.store')->middleware('can:read master');
+    Route::get('/rules/{id}', [RulesController::class, 'edit'])->name('rules.edit')->middleware('can:read master');
 //    Route::post('/rules/create', [RulesController::class, 'createrule'])->name('rules.create.post')->middleware('can:read master');
 
     //Conditions
@@ -180,6 +182,10 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/blogs', [BlogController::class, 'index'])->name('blogs.index')->middleware('can:read master');
     Route::get('/quotes', [QuoteController::class, 'index'])->name('quotes.index')->middleware('can:read master');
     Route::get('/occasions', [OccasionController::class, 'index'])->name('occasions.index')->middleware('can:read master');
+
+    //Logs
+    Route::get('/logs', [LogController::class, 'index'])->name('logs.index')->middleware('can:read master');
+    Route::get('/logs/leads/{$id}', [LogController::class, 'leadslogs'])->name('logs.leadslogs')->middleware('can:read master');
 
 
     //State

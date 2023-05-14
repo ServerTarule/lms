@@ -23,7 +23,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        view()->share('rule', null);
         view()->share('masters', []);
         view()->share('leadMasters', []);
+        view()->share('masterValues',[]);
     }
 }

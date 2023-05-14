@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use OwenIt\Auditing\Contracts\Auditable;
 
 /**
  * App\Models\LeadMaster
@@ -29,8 +30,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static \Illuminate\Database\Eloquent\Builder|LeadMaster whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-class LeadMaster extends Model
+class LeadMaster extends Model implements Auditable
 {
+    use \OwenIt\Auditing\Auditable;
+
     use HasFactory;
 
     protected $table = 'leadmasters';
@@ -51,5 +54,12 @@ class LeadMaster extends Model
 
     public function mastervalue() : BelongsTo {
         return $this->belongsTo(DynamicValue::class);
+    }
+
+    public function generateTags(): array
+    {
+        return [
+            $this->lead->id
+        ];
     }
 }

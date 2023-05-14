@@ -17,15 +17,8 @@ class ConditionsController extends Controller
 {
     public function create(Request $request) : View {
         $data = $request->query('data');
-//        dd($data);
         $ruleName = $request->query('ruleName');
-//        $masterId = $data['ruleMaster'];
-//        $masterId1 = $data['ruleMaster1'];
-//        $masterId2 = $data['ruleMaster2'];
-//        $masters = DynamicMain::wherein('id', [$masterId,$masterId1,$masterId2])->get(); //Need to use where in when multiple ids are available
-//        $masters = DynamicMain::wherein('id', [$masterId])->get(); //Need to use where in when multiple ids are available
-        $masters = DynamicMain::wherein('id', $data)->get(); //Need to use where in when multiple ids are available
-//        $masters=DynamicMain::where('master', '1')->get();
+        $masters = DynamicMain::wherein('id', $data)->get();
         return view('conditions.create', compact('ruleName','masters'));
 
         /*        $ruleName = $request->query('ruleName');
@@ -55,17 +48,21 @@ class ConditionsController extends Controller
     {
         $ruleName = $request->get('ruleName');
         $ruleData = $request->get('ruleData');
-//        Log::info($ruleName);
-//        Log::info($ruleData);
 
-        $rule = Rule::create(['name' => $ruleName]);
+        $ruleType = $request->get('ruleType');
+        $ruleFrequency = $request->get('ruleFrequency');
+        $ruleSchedule = $request->get('ruleSchedule');
+
+        Log::info($request);
+
+        $rule = Rule::create([
+            'name' => $ruleName,
+            'ruletype' => $ruleType,
+            'rulefrequency' => $ruleFrequency,
+            'ruleschedule' => $ruleSchedule
+        ]);
         $ruleId = $rule->id;
-//        Log::info($rule->id);
-
         $ruleConditions = json_decode( $ruleData, true );
-
-        $data = [];
-//        $rowConditionData = [];
 
         foreach($ruleConditions as $rule) {
 
@@ -73,14 +70,12 @@ class ConditionsController extends Controller
             $masters = $rule['master'];
             foreach ($masters as $master) {
                 $masterDataItem = $master;
-//                Log::info($master);
             }
 
             $masterOperationItem = null;
             $masterOperations = $rule['masterOperations'];
             foreach($masterOperations as $masterOperation) {
                 $masterOperationItem = $masterOperation;
-//                Log::info($masterOperation);
             }
 
             $masterValues = $rule['masterValues'];

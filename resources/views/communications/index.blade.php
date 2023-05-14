@@ -60,9 +60,9 @@
                             @foreach ($communications as $communication)
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
-                                    <td>{{ $communication->rule->name }}</td>
+                                    <td>{{ $communication->rule?->name }}</td>
                                     <td>{{ $communication->type }}</td>
-                                    <td>{{ $communication->template->name }}</td>
+                                    <td>{{ $communication->template?->name }}</td>
                                     <td>{{ $communication->words }}</td>
                                     <td><a href="/communications/{{$communication->id}}/leads">{{ $communication->leads()->count() }}</a></td>
 {{--                                    <td></td>--}}
@@ -137,7 +137,7 @@
                                         <textarea class="form-control" id="communicationTemplateBody" name="communicationTemplateBody" placeholder="Please type here.."></textarea>
                                     </div>
                                     <div class="col-md-6 form-group">
-                                        <label class="control-label"><input type="radio" value="scheduled" id="communicationSchedule" name="schedule"/>Scheduled</label>
+                                        <label class="control-label"><input type="radio" value="scheduled" id="communicationSchedule" name="schedule" checked/>Scheduled</label>
                                     </div>
                                     <div class="col-md-6 form-group">
                                         <label class="control-label"><input type="radio" value="now" id="communicationNow" name="schedule"/>Send Now</label>

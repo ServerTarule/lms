@@ -5,11 +5,13 @@ namespace App\Http\Controllers;
 use App\Models\DynamicMain;
 use App\Models\DynamicValue;
 use App\Models\Rule;
+use App\Models\RuleCondition;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
 use Illuminate\View\View;
+use stdClass;
 
 class RulesController extends Controller
 {
@@ -36,7 +38,7 @@ class RulesController extends Controller
 //            $property = 'ruleName_'.$i;
             $data[] = $request->input('ruleMaster_'.$i);
         }
-
+        $data[] = 99; // Date Range Master
 //        $ruleName = $request->input('ruleName');
 
 
@@ -51,6 +53,39 @@ class RulesController extends Controller
         $ruleName = $request->input('ruleName');
 //        $ruleMaster = $request->input('ruleMaster');
         return redirect()->route('conditions.create', compact('ruleName', 'data'));
+    }
+
+    public function edit($id) : View {
+        $rule = Rule::find($id);
+        $ruleConditions = RuleCondition::where('rule_id', $rule->id)->get();
+        $ruleConditionMasters = array();
+        $masterValues = array();
+        foreach ($ruleConditions as $ruleCondition) {
+            Log::info($ruleCondition);
+            $ruleConditionMasters[] = $ruleCondition->master_id;
+            $masterValues[$ruleCondition->master_id]['clause']=$ruleCondition->condition;
+            $masterValues[$ruleCondition->master_id][]=$ruleCondition->mastervalue_id;
+        }
+        $masters = DynamicMain::whereIn('id', collect(array_values($ruleConditionMasters))->unique())->get();
+        Log::info($masterValues);
+
+//        $ruleConditionMasters = array();
+//        $masters = array();
+//        foreach ($ruleConditions as $ruleCondition) {
+//            $ruleConditionMasters[] = $ruleCondition->master_id;
+//        }
+//        $uniqueRuleConditionMasters = collect(array_values($ruleConditionMasters))->unique();
+//        foreach ($uniqueRuleConditionMasters as $key => $value) {
+//             $rulesConditionsForMasters = RuleCondition::where('rule_id', $rule->id)->where('master_id', $value)->get()->toArray();
+//             $mastersValues = array();
+//             foreach ($rulesConditionsForMasters as $rulesConditionsForMaster) {
+//                 $mastersValues[] = $rulesConditionsForMaster;
+//             }
+//            $masters[$value] = $mastersValues;
+//        }
+//        Log::info($masters);
+//        $mastersJSON = json_encode($masters);
+        return view('rules.edit', compact('rule','masters','masterValues'));
     }
 
 }

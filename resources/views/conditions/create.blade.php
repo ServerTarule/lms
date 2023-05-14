@@ -52,7 +52,7 @@
                                 </div>
                                 <div class="panel-body">
                                     <div class="form-group">
-                                        <select class="form-control" name="ruleMaster" id="ruleMaster_{{ $master -> id }}" multiple>
+                                        <select class="form-control" name="ruleMaster" id="ruleMaster_{{ $master -> id }}" multiple >
                                             <option disabled>-- Select Condition --</option>
                                             @php
                                                 $values = $master->values()->get();
@@ -60,11 +60,21 @@
                                             @foreach($values as $value)
                                                 <option value="{{ $value->id }}">{{ $value->name }}</option>
                                             @endforeach
-{{--                                            @foreach($mainmasters as $mainmasters)--}}
-{{--                                                <option value="{{ $mainmasters -> id }}">{{ $mainmasters -> name }}</option>--}}
-{{--                                            @endforeach--}}
                                         </select>
                                     </div>
+{{--                                        <select class="form-control" name="ruleMaster" id="ruleMaster_{{ $master -> id }}" @if($master -> id != 99) multiple @endif >--}}
+{{--                                            <option disabled>-- Select Condition --</option>--}}
+{{--                                            @php--}}
+{{--                                                $values = $master->values()->get();--}}
+{{--                                            @endphp--}}
+{{--                                            @foreach($values as $value)--}}
+{{--                                                <option value="{{ $value->id }}">{{ $value->name }}</option>--}}
+{{--                                            @endforeach--}}
+{{--                                            @foreach($mainmasters as $mainmasters)--}}
+{{--                                                <option     value="{{ $mainmasters -> id }}">{{ $mainmasters -> name }}</option>--}}
+{{--                                            @endforeach--}}
+{{--                                        </select>--}}
+{{--                                    </div>--}}
                                 </div>
                             </div>
                         </div>
@@ -84,32 +94,57 @@
                         @endif
                         @endforeach
                     </div>
-
-                <div>
-                    <div class="col-md-1"></div>
-                    <div class="col-md-3">
-                        <div class="panel panel-bd">
-                            <div class="panel-heading">
-                                <div class="btn-group">
-                                    <a>
-                                        <h4>Date Range<span class="required"> * </span></h4>
-                                    </a>
-                                </div>
+                        <div class="col-md-12">
+                            <div class="col-md-2 form-group">
+                                <label class="control-label"><input type="radio" value="inbound" id="inboundRule" name="ruleType"/> Inbound</label>
                             </div>
-                            <div class="panel-body">
-                                <div class="form-group">
-                                    <select class="form-control" name="ruleMasterDateRange" id="ruleMasterDateRange">
-                                        <option value="NA">-- Select Date Range --</option>
-                                        <option value="7">7 Days</option>
-                                        <option value="14">14 Days</option>
-                                        <option value="30">1 Month</option>
-                                        <option value="60">2 Months</option>
-                                    </select>
-                                </div>
+                            <div class="col-md-2 form-group">
+                                <label class="control-label"><input type="radio" value="outbound" id="outboundRule" name="ruleType" checked/>   Outbound</label>
+                            </div>
+                        </div>
+                        <div class="col-md-12" id="outboundDiv">
+                            <div class="col-md-2 form-group">
+                                <label class="control-label">Frequency</label>
+                                <input type="number" id="ruleFrequency" name="ruleFrequency" placeholder="Enter Frequency" class="form-control">
+                            </div>
+                            <div class="col-md-2 form-group">
+                                <label class="control-label">Schedule</label>
+                                <select class="form-control" name="ruleSchedule" id="ruleSchedule" >
+                                    <option>-- Select Schedule --</option>
+                                    <option value="Days">Days</option>
+                                    <option value="Weeks">Weeks</option>
+                                    <option value="Months">Months</option>
+                                    <option value="Years">Years</option>
+                                </select>
                             </div>
                         </div>
                     </div>
-                </div>
+
+{{--                <div>--}}
+{{--                    <div class="col-md-1"></div>--}}
+{{--                    <div class="col-md-3">--}}
+{{--                        <div class="panel panel-bd">--}}
+{{--                            <div class="panel-heading">--}}
+{{--                                <div class="btn-group">--}}
+{{--                                    <a>--}}
+{{--                                        <h4>Date Range<span class="required"> * </span></h4>--}}
+{{--                                    </a>--}}
+{{--                                </div>--}}
+{{--                            </div>--}}
+{{--                            <div class="panel-body">--}}
+{{--                                <div class="form-group">--}}
+{{--                                    <select class="form-control" name="ruleMasterDateRange" id="ruleMasterDateRange">--}}
+{{--                                        <option value="NA">-- Select Date Range --</option>--}}
+{{--                                        <option value="7">7 DAYS</option>--}}
+{{--                                        <option value="14">14 DAYS</option>--}}
+{{--                                        <option value="30">1 MONTH</option>--}}
+{{--                                        <option value="60">2 MONTHS</option>--}}
+{{--                                    </select>--}}
+{{--                                </div>--}}
+{{--                            </div>--}}
+{{--                        </div>--}}
+{{--                    </div>--}}
+{{--                </div>--}}
 
                     <div class="col-sm-12">
                         <div class="form-group">

@@ -196,8 +196,8 @@
                             <li><a href="/leadupload">Upload Data</a></li>
                         </ul>
                     </li>
-                    <li class="treeview">
-                        <a href="logReport.php">
+                    <li class="preview">
+                        <a href="/logs">
                             <i class="fa fa-book"></i><span>Log Report</span>
                         </a>
                     </li>
@@ -326,6 +326,25 @@
             // $("#ruleNameNext").click(function(){
             //     $("ruleNameForm").submit(); // Submit the form
             // });
+
+            let conditionMasterValues = <?php echo json_encode($masterValues) ?>;
+            let rule = <?php echo $rule ?>;
+            $.each(conditionMasterValues, function(key, value) {
+                let multipleValues = [];
+                $.each(value, function(k,v) {
+                    // console.log(v);
+                    if (v === 'and' || v === 'or') {
+                        $("#ruleConditionClause_"+key+"").val(v);
+                    }
+                    multipleValues.push(v);
+                });
+                $("#ruleConditionMaster_"+key+"").val(multipleValues);
+            });
+
+            $("#ruleType").val(rule['ruletype']);
+            $("#ruleFrequency").val(rule['rulefrequency']);
+            $("#ruleSchedule").val(rule['ruleschedule']);
+
         });
     </script>
     <script>
@@ -494,12 +513,15 @@
                 // jsonObject.name = $('#ruleName').val();
                 let ruleName = $('#ruleName').val();
                 let ruleMasterData = $('#ruleMasters').val();
+                let ruleType = $("input[name='ruleType']:checked").val();
+                let ruleFrequency = $('#ruleFrequency').val();
+                let ruleSchedule = $('#ruleSchedule :selected').text();
                 let items = [];
                 $.each(JSON.parse(ruleMasterData), function (key, value) {
                     // item ["master"] = value.id;
 
                     let itemValue = {};
-                    let master = []
+                    let master = [];
                     let masterValues = [];
                     let masterOperations = [];
 
@@ -521,7 +543,6 @@
                 //jsonObject.push(items)
                 // console.log(JSON.stringify(items));
 
-
             let CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
             $.ajaxSetup({
                 headers: {
@@ -534,7 +555,14 @@
                 type: 'POST',
                 /* send the csrf-token and the input to the controller */
                 // data: {_token: CSRF_TOKEN, 'ruleData':JSON.stringify(jsonObject)},
-                    data: {_token: CSRF_TOKEN, 'ruleName': ruleName, 'ruleData':JSON.stringify(items)},
+                    data: {
+                        _token: CSRF_TOKEN,
+                        'ruleName': ruleName,
+                        'ruleData':JSON.stringify(items),
+                        'ruleType': ruleType,
+                        'ruleFrequency': ruleFrequency,
+                        'ruleSchedule':ruleSchedule
+                    },
                 // data: $(this).serialize(),
                 dataType: 'JSON',
                 /* remind that 'data' is the response of the AjaxController */
@@ -707,7 +735,7 @@
 
         });
 
-        $("#communicationSchedule").prop('checked', true);
+        // $("#communicationSchedule").prop('checked', true);
 
         $("#communicationSchedule").click(function() {
             $("#communicationScheduleDiv *").prop('disabled',false);
@@ -717,6 +745,14 @@
         $("#communicationNow").click(function() {
             $("#communicationNowDiv *").prop('disabled',true);
             $("#communicationScheduleDiv *").prop('disabled',true);
+        });
+
+        $("#inboundRule").click(function() {
+            $("#outboundDiv *").prop('disabled',true);
+        });
+
+        $("#outboundRule").click(function() {
+            $("#outboundDiv *").prop('disabled',false);
         });
 
         $('select[name="scheduleUnit"]').change(function() {

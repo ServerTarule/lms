@@ -16,6 +16,9 @@ return new class extends Migration
         Schema::create('rules', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->string('ruletype');
+            $table->integer('rulefrequency');
+            $table->string('ruleschedule');
             $table->timestamps();
         });
     }
