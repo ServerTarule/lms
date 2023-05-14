@@ -12,6 +12,7 @@
         "vite": "^4.0.0"
     },
     "dependencies": {
+        "bootbox": "^6.0.0",
         "fullcalendar": "^6.1.5"
     }
 }

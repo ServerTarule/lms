@@ -6,6 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <!-- <meta name="viewport" content="width=device-width, initial-scale=1"> -->
     <meta name="csrf-token" content="{{ csrf_token() }}" >
+
 {{--    <title>CRM Admin | @yield('title')</title>--}}
 {{--    <link rel="shortcut icon" href="{{ asset('assets/dist/img/mini-logo.png') }}" type="image/x-icon">--}}
     <link href="{{ asset('assets/plugins/jquery-ui-1.12.1/jquery-ui.min.css') }}" rel="stylesheet" type="text/css" />
@@ -27,6 +28,7 @@
     @livewireStyles
 
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.5/index.global.min.js'></script>
+
 {{--    <script>--}}
 
 {{--        document.addEventListener('DOMContentLoaded', function() {--}}
@@ -276,7 +278,9 @@
 {{--    <script src="{{ asset('assets//plugins/fullcalendar/fullcalendar.min.js') }}" type="text/javascript"></script>--}}
 {{--    <script src="{{ asset('assets//plugins/fullcalendar/lib/moment.min.js') }}" type="text/javascript"></script>--}}
 {{--    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>--}}
-    <script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/5.5.2/bootbox.min.js"></script>
+    
+<script>        
         $(document).ready(function() {
 
             {{--$('#day').datepicker({--}}
@@ -805,7 +809,154 @@
             });
         });
 
-        $('select[name="communicationTemplateId"]').change(function() {
+
+        $(".update-menu-permission").click(function(){
+            const self = this;
+            bootbox.confirm({
+                message: "Are you sure? Updating permission(s) on a menu will change permissions for child menus as well.",
+                callback: function (confirm) {
+                    if(confirm) {
+                        processSingleMenuPermissionUpdate(self);
+                    }
+                }
+            });
+            
+        });
+
+        function processSingleMenuPermissionUpdate(self) {
+            const datamenuid = $(self).attr("data-menuid");
+            const dataempid = $(self).attr("data-empid");
+            let employeeId = $("#employeeId").val();
+            console.log("---datamenuid--",datamenuid,"===dataempid==",dataempid);
+            const add_permission_val =  $('#add_menu_' + datamenuid).val();
+            const edit_permission_val =  $('#edit_menu_' + datamenuid).val();
+            const delete_permission_val =  $('#delete_menu_' + datamenuid).val();
+            const view_permission_val =  $('#view_menu_' + datamenuid).val();
+            const menu_parent_id =  $('#parent_menu_' + datamenuid).val();
+            console.log("--menu_parent_id-",menu_parent_id);
+            const permissionData = {
+                'menu_id':datamenuid,
+                'employee_id':employeeId,
+                'add_permissions':(add_permission_val == 1 || add_permission_val == "true" )?1:0,
+                'edit_permissions':(edit_permission_val == 1 || edit_permission_val == "true" )?1:0,
+                'delete_permissions':(delete_permission_val == 1 || delete_permission_val == "true" )?1:0,
+                'view_permissions':(view_permission_val == 1 || view_permission_val == "true" )?1:0,
+                'parent_id' : menu_parent_id
+            }
+
+            console.log(permissionData);
+            let CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+            $.ajax({
+                /* the route pointing to the post function */
+                url: '/menus/set-single-permissions/'+employeeId,
+                type: 'POST',
+                /* send the csrf-token and the input to the controller */
+                // data: {_token: CSRF_TOKEN, 'ruleData':JSON.stringify(jsonObject)},
+                data: {
+                    _token: CSRF_TOKEN,
+                    'employeeId': employeeId,
+                    // 'rulesDate':JSON.stringify(items)
+                    'permissionData':JSON.stringify(permissionData)
+                },
+                dataType: 'JSON',
+                /* remind that 'data' is the response of the AjaxController */
+                success: function (response) {
+                    if(response?.message) {
+                        bootbox.confirm({
+                            message: "<p class='text-success ml-3 px-3 p-3 font-weight-bold'>"+response.message+"</p><p></p><p class='text-center font-weight-bold'><ul><li>Click 'OK' to redirect to employee list page.</li><li> Click 'Cancel' to reload the page. </li></ul></p>",
+                            callback: function (confirm) {
+                                if(confirm) {
+                                    window.location.href = "/permissions/employee-list";
+                                }
+                                else {
+                                    window.location.reload();
+                                }
+                            }
+                        })
+                    }
+                },
+                failure: function (data) {
+                    console.log("failure response",data);
+                    bootbox.alert("Request Failed!");
+                },
+                done: function (data) {
+                    bootbox.alert("Request Completed!");
+                },
+
+                error: function (data) {
+                    if(data?.responseText) {
+                        const jsonResp = JSON.parse(data.responseText);
+                        bootbox.alert(jsonResp.message);
+                        location.reload();
+                    }
+                   
+                }
+            });
+        }
+
+        $("#employeeMenuPermissionbtn").click(function(){
+            let employeeId = $("#employeeId").val();
+            let allPermissions = $("#allPermissions").val();
+            console.log("---allPermissions--",allPermissions);
+            let items = [];
+            $.each(JSON.parse(allPermissions), function (key, value) {
+                let itemValue = {};
+                itemValue ["id"] = value.mId;
+                itemValue ["menu_id"] = value.id;
+                const add_permission_val =  $('#add_menu_' + value.id).val();
+                const edit_permission_val =  $('#edit_menu_' + value.id).val();
+                const delete_permission_val =  $('#delete_menu_' + value.id).val();
+                const view_permission_val =  $('#view_menu_' + value.id).val();
+                const menu_parent_id =  $('#parent_menu_' + value.id).val();
+                itemValue ["add_permissions"] = (add_permission_val == 1 || add_permission_val == "true" )?1:0;
+                itemValue ["edit_permissions"] = (edit_permission_val == 1 || edit_permission_val == "true" )?1:0;
+                itemValue ["delete_permissions"] = (delete_permission_val == 1 || delete_permission_val == "true" )?1:0;
+                itemValue ["view_permissions"] = (view_permission_val == 1 || view_permission_val == "true" )?1:0;
+                itemValue ["parent_id"] = menu_parent_id;
+                items.push(itemValue);
+            });
+            let CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+            $.ajax({
+                /* the route pointing to the post function */
+                url: '/menus/set-all-permissions/'+employeeId,
+                type: 'POST',
+                /* send the csrf-token and the input to the controller */
+                // data: {_token: CSRF_TOKEN, 'ruleData':JSON.stringify(jsonObject)},
+                data: {
+                    _token: CSRF_TOKEN,
+                    'employeeId': employeeId,
+                    // 'rulesDate':JSON.stringify(items)
+                    'permissionsData':JSON.stringify(items)
+                },
+                dataType: 'JSON',
+                /* remind that 'data' is the response of the AjaxController */
+                success: function (data) {
+                    console.log("success response",data);
+                   // window.location.href = "/permissions/employee-list";
+                },
+                error: function (jqXHR, exception) {
+                    const jsonResp = JSON.parse(data.responseText);
+                    alert(jsonResp.message);
+                    location.reload();
+                },
+                failure: function (data) {
+                    console.log("failure response",data);
+                }
+            });
+        });
+
+        
+            $('select[name="communicationTemplateId"]').change(function() {
 
             let templateId = $(this).val();
 
