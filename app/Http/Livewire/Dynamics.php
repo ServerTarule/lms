@@ -11,6 +11,7 @@ class Dynamics extends Component
     {
         $master=DynamicMain::where('master',0)->orderBy('id')->get();
         $main=DynamicMain::where('master',1)->orderBy('id')->get();
-        return view('livewire.dynamics',['masters'=> $master,'main'=>$main]);
+        $menu =[];
+        return view('livewire.dynamics',['masters'=> $master,'main'=>$main,"menu"=>$menu]);
     }
 }

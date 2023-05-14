@@ -29,6 +29,9 @@ use App\Http\Controllers\CenterController;
 use App\Http\Controllers\TemplateController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\MenusController;
+use App\Http\Controllers\MenusPermissionController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -111,6 +114,25 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/master', [MasterController::class, 'store'])->name('master')->middleware('can:create master');
     Route::get('/master/{id}', [MasterController::class, 'edit'])->name('master/{id}')->middleware('can:update master');
     Route::post('/master/{id}', [MasterController::class, 'update'])->name('master/{id}')->middleware('can:update master');
+
+
+
+
+    // Menu
+    Route::get('/menus', [MenusController::class, 'index'])->name('menus')->middleware('can:read master');
+    Route::post('/menus', [MenusController::class, 'store'])->name('menus')->middleware('can:create master');
+    Route::get('/menus/{id}', [MenusController::class, 'edit'])->name('menus/{id}')->middleware('can:update master');
+    Route::post('/menus/{id}', [MenusController::class, 'update'])->name('menus/{id}')->middleware('can:update master');
+    Route::delete('menus/{id}', [MenusController::class, 'delete'])->name('menus.delete');
+
+    // Menu Permission
+    Route::get('/permissions/employee-list', [MenusPermissionController::class, 'index'])->name('menuspermission')->middleware('can:read master');
+    Route::get('/permissions/menu-list/{employeeId}', [MenusPermissionController::class, 'managePermission'])->name('menuspermission')->middleware('can:read master');
+    Route::post('/menus/set-all-permissions/{employeeId}', [MenusPermissionController::class, 'setPermission'])->name('menuspermission/{id}')->middleware('can:update master');
+    Route::post('/menus/set-single-permissions/{employeeId}', [MenusPermissionController::class, 'setSinglePermission'])->name('menuspermission/{id}')->middleware('can:update master');
+    Route::post('/menuspermission/{id}', [MenusPermissionController::class, 'update'])->name('menuspermission/{id}')->middleware('can:update master');
+    Route::delete('menuspermission/{id}', [MenusPermissionController::class, 'delete'])->name('menuspermission.delete');
+
 
     // Main Master
     Route::get('/master/main/{id}', [MainMasterController::class, 'index'])->name('/master/main/{id}')->middleware('can:read master');
