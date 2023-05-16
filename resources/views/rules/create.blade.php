@@ -54,9 +54,7 @@
                                                     <select class="form-control" name="ruleMaster_1" id="ruleMaster_1">
                                                         <option selected disabled>-- Select Condition --</option>
                                                         @foreach($masters as $master)
-                                                            @if($master -> id != 99)
-                                                            <option value="{{ $master -> id }}" >{{ $master -> name }}</option>
-                                                            @endif
+                                                        <option value="{{ $master -> id }}" >{{ $master -> name }}</option>
                                                         @endforeach
                                                     </select>
                                                 </td>

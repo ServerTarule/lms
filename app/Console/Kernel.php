@@ -26,12 +26,11 @@ class Kernel extends ConsoleKernel
 
         $communicationSchedules = Communication::all();
         foreach ($communicationSchedules as $communicationSchedule) {
-            Log::info($communicationSchedule->schedule);
             if ($communicationSchedule->schedule != 'now') {
                 $schedule->command('processcommunicationschedules:cron', [$communicationSchedule])->cron($communicationSchedule->schedule);
             }
         }
-//        $schedule->command('openleadsassignment:cron')->everyMinute();
+        $schedule->command('openleadsassignment:cron')->everyMinute();
     }
 
     /**
