@@ -219,4 +219,11 @@ class CommunicationController extends Controller
 
         return response()->json(['template' => $template, 'success' => 'Received template data']);
     }
+
+    public function destroy(Request $request) : JsonResponse {
+        $id = $request->get('id');
+        Communication::where('id', $id)->delete();
+
+        return response()->json(['success' => 'Received rule data']);
+    }
 }

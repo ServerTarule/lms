@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use App\Models\Template;
@@ -32,6 +33,13 @@ class TemplateController extends Controller
         $templates = Template::all();
         return redirect()->route('templates.index', compact('templates'));
 
+    }
+
+    public function destroy(Request $request) : JsonResponse {
+        $id = $request->get('id');
+        Template::where('id', $id)->delete();
+
+        return response()->json(['success' => 'Received rule data']);
     }
 
 }

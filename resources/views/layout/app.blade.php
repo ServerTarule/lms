@@ -122,7 +122,7 @@
                             <li><a href="/menu">Create Menu</a></li>
 
                         </ul>
-                        
+
                     </li>
                     <li class="treeview">
                         <a href="#">
@@ -193,8 +193,6 @@
                         </a>
                         <ul class="treeview-menu">
                             <li><a href="/role">Roles</a></li>
-                            <li><a href="/permission">Permissions</a></li>
-                            <!-- <li><a href="Employee_authority.php">Employee Permissions</a></li> -->
                         </ul>
                     </li>
                     <li class="treeview">
@@ -279,8 +277,8 @@
 {{--    <script src="{{ asset('assets//plugins/fullcalendar/lib/moment.min.js') }}" type="text/javascript"></script>--}}
 {{--    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>--}}
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/5.5.2/bootbox.min.js"></script>
-    
-<script>        
+
+<script>
         $(document).ready(function() {
 
             {{--$('#day').datepicker({--}}
@@ -366,6 +364,391 @@
         });
     </script>
     <script>
+
+        function deleteRule(id) {
+            if(confirm("Are you sure you want to delete this rule?")){
+                let CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
+                $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }
+                });
+                $.ajax({
+                    /* the route pointing to the post function */
+                    url: '/conditions/destroy',
+                    type: 'POST',
+                    /* send the csrf-token and the input to the controller */
+                    // data: {_token: CSRF_TOKEN, 'ruleData':JSON.stringify(jsonObject)},
+                    data: {
+                        _token: CSRF_TOKEN,
+                        'id': id
+                    },
+                    // data: $(this).serialize(),
+                    dataType: 'JSON',
+                    /* remind that 'data' is the response of the AjaxController */
+                    success: function (data) {
+                        console.log(data);
+                        window.location.href = "/rules";
+                    },
+                    failure: function (data) {
+                        console.log(data);
+                    }
+                });
+            }
+            else{
+                return false;
+            }
+        }
+
+        function deleteMaster(id) {
+            if(confirm("Are you sure you want to delete this master?")){
+                let CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
+                $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }
+                });
+                $.ajax({
+                    /* the route pointing to the post function */
+                    url: '/master/destroy',
+                    type: 'POST',
+                    /* send the csrf-token and the input to the controller */
+                    // data: {_token: CSRF_TOKEN, 'ruleData':JSON.stringify(jsonObject)},
+                    data: {
+                        _token: CSRF_TOKEN,
+                        'id': id
+                    },
+                    // data: $(this).serialize(),
+                    dataType: 'JSON',
+                    /* remind that 'data' is the response of the AjaxController */
+                    success: function (data) {
+                        console.log(data);
+                        window.location.href = "/master";
+                    },
+                    failure: function (data) {
+                        console.log(data);
+                    }
+                });
+            }
+            else{
+                return false;
+            }
+        }
+
+        function deleteMainMaster(id, masterid) {
+            if(confirm("Are you sure you want to delete this?")){
+                let CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
+                $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }
+                });
+                $.ajax({
+                    /* the route pointing to the post function */
+                    url: '/master/main/destroy',
+                    type: 'POST',
+                    /* send the csrf-token and the input to the controller */
+                    // data: {_token: CSRF_TOKEN, 'ruleData':JSON.stringify(jsonObject)},
+                    data: {
+                        _token: CSRF_TOKEN,
+                        'id': id
+                    },
+                    // data: $(this).serialize(),
+                    dataType: 'JSON',
+                    /* remind that 'data' is the response of the AjaxController */
+                    success: function (data) {
+                        console.log(data);
+                        window.location.href = "/master/main/"+masterid;
+                    },
+                    failure: function (data) {
+                        console.log(data);
+                    }
+                });
+            }
+            else{
+                return false;
+            }
+        }
+
+        function deleteDynamicMaster(id, masterid) {
+            if(confirm("Are you sure you want to delete this master?")){
+                let CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
+                $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }
+                });
+                $.ajax({
+                    /* the route pointing to the post function */
+                    url: '/dynamic/destroy',
+                    type: 'POST',
+                    /* send the csrf-token and the input to the controller */
+                    // data: {_token: CSRF_TOKEN, 'ruleData':JSON.stringify(jsonObject)},
+                    data: {
+                        _token: CSRF_TOKEN,
+                        'id': id
+                    },
+                    // data: $(this).serialize(),
+                    dataType: 'JSON',
+                    /* remind that 'data' is the response of the AjaxController */
+                    success: function (data) {
+                        console.log(data);
+                        window.location.href = "/dynamic/"+masterid;
+                    },
+                    failure: function (data) {
+                        console.log(data);
+                    }
+                });
+            }
+            else{
+                return false;
+            }
+        }
+
+        function deleteTemplate(id) {
+            if(confirm("Are you sure you want to delete this template?")){
+                let CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
+                $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }
+                });
+                $.ajax({
+                    /* the route pointing to the post function */
+                    url: '/templates/destroy',
+                    type: 'POST',
+                    /* send the csrf-token and the input to the controller */
+                    // data: {_token: CSRF_TOKEN, 'ruleData':JSON.stringify(jsonObject)},
+                    data: {
+                        _token: CSRF_TOKEN,
+                        'id': id
+                    },
+                    // data: $(this).serialize(),
+                    dataType: 'JSON',
+                    /* remind that 'data' is the response of the AjaxController */
+                    success: function (data) {
+                        console.log(data);
+                        window.location.href = "/templates";
+                    },
+                    failure: function (data) {
+                        console.log(data);
+                    }
+                });
+            }
+            else{
+                return false;
+            }
+        }
+
+        function deleteHoliday(id) {
+            if(confirm("Are you sure you want to delete this holiday?")){
+                let CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
+                $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }
+                });
+                $.ajax({
+                    /* the route pointing to the post function */
+                    url: '/holidays/destroy',
+                    type: 'POST',
+                    /* send the csrf-token and the input to the controller */
+                    // data: {_token: CSRF_TOKEN, 'ruleData':JSON.stringify(jsonObject)},
+                    data: {
+                        _token: CSRF_TOKEN,
+                        'id': id
+                    },
+                    // data: $(this).serialize(),
+                    dataType: 'JSON',
+                    /* remind that 'data' is the response of the AjaxController */
+                    success: function (data) {
+                        console.log(data);
+                        window.location.href = "/holidays";
+                    },
+                    failure: function (data) {
+                        console.log(data);
+                    }
+                });
+            }
+            else{
+                return false;
+            }
+        }
+
+        function deleteDoctor(id) {
+            if(confirm("Are you sure you want to delete this doctor?")){
+                let CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
+                $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }
+                });
+                $.ajax({
+                    /* the route pointing to the post function */
+                    url: '/doctors/destroy',
+                    type: 'POST',
+                    /* send the csrf-token and the input to the controller */
+                    // data: {_token: CSRF_TOKEN, 'ruleData':JSON.stringify(jsonObject)},
+                    data: {
+                        _token: CSRF_TOKEN,
+                        'id': id
+                    },
+                    // data: $(this).serialize(),
+                    dataType: 'JSON',
+                    /* remind that 'data' is the response of the AjaxController */
+                    success: function (data) {
+                        console.log(data);
+                        window.location.href = "/doctors";
+                    },
+                    failure: function (data) {
+                        console.log(data);
+                    }
+                });
+            }
+            else{
+                return false;
+            }
+        }
+
+        function deleteCenter(id) {
+            if(confirm("Are you sure you want to delete this center?")){
+                let CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
+                $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }
+                });
+                $.ajax({
+                    /* the route pointing to the post function */
+                    url: '/centers/destroy',
+                    type: 'POST',
+                    /* send the csrf-token and the input to the controller */
+                    // data: {_token: CSRF_TOKEN, 'ruleData':JSON.stringify(jsonObject)},
+                    data: {
+                        _token: CSRF_TOKEN,
+                        'id': id
+                    },
+                    // data: $(this).serialize(),
+                    dataType: 'JSON',
+                    /* remind that 'data' is the response of the AjaxController */
+                    success: function (data) {
+                        console.log(data);
+                        window.location.href = "/centers";
+                    },
+                    failure: function (data) {
+                        console.log(data);
+                    }
+                });
+            }
+            else{
+                return false;
+            }
+        }
+
+        function deleteLeave(id, employeeid) {
+            if(confirm("Are you sure you want to delete this leave?")){
+                let CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
+                $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }
+                });
+                $.ajax({
+                    /* the route pointing to the post function */
+                    url: '/leaves/destroy',
+                    type: 'POST',
+                    /* send the csrf-token and the input to the controller */
+                    // data: {_token: CSRF_TOKEN, 'ruleData':JSON.stringify(jsonObject)},
+                    data: {
+                        _token: CSRF_TOKEN,
+                        'id': id
+                    },
+                    // data: $(this).serialize(),
+                    dataType: 'JSON',
+                    /* remind that 'data' is the response of the AjaxController */
+                    success: function (data) {
+                        console.log(data);
+                        window.location.href = "/leaves/"+employeeid;
+                    },
+                    failure: function (data) {
+                        console.log(data);
+                    }
+                });
+            }
+            else{
+                return false;
+            }
+        }
+
+        function deleteRole(id) {
+            if(confirm("Are you sure you want to delete this role?")){
+                let CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
+                $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }
+                });
+                $.ajax({
+                    /* the route pointing to the post function */
+                    url: '/role/destroy',
+                    type: 'POST',
+                    /* send the csrf-token and the input to the controller */
+                    // data: {_token: CSRF_TOKEN, 'ruleData':JSON.stringify(jsonObject)},
+                    data: {
+                        _token: CSRF_TOKEN,
+                        'id': id
+                    },
+                    // data: $(this).serialize(),
+                    dataType: 'JSON',
+                    /* remind that 'data' is the response of the AjaxController */
+                    success: function (data) {
+                        console.log(data);
+                        window.location.href = "/role";
+                    },
+                    failure: function (data) {
+                        console.log(data);
+                    }
+                });
+            }
+            else{
+                return false;
+            }
+        }
+
+        function deleteCommunication(id) {
+            if(confirm("Are you sure you want to delete this schedule?")){
+                let CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
+                $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }
+                });
+                $.ajax({
+                    /* the route pointing to the post function */
+                    url: '/communications/destroy',
+                    type: 'POST',
+                    /* send the csrf-token and the input to the controller */
+                    // data: {_token: CSRF_TOKEN, 'ruleData':JSON.stringify(jsonObject)},
+                    data: {
+                        _token: CSRF_TOKEN,
+                        'id': id
+                    },
+                    // data: $(this).serialize(),
+                    dataType: 'JSON',
+                    /* remind that 'data' is the response of the AjaxController */
+                    success: function (data) {
+                        console.log(data);
+                        window.location.href = "/communications";
+                    },
+                    failure: function (data) {
+                        console.log(data);
+                    }
+                });
+            }
+            else{
+                return false;
+            }
+        }
 
         function handleChange(cb) {
             console.log("Changed, new value = " + cb.checked);
@@ -856,7 +1239,7 @@
                     }
                 }
             });
-            
+
         });
 
         function processSingleMenuPermissionUpdate(self) {
@@ -930,7 +1313,7 @@
                         bootbox.alert(jsonResp.message);
                         location.reload();
                     }
-                   
+
                 }
             });
         }
@@ -991,7 +1374,7 @@
             });
         });
 
-        
+
             $('select[name="communicationTemplateId"]').change(function() {
 
             let templateId = $(this).val();

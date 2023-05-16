@@ -6,6 +6,7 @@ use App\Models\DynamicMain;
 use App\Models\DynamicValue;
 use App\Models\Employee;
 use App\Models\State;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -51,13 +52,20 @@ class MainMasterController extends Controller
 
     }
 
-    public function remove($id){
-        $employee=Employee::where('id',$id)->delete(['id'=>$id]);
-       // $employee=Employee::find('id',$id)->delete();
-      //  echo $employee;
-        if($employee){
-            return redirect()->back()->with('status', 'User Remove From Master Successfully');
-         }
-         return redirect()->back()->with('error', 'Something Went Wrong');
+//    public function remove($id){
+//        $employee=Employee::where('id',$id)->delete(['id'=>$id]);
+//       // $employee=Employee::find('id',$id)->delete();
+//      //  echo $employee;
+//        if($employee){
+//            return redirect()->back()->with('status', 'User Remove From Master Successfully');
+//         }
+//         return redirect()->back()->with('error', 'Something Went Wrong');
+//    }
+
+    public function destroy(Request $request) : JsonResponse {
+        $id = $request->get('id');
+        DynamicValue::where('id', $id)->delete();
+
+        return response()->json(['success' => 'Received rule data']);
     }
 }

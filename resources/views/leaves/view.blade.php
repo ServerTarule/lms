@@ -50,8 +50,10 @@
                                         <td>
                                             <a data-toggle="modal" data-target="#edititem" class="btn-xs btn-info"> <i class="fa fa-pencil"></i>  </a>
                                         </td>
-                                         <td>
-                                            <a class="btn-xs btn-danger"> <i class="fa fa-trash-o"></i>  </a>
+                                        <td>
+                                            <a href="#" id="deleteLeave" onclick="deleteLeave({{ $leave->id }}, {{ $leave->employee_id }})" class="btn-xs btn-danger">
+                                                <i class="fa fa-trash-o"></i>
+                                            </a>
                                         </td>
                                         {{-- <td>
                                             <label class="switch">

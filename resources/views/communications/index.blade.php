@@ -72,7 +72,9 @@
                                         <a data-toggle="modal" data-target="#edititem" class="btn-xs btn-info"> <i class="fa fa-pencil"></i>  </a>
                                     </td>
                                     <td>
-                                        <a class="btn-xs btn-danger"> <i class="fa fa-trash-o"></i>  </a>
+                                        <a href="#" id="deleteCommunication" onclick="deleteCommunication( {{ $communication->id }})" class="btn-xs btn-danger">
+                                            <i class="fa fa-trash-o"></i>
+                                        </a>
                                     </td>
                                 </tr>
                             @endforeach

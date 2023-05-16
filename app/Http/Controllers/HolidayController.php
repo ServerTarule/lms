@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Holiday;
+use App\Models\Template;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
@@ -26,5 +28,12 @@ class HolidayController extends Controller
         $holidays = Holiday::all();
         return redirect()->route('holidays.index', compact('holidays'));
 
+    }
+
+    public function destroy(Request $request) : JsonResponse {
+        $id = $request->get('id');
+        Holiday::where('id', $id)->delete();
+
+        return response()->json(['success' => 'Received rule data']);
     }
 }

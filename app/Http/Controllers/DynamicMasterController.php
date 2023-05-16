@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\DynamicMain;
 use App\Models\DynamicValue;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
@@ -64,5 +65,12 @@ class DynamicMasterController extends Controller
             return redirect()->back()->with('status', 'Master Added Successfully');
         }
         return redirect()->back()->with('error','Something Went Wrong');
+    }
+
+    public function destroy(Request $request) : JsonResponse {
+        $id = $request->get('id');
+        DynamicValue::where('id', $id)->delete();
+
+        return response()->json(['success' => 'Received rule data']);
     }
 }

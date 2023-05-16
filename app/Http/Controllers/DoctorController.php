@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Template;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use App\Models\Doctors;
-
+use Illuminate\Support\Facades\Log;
 
 
 class DoctorController extends Controller
@@ -29,20 +31,25 @@ class DoctorController extends Controller
         }
         return redirect('doctors')->with('error', 'Somethinge went wrong !');
     }
-    public function deletedoctors($id)
-    {
+//    public function deletedoctors($id)
+//    {
+//
+//
+//        if (!$doctors =Doctors:: find($id)->firstorfail()->delete()) {
+//
+//            return redirect('doctors')->with('status', 'Doctor Deleted Successfully');
+//        }
+//        return redirect('doctors')->with('error', 'Somethinge went wrong !');
+//
+//    }
 
-       
-        if (!$doctors =Doctors:: find($id)->firstorfail()->delete()) {
-           
-            return redirect('doctors')->with('status', 'Doctor Deleted Successfully');
-        }
-        return redirect('doctors')->with('error', 'Somethinge went wrong !');
-    
+    public function destroy(Request $request) : JsonResponse {
+        $id = $request->get('id');
+        Log::info("*** Delete Doctor ***");
+        Log::info($id);
+        Doctors::where('id', $id)->delete();
+
+        return response()->json(['success' => 'Received rule data']);
     }
-
-   
-
-    
 
 }

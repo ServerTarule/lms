@@ -94,4 +94,12 @@ class ConditionsController extends Controller
 
         return response()->json(['success' => 'Received rule data']);
     }
+
+    public function destroy(Request $request) : JsonResponse {
+        $id = $request->get('id');
+        RuleCondition::where('rule_id', $id)->delete();
+        Rule::where('id', $id)->delete();
+
+        return response()->json(['success' => 'Received rule data']);
+    }
 }

@@ -108,7 +108,7 @@
                                         <td><img height="40px" width="40px" /></td>
 
                                         <td>
-								            <a data-toggle="modal" data-target="#editEmployee" class="btn-xs btn-info"> <i class="fa fa-edit"></i> <span>Edit</span> </a>
+								            <a data-toggle="modal" data-target="#editEmployee" class="btn-xs btn-info"> <i class="fa fa-edit"></i></a>
 								        </td>
                                         <td>
                                             <a href=""onclick="if (confirm('are you sure you want to cancel?')) window.location.href='/cancel';                                            "
@@ -251,7 +251,7 @@
                                           <label class="control-label">Employee Name   </label>
                                           <input type="text" placeholder="Enter Employee Name" class="form-control">
                                        </div>
-                                      
+
                                         <div class="col-md-6 form-group">
                                           <label class="control-label">Mobile Number   </label>
                                           <input type="text" placeholder="Enter Mobile Number" class="form-control">
@@ -309,7 +309,7 @@
                         </div>
                      </div>
                   </div>
-               
+
                </div>
 
 @endsection

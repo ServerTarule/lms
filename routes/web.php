@@ -59,13 +59,12 @@ Route::get('/permission', function () {
 Route::middleware(['auth'])->group(function () {
     // Roles
     Route::get('/role', [RoleController::class, 'index'])->name('role')->middleware('can:read role');
+    Route::post('/role/destroy', [RoleController::class, 'destroy'])->name('destroy')->middleware('can:read master');
     Route::get('/role/{id}', [RoleController::class, 'edit'])->name('role/{id}')->middleware('can:update role');
     Route::post('/createrole', [RoleController::class, 'store'])->name('createrole')->middleware('can:create role');
     Route::post('/updaterole', [RoleController::class, 'update'])->name('updaterole')->middleware('can:update role');
     Route::get('/assign', [RoleController::class, 'assign'])->name('assign')->middleware('can:assign role');
-    Route::get('/assign-role', function () {
-        return view('assignrole');
-    });
+    Route::get('/assign-role', function () { return view('assignrole'); });
 
     Route::get('/createmaste', [RoleController::class, 'assign'])->name('assign')->middleware('can:assign role');
     Route::get('/master/{id}', [RoleController::class, 'assign'])->name('assign')->middleware('can:assign role');
@@ -95,6 +94,7 @@ Route::middleware(['auth'])->group(function () {
     // Leave
     Route::get('/leaves', [LeaveController::class, 'index'])->name('leaves.index')->middleware('can:read master');
     Route::post('/leaves/store', [LeaveController::class, 'store'])->name('leaves.store')->middleware('can:read master');
+    Route::post('/leaves/destroy', [LeaveController::class, 'destroy'])->name('leaves.destroy')->middleware('can:read master');
     Route::get('/leaves/{id}', [LeaveController::class, 'view'])->name('leaves.view')->middleware('can:read master');
     Route::get('/leaves/calendar/{id}', [LeaveController::class, 'calendar'])->name('leaves.calendar')->middleware('can:read master');
 
@@ -112,11 +112,21 @@ Route::middleware(['auth'])->group(function () {
     // Masters
     Route::get('/master', [MasterController::class, 'index'])->name('master')->middleware('can:read master');
     Route::post('/master', [MasterController::class, 'store'])->name('master')->middleware('can:create master');
+    Route::post('/master/destroy', [MasterController::class, 'destroy'])->name('master.destroy')->middleware('can:read master');
     Route::get('/master/{id}', [MasterController::class, 'edit'])->name('master/{id}')->middleware('can:update master');
     Route::post('/master/{id}', [MasterController::class, 'update'])->name('master/{id}')->middleware('can:update master');
 
+    // Main Master
+    Route::post('/master/main/destroy', [MainMasterController::class, 'destroy'])->name('mainmaster.destroy')->middleware('can:read master');
+    Route::get('/master/main/{id}', [MainMasterController::class, 'index'])->name('/master/main/{id}')->middleware('can:read master');
+    Route::post('/master/main/{id}', [MainMasterController::class, 'store'])->name('/master/main/{id}')->middleware('can:create master');
 
-
+    // Dynamic Master
+    Route::post('/dynamic/destroy', [DynamicMasterController::class, 'destroy'])->name('dynamicmaster.destroy')->middleware('can:read master');
+    Route::get('/dynamic/{id}', [DynamicMasterController::class, 'index'])->name('/dynamic/{id}')->middleware('can:read master');
+    Route::post('/dynamic/{id}', [DynamicMasterController::class, 'store'])->name('/dynamic/{id}')->middleware('can:create master');
+    Route::get('/dynamic/edit/{id}', [DynamicMasterController::class, 'edit'])->name('/dynamic/edit/{id}')->middleware('can:update master');
+    Route::post('/dynamic/edit/{id}', [DynamicMasterController::class, 'update'])->name('/dynamic/edit/{id}')->middleware('can:update master');
 
     // Menu
     Route::get('/menus', [MenusController::class, 'index'])->name('menus')->middleware('can:read master');
@@ -133,38 +143,28 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/menuspermission/{id}', [MenusPermissionController::class, 'update'])->name('menuspermission/{id}')->middleware('can:update master');
     Route::delete('menuspermission/{id}', [MenusPermissionController::class, 'delete'])->name('menuspermission.delete');
 
-
-    // Main Master
-    Route::get('/master/main/{id}', [MainMasterController::class, 'index'])->name('/master/main/{id}')->middleware('can:read master');
-    Route::post('/master/main/{id}', [MainMasterController::class, 'store'])->name('/master/main/{id}')->middleware('can:create master');
-    Route::get('/master/main/edit/{id}', [MainMasterController::class, 'remove'])->name('/master/main/edit/{id}')->middleware('can:delete master');
-
-    // Dynamic Master
-    Route::get('/dynamic/{id}', [DynamicMasterController::class, 'index'])->name('/dynamic/{id}')->middleware('can:read master');
-    Route::post('/dynamic/{id}', [DynamicMasterController::class, 'store'])->name('/dynamic/{id}')->middleware('can:create master');
-    Route::get('/dynamic/edit/{id}', [DynamicMasterController::class, 'edit'])->name('/dynamic/edit/{id}')->middleware('can:update master');
-    Route::post('/dynamic/edit/{id}', [DynamicMasterController::class, 'update'])->name('/dynamic/edit/{id}')->middleware('can:update master');
-
     //Locations
     Route::get('/locations', [LocationController::class, 'index'])->name('cities')->middleware('can:read lead');
 
     //Doctors
     Route::get('/doctors', [DoctorController::class, 'index'])->name('doctors');//->middleware('can:read master');
+    Route::post('/doctors/destroy', [DoctorController::class, 'destroy'])->name('doctors.destroy')->middleware('can:read master');
     Route::post('/addDoctors', [DoctorController::class, 'addDoctors'])->name('addDoctors');//->middleware('can:read master');
-    Route::get('/deletedoctors/{id}', [DoctorController::class, 'deletedoctors'])->name('deletedoctors/{id}');//->middleware('can:delete master');
 
     //Centers
     Route::get('/centers', [CenterController::class, 'index'])->name('centers')->middleware('can:read master');
     Route::post('/addCenter', [CenterController::class, 'addCenter'])->name('addCenter')->middleware('can:read master');
-    Route::get('/deletecentres/{id}', [CenterController::class, 'deletecentres'])->name('deletecentres/{id}');//->middleware('can:delete master');
+    Route::post('/centers/destroy', [CenterController::class, 'destroy'])->name('centers.destroy')->middleware('can:read master');
 
     //Templates
     Route::get('/templates', [TemplateController::class, 'index'])->name('templates.index')->middleware('can:read master');
     Route::post('/templates/store', [TemplateController::class, 'store'])->name('templates.store')->middleware('can:read master');
+    Route::post('/templates/destroy', [TemplateController::class, 'destroy'])->name('templates.destroy')->middleware('can:read master');
 
     //Holidays
     Route::get('/holidays', [HolidayController::class, 'index'])->name('holidays.index')->middleware('can:read master');
     Route::post('/holidays/store', [HolidayController::class, 'store'])->name('holidays.store')->middleware('can:read master');
+    Route::post('/holidays/destroy', [HolidayController::class, 'destroy'])->name('holidays.destroy')->middleware('can:read master');
 
     //Rules
     Route::get('/rules', [RulesController::class, 'index'])->name('rules.index')->middleware('can:read master');
@@ -176,6 +176,7 @@ Route::middleware(['auth'])->group(function () {
     //Conditions
     Route::get('/conditions/create', [ConditionsController::class, 'create'])->name('conditions.create')->middleware('can:read master');
     Route::post('/conditions/store', [ConditionsController::class, 'store'])->name('conditions.store')->middleware('can:read master');
+    Route::post('/conditions/destroy', [ConditionsController::class, 'destroy'])->name('conditions.destroy')->middleware('can:read master');
 //    Route::get('/rules/create/condition', [RulesController::class, 'createcondition'])->name('rules.create.condition')->middleware('can:read master');
 
     //Leads
@@ -196,6 +197,7 @@ Route::middleware(['auth'])->group(function () {
 
     //Communications
     Route::get('/communications', [CommunicationController::class, 'index'])->name('communications.index')->middleware('can:read master');
+    Route::post('/communications/destroy', [CommunicationController::class, 'destroy'])->name('communications.destroy')->middleware('can:read master');
     Route::get('/communications/{id}/leads', [CommunicationController::class, 'leads'])->name('/communications/{id}/leads')->middleware('can:read master');
     Route::get('/communications/templates/{id}', [CommunicationController::class, 'templates'])->name('/communications/templates/{id}')->middleware('can:read master');
     Route::post('/communications/store', [CommunicationController::class, 'store'])->name('communications.store')->middleware('can:read master');

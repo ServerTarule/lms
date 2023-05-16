@@ -53,7 +53,7 @@
                                     <th scope="col">
                                         <a>Created Date</a>
                                     </th>
-                                   
+
                                     <th scope="col">
                                         <a>Edit</a>
                                     </th>
@@ -82,18 +82,16 @@
                                         <td>{{$center->EmailId}}</td>
                                         <td>{{$center->created_at}}</td>
 
-                                        
+
                                         <td>
                                             {{-- <a data-toggle="modal" data-target="#edititem" class="btn-xs btn-info"> <i
                                                     class="fa fa-edit"></i> <span>Edit</span> </a> --}}
                                                     <a onclick="return confirm('Edit Action cannot perform now ! Site under Development')" class="btn-xs btn-info"> <i
-                                                        class="fa fa-edit"></i> <span>Edit</span> </a>
+                                                        class="fa fa-edit"></i></a>
                                         </td>
                                         <td>
-                                        
-                                            <a href="{{ url('/deletecentres', ['id' => $center->id]) }}"
-                                                class="fa fa-trash" >
-                                                
+                                            <a href="#" id="deleteCenter" onclick="deleteCenter( {{ $center->id }})" class="btn-xs btn-danger">
+                                                <i class="fa fa-trash-o"></i>
                                             </a>
                                         </td>
                                         {{-- <td>
@@ -163,8 +161,8 @@
                                             @endforeach
                                           </select>
                                     </div>
-                                    
-                                
+
+
                                     <div class="col-md-6 form-group">
                                         <label class="control-label">Owner Name </label>
                                         <input type="text" placeholder="Enter Owner Name" name="ownerName" class="form-control">
@@ -172,8 +170,8 @@
                                     <div class="col-md-6 form-group">
                                         <label class="control-label">Email Id </label>
                                         <input type="text" placeholder="Enter Email Id" name="EmailId" class="form-control">
-                                    </div>  
-                                    
+                                    </div>
+
                                     <div class="col-md-12 form-group">
                                         <div>
                                             <button type="button" class="btn btn-danger btn-sm"

@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\DynamicMain;
+use App\Models\Leaves;
 use App\Models\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
 
@@ -90,15 +92,11 @@ class RoleController extends Controller
     }
 
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
+    public function destroy(Request $request) : JsonResponse {
+        $id = $request->get('id');
+        Role::where('id', $id)->delete();
+
+        return response()->json(['success' => 'Received rule data']);
     }
 
     public function assign()

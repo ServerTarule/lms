@@ -53,13 +53,12 @@
                                     <td></td>
                                     <td></td>
                                     <td>
-                                        <a href="/rules/{{$rule->id}}" class="btn-xs btn-info"> <i
-                                                class="fa fa-edit"></i> </a>
+                                        <a href="/rules/{{$rule->id}}" class="btn-xs btn-info">
+                                            <i class="fa fa-edit"></i> </a>
                                     </td>
                                     <td>
-                                        <a onclick="return confirm('Are you sure want to delete this?')"
-                                           class="btn-xs btn-info" style="background: red;"> <i
-                                                class="fa fa-trash-o"></i>
+                                        <a id="deleteRule" onclick="deleteRule({{$rule->id}})" class="btn-xs btn-info" style="background: red;">
+                                            <i class="fa fa-trash-o"></i>
                                         </a>
                                     </td>
                             @endforeach

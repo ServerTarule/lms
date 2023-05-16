@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\DynamicMain;
+use App\Models\DynamicValue;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class MasterController extends Controller
 {
@@ -50,9 +53,17 @@ class MasterController extends Controller
         }
     }
 
-    public function delete($id){
-        $master=DynamicMain::where('id',$id)->first();
-        return view('master.index',['master'=>$master,'masters'=> false]);
+//    public function delete($id){
+//        $master=DynamicMain::where('id',$id)->first();
+//        return view('master.index',['master'=>$master,'masters'=> false]);
+//    }
+
+    public function destroy(Request $request) : JsonResponse {
+        $id = $request->get('id');
+        DynamicValue::where('parent_id', $id)->delete();
+        DynamicMain::where('id', $id)->delete();
+
+        return response()->json(['success' => 'Received rule data']);
     }
 
 }

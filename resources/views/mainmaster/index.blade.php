@@ -85,8 +85,9 @@
                                     <td>{{ \Carbon\Carbon::parse($mainmaster->created_at)->format('d/m/Y') }}
                                     </td>
                                     <td>
-                                        <a href="/master/main/edit/{{ $mainmaster->id }}" class="btn-xs btn-info"> <i
-                                                class="fa fa-trash-o"></i> </a>
+                                        <a href="#" id="deleteMainMaster" onclick="deleteMainMaster( {{ $mainmaster->id }} , {{ $master->id }})" class="btn-xs btn-danger">
+                                            <i class="fa fa-trash-o"></i>
+                                        </a>
                                     </td>
                                     {{-- <td>
                                         <a onclick="return confirm('Are you sure want to delete this?')"

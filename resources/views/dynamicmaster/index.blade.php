@@ -43,22 +43,17 @@
                             </thead>
                             <tbody>
                             @foreach ($dynamicmasters as $dynamicmaster)
-                                    <tr>
-                                        <td>{{ $loop->iteration }}</td>
-                                        <td>{{ $dynamicmaster->name }}</td>
-                                        <td>{{ \Carbon\Carbon::parse($dynamicmaster->created_at)->format('d/m/Y') }}
-                                        </td>
-                                        <td>
-                                            <a href="/master/main/edit/{{ $dynamicmaster->id }}" class="btn-xs btn-info"> <i
-                                                    class="fa fa-trash-o"></i> </a>
-                                        </td>
-                                        {{-- <td>
-                                            <a onclick="return confirm('Are you sure want to delete this?')"
-                                                class="btn-xs btn-info" style="background: red;"> <i
-                                                    class="fa fa-trash-o"></i>
-                                            </a>
-                                        </td> --}}
-                                    </tr>
+                                <tr>
+                                    <td>{{ $loop->iteration }}</td>
+                                    <td>{{ $dynamicmaster->name }}</td>
+                                    <td>{{ \Carbon\Carbon::parse($dynamicmaster->created_at)->format('d/m/Y') }}
+                                    </td>
+                                    <td>
+                                        <a href="#" id="deleteDynamicMaster" onclick="deleteDynamicMaster( {{ $dynamicmaster->id }}, {{ $master->id }})" class="btn-xs btn-danger">
+                                            <i class="fa fa-trash-o"></i>
+                                        </a>
+                                    </td>
+                                </tr>
                             @endforeach
                             </tbody>
                         </table>

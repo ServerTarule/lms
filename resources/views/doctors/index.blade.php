@@ -45,20 +45,15 @@
                                     <td>{{$doctor->name}}</td>
                                     <td>{{$doctor->created_at}}</td>
                                     <td>
-                                                        <a onclick="return "
-                                                    class="btn-xs btn-info" style="background: blue;"> <i
-                                                        class="fa fa-edit"></i>
-                                                </a>       
-                                            </td>
-                                            <td>
-                                                
-                                            
-                                            <form action="{{ url('/deletedoctors', ['id' => $doctor->id]) }}" method="GET">
-                                              <input class="btn-xs btn-info"  type="submit" value="Delete" />
-                                             @method('delete')
-                                              @csrf
-                                            </form>
-                                            </td>
+                                        <a onclick="return" class="btn-xs btn-info">
+                                            <i class="fa fa-edit"></i>
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <a href="#" id="deleteDoctor" onclick="deleteDoctor( {{ $doctor->id }})" class="btn-xs btn-danger">
+                                            <i class="fa fa-trash-o"></i>
+                                        </a>
+                                    </td>
                             @endforeach
                             </tbody>
                         </table>

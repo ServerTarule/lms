@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use App\Models\Center;
 use App\Models\Doctors;
 use App\Models\City;
 use App\Models\State;
+use Illuminate\Support\Facades\Log;
 
 class CenterController extends Controller
 {
@@ -17,12 +19,12 @@ class CenterController extends Controller
         $doctor=Doctors::all();
         $city=City::all();
         $state = State::all();
-      
+
         return view('center.index',compact( 'centers','doctor','city','state'));
     }
 
     public function addCenter(Request $request){
-        
+
     $centers=Center::create([
             'centerDetails'=>$request->centerDetails,
             'mobile'=>$request->mobile,
@@ -39,18 +41,13 @@ class CenterController extends Controller
         return redirect('centers')->with('status', 'Some Error Occured');
     }
 
-    public function deletecentres($id)
-    {
+    public function destroy(Request $request) : JsonResponse {
+        $id = $request->get('id');
+        Center::where('id', $id)->delete();
 
-       
-        if ($centres =Center:: find($id)->firstorfail()->delete()) {
-           
-            return redirect('centers')->with('status', 'Centre Deleted Successfully');
-        }
-        return redirect('centers')->with('error', 'Somethinge went wrong !');
-    
+        return response()->json(['success' => 'Received rule data']);
     }
-    
+
 
 }
 

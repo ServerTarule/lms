@@ -118,14 +118,14 @@
                                                     class="fa fa-edit"></i> </a>
                                         </td>
                                         <td>
-                                            <a href="#"
-                                                onclick="return confirm('Delete Cannot perform LMS under development')"
-                                                class="btn-xs btn-info" style="background: red;"> <i
-                                                    class="fa fa-trash-o"></i> </a>
+                                            <a href="#" id="deleteRole" onclick="deleteRole( {{ $role->id }})" class="btn-xs btn-danger">
+                                                <i class="fa fa-trash-o"></i>
+                                            </a>
                                         </td>
                                     </tr>
                                 @endforeach
                             </tbody>
+                        </table>
                     </div>
                 </div>
                 @endif

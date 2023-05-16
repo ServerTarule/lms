@@ -76,9 +76,8 @@
                                                         class="fa fa-edit"></i> </a>
                                             </td>
                                             <td>
-                                                <a onclick="return confirm('Are you sure want to delete this?')"
-                                                    class="btn-xs btn-info" style="background: red;"> <i
-                                                        class="fa fa-trash-o"></i>
+                                                <a href="#" id="deleteMaster" onclick="deleteMaster({{$master->id}})" class="btn-xs btn-danger">
+                                                    <i class="fa fa-trash-o"></i>
                                                 </a>
                                             </td>
                                         </tr>
