@@ -286,22 +286,45 @@
             {{--    locale: 'en'--}}
             {{--});--}}
 
-            $('.table').DataTable({
-                aLengthMenu: [
-                    [50, 100, 200, 500, -1],
-                    [50, 100, 200, 500, "All"]
-                ],
-                'iDisplayLength': 100,
-                scrollX: true,
-                responsive: true,
-                "scrollY": 400,
-                "scrollCollapse": true,
-                fixedColumns: {
-                    leftColumns: 4
-                }
-            });
-
-
+            // $('.table').DataTable({
+            //     aLengthMenu: [
+            //         [50, 100, 200, 500, -1],
+            //         [50, 100, 200, 500, "All"]
+            //     ],
+            //     'iDisplayLength': 100,
+            //     scrollX: true,
+            //     responsive: true,
+            //     "scrollY": 400,
+            //     "scrollCollapse": true,
+            //     fixedColumns: {
+            //         leftColumns: 4
+            //     }
+            // });
+            let count = $("#editRuleMasterRowCount").val();
+            // $("#initial_"+count+"").after(`<tr id="initial_`+nextCount+`"><td>`+nextCount+`</td><td><select class="form-control" name="ruleMaster_`+nextCount+`" id="ruleMaster_`+nextCount+`"><option selected disabled>-- Select Condition --</option></select></td><td><button id="removeRow" class="fa fa-minus btn btn-sm btn-danger removeRow" onclick="$(this).parent().parent().remove();"></button></td></tr>`);
+            // $("#initial_"+count+"").after(`<tr id="initial_`+nextCount+`"><td>`+nextCount+`</td><td><select class="form-control" name="ruleMaster_`+nextCount+`" id="ruleMaster_`+nextCount+`"><option selected disabled>-- Select Condition --</option></select></td><td><button id="removeRow" class="fa fa-minus btn btn-sm btn-danger removeRow" onclick="$('#addRow').prop('disabled', false); let count = $('#ruleMasterRowCount').val(); let previousCount = parseInt(count) - 1; $('#ruleMasterRowCount').val(previousCount); $(this).parent().parent().remove();"></button></td></tr>`);
+            // $("#initial_"+count+"").after(`<tr id="initial_`+nextCount+`"><td>`+nextCount+`</td><td><select class="form-control" name="ruleMaster_`+nextCount+`" id="ruleMaster_`+nextCount+`"><option selected disabled>-- Select Condition --</option></select></td><td><button id="removeRow" class="fa fa-minus btn btn-sm btn-danger removeRow""></button></td></tr>`);
+            $("#editRuleMasterHeaders").after(
+            `@foreach($masters as $master)
+                <tr id="editInitial_`+ {{ $loop->iteration }} +`">
+                    <td>`+ {{ $loop->iteration }} +`</td>
+                    <td>
+                        <select class="form-control" name="editRuleMaster_`+ {{ $loop->iteration }} +`" id="editRuleMaster_`+ {{ $loop->iteration }} +`"><option value="{{ $master -> id }}">{{ $master -> name }}</option> </select>
+                    </td>
+                    <td>
+                        <button id="editRuleAddRow" class="fa fa-plus btn btn-sm btn-primary"></button>
+                        <button id="editRuleRemoveRow" class="fa fa-minus btn btn-sm btn-danger"></button>
+                    </td>
+                </tr>
+            @endforeach`);
+            // $("#ruleMasterRowCount").val(nextCount);
+            //
+            // $("#removeRow").prop("disabled", false);
+            // $("#addRow").prop("disabled", false);
+            //
+            // if ($("#ruleMasterRowCount").val() == 5) {
+            //     $("#addRow").prop("disabled", true);
+            // }
 
             // let ruleMasterData = $('#ruleMasters').val();
             //
@@ -350,16 +373,23 @@
                 $.each(value, function(k,v) {
                     // console.log(v);
                     if (v === 'and' || v === 'or') {
-                        $("#ruleConditionClause_"+key+"").val(v);
+                        $("#ruleCondition_"+key+"").val(v);
                     }
                     multipleValues.push(v);
                 });
-                $("#ruleConditionMaster_"+key+"").val(multipleValues);
+                $("#ruleMaster_"+key+"").val(multipleValues);
             });
-
-            $("#ruleType").val(rule['ruletype']);
+            $('input:radio[name="ruleType"]').filter('[value="'+rule['ruletype']+'"]').attr('checked', true);
             $("#ruleFrequency").val(rule['rulefrequency']);
-            $("#ruleSchedule").val(rule['ruleschedule']);
+            $('#ruleSchedule option[value="'+rule['ruleschedule']+'"]').attr("selected", "selected");
+
+            if (rule['ruletype'] === 'inbound') {
+;                $("#ruleFrequency").attr('disabled','disabled');
+                $("#ruleSchedule").attr('disabled','disabled');
+            } else {
+                $("#ruleFrequency").removeAttr('disabled');
+                $("#ruleSchedule").removeAttr('disabled');
+            }
 
         });
     </script>
@@ -880,6 +910,7 @@
         //     // });
         // });
 
+
         $("#ruleConditionSubmit").click(function(){
         //WORKING
         //     let jsonObject = [];
@@ -916,7 +947,7 @@
                 let ruleMasterData = $('#ruleMasters').val();
                 let ruleType = $("input[name='ruleType']:checked").val();
                 let ruleFrequency = $('#ruleFrequency').val();
-                let ruleSchedule = $('#ruleSchedule :selected').text();
+                let ruleSchedule = $('#ruleSchedule :selected').val();
                 let items = [];
                 $.each(JSON.parse(ruleMasterData), function (key, value) {
                     // item ["master"] = value.id;
@@ -967,6 +998,65 @@
                 // data: $(this).serialize(),
                 dataType: 'JSON',
                 /* remind that 'data' is the response of the AjaxController */
+                success: function (data) {
+                    console.log(data);
+                    window.location.href = "/rules";
+                },
+                failure: function (data) {
+                    console.log(data);
+                }
+            });
+        });
+
+        $("#editRuleConditionSubmit").click(function(){
+            let ruleId = $('#ruleId').val();
+            let ruleName = $('#ruleName').val();
+            let ruleMasterData = $('#ruleMasters').val();
+            let ruleType = $("input[name='ruleType']:checked").val();
+            let ruleFrequency = $('#ruleFrequency').val();
+            let ruleSchedule = $('#ruleSchedule :selected').val();
+            let items = [];
+            $.each(JSON.parse(ruleMasterData), function (key, value) {
+                let itemValue = {};
+                let master = [];
+                let masterValues = [];
+                let masterOperations = [];
+
+                master.push(value.id);
+                itemValue ["master"] = master;
+                $('#ruleMaster_' + value.id + ' :selected').each(function (i, sel) {
+                    masterValues.push($(sel).val());
+                });
+                itemValue ["masterValues"] = masterValues;
+                $('#ruleCondition_' + value.id + ' :selected').each(function (i, sel) {
+                    masterOperations.push($(sel).val());
+                });
+                itemValue ["masterOperations"] = masterOperations;
+
+                items.push(itemValue);
+
+            });
+
+            let CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+            $.ajax({
+                url: '/conditions/update',
+                type: 'POST',
+                data: {
+                    _token: CSRF_TOKEN,
+                    'ruleId':ruleId,
+                    'ruleName': ruleName,
+                    'ruleData':JSON.stringify(items),
+                    'ruleType': ruleType,
+                    'ruleFrequency': ruleFrequency,
+                    'ruleSchedule':ruleSchedule
+                },
+                // data: $(this).serialize(),
+                dataType: 'JSON',
                 success: function (data) {
                     console.log(data);
                     window.location.href = "/rules";
@@ -1150,6 +1240,8 @@
 
         $("#inboundRule").click(function() {
             $("#outboundDiv *").prop('disabled',true);
+            $("#ruleFrequency").val('');
+            $("#ruleSchedule").val('NA');
         });
 
         $("#outboundRule").click(function() {

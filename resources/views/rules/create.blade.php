@@ -33,12 +33,13 @@
                                             data-val-number=""
                                             id="name"
                                             name="ruleName"
-                                            placeholder="Rule Name"
+                                            placeholder="Please enter rule name"
                                             type="text"
                                             value=""
+                                            required
+
                                         />
                                         <span role="status" aria-live="polite" class="ui-helper-hidden-accessible"></span>
-    {{--                                    <input type="hidden" class="hdncityid" value="0" name="hdncityid"/>--}}
                                     </div>
                                     <div class="form-group">
                                         <input type="hidden" name="ruleMasterRowCount" id="ruleMasterRowCount" value="1">

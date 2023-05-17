@@ -57,7 +57,7 @@
                                             <i class="fa fa-edit"></i> </a>
                                     </td>
                                     <td>
-                                        <a id="deleteRule" onclick="deleteRule({{$rule->id}})" class="btn-xs btn-info" style="background: red;">
+                                        <a href="#" id="deleteRule" onclick="deleteRule({{$rule->id}})" class="btn-xs btn-info" style="background: red;">
                                             <i class="fa fa-trash-o"></i>
                                         </a>
                                     </td>

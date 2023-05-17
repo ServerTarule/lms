@@ -110,7 +110,7 @@
                             <div class="col-md-2 form-group">
                                 <label class="control-label">Schedule</label>
                                 <select class="form-control" name="ruleSchedule" id="ruleSchedule" >
-                                    <option>-- Select Schedule --</option>
+                                    <option value="NA">-- Select Schedule --</option>
                                     <option value="Days">Days</option>
                                     <option value="Weeks">Weeks</option>
                                     <option value="Months">Months</option>

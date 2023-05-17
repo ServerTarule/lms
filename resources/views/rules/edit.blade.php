@@ -1,116 +1,54 @@
 @extends('layout.app')
-@section('title', 'Rule')
-@section('subtitle', 'Edit Rule')
+@section('title', 'Rules & Regulations')
+@section('subtitle', 'List of Rules & Regulations')
 @section('content')
     <div class="row">
         <div class="col-sm-12">
-            <div class="text-right">
-                <a href="/rules" class="btn btn-exp btn-sm"><i class="fa fa-eye"></i>< Back</a>
-            </div>
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="panel panel-bd drag">
-                        <div class="panel-heading">
-                            <div class="btn-group">
-                                <a>
-                                    <h4>Edit Rule</h4>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="panel-body">
-                            <div class="form-group">
-                                <input
-                                    autocomplete="off"
-                                    class="form-control CityName ui-autocomplete-input"
-                                    data-val=""
-                                    data-val-number=""
-                                    id="City"
-                                    name="City"
-                                    type="text"
-                                    value="{{ $rule->name }}"
-                                />
-                                <span role="status" aria-live="polite" class="ui-helper-hidden-accessible"></span>
-                                <input type="hidden" class="hdncityid" value="0" name="hdncityid" />
-                            </div>
-                        </div>
-                    </div>
+            <form method="post" action="{{ route('rules.update') }}" id="editRuleNameForm">
+                @csrf
+                <input type="hidden" name="editRuleId" id="editRuleId" value="{{ $rule->id }}">
+                <div class="text-right">
+                    <a href="/rules" class="btn btn-exp btn-sm">< Back</a>
+                    <button type="submit" class="btn btn-exp btn-sm">Next</button>
                 </div>
-
-                <div>
-                    @foreach($masters as $master)
-                        <div class="col-md-3">
-                            <div class="panel panel-bd">
-                                <div class="panel-heading">
-                                    <div class="btn-group">
-                                        <a>
-                                            <h4>{{ $master->name }}<span class="required"> * </span></h4>
-                                        </a>
-                                    </div>
-                                </div>
-                                <div class="panel-body">
-                                    <div class="form-group">
-                                        <select class="form-control" name="ruleConditionMaster" id="ruleConditionMaster_{{ $master->id }}" @if( $master -> id != 99) multiple @endif >
-                                            <option disabled>-- Select Condition --</option>
-{{--                                            @php--}}
-{{--                                                $values = $master->values()->get();--}}
-{{--                                            @endphp--}}
-                                            @foreach($master->values as $value)
-                                                <option value="{{ $value->id }}">{{ $value->name }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="panel panel-bd drag">
+                            <div class="panel-heading">
+                                <div class="btn-group">
+                                    <a>
+                                        <h4>Title</h4>
+                                    </a>
                                 </div>
                             </div>
-                        </div>
-                        @if(!$loop->last)
-                            <div class="col-md-1">
+                            <div class="panel-body">
                                 <div class="form-group">
-                                    <small>Condition</small>
-                                    <select class="form-control" data-val="true" name="ruleConditionClause" id="ruleConditionClause_{{ $master->id }}" >
-                                        <option disabled>--Select Condition--</option>
-                                        <option value="or">OR</option>
-                                        <option value="and">AND</option>
-                                    </select>
+                                    <input
+                                        autocomplete="off"
+                                        class="form-control CityName ui-autocomplete-input"
+                                        id="name"
+                                        name="editRuleName"
+                                        type="text"
+                                        value="{{ $rule->name }}"
+                                        required
+                                    />
+                                    <span role="status" aria-live="polite" class="ui-helper-hidden-accessible"></span>
+                                </div>
+                                <div class="form-group">
+                                    <input type="hidden" name="editRuleMasterRowCount" id="editRuleMasterRowCount" value=" {{ count($masters) }}">
+                                    <table class="table table-bordered table-striped">
+                                        <tr id="editRuleMasterHeaders">
+                                            <th>S.No.</th>
+                                            <th>Title</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </table>
                                 </div>
                             </div>
-                        @endif
-                    @endforeach
-                </div>
-
-            </div>
-            <div class="col-md-12">
-                <div class="col-md-2 form-group">
-                    <label class="control-label"><input type="radio" value="inbound" id="inboundRule" name="ruleType"/> Inbound</label>
-                </div>
-                <div class="col-md-2 form-group">
-                    <label class="control-label"><input type="radio" value="outbound" id="outboundRule" name="ruleType" checked/>   Outbound</label>
-                </div>
-            </div>
-            <div class="col-md-12" id="outboundDiv">
-                <div class="col-md-2 form-group">
-                    <label class="control-label">Frequency</label>
-                    <input type="number" id="ruleFrequency" name="ruleFrequency" placeholder="Enter Frequency" class="form-control">
-                </div>
-                <div class="col-md-2 form-group">
-                    <label class="control-label">Schedule</label>
-                    <select class="form-control" name="ruleSchedule" id="ruleSchedule" >
-                        <option>-- Select Schedule --</option>
-                        <option value="Days">Days</option>
-                        <option value="Weeks">Weeks</option>
-                        <option value="Months">Months</option>
-                        <option value="Years">Years</option>
-                    </select>
-                </div>
-            </div>
-        </div>
-
-                <div class="col-sm-12">
-                    <div class="form-group">
-                        <button type="submit" class="btn btn-primary btn-sm">Submit</button>
-                        <button type="reset" class="btn btn-danger btn-sm">Clear</button>
+                        </div>
                     </div>
                 </div>
-            </div>
+            </form>
         </div>
     </div>
 @endsection

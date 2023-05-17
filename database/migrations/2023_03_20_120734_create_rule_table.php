@@ -17,8 +17,8 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('ruletype');
-            $table->integer('rulefrequency');
-            $table->string('ruleschedule');
+            $table->integer('rulefrequency')->nullable()->constrained();
+            $table->string('ruleschedule')->nullable()->constrained();
             $table->timestamps();
         });
     }

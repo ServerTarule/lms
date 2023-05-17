@@ -33,12 +33,10 @@ class RulesController extends Controller
 //        dd($request->all());
         $ruleMasterCount = $request->input('ruleMasterRowCount');
 //        dd($ruleMasterCount);
-        $data = array();
         for ($i = 1; $i <= $ruleMasterCount; $i++) {
 //            $property = 'ruleName_'.$i;
             $data[] = $request->input('ruleMaster_'.$i);
         }
-        $data[] = 99; // Date Range Master
 //        $ruleName = $request->input('ruleName');
 
 
@@ -59,33 +57,15 @@ class RulesController extends Controller
         $rule = Rule::find($id);
         $ruleConditions = RuleCondition::where('rule_id', $rule->id)->get();
         $ruleConditionMasters = array();
-        $masterValues = array();
         foreach ($ruleConditions as $ruleCondition) {
-            Log::info($ruleCondition);
             $ruleConditionMasters[] = $ruleCondition->master_id;
-            $masterValues[$ruleCondition->master_id]['clause']=$ruleCondition->condition;
-            $masterValues[$ruleCondition->master_id][]=$ruleCondition->mastervalue_id;
         }
-        $masters = DynamicMain::whereIn('id', collect(array_values($ruleConditionMasters))->unique())->get();
-        Log::info($masterValues);
-
-//        $ruleConditionMasters = array();
-//        $masters = array();
-//        foreach ($ruleConditions as $ruleCondition) {
-//            $ruleConditionMasters[] = $ruleCondition->master_id;
-//        }
-//        $uniqueRuleConditionMasters = collect(array_values($ruleConditionMasters))->unique();
-//        foreach ($uniqueRuleConditionMasters as $key => $value) {
-//             $rulesConditionsForMasters = RuleCondition::where('rule_id', $rule->id)->where('master_id', $value)->get()->toArray();
-//             $mastersValues = array();
-//             foreach ($rulesConditionsForMasters as $rulesConditionsForMaster) {
-//                 $mastersValues[] = $rulesConditionsForMaster;
-//             }
-//            $masters[$value] = $mastersValues;
-//        }
-//        Log::info($masters);
-//        $mastersJSON = json_encode($masters);
-        return view('rules.edit', compact('rule','masters','masterValues'));
+        $masters = DynamicMain::whereIn('id', collect(array_values($ruleConditionMasters)))->get();
+        return view('rules.edit', compact('rule','masters'));
     }
 
+    public function update(Request $request) : RedirectResponse {
+        $id = $request->input('editRuleId');
+        return redirect()->route('conditions.edit', compact('id'));
+    }
 }

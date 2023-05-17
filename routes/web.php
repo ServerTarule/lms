@@ -170,14 +170,15 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/rules', [RulesController::class, 'index'])->name('rules.index')->middleware('can:read master');
     Route::get('/rules/create', [RulesController::class, 'create'])->name('rules.create')->middleware('can:read master');
     Route::post('/rules/store', [RulesController::class, 'store'])->name('rules.store')->middleware('can:read master');
+    Route::post('/rules/update', [RulesController::class, 'update'])->name('rules.update')->middleware('can:read master');
     Route::get('/rules/{id}', [RulesController::class, 'edit'])->name('rules.edit')->middleware('can:read master');
-//    Route::post('/rules/create', [RulesController::class, 'createrule'])->name('rules.create.post')->middleware('can:read master');
 
     //Conditions
     Route::get('/conditions/create', [ConditionsController::class, 'create'])->name('conditions.create')->middleware('can:read master');
+    Route::get('/conditions/edit', [ConditionsController::class, 'edit'])->name('conditions.edit')->middleware('can:read master');
     Route::post('/conditions/store', [ConditionsController::class, 'store'])->name('conditions.store')->middleware('can:read master');
+    Route::post('/conditions/update', [ConditionsController::class, 'update'])->name('conditions.update')->middleware('can:read master');
     Route::post('/conditions/destroy', [ConditionsController::class, 'destroy'])->name('conditions.destroy')->middleware('can:read master');
-//    Route::get('/rules/create/condition', [RulesController::class, 'createcondition'])->name('rules.create.condition')->middleware('can:read master');
 
     //Leads
     Route::get('/leads', [LeadController::class, 'index'])->name('leads.index')->middleware('can:read master');
