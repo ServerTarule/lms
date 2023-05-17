@@ -34,12 +34,12 @@
                     <td></td>
                     <td></td>
                     <td>
-                        <a class="btn btn-primary CenterRecommended" data-toggle="modal" data-target="#CenterChange" style="cursor: pointer;"><span>Center Change</span></a>
+                        <a href="#" class="btn btn-primary CenterRecommended" data-toggle="modal" data-target="#CenterChange"><span>Center Change</span></a>
                         <input type="hidden" class="ModuleName" value="FirstCallingDetails" />
                         <input type="hidden" id="leadId" name="leadId" value="{{$leadKVForEdit['id']}}" />
                     </td>
                     <td>
-                        <a data-toggle="modal" data-target="#editLead" id="editLeadDetails" class="btn btn-primary" style="cursor: pointer;"><i class="fa fa-edit"></i></a>
+                        <a href="#" data-toggle="modal" data-target="#editLead" id="editLeadDetails" class="btn btn-primary"><i class="fa fa-edit"></i></a>
                     </td>
                     <td>
                         <span class="divupld">

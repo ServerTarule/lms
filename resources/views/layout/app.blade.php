@@ -780,6 +780,67 @@
             }
         }
 
+        function editCommunication(id) {
+            let CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+            $.ajax({
+                /* the route pointing to the post function */
+                url: '/communications/'+id,
+                type: 'GET',
+                /* send the csrf-token and the input to the controller */
+                // data: {_token: CSRF_TOKEN, 'ruleData':JSON.stringify(jsonObject)},
+                data: {
+                    _token: CSRF_TOKEN,
+                    'id': id
+                },
+                // data: $(this).serialize(),
+                dataType: 'JSON',
+                /* remind that 'data' is the response of the AjaxController */
+                success: function (data) {
+                    let communicationSchedule = data['schedule'];
+                    let type = communicationSchedule['type'];
+                    $('.ruleId').val(communicationSchedule['rule_id']);
+                    $('.communicationTemplateType').val(type);
+
+                    if(type === 'WhatsApp') {
+                        $(".communicationTemplateMessageDiv").show();
+                        $(".communicationTemplateSubjectDiv").hide();
+                        $(".communicationTemplateBodyDiv").hide();
+                    }
+
+                    if(type === 'Email') {
+                        $(".communicationTemplateMessageDiv").hide();
+                        $(".communicationTemplateSubjectDiv").show();
+                        $(".communicationTemplateBodyDiv").show();
+                    }
+
+                    $('.communicationTemplateId').val(communicationSchedule['template_id']);
+                    $('.communicationTemplateSubject').val(communicationSchedule['subject']);
+                    $('.communicationTemplateBody').val(communicationSchedule['content']);
+
+                    let schedule = communicationSchedule['schedule'];
+
+                    if (schedule === 'now') {
+                        $('input:radio[name="schedule"]').filter('[value="'+schedule+'"]').attr('checked', true);
+                        $("#editCommunicationNowDiv *").prop('disabled',true);
+                        $("#editCommunicationScheduleDiv *").prop('disabled',true);
+                    } else {
+                        $("#editCommunicationScheduleDiv *").prop('disabled',false);
+                        $("#editCommunicationNowDiv *").prop('disabled',false);
+                    }
+
+                    $('#editSchedule').modal('show');
+                },
+                failure: function (data) {
+                    console.log(data);
+                }
+            });
+        }
+
         function handleChange(cb) {
             console.log("Changed, new value = " + cb.checked);
             $(cb).attr('value', cb.checked);
@@ -1214,7 +1275,7 @@
                     success: function (data) {
                         let templates = data.template;
                         templates.forEach(function(template) {
-                            $("#communicationTemplateId").append(`<option class="removableTemplate" value="`+template.id+`">`+template.name+`</option>`);
+                            $("#communicationTemplateId, #editCommunicationTemplateId").append(`<option class="removableTemplate" value="`+template.id+`">`+template.name+`</option>`);
                         });
 
                     },
@@ -1226,16 +1287,14 @@
 
         });
 
-        // $("#communicationSchedule").prop('checked', true);
-
-        $("#communicationSchedule").click(function() {
-            $("#communicationScheduleDiv *").prop('disabled',false);
-            $("#communicationNowDiv *").prop('disabled',false);
+        $("#communicationSchedule, .communicationSchedule").click(function() {
+            $("#communicationScheduleDiv *, #editCommunicationScheduleDiv *").prop('disabled',false);
+            $("#communicationNowDiv *, #editCommunicationNowDiv *").prop('disabled',false);
         });
 
-        $("#communicationNow").click(function() {
-            $("#communicationNowDiv *").prop('disabled',true);
-            $("#communicationScheduleDiv *").prop('disabled',true);
+        $("#communicationNow, .communicationNow").click(function() {
+            $("#communicationNowDiv *, #editCommunicationNowDiv *").prop('disabled',true);
+            $("#communicationScheduleDiv *, #editCommunicationScheduleDiv *").prop('disabled',true);
         });
 
         $("#inboundRule").click(function() {

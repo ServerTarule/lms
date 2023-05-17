@@ -198,10 +198,12 @@ Route::middleware(['auth'])->group(function () {
 
     //Communications
     Route::get('/communications', [CommunicationController::class, 'index'])->name('communications.index')->middleware('can:read master');
-    Route::post('/communications/destroy', [CommunicationController::class, 'destroy'])->name('communications.destroy')->middleware('can:read master');
-    Route::get('/communications/{id}/leads', [CommunicationController::class, 'leads'])->name('/communications/{id}/leads')->middleware('can:read master');
-    Route::get('/communications/templates/{id}', [CommunicationController::class, 'templates'])->name('/communications/templates/{id}')->middleware('can:read master');
     Route::post('/communications/store', [CommunicationController::class, 'store'])->name('communications.store')->middleware('can:read master');
+    Route::post('/communications/update', [CommunicationController::class, 'update'])->name('communications.update')->middleware('can:read master');
+    Route::post('/communications/destroy', [CommunicationController::class, 'destroy'])->name('communications.destroy')->middleware('can:read master');
+    Route::get('/communications/templates/{id}', [CommunicationController::class, 'templates'])->name('/communications/templates/{id}')->middleware('can:read master');
+    Route::get('/communications/{id}', [CommunicationController::class, 'show'])->name('communications.show')->middleware('can:read master');
+    Route::get('/communications/{id}/leads', [CommunicationController::class, 'leads'])->name('/communications/{id}/leads')->middleware('can:read master');
 
     //Other Management
     Route::get('/blogs', [BlogController::class, 'index'])->name('blogs.index')->middleware('can:read master');

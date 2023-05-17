@@ -17,6 +17,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Notification;
+use Illuminate\View\View;
 use Lorisleiva\CronTranslator\CronTranslator;
 
 class CommunicationController extends Controller
@@ -27,6 +28,14 @@ class CommunicationController extends Controller
         $templates = Template::all();
         $communications = Communication::all();
         return view('communications.index', compact('rules', 'templates', 'communications'));
+    }
+
+    public function show($id) : JsonResponse {
+        $communication = Communication::where('id', $id)->get()->first();
+        return response()->json([
+            'schedule' => $communication,
+            'success' => 'Received rule data'
+        ]);
     }
 
     public function store(Request $request) : RedirectResponse {
@@ -190,6 +199,59 @@ class CommunicationController extends Controller
 
 //        return Command::SUCCESS;
         }
+
+        $communications = Communication::all();
+        return redirect()->route('communications.index', compact('communications'));
+
+    }
+
+    public function update(Request $request) : RedirectResponse {
+
+        $id = $request->input('communicationId');
+        $communication = Communication::where('id', $id)->get()->first();
+
+        $communication->rule_id = $request->input('ruleId');
+        $communication->type = $request->input('communicationTemplateType');
+        $communication->template_id = $request->input('communicationTemplateId');
+        $communication->subject = $request->input('communicationTemplateSubject');
+        $communication->message = $request->input('communicationTemplateMessage');
+        $communication->content = $request->input('communicationTemplateBody');
+        $communication->schedule = $request->input('schedule');
+
+        $communicationType = $request->input('schedule');
+        $words = null;
+        if ($communicationType == 'scheduled') {
+
+            $scheduleUnit = $request->input('scheduleUnit');
+            $dayOfWeek = $request->input('dayOfWeek');
+            $dayOfMonth = $request->input('dayOfMonth');
+            $minuteHour = $request->input('minuteHour');
+
+            $schedule = null;
+
+            if ($scheduleUnit == 'DAILY') {
+                $dayOfWeek = "*";
+                $dayOfMonth = "*";
+            }
+
+            if ($scheduleUnit == 'WEEKLY') {
+                $dayOfMonth = "*";
+            }
+
+            if (!is_null($minuteHour)) {
+                $hour = substr($minuteHour, 0, 2);
+                $min = substr($minuteHour, 3, 2);
+                $schedule = $min . ' ' . $hour . ' ' . $dayOfMonth . ' ' . '*' . ' ' . $dayOfWeek;
+            }
+
+            $words = CronTranslator::translate($schedule);
+        } else if ($communicationType == 'now') {
+            $words = 'now';
+        }
+
+        $communication->words = $words;
+
+        $communication->save();
 
         $communications = Communication::all();
         return redirect()->route('communications.index', compact('communications'));

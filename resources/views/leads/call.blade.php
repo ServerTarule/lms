@@ -54,7 +54,7 @@
                                             <a>MobileNo</a>
                                         </th>
                                         <th scope="col">
-                                            <a>Alternate Mobno</a>
+                                            <a>Alternate Mob. No.</a>
                                         </th>
                                         <th scope="col">
                                             <a>EmailId</a>

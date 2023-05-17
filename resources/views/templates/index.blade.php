@@ -101,11 +101,11 @@
                                         <input type="text" id="templateEmailSubject" name="templateEmailSubject" placeholder="Please type here.." class="form-control">
                                     </div>
                                     <div id="templateMessageDiv" class="col-md-12 form-group">
-                                        <label class="control-label">SMS/WhatsApp</label>
+                                        <label class="control-label">WhatsApp Message</label>
                                         <textarea class="form-control" id="templateMessage" name="templateMessage" placeholder="Please type here.."></textarea>
                                     </div>
                                     <div id="templateEmailDiv" class="col-md-12 form-group">
-                                        <label class="control-label">Email</label>
+                                        <label class="control-label">Email Body</label>
                                         <textarea class="form-control" id="templateEmailBody" name="templateEmailBody" placeholder="Please type here.."></textarea>
                                     </div>
 
