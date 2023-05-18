@@ -1428,10 +1428,13 @@
         $(".update-menu-permission").click(function(){
             const self = this;
             bootbox.confirm({
-                message: "Are you sure? Updating permission(s) on a menu will change permissions for child menus as well.",
+                message: "Do you really want to update permission for this menu item?.",
                 callback: function (confirm) {
                     if(confirm) {
                         processSingleMenuPermissionUpdate(self);
+                    }
+                    else {
+                        window.location.reload();
                     }
                 }
             });
@@ -1506,8 +1509,9 @@
                 error: function (data) {
                     if(data?.responseText) {
                         const jsonResp = JSON.parse(data.responseText);
-                        bootbox.alert(jsonResp.message);
-                        location.reload();
+                        bootbox.confirm(jsonResp.message, function(resp){
+                            location.reload();
+                        });
                     }
 
                 }
@@ -1562,7 +1566,7 @@
                 error: function (jqXHR, exception) {
                     const jsonResp = JSON.parse(data.responseText);
                     alert(jsonResp.message);
-                    location.reload();
+                    //location.reload();
                 },
                 failure: function (data) {
                     console.log("failure response",data);

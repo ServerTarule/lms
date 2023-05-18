@@ -14,15 +14,17 @@ class MenusController extends Controller
     }
 
     public function store(Request $request){
-        $unique = Menu::where('title',$request->title)->orWhere('url', $request->url)->first();
+        $unique = Menu::where('title',$request->title)->where('url', $request->url)->first();
         if($unique){
             return redirect()->back()->with('error','Menu with this name or url already Exist');
         }
+        $class = $request->class;
+        $icon = $request->icon;
         $menuData=Menu::create([
             'title'=>$request->title,
             'parent_id'=>$request->parent_id,
-            'class'=>$request->class,
-            'icon'=>$request->icon,
+            'class'=>(isset($class ))? $class : "",
+            'icon'=>(isset($icon ))? $icon : "",
             'url'=>$request->url,
             'preference'=>$request->preference
         ]);
@@ -51,8 +53,8 @@ class MenusController extends Controller
         $master= Menu::find($id)->update(
             [
                 'title'=>$request->title,
-                'class'=>$request->class,
-                'icon'=>$request->icon,
+                'class'=>(isset($class ))? $class : "",
+                'icon'=>(isset($icon ))? $icon : "",
                 'url'=>$request->url,
                 'parent_id'=>$request->parent_id,
                 'preference'=>$request->preference,

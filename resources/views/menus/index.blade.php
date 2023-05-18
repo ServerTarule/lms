@@ -43,11 +43,11 @@
                                             </div>
                                             <div class="col-md-4 form-group AUTHORITY">
                                             <input type="text" name="class" placeholder=" Css Class"
-                                                    class="form-control" required>
+                                                    class="form-control">
                                             </div>
                                             <div class="col-md-4 form-group AUTHORITY">
                                             <input type="text" name="icon" placeholder="Css Icon"
-                                                    class="form-control" required>
+                                                    class="form-control">
                                             </div>
 
                                         </div>
@@ -151,12 +151,12 @@
                                             </div>
 
                                             <div class="col-md-4 form-group AUTHORITY">
-                                            <input type="text" name="class" placeholder=" Css Class"
-                                                    class="form-control" value="{{ $menu->class }}" required>
+                                            <input type="text" name="class" placeholder="Css Class"
+                                                    class="form-control" value="{{ $menu->class }}">
                                             </div>
                                             <div class="col-md-4 form-group AUTHORITY">
                                                 <input type="text" name="icon" placeholder="Css Icon"
-                                                    class="form-control" value="{{ $menu->icon }}" required>
+                                                    class="form-control" value="{{ $menu->icon }}">
                                            </div>
                                         </div>
                                         <div class="row float-end ">

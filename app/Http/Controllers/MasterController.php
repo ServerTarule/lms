@@ -10,12 +10,13 @@ use Illuminate\Support\Facades\Log;
 
 class MasterController extends Controller
 {
-    public function index(){
+    public function indexss(){
         $masters=DynamicMain::all();
         return view('master.index',compact('masters'));
     }
 
     public function store(Request $request){
+
         $unique = DynamicMain::where('name',$request->name)->first();
         if($unique){
             return redirect()->back()->with('error','Master Already Exist');
@@ -38,6 +39,7 @@ class MasterController extends Controller
 
     public function edit($id){
         $master=DynamicMain::where('id',$id)->first();
+        print_r($master); die;
         return view('master.index',['master'=>$master,'masters'=> false]);
     }
 
@@ -64,6 +66,16 @@ class MasterController extends Controller
         DynamicMain::where('id', $id)->delete();
 
         return response()->json(['success' => 'Received rule data']);
+    }
+    
+    public function reove($id){
+        echo "hellll";
+        die($id);
+    }
+
+    public function delete($id){
+        $master=DynamicMain::where('id',$id)->first();
+        return view('master.index',['master'=>$master,'masters'=> false]);
     }
 
 }
