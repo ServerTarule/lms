@@ -12,7 +12,8 @@ class MasterController extends Controller
 {
     public function index(){
         $masters=DynamicMain::all();
-        return view('master.index',compact('masters'));
+        $edit=false;
+        return view('master.index',compact('masters','edit'));
     }
 
     public function store(Request $request){
@@ -39,17 +40,23 @@ class MasterController extends Controller
 
     public function edit($id){
         $master=DynamicMain::where('id',$id)->first();
-        return view('master.index',['masters'=> false,'master'=>$master,]);
+        return view('master.index',['masters'=> false,'master'=>$master,'edit'=>true]);
     }
 
     public function update(Request $request, $id){
-        $unique = DynamicMain::where('name',$request->name)->first();
-        if($unique){
+        
+        $master = DynamicMain::where('name',$request->name)->first();
+
+        // print_r($master);die;
+        if($master && $master->master) {
+            return redirect()->back()->with('error','You can not edit a "Main Master"');
+        }
+        if($master){
             return redirect()->back()->with('error','Master Alredy Exist');
         }
 
-        $master= DynamicMain::find($id)->update(['name'=>$request->name]);
-        if($master){
+        $masterUpdated= DynamicMain::find($id)->update(['name'=>$request->name]);
+        if($masterUpdated){
             return redirect()->route('master')->with('status','Master Updated Successfully');
         }
     }

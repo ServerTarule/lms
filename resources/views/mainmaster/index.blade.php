@@ -1,7 +1,7 @@
 @extends('layout.app')
 @section('title', 'Master')
 @section('content')
-@if($mainmasters)
+@if($mainmasters || $edit)
     <div class="row">
         <div class="col-sm-12">
             <div class="panel panel-bd lobidrag">

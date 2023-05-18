@@ -7,7 +7,7 @@
                 <div class="panel-heading">
                     <div class="btn-group" id="buttonexport">
                         <a href="#">
-                            <h4>All Master</h4>
+                            <h4>{{ $edit? 'Edit' : 'All'}} Master</h4>
                         </a>
                     </div>
                 </div>
@@ -29,12 +29,13 @@
                                             </div>
                                            
                                         </div>
+                                        <div class="text-center">
+                                            <input type="checkbox" name="main" id="checkbox">
+                                            <label for="checkbox">Please tick the checkbox if its Main Master</label>
+                                        </div>
                                     </form>
                                 </div>
-                                <div class="text-center">
-                                    <input type="checkbox" name="main" id="checkbox">
-                                    <label for="checkbox">Please tick the checkbox if its Main Master</label>
-                                </div>
+                                
                                
                             </div>
                             <div class="col-md-3">
@@ -100,34 +101,56 @@
                 @endif
                 @if (!$masters)
                     <div class="row">
-                        <div class="col-md-4"></div>
-
-                        <div class="col-md-4">
+                        <div class="col-md-2">
+                        </div>
+                        <div class="col-md-6">
                             <br />
                             <div class="text-right">
                                 <form action="/master/{{$master->id}}" method="post">
                                     @csrf
                                     <div class="row">
-                                        <div class="col-md-12 form-group AUTHORITY">
+                                        <div class="col-md-9 form-group AUTHORITY">
                                             <input type="text" name="name" value="{{ $master->name }}"
-                                                placeholder="master Name" class="form-control" required>
+                                                placeholder="master Name" class="form-control" required {{$master->master ? 'readonly' : ''}}>
                                             <div>
-                                                <button type="submit" class="btn btn-add">Update</button>
+                                                <button type="submit" class="btn btn-add">Update</button> 
+                                            </div>
+                                            
+                                        </div>
+                                        @if($master && $master->master)
+                                        <div class="col-md-3 form-group AUTHORITY">
+                                            <div style="text-align: center;margin-top:7px">
+                                            <i style="font-size:30px; align:center" class="fa fa-10x fa-lg fa-info-circle" title='Not allowed to edit main master'></i>
                                             </div>
                                         </div>
+                                        @endif
                                     </div>
                                 </form>
                             </div>
-                            @if (session('error'))
-                                <span class="alert danger">{{ session('error') }}</span>
-                            @endif
-                            @if (session('status'))
-                                <span class="alert success">{{ session('status') }}</span>
-                            @endif
+                            <div>
+                            
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-2">
+                        </div>
+                        <div class="col-md-6">
+                        
+                        @if (session('error'))
+                            <span class="text-danger">{{ session('error') }}</span>
+                        @endif
+                        @if (session('status'))
+                            <span class="text-success">{{ session('status') }}</span>
+                        @endif
                         </div>
                         <div class="col-md-4">
                         </div>
                     </div>
+                    <div class="row">&nbsp;</div>
                 @endif
             </div>
         </div>
