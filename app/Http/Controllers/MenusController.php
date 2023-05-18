@@ -10,11 +10,8 @@ class MenusController extends Controller
 {
     public function index(){
         // $menus=Menu::all();
-        $menus=DB::table('menus as m')->select('m.*','parM.title as parent_name')->leftJoin('menus as parM', 'm.parent_id', '=', 'parM.id')->get();
-       
-        // print_r($menus->toArray());
+        $menus=DB::table('menus as m')->select('m.*','parM.title as parent_name')->leftJoin('menus as parM', 'm.parent_id', '=', 'parM.id')->get();       
         $menuWithTopPref=Menu::where([])->orderBy('preference','desc')->first();
-        //  print_r($menuWithTopPrefone->toArray());
         return view('menus.index',compact('menus','menuWithTopPref'));
     }
 

@@ -67,11 +67,6 @@ class MasterController extends Controller
         return response()->json(['success' => 'Received rule data']);
     }
     
-    public function reove($id){
-        echo "hellll";
-        die($id);
-    }
-
     public function delete($id){
         $master=DynamicMain::where('id',$id)->first();
         return view('master.index',['master'=>$master,'masters'=> false]);

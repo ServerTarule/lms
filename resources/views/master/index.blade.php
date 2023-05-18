@@ -47,7 +47,7 @@
                                 <span class="text-danger">{{ session('error') }}</span>
                                 @endif
                                 @if (session('status'))
-                                    <span class="alert success">{{ session('status') }}</span>
+                                    <span class="text-success">{{ session('status') }}</span>
                                 @endif
                             </div>
                         </div>
