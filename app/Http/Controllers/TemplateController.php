@@ -20,8 +20,6 @@ class TemplateController extends Controller
 
     public function store(Request $request) : RedirectResponse {
 
-        Log::info($request);
-
         $template = Template::create([
             'type'=>$request->templateType,
             'name'=>$request->templateName,

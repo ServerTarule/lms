@@ -1637,7 +1637,6 @@
 
         // Lead Call Send Email
         $('#leadSendEmail').click(function() {
-            // $("#spinner-div").show();
             let leadId = $('#leadId').val();
             let employeeId = $("#leadEmployeeId").val();
             let templateId = $("#leadEmailTemplateId").val();
@@ -1652,7 +1651,6 @@
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 }
             });
-            console.log(emailId);
             if(templateId !== 'NA') {
                 $.ajax({
                     url: '/leads/calls/'+leadId+'/email',
@@ -1722,6 +1720,39 @@
                     }
                 });
             }
+        });
+
+        $('#submitLeadCall').click(function() {
+            let leadId = $('#leadId').val();
+            let employeeId = $("#leadEmployeeId").val();
+            let reminderDate = $("#leadNextReminderDate").val();
+            let remark = $("#leadCallRemark").val();
+
+
+            let CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+            $.ajax({
+                url: '/leads/calls/'+leadId+'/call',
+                type: 'POST',
+                data: {
+                    _token: CSRF_TOKEN,
+                    'leadId': leadId,
+                    'employeeId': employeeId,
+                    'remark': remark,
+                    'reminderDate': reminderDate
+                },
+                dataType: 'JSON',
+                success: function (data) {
+                    window.location.href = '/leads/calls/'+leadId+'';
+                },
+                failure: function (data) {
+                    console.log(data);
+                }
+            });
         });
 
     </script>

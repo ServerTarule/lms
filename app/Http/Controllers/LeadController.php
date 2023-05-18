@@ -306,7 +306,6 @@ class LeadController extends Controller
         ]);
 
         Lead::where('id', $leadId)->update(['employee_id' => $employeeId]);
-        Log::info($emailId);
         Mail::to($emailId)->send(new Campaign($template));
 
         return response()->json(['success' => 'Email sent']);
@@ -319,7 +318,6 @@ class LeadController extends Controller
         $templateId = $request->get('templateId');
         $mobileno = $request->get('mobileno');
         $type = $request->get('type');
-        $callStatusId = $request->get('callStatusId');
         $remark = $request->get('remark');
         $reminderDate = $request->get('reminderDate');
         $template = Template::where('id', $templateId)->first();
@@ -332,7 +330,6 @@ class LeadController extends Controller
             'lead_id'=>$leadId,
             'employee_id'=>$employeeId,
             'leadstatus_id'=>null,
-            'callstatus_id'=>$callStatusId,
             'remark'=>$remark,
             'called_at'=>now(),
             'remind_at'=>$reminderDate
@@ -343,6 +340,28 @@ class LeadController extends Controller
         $lead = Lead::where('id', $leadId)->first();
 
         Notification::send($lead, new LeadConnect($lead));
+
+        return response()->json(['success' => 'WhatsApp message sent']);
+    }
+
+    public function leadcall(Request $request) : JsonResponse {
+
+        $leadId = $request->get('leadId');
+        $employeeId = $request->get('employeeId');
+        $reminderDate = $request->get('reminderDate');
+        $remark = $request->get('remark');
+
+        $leadCall = LeadCall::create([
+            'lead_id'=>$leadId,
+            'employee_id'=>$employeeId,
+            'remind_at'=>$reminderDate,
+            'remark'=>$remark,
+            'called_at'=>now()
+        ]);
+
+        Lead::where('id', $leadId)->update(['employee_id' => $employeeId]);
+
+        $lead = Lead::where('id', $leadId)->first();
 
         return response()->json(['success' => 'WhatsApp message sent']);
     }

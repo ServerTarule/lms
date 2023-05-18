@@ -78,7 +78,7 @@
                 <a href="/leads/calls" id="leadFollowup" class="btn btn-sm btn-primary">Follow Up</a>
                 <a data-toggle="modal" data-target="#sendEmail" class="btn btn-sm btn-primary">Send Email</a>
                 <a data-toggle="modal" data-target="#sendWhatsApp" class="btn btn-sm btn-primary">Send WhatsApp</a>
-                <a class="btn btn-sm btn-success" type="submit">Submit</a>
+                <a class="btn btn-sm btn-success" id="submitLeadCall" type="submit">Submit</a>
                 <a class="btn btn-sm btn-info" href="/leads/calls">< Back</a>
             </div>
         </div>
@@ -274,7 +274,6 @@
                                                 id="leadMobile"
                                                 maxlength="10"
                                                 name="leadMobile"
-                                                onkeypress="return isNumberKey(event)"
                                                 placeholder="Enter MobileNumber"
                                                 required="required"
                                                 type="text"
@@ -290,7 +289,6 @@
                                                 id="leadAlternateMobile"
                                                 maxlength="10"
                                                 name="leadAlternateMobile"
-                                                onkeypress="return isNumberKey(event)"
                                                 placeholder="Enter Mobile Number"
                                                 type="text"
                                                 value="{{$leadKVForEdit['altmobileno']}}"

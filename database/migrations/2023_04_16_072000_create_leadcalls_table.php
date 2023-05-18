@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('leadcalls', function (Blueprint $table) {
             $table->id();
-            $table->string('type');
+            $table->string('type')->nullable()->constrained();
             $table->unsignedBigInteger('lead_id');
             $table->unsignedBigInteger('employee_id')->nullable()->constrained();
             $table->unsignedBigInteger('leadstatus_id')->nullable()->constrained();
