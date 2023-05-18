@@ -17,14 +17,10 @@ class MainMasterController extends Controller
 
         $master =DynamicMain::where('id', $id)->first();
         if(!isset($master)) {
-            //   return view('mainmaster.index', compact('mainmasters', 'master', 'currentStateId','leadStatuses', 'states'));
-
               return view('mainmaster.index',
-              [
-                  
+              [      
                   'mainmasters'=>false,    
               ]);
-            // return redirect()->back()->with('error', 'Something Went Wrong');
         }
         $leadStatuses = null;
         $states = null;
@@ -89,7 +85,6 @@ class MainMasterController extends Controller
         $currentLeadId = null;
         $dynaicmaster=DynamicValue::where('id',$id)->first();
         $dynaicmasterParentId = $dynaicmaster->parent_id;
-        $currentStateId = $dynaicmaster->dependent_id;
         $currentDependentId =  $dynaicmaster->dependent_id;
         $dependentLabel = null;
         $parentData = null;

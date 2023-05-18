@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Log;
 
 class MasterController extends Controller
 {
-    public function indexss(){
+    public function index(){
         $masters=DynamicMain::all();
         return view('master.index',compact('masters'));
     }
@@ -39,8 +39,7 @@ class MasterController extends Controller
 
     public function edit($id){
         $master=DynamicMain::where('id',$id)->first();
-        print_r($master); die;
-        return view('master.index',['master'=>$master,'masters'=> false]);
+        return view('master.index',['masters'=> false,'master'=>$master,]);
     }
 
     public function update(Request $request, $id){
@@ -51,7 +50,7 @@ class MasterController extends Controller
 
         $master= DynamicMain::find($id)->update(['name'=>$request->name]);
         if($master){
-            return redirect()->route('master')->with('status','Master Added Successfully');
+            return redirect()->route('master')->with('status','Master Updated Successfully');
         }
     }
 
