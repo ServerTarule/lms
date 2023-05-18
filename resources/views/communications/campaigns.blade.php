@@ -9,6 +9,6 @@
 Button Text
 </x-mail::button>
 
-Thanks You,<br>
+Thank You,<br>
 {{ config('app.name') }}
 </x-mail::message>

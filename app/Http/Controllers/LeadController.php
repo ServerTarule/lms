@@ -306,7 +306,7 @@ class LeadController extends Controller
         ]);
 
         Lead::where('id', $leadId)->update(['employee_id' => $employeeId]);
-
+        Log::info($emailId);
         Mail::to($emailId)->send(new Campaign($template));
 
         return response()->json(['success' => 'Email sent']);

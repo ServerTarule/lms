@@ -75,7 +75,7 @@
         </div>
         <div class="col-sm-12 form-group">
             <div class="form-group">
-                <a id="leadFollowup" class="btn btn-sm btn-primary">Follow Up</a>
+                <a href="/leads/calls" id="leadFollowup" class="btn btn-sm btn-primary">Follow Up</a>
                 <a data-toggle="modal" data-target="#sendEmail" class="btn btn-sm btn-primary">Send Email</a>
                 <a data-toggle="modal" data-target="#sendWhatsApp" class="btn btn-sm btn-primary">Send WhatsApp</a>
                 <a class="btn btn-sm btn-success" type="submit">Submit</a>
@@ -90,10 +90,9 @@
                     <th>Employee</th>
                     <th>Type</th>
                     <th>Calling Date</th>
-                    <th>Lead Status</th>
+{{--                    <th>Lead Status</th>--}}
                     <th>Next Reminder Date</th>
                     <th>Remark</th>
-                    <th>Call Status</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -103,10 +102,9 @@
                             <td>{{ $leadCall->employee?->name }}</td>
                             <td>{{ $leadCall->type }}</td>
                             <td>{{ \Carbon\Carbon::parse($leadCall->called_at)->format('d/m/Y') }}</td>
-                            <td>{{ $leadCall->leadstatus?->name }}</td>
+{{--                            <td>{{ $leadCall->leadstatus?->name }}</td>--}}
                             <td>{{ \Carbon\Carbon::parse($leadCall->remind_at)->format('d/m/Y') }}</td>
                             <td>{{ $leadCall->remark }}</td>
-                            <td>{{ $leadCall->callstatus->name }}</td>
                     </tr>
                     @endforeach
                 </tbody>
@@ -380,16 +378,20 @@
                                         <input type="email" placeholder="Enter Email Id" id="leadEmailId" name="leadEmailId" value="{{$leadKV['email']}}" class="form-control" />
                                     </div>
                                     <div class="col-md-12 form-group">
-                                        <input type="text" placeholder="Subject" id="leadEmailSubject" name="leadEmailSubject" class="form-control" />
+                                        <input type="text" placeholder="Email Subject" id="leadEmailSubject" name="leadEmailSubject" class="form-control" />
                                     </div>
                                     <div class="col-md-12 form-group">
-                                        <textarea placeholder="Description" id="leadEmailBody" name="leadEmailBody" class="form-control"></textarea>
+                                        <textarea placeholder="Email Body" id="leadEmailBody" name="leadEmailBody" class="form-control"></textarea>
                                     </div>
                                     <div class="col-md-12 form-group">
                                         <div>
                                             <button type="submit" class="btn btn-add btn-sm" id="leadSendEmail">Send</button>
                                         </div>
                                     </div>
+{{--                                    <div id="spinner-div" class="pt-5">--}}
+{{--                                        <div class="spinner-border text-primary" role="status">--}}
+{{--                                        </div>--}}
+{{--                                    </div>--}}
                                 </fieldset>
 {{--                            </form>--}}
                         </div>

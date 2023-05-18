@@ -20,8 +20,8 @@ return new class extends Migration
             $table->unsignedBigInteger('employee_id')->nullable()->constrained();
             $table->unsignedBigInteger('leadstatus_id')->nullable()->constrained();
             $table->longText('remark')->nullable();
-            $table->dateTime('called_at');
-            $table->date('remind_at');
+            $table->dateTime('called_at')->nullable();
+            $table->date('remind_at')->nullable();
             $table->foreign('lead_id')
                 ->references('id')
                 ->on('leads')

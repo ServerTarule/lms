@@ -1605,6 +1605,7 @@
                     type: 'GET',
                     dataType: 'JSON',
                     success: function (data) {
+                        console.log(data);
                         $("#leadEmailSubject").val(data.template.subject);
                         $("#leadEmailBody").val(data.template.body);
                     },
@@ -1636,12 +1637,11 @@
 
         // Lead Call Send Email
         $('#leadSendEmail').click(function() {
-
+            // $("#spinner-div").show();
             let leadId = $('#leadId').val();
             let employeeId = $("#leadEmployeeId").val();
             let templateId = $("#leadEmailTemplateId").val();
             let emailId = $("#leadEmailId").val();
-            let callStatusId = $("#callStatusId").val();
             let remark = $("#leadCallRemark").val();
             let reminderDate = $("#leadNextReminderDate").val();
 
@@ -1652,7 +1652,7 @@
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 }
             });
-
+            console.log(emailId);
             if(templateId !== 'NA') {
                 $.ajax({
                     url: '/leads/calls/'+leadId+'/email',
@@ -1664,16 +1664,16 @@
                         'templateId': templateId,
                         'emailId': emailId,
                         'type': 'Email',
-                        'callStatusId': callStatusId,
                         'remark': remark,
                         'reminderDate': reminderDate
                     },
                     dataType: 'JSON',
                     success: function (data) {
-                        console.log(data);
+                        // $("#spinner-div").hide();
                         window.location.href = '/leads/calls/'+leadId;
                     },
                     failure: function (data) {
+                        // $("#spinner-div").hide();
                         console.log(data);
                     }
                 });
