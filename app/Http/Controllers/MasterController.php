@@ -16,6 +16,7 @@ class MasterController extends Controller
     }
 
     public function store(Request $request){
+
         $unique = DynamicMain::where('name',$request->name)->first();
         if($unique){
             return redirect()->back()->with('error','Master Already Exist');
@@ -38,7 +39,7 @@ class MasterController extends Controller
 
     public function edit($id){
         $master=DynamicMain::where('id',$id)->first();
-        return view('master.index',['master'=>$master,'masters'=> false]);
+        return view('master.index',['masters'=> false,'master'=>$master,]);
     }
 
     public function update(Request $request, $id){
@@ -49,7 +50,7 @@ class MasterController extends Controller
 
         $master= DynamicMain::find($id)->update(['name'=>$request->name]);
         if($master){
-            return redirect()->route('master')->with('status','Master Added Successfully');
+            return redirect()->route('master')->with('status','Master Updated Successfully');
         }
     }
 
@@ -64,6 +65,11 @@ class MasterController extends Controller
         DynamicMain::where('id', $id)->delete();
 
         return response()->json(['success' => 'Received rule data']);
+    }
+    
+    public function delete($id){
+        $master=DynamicMain::where('id',$id)->first();
+        return view('master.index',['master'=>$master,'masters'=> false]);
     }
 
 }

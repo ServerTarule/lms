@@ -143,6 +143,21 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/menuspermission/{id}', [MenusPermissionController::class, 'update'])->name('menuspermission/{id}')->middleware('can:update master');
     Route::delete('menuspermission/{id}', [MenusPermissionController::class, 'delete'])->name('menuspermission.delete');
 
+
+    // Main Master
+    Route::get('/master/main/{id}', [MainMasterController::class, 'index'])->name('/master/main/{id}')->middleware('can:read master');
+    Route::post('/master/main/{id}', [MainMasterController::class, 'store'])->name('/master/main/{id}')->middleware('can:create master');
+    Route::get('/master/main/edit/{id}', [MainMasterController::class, 'remove'])->name('/master/main/edit/{id}')->middleware('can:delete master');
+    Route::get('/master/main/edit-value/{masterid}/{id}', [MainMasterController::class, 'edit'])->name('/master/main/edit-value/{masterid}/{id}')->middleware('can:read master');
+    Route::post('/master/main/update-value/{masterid}/{id}', [MainMasterController::class, 'update'])->name('/master/main/update-value/{masterid}/{id}')->middleware('can:update master');
+    Route::delete('/master/main/remove/{id}', [MainMasterController::class, 'delete'])->name('mainmaster.delete');
+
+    // Dynamic Master
+    Route::get('/dynamic/{id}', [DynamicMasterController::class, 'index'])->name('/dynamic/{id}')->middleware('can:read master');
+    Route::post('/dynamic/{id}', [DynamicMasterController::class, 'store'])->name('/dynamic/{id}')->middleware('can:create master');
+    Route::get('/dynamic/edit/{id}', [DynamicMasterController::class, 'edit'])->name('/dynamic/edit/{id}')->middleware('can:update master');
+    Route::post('/dynamic/edit/{id}', [DynamicMasterController::class, 'update'])->name('/dynamic/edit/{id}')->middleware('can:update master');
+
     //Locations
     Route::get('/locations', [LocationController::class, 'index'])->name('cities')->middleware('can:read lead');
 

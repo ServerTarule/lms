@@ -32,11 +32,11 @@
                                             <a>Created Date</a>
                                         </th>
                                         <th scope="col">
-                                            <a>Edit</a>
+                                            <a>Edit Permissions</a>
                                         </th>
-                                        <th scope="col">
+                                        <!-- <th scope="col">
                                             <a>Delete</a>
-                                        </th>
+                                        </th> -->
                                     </tr>
                                     </thead>
                                     <tbody>
@@ -47,16 +47,16 @@
                                                 <td>{{ $employee->designation->name }}</td>
                                                 <td>{{ $employee->name }}</td>
                                                 <td>{{ \Carbon\Carbon::parse($employee->created_at)->format('d/m/Y') }}</td>
-                                                <td>
+                                                <td class="align-items-center">
                                                     <a href="/permissions/menu-list/{{$employee->id}}" class="btn-xs btn-info"> <i
                                                             class="fa fa-edit"></i> </a>
                                                 </td>
-                                                <td>
+                                                <!-- <td>
                                                     <a onclick="return confirm('Are you sure want to delete this?')"
                                                     class="btn-xs btn-info" style="background: red;"> <i
                                                             class="fa fa-trash-o"></i>
                                                     </a>
-                                                </td>
+                                                </td> -->
                                         @endforeach
                                     @endif
                                     </tbody>

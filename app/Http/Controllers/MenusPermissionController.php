@@ -89,7 +89,7 @@ class MenusPermissionController extends Controller
         $parentId = $permissionData['parent_id'];
         // print_r($permissionData); 
 
-        $previousPermissions =  MenuPermission::where('menu_id', $menuId)->first()->toArray();
+        $previousPermissions =  MenuPermission::where('menu_id', $menuId)->where('employee_id', $employeeId)->first()->toArray();
 
         $childrenPermissionData = [];
         // print_r($previousPermissions); 
@@ -119,14 +119,22 @@ class MenusPermissionController extends Controller
         }
 
         if($parentId > 0) {
-            $parentPermissions = MenuPermission::where('menu_id',$parentId)->select('add_permission','edit_permission','delete_permission','view_permission')->first()->toArray();
+            $parentPermissions = MenuPermission::where('menu_id',$parentId)->where('employee_id',$employeeId)->select('add_permission','edit_permission','delete_permission','view_permission')->first()->toArray();
+//              echo "Details ==view_permissions: ".$permissionData['view_permissions'] ."----previousPermissions:".$previousPermissions['view_permission']."-----parentPermissions:".$parentPermissions['view_permission'];
+            $isInvalidViewPerm = (
+                $permissionData['view_permissions'] == 1 
+                && $previousPermissions['view_permission'] != $permissionData['view_permissions'] 
+                && $parentPermissions['view_permission'] != $permissionData['view_permissions']
             
+            );
+
+            // echo "*****isInvalidViewPerm***** ==".$isInvalidViewPerm;
             $isInvalidAddPerm = (
                                     $permissionData['add_permissions'] == 1 &&
                                     $previousPermissions['add_permission'] != $permissionData['add_permissions'] &&
                                     $parentPermissions['add_permission'] != $permissionData['add_permissions']
                                 
-                                ) ;
+                                );
             
             $isInvalidEditPerm = (
                                     $permissionData['edit_permissions'] == 1 &&
@@ -140,20 +148,27 @@ class MenusPermissionController extends Controller
                                     $parentPermissions['delete_permission'] != $permissionData['delete_permissions']
                                 );
     
-            $isInvalidViewPerm = (
-                                    $permissionData['view_permissions'] == 1 &&
-                                    $previousPermissions['view_permission'] != $permissionData['view_permissions'] &&
-                                    $parentPermissions['view_permission'] == $permissionData['view_permissions']
-                                
-                                );
+           
 
             if(
-                $isInvalidAddPerm || 
-                $isInvalidEditPerm|| 
-                $isInvalidDeletePerm ||
-                $isInvalidViewPerm 
+                $isInvalidViewPerm         
                 ) {
-                throw new \Error('Please make sure parent menu permissions are same as child menu permissions.');
+                throw new \Error('Please make sure view permission  for parent menu is same.');
+            }
+            else if(
+                $isInvalidAddPerm               
+                ) {
+                throw new \Error('Please make sure add permission  for parent menu is  same.');
+            }
+            else if(
+                $isInvalidEditPerm               
+                ) {
+                throw new \Error('Please make sure edit permission  for parent menu is same.');
+            }
+            else if(
+                $isInvalidDeletePerm               
+                ) {
+                throw new \Error('Please make sure delete permission  for parent menu is same.');
             }
 
         }
@@ -173,10 +188,7 @@ class MenusPermissionController extends Controller
         MenuPermission::reguard();
        
         foreach($menu_ids as $menu_id) {
-
-            
-           
-            $previousPermissionsSubMenu =  MenuPermission::where('menu_id', $menu_id)->first()->toArray();
+            $previousPermissionsSubMenu =  MenuPermission::where('menu_id', $menu_id)->where('employee_id', $employeeId)->first()->toArray();
             MenuPermission::unguard();
             MenuPermission::updateOrCreate(
                 [
@@ -205,19 +217,14 @@ class MenusPermissionController extends Controller
             $idWisePermissions = [];
             foreach($permissionsData as $permissionData) {
                 $currentMenuId =$permissionData['menu_id'];
-                $parentId = $permissionData["parent_id"];
-                
-                $oldPermissions = MenuPermission::where('menu_id',$currentMenuId)->select('add_permission','edit_permission','delete_permission','view_permission')->first()->toArray();
-                 
+                $parentId = $permissionData["parent_id"];               
+                $oldPermissions = MenuPermission::where('menu_id',$currentMenuId)->select('add_permission','edit_permission','delete_permission','view_permission')->first()->toArray();           
                 $oldPermissionsStr = implode("#",$oldPermissions);
                 $newPermissionsStr = $permissionData['add_permissions'].'#'.$permissionData['edit_permissions'].'#'.$permissionData['delete_permissions'].'#'.$permissionData['view_permissions'];
-
-                    echo "Processing for ".$currentMenuId;
-                    echo "Inside if 1    children \n";
+                    // echo "Processing for ".$currentMenuId;
+                    // echo "Inside if 1    children \n";
                     $this->upsertPermissions($employeeId,$permissionData);
-                //}
                 $children = $this->getChildMenu($currentMenuId,true);
-               // print_r($children);
                 if(count($children) > 0 && $parentId == 0) {
                     foreach($children as $child) {
                         $chilePermissionData = [
@@ -227,43 +234,18 @@ class MenusPermissionController extends Controller
                             "delete_permissions"=> $permissionData['delete_permissions'],
                             "view_permissions"=> $permissionData['view_permissions'],
                         ];
-                        echo "Processing for ".$child;
-                        echo "Inside Loop 1 \n";
+                        // echo "Processing for ".$child;
+                        // echo "Inside Loop 1 \n";
                         $this->upsertPermissions($employeeId,$chilePermissionData );
                         $idsToSkip[] = $child;
                     }
                 }
                 else if(count($children) > 0 && $parentId !== 0 ||  $oldPermissionsStr !== $newPermissionsStr) {
-                    // foreach($children as $child) {
-                    //     $parentPermissions = MenuPermission::where('menu_id',$parentId)->first()->toArray();
-                    //     $chilePermissionData = [
-                    //         "menu_id"=> $child,
-                    //         "add_permissions"=> $parentPermissions['add_permission'],
-                    //         "edit_permissions"=> $parentPermissions['edit_permission'],
-                    //         "delete_permissions"=> $parentPermissions['delete_permission'],
-                    //         "view_permissions"=> $parentPermissions['view_permission'],
-                    //     ];
-                    //     echo "Processing for ".$child;
-                    //     echo "Inside Loop 2 \n";
-                    //    // $this->upsertPermissions($employeeId,$chilePermissionData );
-                    // }
-                    //$idsToSkip[] = $child;
+                //TO DO
 
                 }
                 continue;
-
-
-
-
-
-
-
-
-
-
-
-
-                
+ 
                 $newPermissionsStr = $permissionData['add_permissions'].'#'.$permissionData['edit_permissions'].'#'.$permissionData['delete_permissions'].'#'.$permissionData['view_permissions'];
                 $idWisePermissions[$currentMenuId] = $newPermissionsStr;
                 echo " Id Wise Permissions  \n"; 
@@ -284,67 +266,40 @@ class MenusPermissionController extends Controller
                     $permissionData['delete_permissions'] = $parentPermissionArr[2];
                     $permissionData['view_permissions'] = $parentPermissionArr[3];
                 }
-                
-                // echo "===preeee permissionData====";print_r($permissionData); die;
-                
+                                
                 $oldPermissions = MenuPermission::where('menu_id',$permissionData['menu_id'])->first()->toArray();
                 $oldPermissionsStr = $oldPermissions['add_permission'].$oldPermissions['edit_permission'].$oldPermissions['delete_permission'].$oldPermissions['view_permission'];
-                
-                // echo "\n id processing ==".$permissionData['menu_id'];
-                // echo "\n";
-                // echo "----new permission first loop ---- ";  
-                // echo "\n"; 
-                // print_r($newPermissionsStr);
-                // echo "\n";
-                // echo "----old permission first loop ----";
-                // echo "\n";
-                // print_r($oldPermissionsStr);
-                // echo "\n ";
                 if($newPermissionsStr !== $oldPermissionsStr && !in_array($permissionData['menu_id'],$idsToSkip)) {
                     $this->upsertPermissions($employeeId,$permissionData);
                 }
                 $children = $this->getChildMenu($permissionData['menu_id'],true);
-                
-                // echo "===children ids for menu id ====".$permissionData['menu_id'];
-                // echo "\n";
-                // print_r($children);
-                // echo "\n";
-                // if(count($children) > 0 ) {
-                    
-                        foreach($children as $child) {
-                            // if(!in_array($child,$idsToSkip)) {
-                                $newChPermissionsStr = $newPermissionsStr;
-                                $oldChPermissions = MenuPermission::where('menu_id',$child)->first()->toArray();
-                                $oldChPermissionsStr = $oldChPermissions['add_permission'].$oldChPermissions['edit_permission'].$oldChPermissions['delete_permission'].$oldChPermissions['view_permission'];
-    
-                                echo "\n id processing ==".$child;
-                                echo "\n";
-                                echo "----new permission second loop ----";
-                                echo "\n";  
-                                print_r($newPermissionsStr);
-                                echo "\n";
-                                echo "----old permission second loop ----";
-                                echo "\n";
-                                print_r($oldPermissionsStr);
-                                echo "\n";
-                                // echo "===menu chilePermissionData====";print_r($chilePermissionData);
-                               if(($newChPermissionsStr !== $oldChPermissionsStr) || !in_array($child,$idsToSkip)) {
-                                    $chilePermissionData = [
-                                        "menu_id"=> $child,
-                                        "add_permissions"=> $permissionData['add_permissions'],
-                                        "edit_permissions"=> $permissionData['edit_permissions'],
-                                        "delete_permissions"=> $permissionData['delete_permissions'],
-                                        "view_permissions"=> $permissionData['view_permissions'],
-                                    ];
-                                    $this->upsertPermissions($employeeId,$chilePermissionData );
-                               }
-                            // }
-                           
-                            //array_push($idsToSkip,$menuId);
-                            $idsToSkip[] = $child;
+                foreach($children as $child) {
+                        $newChPermissionsStr = $newPermissionsStr;
+                        $oldChPermissions = MenuPermission::where('menu_id',$child)->first()->toArray();
+                        $oldChPermissionsStr = $oldChPermissions['add_permission'].$oldChPermissions['edit_permission'].$oldChPermissions['delete_permission'].$oldChPermissions['view_permission'];
+
+                        echo "\n id processing ==".$child;
+                        echo "\n";
+                        echo "----new permission second loop ----";
+                        echo "\n";  
+                        print_r($newPermissionsStr);
+                        echo "\n";
+                        echo "----old permission second loop ----";
+                        echo "\n";
+                        print_r($oldPermissionsStr);
+                        echo "\n";
+                        if(($newChPermissionsStr !== $oldChPermissionsStr) || !in_array($child,$idsToSkip)) {
+                            $chilePermissionData = [
+                                "menu_id"=> $child,
+                                "add_permissions"=> $permissionData['add_permissions'],
+                                "edit_permissions"=> $permissionData['edit_permissions'],
+                                "delete_permissions"=> $permissionData['delete_permissions'],
+                                "view_permissions"=> $permissionData['view_permissions'],
+                            ];
+                            $this->upsertPermissions($employeeId,$chilePermissionData );
                         }
-                //     //}
-                // }
+                    $idsToSkip[] = $child;
+                }
             }
             return response()->json(['success' => 'Received employee menu permissions data']);
         }
