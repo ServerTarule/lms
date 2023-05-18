@@ -2,6 +2,7 @@
 @section('title', 'Employee Permissions Management')
 @section('subtitle', 'List of menus & their permissions')
 @section('content')
+@if($employeeDetail)
 <div class="row">
     <div class="col-sm-12">
         <div class="panel panel-bd lobidrag">
@@ -109,4 +110,25 @@
         </div>
     </div>
 </div>
+@else
+<div class="row">
+    <div class="col-sm-12">
+        <div class="panel panel-bd lobidrag">
+            <div class="panel-heading">
+                <div class="btn-group" id="buttonexport">
+                    <a href="#">
+                        <h4 class="text-danger bold">No Employee Found <i class="text-danger bold"></i></h4>
+                    </a>
+                </div>
+            </div>
+            <div class="panel-body">
+                <div class="col-xs-12 col-sm-12 col-md-12 m-b-20">
+                    No Employee With This Id Found!!
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@endif
+
 @endsection
