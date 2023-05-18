@@ -33,7 +33,9 @@ class LeadController extends Controller
     public function index() : View
     {
         $leads = Lead::all();
-        return view('leads.index', compact('leads'));
+        //Get all Masters
+        $masters=DynamicMain::where('master', '1')->get();
+        return view('leads.index', compact('leads', 'masters'));
     }
 
     public function show($id) : View
@@ -54,6 +56,18 @@ class LeadController extends Controller
             $leadKV['Received Date'] = date("d/m/Y", strtotime($l->receiveddate));
         }
         return view('leads.show', compact('leadKV'));
+    }
+
+    public function showtoedit($id) : JsonResponse {
+        $lead = Lead::find($id);
+        $leadmasters = LeadMaster::where('lead_id', $id)->get();
+        //Get all Masters
+        $masters=DynamicMain::where('master', '1')->get();
+        return response()->json([
+            'lead' => $lead,
+            'leadmasters' => $leadmasters,
+            'success' => 'Received rule data'
+        ]);
     }
 
     public function create() : View
@@ -105,6 +119,30 @@ class LeadController extends Controller
         LeadReceived::dispatch($lead);
 
         return response()->json(['success' => 'Received rule data']);
+    }
+
+    public function updateone(Request $request) : RedirectResponse
+    {
+
+        $leadId = $request->get('leadId');
+
+        $lead = Lead::find($leadId);
+        $lead->name = $request->get('leadName');
+        $lead->email = $request->get('leadEmail');
+        $lead->mobileno = $request->get('leadMobile');
+        $lead->altmobileno = $request->get('leadAlternateMobile');
+        $lead->save();
+
+        $leadMasters = LeadMaster::where('lead_id', $leadId)->orderBy('master_id', 'ASC')->get();
+        foreach ($leadMasters as $key => $value) {
+            $value->mastervalue_id = $request->get('leadMaster_'.$key+1);
+            $value->save();
+        }
+
+        $leads = Lead::all();
+        //Get all Masters
+        $masters=DynamicMain::where('master', '1')->get();
+        return redirect()->route('leads.index', compact('leads', 'masters'));
     }
 
     public function call() : View

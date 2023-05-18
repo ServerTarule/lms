@@ -59,9 +59,12 @@
                                     <td>{{$lead->mobileno}}</td>
                                     <td>{{ \Carbon\Carbon::parse($lead->receiveddate)->format('d/m/Y')}}</td>
                                     <td>{{ \Carbon\Carbon::parse($lead->created_at)->format('d/m/Y')}}</td>
+{{--                                    <td>--}}
+{{--                                        <a href="/leads/{{$lead->id}}" class="btn-xs btn-info"> <i--}}
+{{--                                                class="fa fa-edit"></i> </a>--}}
+{{--                                    </td>--}}
                                     <td>
-                                        <a href="/leads/{{$lead->id}}" class="btn-xs btn-info"> <i
-                                                class="fa fa-edit"></i> </a>
+                                        <a href="#" id="editLead" onclick="editLead( {{ $lead->id }})" class="btn-xs btn-info"><i class="fa fa-edit"></i></a>
                                     </td>
                             @endforeach
                             </tbody>
@@ -212,6 +215,115 @@
                         <a href="#" class="btn btn-default btn-sm"><i class="fa fa-minus"></i> Clear</a>
                     </div>
                     <div class="table-responsive">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="editSingleLead" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header modal-header-primary">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h3><i class="fa fa-plus m-r-5"></i>Edit Lead</h3>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <form class="form-horizontal"  action="{{ route('leads.updateone') }}" method="POST">
+                                @csrf
+                                <input class="leadId" type="hidden" id="leadId" name="leadId"  />
+                                <div class="col-md-12">
+                                    <h4 style="text-align: left; font-weight: bold; color: #00b0f0; text-decoration: underline;">General Information</h4>
+                                    <div class="row">
+                                        <div class="form-group col-sm-6">
+                                            <label>Name <span class="required"> * </span></label>
+                                            <input class="form-control leadName" id="leadName" name="leadName" placeholder="Enter Name" required="required" type="text" value="{{$lead->name}}" />
+                                        </div>
+                                        <div class="form-group col-sm-6">
+                                            <label>Email Id</label>
+                                            <input class="form-control leadEmail" id="leadEmail" name="leadEmail" placeholder="Enter EmailId" type="text" {{--value="{{ $leadKVForEdit['email'] }}"--}} />
+                                            <span class="required" id="rqrmail" style="color: red; width: -5%; display: none;"> Please Enter Valid Email </span>
+                                        </div>
+                                        <div class="form-group col-sm-6">
+                                            <label>Mobile Number <span style="color: red;"> * </span> <span class="spnmobile" style="color: red;"></span></label>
+                                            <input
+                                                class="form-control leadMobile"
+                                                id="leadMobile"
+                                                maxlength="10"
+                                                name="leadMobile"
+                                                placeholder="Enter MobileNumber"
+                                                required="required"
+                                                type="text"
+{{--                                                value="{{ $leadKVForEdit['mobileno'] }}"--}}
+                                            />
+                                            <span class="required" id="rqrNumber" style="color: red; width: -5%; display: none;"> Please Enter Currect Number </span>
+                                        </div>
+
+                                        <div class="form-group col-sm-6">
+                                            <label for="emp_name">Alternate MobileNo.</label>
+                                            <input
+                                                class="form-control leadAlternateMobile"
+                                                id="leadAlternateMobile"
+                                                maxlength="10"
+                                                name="leadAlternateMobile"
+                                                placeholder="Enter Mobile Number"
+                                                type="text"
+{{--                                                value="{{$leadKVForEdit['altmobileno']}}"--}}
+                                            />
+                                            <span class="required" id="rqrAlterNumber" style="color: red; width: -5%; display: none;"> Please Enter Currect Number</span>
+                                        </div>
+                                        <div class="form-group col-sm-6">
+                                            <label for="emp_name">Received Date <span class="required"> * </span></label>
+                                            <input
+                                                readonly
+                                                autocomplete="off"
+                                                class="form-control leadReceivedDate"
+                                                data-val="true"
+                                                data-val-date="The field ReceivedDate must be a date."
+                                                id="leadReceivedDate"
+                                                name="leadReceivedDate"
+                                                placeholder="Enter Received Date"
+                                                type="text"
+{{--                                                value="{{ \Carbon\Carbon::parse($leadKVForEdit['receiveddate'])->format('d/m/Y') }}"--}}
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <h4 style="text-align: left; font-weight: bold; color: #00b0f0; text-decoration: underline;">Other Information</h4>
+                                    <div class="row">
+                                        @foreach($masters as $master)
+                                            <div class="form-group col-sm-6">
+                                                <label>{{ $master->name }}<span class="required"> * </span></label>
+                                                <select class="form-control leadMaster_{{ $master -> id }}" name="leadMaster_{{ $master -> id }}" id="leadMaster_{{ $master -> id }}">
+                                                    <option value="0">-- Select Option --</option>
+                                                    @php
+                                                        $values = $master->values()->get();
+                                                    @endphp
+                                                    @foreach($values as $value)
+                                                        <option value="{{ $value->id }}">{{ $value->name }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                </div>
+{{--                                <div class="col-sm-12">--}}
+{{--                                    <label>Remark</label>--}}
+{{--                                    <div class="form-group">--}}
+{{--                                        <textarea class="form-control Remark" cols="20" id="leadRemark" name="leadRemark" rows="2">{{ $leadKVForEdit['remark'] }}</textarea>--}}
+{{--                                    </div>--}}
+{{--                                </div>--}}
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <div>
+                                            <input type="submit" class="btn btn-primary" value="Update" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>

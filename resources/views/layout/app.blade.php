@@ -841,6 +841,51 @@
             });
         }
 
+        function editLead(id) {
+            let CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+            $.ajax({
+                /* the route pointing to the post function */
+                url: '/leads/'+id,
+                type: 'GET',
+                /* send the csrf-token and the input to the controller */
+                // data: {_token: CSRF_TOKEN, 'ruleData':JSON.stringify(jsonObject)},
+                data: {
+                    _token: CSRF_TOKEN,
+                    'id': id
+                },
+                // data: $(this).serialize(),
+                dataType: 'JSON',
+                /* remind that 'data' is the response of the AjaxController */
+                success: function (data) {
+                    let lead = data['lead'];
+                    let leadmasters = data['leadmasters'];
+                    $('.leadId').val(lead['id']);
+                    $('.leadName').val(lead['name']);
+                    $('.leadEmail').val(lead['email']);
+                    $('.leadMobile').val(lead['mobileno']);
+                    $('.leadAlternateMobile').val(lead['altmobileno']);
+                    $('.leadReceivedDate').val(lead['receiveddate']);
+
+                    $.each(leadmasters, function(key, value) {
+                        if(value != null) {
+                            $(".leadMaster_"+value['master_id']+"").val(value['mastervalue_id']);
+                        }
+                    });
+
+
+                    $('#editSingleLead').modal('show');
+                },
+                failure: function (data) {
+                    console.log(data);
+                }
+            });
+        }
+
         function handleChange(cb) {
             console.log("Changed, new value = " + cb.checked);
             $(cb).attr('value', cb.checked);
