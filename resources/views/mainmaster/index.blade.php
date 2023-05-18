@@ -1,6 +1,7 @@
 @extends('layout.app')
 @section('title', 'Master')
 @section('content')
+@if($mainmasters)
     <div class="row">
         <div class="col-sm-12">
             <div class="panel panel-bd lobidrag">
@@ -25,12 +26,9 @@
                                             <div class="form-group col-sm-2">
                                                 <select class="form-control" name="leadStatusMasterId" id="leadStatusMasterId">
                                                     <option disabled>-- Select Lead Status --</option>
-    {{--                                                @php--}}
-    {{--                                                    $values = $master->values()->get();--}}
-    {{--                                                @endphp--}}
-                                                    @foreach($leadStatuses as $leadStatus)
-                                                        <option value="{{ $leadStatus->id }}">{{ $leadStatus->name }}</option>
-                                                    @endforeach
+                                                        @foreach($leadStatuses as $leadStatus)
+                                                            <option value="{{ $leadStatus->id }}">{{ $leadStatus->name }}</option>
+                                                        @endforeach
                                                 </select>
                                             </div>
                                         @endif
@@ -43,9 +41,6 @@
                                             <div class="form-group col-sm-2">
                                                 <select class="form-control" name="stateMasterId" id="stateMasterId">
                                                     <option disabled>-- Select State --</option>
-    {{--                                                @php--}}
-    {{--                                                    $values = $master->values()->get();--}}
-    {{--                                                @endphp--}}
                                                     @foreach($states as $state)
                                                         <option value="{{ $state->id }}" {{$state->id  == $currentStateId ? 'selected' : ''}}>{{ $state->name }}</option>
                                                     @endforeach
@@ -137,64 +132,21 @@
                                 <form action="/master/main/update-value/{{ $master->id }}/{{$dynaicmaster->id}}" method="post">
                                     @csrf
                                     <div class="row">
-                                        
-
-
-                                    <!-- @if($leadStatuses)
-                                        @if( count($leadStatuses) != 0 )
-                                            <div class="form-group col-sm-2">
-                                                <label>Select Lead Status<span class="required"> * </span></label>
-                                            </div>
-                                            <div class="form-group col-sm-2">
-                                                <select class="form-control" name="dependentId" id="leadStatusMasterId">
-                                                    <option disabled>-- Select Lead Status --</option>
-    {{--                                                @php--}}
-    {{--                                                    $values = $master->values()->get();--}}
-    {{--                                                @endphp--}}
-                                                    @foreach($leadStatuses as $leadStatus)
-                                                        <option value="{{ $leadStatus->id }}" {{$leadStatus->id  == $currentLeadId ? 'selected' : ''}}>{{$leadStatus->id}} {{$currentLeadId}}{{ $leadStatus->name }}</option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                                        @endif
-                                    @endif -->
-
                                     @if($dependentMasterData)
                                         @if( count($dependentMasterData) != 0 )
                                             <div class="col-md-2 form-group AUTHORITY">
-                                                    <label>Select {{$dependentName}} *</label>
+                                                    <label>Select {{$dependentLabel}} *</label>
                                                 </div>
                                                 <div class="col-md-4 form-group AUTHORITY">
                                                     <select class="form-control" name="dependentId" id="stateMasterId">
                                                         <option disabled>-- Select Value --</option>
-        {{--                                                @php--}}
-        {{--                                                    $values = $master->values()->get();--}}
-        {{--                                                @endphp--}}
-                                                        @foreach($dependentMasterData as $dependentMasterDt)
-                                                            <option value="{{ $dependentMasterDt->id }}" {{$dependentMasterDt->id  == $currentDependentId ? 'selected' : ''}}>{{ $dependentMasterDt->name }}</option>
-                                                        @endforeach
+                                                            @foreach($dependentMasterData as $dependentMasterDt)
+                                                                <option value="{{ $dependentMasterDt->id }}" {{$dependentMasterDt->id  == $currentDependentId ? 'selected' : ''}}>{{ $dependentMasterDt->name }}</option>
+                                                            @endforeach
                                                     </select>
                                                 </div>
                                         @endif
                                     @endif
-                                    <!-- @if($states)
-                                        @if( count($states) != 0 )
-                                            <div class="col-md-2 form-group AUTHORITY">
-                                                <label>Select State *</label>
-                                            </div>
-                                            <div class="col-md-4 form-group AUTHORITY">
-                                                <select class="form-control" name="dependentId" id="stateMasterId">
-                                                    <option disabled>-- Select State --</option>
-    {{--                                                @php--}}
-    {{--                                                    $values = $master->values()->get();--}}
-    {{--                                                @endphp--}}
-                                                    @foreach($states as $state)
-                                                        <option value="{{ $state->id }}" {{$state->id  == $currentStateId ? 'selected' : ''}}>{{ $state->name }}</option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                                        @endif
-                                    @endif -->
                                         <div class="col-md-1 form-group AUTHORITY">
                                             <label>Name<span class="required"> * </span></label>
                                         </div>
@@ -209,15 +161,6 @@
                                             <button type="submit" class="btn btn-warning ">update</button>
                                         </div>
                                     </div>
-
-
-
-
-
-
-
-
-                                   
                                 </form>
                             </div>
                             @if (session('error'))
@@ -268,5 +211,22 @@
             </div>
         </div>
     </div>
-
+@else
+<div class="row">
+    <div class="col-sm-12">
+        <div class="panel panel-bd lobidrag">
+            <div class="panel-heading">
+                <div class="btn-group" id="buttonexport">
+                    <a href="#">
+                    <h4>No Master</h4>
+                    </a>
+                </div>
+            </div>
+            <div class="panel-body">
+                No Master With This ID found
+            </div>
+        </div>
+    </div>
+</div>
+@endif                    
 @endsection

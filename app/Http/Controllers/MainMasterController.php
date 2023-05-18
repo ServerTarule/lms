@@ -16,18 +16,28 @@ class MainMasterController extends Controller
     public function index($id){
 
         $master =DynamicMain::where('id', $id)->first();
+        if(!isset($master)) {
+            //   return view('mainmaster.index', compact('mainmasters', 'master', 'currentStateId','leadStatuses', 'states'));
+
+              return view('mainmaster.index',
+              [
+                  
+                  'mainmasters'=>false,    
+              ]);
+            // return redirect()->back()->with('error', 'Something Went Wrong');
+        }
         $leadStatuses = null;
         $states = null;
         $currentStateId = null;
         //Log::info($master->name);
-        if($master->name == 'Lead Stages') {
+        if(isset($master) && $master->name == 'Lead Stages') {
             $leadStatusMaster = DynamicMain::where('name', 'Lead Status')->first();
             //Log::info($leadStatusMaster);
             $leadStatuses = DynamicValue::where('parent_id', $leadStatusMaster->id)->get();
             //Log::info($leadStatuses);
         }
 
-        if($master->name == 'Cities') {
+        if(isset($master) && $master->name == 'Cities') {
             $stateMaster = DynamicMain::where('name', 'States')->first();
             $states = DynamicValue::where('parent_id', $stateMaster->id)->get();
         }
@@ -72,11 +82,7 @@ class MainMasterController extends Controller
     }
 
     public function edit($masterId, $id){
-        // echo "Master id".$masterId;
-        // echo " id".$id;
-        $master =DynamicMain::where('id', $masterId)->first();
-
-        
+        $master =DynamicMain::where('id', $masterId)->first(); 
         $leadStatuses = null;
         $states = null;
         $currentStateId = null;
@@ -84,25 +90,26 @@ class MainMasterController extends Controller
         $dynaicmaster=DynamicValue::where('id',$id)->first();
         $dynaicmasterParentId = $dynaicmaster->parent_id;
         $currentStateId = $dynaicmaster->dependent_id;
-        $dynaicmasterDependentId = $dynaicmaster->dependent_id;
-        print_r($dynaicmaster->toArray());
-        
-        $dynaicmasteOneLevelUp =DynamicValue::where('id',$dynaicmasterDependentId)->first();
-        print_r($dynaicmasteOneLevelUp->toArray());
-
-        echo "Parent ID ".$parentIdOfDependentId = $dynaicmasteOneLevelUp->parent_id;
-        $parentData = DynamicValue::where('parent_id', $parentIdOfDependentId)->get();
-        
-        print_r($parentData->toArray());
-$currentDependentId =  $dynaicmaster->dependent_id;
-        // print_r($parentData);
-        // print_r($dependentMasterData); 
-        if($dynaicmaster->dependent_id !== 0) {
-            // $dependentData =     
+        $currentDependentId =  $dynaicmaster->dependent_id;
+        $dependentLabel = null;
+        $parentData = null;
+        if(isset($currentDependentId)) {
+            $dynaicmasterDependentId = $dynaicmaster->dependent_id;
+            $dynaicmasteOneLevelUp =DynamicValue::where('id',$dynaicmasterDependentId)->first();
+            $parentIdOfDependentId = $dynaicmasteOneLevelUp->parent_id;
+            $parentData = DynamicValue::where('parent_id', $parentIdOfDependentId)->get();
+            $parentmainMaster = DynamicMain::where('id', $parentIdOfDependentId)->first();
+            $dependentLabel = $parentmainMaster->name;
         }
-        $currentLeadId = $dynaicmaster->dependent_id;
-       // print_r($dynaicmaster);die;
-        return view('mainmaster.index',['currentDependentId'=>$currentDependentId,'dependentName'=>$dependentMaster->name,'dependentMasterData'=>$dependentMasterData,'master'=>$master,'currentStateId'=>$currentStateId,'currentLeadId'=>$currentLeadId, 'mainmasters'=>false,'leadStatuses'=>$leadStatuses,'states'=>$states,]);
+        return view('mainmaster.index',
+        [
+            'dynaicmaster'=>$dynaicmaster,
+            'currentDependentId'=>$currentDependentId,
+            'dependentLabel'=>$dependentLabel,
+            'dependentMasterData'=>$parentData,
+            'master'=>$master,
+            'mainmasters'=>false,    
+        ]);
     }
 
     public function update(Request $request,$masterId, $id){
