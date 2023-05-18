@@ -105,13 +105,13 @@
             <div class="sidebar">
                 <ul class="sidebar-menu">
                     @livewire('menus')
-                    <li class="active">
+                    {{--  <li class="active">
                         <a href="/"><i class="fa fa-tachometer"></i><span>Dashboard</span>
                             <span class="pull-right-container">
                             </span>
                         </a>
-                    </li>
-                    <li class="treeview">
+                    </li>--}}
+                    {{-- <li class="treeview">
                         <a href="#">
                             <i class="fa fa-users"></i><span>Menu</span>
                             <span class="pull-right-container">
@@ -123,14 +123,14 @@
 
                         </ul>
 
-                    </li>
-                    <li class="treeview">
+                    </li>--}}
+                     {{--<li class="treeview">
                         <a href="#">
                             <i class="fa fa-users"></i><span>Master</span>
                             <span class="pull-right-container">
                                 <i class="fa fa-angle-left pull-right"></i>
                             </span>
-                        </a>
+                        </a>--}}
                         <ul class="treeview-menu">
                             <li><a href="/master">Create Master</a></li>
                             @livewire('dynamics')
@@ -156,7 +156,7 @@
 {{--                            <li><a href="Grant_authority.php">Permission</a></li>--}}
                         </ul>
                     </li>
-
+                    {{--  
                     <li class="treeview">
                         <a href="#">
                             <i class="fa fa-shopping-basket"></i><span>Rules & Regulations</span>
@@ -168,7 +168,7 @@
                             <li><a href="/rules">Rules</a></li>
                         </ul>
                     </li>
-
+                   
                     <li class="treeview">
                         <a href="#">
                             <i class="fa fa-shopping-basket"></i><span>Employee Management</span>
@@ -183,6 +183,7 @@
                             <li><a href="/employees/permissions">Employee Permissions</a></li>
                         </ul>
                     </li>
+                    
                     <li class="treeview">
                         <a href="#">
                             <i class="fa fa-sliders"></i><span>Roles & Permission</span>
@@ -233,7 +234,7 @@
                             <li><a href="/occasions">Occasion Details</a></li>
                         </ul>
                     </li>
-
+                    --}}
                 </ul>
             </div>
         </aside>
