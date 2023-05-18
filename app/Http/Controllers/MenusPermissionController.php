@@ -16,7 +16,12 @@ class MenusPermissionController extends Controller
     }
 
     public function managePermission($employeeId){
-        $employeeDetail =  Employee::where('id', $employeeId)->first()->toArray();
+        $employeeDetailObj =  Employee::where('id', $employeeId)->first();
+        $employeeDetail = null;
+        if(isset($employeeDetailObj)) {
+            $employeeDetail = $employeeDetailObj->toArray();
+        }
+        
         $menuPermissions = DB::select('SELECT m.*,menuparent.title as parentname, t.* from ( SELECT mp.id as mId,mp.menu_id,mp.employee_id,mp.add_permission,mp.edit_permission,mp.view_permission,mp.delete_permission,mp.created_at as mp_created_at  from menu_permissions as mp where employee_id ='.$employeeId.') t RIGHT JOIN menus as m on t.menu_id =  m.id LEFT JOIN menus as menuparent on m.parent_id = menuparent.id;');
         // $menuPermissions = DB::table('menus as m')->leftJoin('menus as parM', 'm.parent_id', '=', 'parM.id')->leftJoin('menu_permissions as mp', 'm.id', '=', 'mp.menu_id')->leftJoin('employees as e', 'mp.employee_id', '=', 'e.id')->where('mp.employee_id', $employeeId)
         //     ->select('m.*','parM.title as parentname', 'mp.id as mId', 'mp.menu_id', 'mp.employee_id', 'mp.add_permission', 'mp.edit_permission', 'mp.view_permission', 'mp.delete_permission', 'mp.created_at as mp_created_at', 'e.name')
@@ -89,8 +94,9 @@ class MenusPermissionController extends Controller
         $parentId = $permissionData['parent_id'];
         // print_r($permissionData); 
 
-        $previousPermissions =  MenuPermission::where('menu_id', $menuId)->where('employee_id', $employeeId)->first()->toArray();
+        $previousPermissionsObj =  MenuPermission::where('menu_id', $menuId)->where('employee_id', $employeeId)->first();
 
+        $previousPermissions = (isset($previousPermissionsObj))?$previousPermissionsObj->toArray():null;
         $childrenPermissionData = [];
         // print_r($previousPermissions); 
 
@@ -119,33 +125,43 @@ class MenusPermissionController extends Controller
         }
 
         if($parentId > 0) {
-            $parentPermissions = MenuPermission::where('menu_id',$parentId)->where('employee_id',$employeeId)->select('add_permission','edit_permission','delete_permission','view_permission')->first()->toArray();
+            $parentPermissionsObj = MenuPermission::where('menu_id',$parentId)->where('employee_id',$employeeId)->select('add_permission','edit_permission','delete_permission','view_permission')->first();
+            $parentPermissions= (isset($parentPermissionsObj))?$parentPermissionsObj->toArray():null;
+
 //              echo "Details ==view_permissions: ".$permissionData['view_permissions'] ."----previousPermissions:".$previousPermissions['view_permission']."-----parentPermissions:".$parentPermissions['view_permission'];
             $isInvalidViewPerm = (
                 $permissionData['view_permissions'] == 1 
+                && $previousPermissions 
                 && $previousPermissions['view_permission'] != $permissionData['view_permissions'] 
+                && $parentPermissions 
                 && $parentPermissions['view_permission'] != $permissionData['view_permissions']
             
             );
 
             // echo "*****isInvalidViewPerm***** ==".$isInvalidViewPerm;
             $isInvalidAddPerm = (
-                                    $permissionData['add_permissions'] == 1 &&
-                                    $previousPermissions['add_permission'] != $permissionData['add_permissions'] &&
-                                    $parentPermissions['add_permission'] != $permissionData['add_permissions']
+                                    $permissionData['add_permissions'] == 1 
+                                    && $previousPermissions 
+                                    && $previousPermissions['add_permission'] != $permissionData['add_permissions'] 
+                                    && $parentPermissions 
+                                    &&  $parentPermissions['add_permission'] != $permissionData['add_permissions']
                                 
                                 );
             
             $isInvalidEditPerm = (
-                                    $permissionData['edit_permissions'] == 1 &&
-                                    $previousPermissions['edit_permission'] != $permissionData['edit_permissions'] &&
-                                    $parentPermissions['edit_permission'] != $permissionData['edit_permissions']
+                                    $permissionData['edit_permissions'] == 1
+                                    && $previousPermissions
+                                    && $previousPermissions['edit_permission'] != $permissionData['edit_permissions'] 
+                                    && $parentPermissions 
+                                    && $parentPermissions['edit_permission'] != $permissionData['edit_permissions']
                                 );
 
             $isInvalidDeletePerm = (
-                                    $permissionData['delete_permissions'] == 1 &&
-                                    $previousPermissions['delete_permission'] != $permissionData['delete_permissions'] &&
-                                    $parentPermissions['delete_permission'] != $permissionData['delete_permissions']
+                                    $permissionData['delete_permissions'] == 1
+                                    && $previousPermissions
+                                    && $previousPermissions['delete_permission'] != $permissionData['delete_permissions'] 
+                                    && $parentPermissions 
+                                    && $parentPermissions['delete_permission'] != $permissionData['delete_permissions']
                                 );
     
            
@@ -188,7 +204,14 @@ class MenusPermissionController extends Controller
         MenuPermission::reguard();
        
         foreach($menu_ids as $menu_id) {
-            $previousPermissionsSubMenu =  MenuPermission::where('menu_id', $menu_id)->where('employee_id', $employeeId)->first()->toArray();
+            $previousPermissionsSubMenu = [
+                'add_permission'=>0,
+                'edit_permission'=>0,
+                'delete_permission'=>0,
+                'view_permission'=>0,
+            ];
+            $previousPermissionsSubMenuObj =  MenuPermission::where('menu_id', $menu_id)->where('employee_id', $employeeId)->first();
+            $previousPermissionsSubMenu = isset($previousPermissionsSubMenuObj)?$previousPermissionsSubMenuObj->toArray():$previousPermissionsSubMenu;
             MenuPermission::unguard();
             MenuPermission::updateOrCreate(
                 [
