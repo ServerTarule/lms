@@ -21,6 +21,7 @@ class MainMasterController extends Controller
               return view('mainmaster.index',
               [      
                   'mainmasters'=>false,    
+                  'edit'=>false
               ]);
         }
         $leadStatuses = null;
@@ -108,6 +109,7 @@ class MainMasterController extends Controller
             'dependentMasterData'=>$parentData,
             'master'=>$master,
             'mainmasters'=>false,    
+            'edit'=>true
         ]);
     }
 

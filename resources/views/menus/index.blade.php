@@ -80,7 +80,7 @@
                                         <th>Menu Url</th>
                                         <th>Menu Icon</th>
                                         <th>parent ID</th>
-                                        <th>parent name</th>
+                                        <th>Parent Name</th>
                                         <th>Menu Preference</th>
                                         <th>Create Date</th>
                                         <th>Modify</th>
