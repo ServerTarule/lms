@@ -10,6 +10,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 
 class MainMasterController extends Controller
 {
@@ -37,11 +38,14 @@ class MainMasterController extends Controller
             $stateMaster = DynamicMain::where('name', 'States')->first();
             $states = DynamicValue::where('parent_id', $stateMaster->id)->get();
         }
+
+        
         // print_r($states );
-        $mainmasters = DynamicValue::where('parent_id', $id)->get();
-//        Log::info($states);
-//        Log::info(count($states));
-        return view('mainmaster.index', compact('mainmasters', 'master', 'currentStateId','leadStatuses', 'states'));
+        //$mainmasters = DynamicValue::where('parent_id', $id)->get();
+        //Log::info($states);
+        //Log::info(count($states));
+        $mainmasters=DB::table('dynamic_values as dm')->select('dm.*','pardm.name as parent_name')->leftJoin('dynamic_values as pardm', 'dm.dependent_id', '=', 'pardm.id')->get()->where('parent_id', $id);
+      return view('mainmaster.index', compact('mainmasters', 'master', 'currentStateId','leadStatuses', 'states'));
 
 
 /*        $master =DynamicMain::where('id', $id)->first();

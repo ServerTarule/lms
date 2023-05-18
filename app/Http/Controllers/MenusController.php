@@ -4,12 +4,17 @@ namespace App\Http\Controllers;
 
 use App\Models\Menu;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class MenusController extends Controller
 {
     public function index(){
-        $menus=Menu::all();
+        // $menus=Menu::all();
+        $menus=DB::table('menus as m')->select('m.*','parM.title as parent_name')->leftJoin('menus as parM', 'm.parent_id', '=', 'parM.id')->get();
+       
+        // print_r($menus->toArray());
         $menuWithTopPref=Menu::where([])->orderBy('preference','desc')->first();
+        //  print_r($menuWithTopPrefone->toArray());
         return view('menus.index',compact('menus','menuWithTopPref'));
     }
 

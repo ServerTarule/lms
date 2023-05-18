@@ -71,6 +71,11 @@
                                 <tr class="info">
                                     <th>S. No.</th>
                                     <th>Name</th>
+                                    @if($master->name =="Cities")
+                                    <th>State Name</th>
+                                    @elseif($master->name =='Lead Stages')
+                                    <th>Lead Status Name</th>
+                                    @endif
                                     <th>Create Date</th>
                                     <th>Modify</th>
                                     <th>Remove</th>
@@ -81,6 +86,9 @@
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
                                     <td>{{ $mainmaster->name }}</td>
+                                    @if($master->name =="Cities" || $master->name =='Lead Stages')
+                                    <td>{{$mainmaster->parent_name}}</td>
+                                    @endif
                                     <td>{{ \Carbon\Carbon::parse($mainmaster->created_at)->format('d/m/Y') }}
                                     </td>
                                     <td>
