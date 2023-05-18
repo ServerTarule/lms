@@ -238,15 +238,14 @@
                                     <div class="row">
                                         <div class="form-group col-sm-6">
                                             <label>Name <span class="required"> * </span></label>
-                                            <input class="form-control leadName" id="leadName" name="leadName" placeholder="Enter Name" required="required" type="text" value="{{$lead->name}}" />
+                                            <input class="form-control leadName" id="leadName" name="leadName" placeholder="Enter Name" required="required" type="text"/>
                                         </div>
                                         <div class="form-group col-sm-6">
                                             <label>Email Id</label>
-                                            <input class="form-control leadEmail" id="leadEmail" name="leadEmail" placeholder="Enter EmailId" type="text" {{--value="{{ $leadKVForEdit['email'] }}"--}} />
-                                            <span class="required" id="rqrmail" style="color: red; width: -5%; display: none;"> Please Enter Valid Email </span>
+                                            <input class="form-control leadEmail" id="leadEmail" name="leadEmail" placeholder="Enter EmailId" type="text"/>
                                         </div>
                                         <div class="form-group col-sm-6">
-                                            <label>Mobile Number <span style="color: red;"> * </span> <span class="spnmobile" style="color: red;"></span></label>
+                                            <label>Mobile Number <span style="color: red;"> * </span> </label>
                                             <input
                                                 class="form-control leadMobile"
                                                 id="leadMobile"
@@ -257,7 +256,6 @@
                                                 type="text"
 {{--                                                value="{{ $leadKVForEdit['mobileno'] }}"--}}
                                             />
-                                            <span class="required" id="rqrNumber" style="color: red; width: -5%; display: none;"> Please Enter Currect Number </span>
                                         </div>
 
                                         <div class="form-group col-sm-6">

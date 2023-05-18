@@ -803,6 +803,7 @@
                 success: function (data) {
                     let communicationSchedule = data['schedule'];
                     let type = communicationSchedule['type'];
+                    $('#communicationId').val(communicationSchedule['id']);
                     $('.ruleId').val(communicationSchedule['rule_id']);
                     $('.communicationTemplateType').val(type);
 
@@ -820,6 +821,7 @@
 
                     $('.communicationTemplateId').val(communicationSchedule['template_id']);
                     $('.communicationTemplateSubject').val(communicationSchedule['subject']);
+                    $('.communicationTemplateMessage').val(communicationSchedule['message']);
                     $('.communicationTemplateBody').val(communicationSchedule['content']);
 
                     let schedule = communicationSchedule['schedule'];
@@ -873,10 +875,13 @@
 
                     $.each(leadmasters, function(key, value) {
                         if(value != null) {
-                            $(".leadMaster_"+value['master_id']+"").val(value['mastervalue_id']);
+                            let mastervalue = value['mastervalue_id'];
+                            if (mastervalue == null) {
+                                mastervalue = 0;
+                            }
+                            $(".leadMaster_"+value['master_id']+"").val(mastervalue);
                         }
                     });
-
 
                     $('#editSingleLead').modal('show');
                 },
@@ -1298,6 +1303,7 @@
         });
 
         $('select[name="communicationTemplateType"]').change(function() {
+            console.log("Here");
             if($(this).val() === 'WhatsApp') {
                 $("#communicationTemplateMessageDiv").show();
                 $("#communicationTemplateSubjectDiv").hide();

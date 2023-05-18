@@ -277,7 +277,7 @@
                                     </div>
                                     <div class="col-md-12 form-group communicationTemplateMessageDiv" id="communicationTemplateMessageDiv">
                                         <label class="control-label" id="control-label">WhatsApp</label>
-                                        <textarea class="form-control" id="communicationTemplateMessage" name="communicationTemplateMessage" placeholder="Please type here.."></textarea>
+                                        <textarea class="form-control communicationTemplateMessage" id="communicationTemplateMessage" name="communicationTemplateMessage" placeholder="Please type here.."></textarea>
                                     </div>
                                     <div class="col-md-12 form-group communicationTemplateBodyDiv" id="communicationTemplateBodyDiv">
                                         <label class="control-label">Email</label>
