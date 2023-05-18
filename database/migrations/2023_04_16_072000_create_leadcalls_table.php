@@ -19,7 +19,6 @@ return new class extends Migration
             $table->unsignedBigInteger('lead_id');
             $table->unsignedBigInteger('employee_id')->nullable()->constrained();
             $table->unsignedBigInteger('leadstatus_id')->nullable()->constrained();
-            $table->unsignedBigInteger('callstatus_id')->nullable()->constrained();
             $table->longText('remark')->nullable();
             $table->dateTime('called_at');
             $table->date('remind_at');
@@ -32,10 +31,6 @@ return new class extends Migration
                 ->on('employees')
                 ->onDelete('cascade');
             $table->foreign('leadstatus_id')
-                ->references('id')
-                ->on('dynamic_values')
-                ->onDelete('cascade');
-            $table->foreign('callstatus_id')
                 ->references('id')
                 ->on('dynamic_values')
                 ->onDelete('cascade');

@@ -245,12 +245,6 @@ class LeadController extends Controller
 
         $employees = Employee::all();
 
-        // Call Status
-        $callStatusMaster = DynamicMain::where('name', 'Call Status')->first();
-
-        //Call Status Values
-        $callStatusValues = DynamicValue::where('parent_id', $callStatusMaster->id)->get();
-
         //Send Email
         $emailTemplates = Template::where('type', 'Email')->get();
 
@@ -263,7 +257,7 @@ class LeadController extends Controller
         //Get all Masters
         $masters=DynamicMain::where('master', '1')->get();
 
-        return view('leads.showcall', compact('leads', 'leadKV', 'employees', 'callStatusValues', 'emailTemplates', 'whatsappTemplates', 'leadCalls', 'leadKVForEdit', 'masters', 'leadMasters'));
+        return view('leads.showcall', compact('leads', 'leadKV', 'employees', 'emailTemplates', 'whatsappTemplates', 'leadCalls', 'leadKVForEdit', 'masters', 'leadMasters'));
     }
 
     public function update(Request $request): RedirectResponse {
@@ -294,7 +288,6 @@ class LeadController extends Controller
         $templateId = $request->get('templateId');
         $emailId = $request->get('emailId');
         $type = $request->get('type');
-        $callStatusId = $request->get('callStatusId');
         $remark = $request->get('remark');
         $reminderDate = $request->get('reminderDate');
         $template = Template::where('id', $templateId)->first();
@@ -307,7 +300,6 @@ class LeadController extends Controller
             'lead_id'=>$leadId,
             'employee_id'=>$employeeId,
             'leadstatus_id'=>null,
-            'callstatus_id'=>$callStatusId,
             'remark'=>$remark,
             'called_at'=>now(),
             'remind_at'=>$reminderDate

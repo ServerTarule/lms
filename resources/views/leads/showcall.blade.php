@@ -62,17 +62,6 @@
                 </select>
         </div>
         <div class="col-sm-4">
-            <label>Call Status</label> <span class="required" id="LeadStatus" style="color: red; width: -5%; float: right;"> </span>
-            <div class="form-group">
-                <select class="form-control CallingSubject" name="callStatusId" id="callStatusId" >
-                    <option value="">-- Select Call Status --</option>
-                    @foreach ($callStatusValues as $callstatus )
-                        <option value="{{$callstatus->id}}">{{$callstatus->name}}</option>
-                    @endforeach
-                </select>
-            </div>
-        </div>
-        <div class="col-sm-4">
             <label>Next Reminder Date</label>
             <div class="form-group">
                 <input type="date" class="form-control NextReminderDate reg" id="leadNextReminderDate" name="leadNextReminderDate" placeholder="dd/mm/yyyy" autocomplete="off" />

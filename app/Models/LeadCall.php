@@ -17,7 +17,6 @@ class LeadCall extends Model
         'lead_id',
         'employee_id',
         'leadstatus_id',
-        'callstatus_id',
         'remark',
         'called_at',
         'remind_at',
@@ -32,9 +31,6 @@ class LeadCall extends Model
     }
 
     public function leadstatus() : BelongsTo {
-        return $this->belongsTo(DynamicValue::class);
-    }
-    public function callstatus() : BelongsTo {
         return $this->belongsTo(DynamicValue::class);
     }
 }
