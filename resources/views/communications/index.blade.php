@@ -244,7 +244,6 @@
                             <form class="form-horizontal" action="{{ route('communications.update') }}" method="POST">
                                 @csrf
                                 <fieldset>
-                                    <input type="hidden" id="communicationId" name="communicationId" value="{{ $communication->id }}">
                                     <div class="col-md-4 form-group">
                                         <label class="control-label">Rule</label>
                                         <select name="ruleId" id="ruleId" class="form-control ruleId">
