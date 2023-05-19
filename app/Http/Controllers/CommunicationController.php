@@ -271,7 +271,7 @@ class CommunicationController extends Controller
     }
 
     public function templates($id) : JsonResponse {
-
+        Log::info($id);
         $template = null;
         if ($id === 'Email' OR $id === 'WhatsApp') {
             $template = Template::where('type', $id)->get();
