@@ -4,25 +4,29 @@ namespace App\Http\Controllers;
 
 use App\Models\Menu;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class MenusController extends Controller
 {
     public function index(){
-        $menus=Menu::all();
+        // $menus=Menu::all();
+        $menus=DB::table('menus as m')->select('m.*','parM.title as parent_name')->leftJoin('menus as parM', 'm.parent_id', '=', 'parM.id')->get();       
         $menuWithTopPref=Menu::where([])->orderBy('preference','desc')->first();
         return view('menus.index',compact('menus','menuWithTopPref'));
     }
 
     public function store(Request $request){
-        $unique = Menu::where('title',$request->title)->orWhere('url', $request->url)->first();
+        $unique = Menu::where('title',$request->title)->where('url', $request->url)->first();
         if($unique){
             return redirect()->back()->with('error','Menu with this name or url already Exist');
         }
+        $class = $request->class;
+        $icon = $request->icon;
         $menuData=Menu::create([
             'title'=>$request->title,
             'parent_id'=>$request->parent_id,
-            'class'=>$request->class,
-            'icon'=>$request->icon,
+            'class'=>(isset($class ))? $class : "",
+            'icon'=>(isset($icon ))? $icon : "",
             'url'=>$request->url,
             'preference'=>$request->preference
         ]);
@@ -48,11 +52,13 @@ class MenusController extends Controller
         if($unique){
             return redirect()->back()->with('error','Menu Already Exist');
         }
+        $class = $request->class;
+        $icon = $request->icon;
         $master= Menu::find($id)->update(
             [
                 'title'=>$request->title,
-                'class'=>$request->class,
-                'icon'=>$request->icon,
+                'class'=>(isset($class))? $class : "",
+                'icon'=>(isset($icon))? $icon : "",
                 'url'=>$request->url,
                 'parent_id'=>$request->parent_id,
                 'preference'=>$request->preference,

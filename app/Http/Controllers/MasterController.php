@@ -12,10 +12,12 @@ class MasterController extends Controller
 {
     public function index(){
         $masters=DynamicMain::all();
-        return view('master.index',compact('masters'));
+        $edit=false;
+        return view('master.index',compact('masters','edit'));
     }
 
     public function store(Request $request){
+
         $unique = DynamicMain::where('name',$request->name)->first();
         if($unique){
             return redirect()->back()->with('error','Master Already Exist');
@@ -38,18 +40,24 @@ class MasterController extends Controller
 
     public function edit($id){
         $master=DynamicMain::where('id',$id)->first();
-        return view('master.index',['master'=>$master,'masters'=> false]);
+        return view('master.index',['masters'=> false,'master'=>$master,'edit'=>true]);
     }
 
     public function update(Request $request, $id){
-        $unique = DynamicMain::where('name',$request->name)->first();
-        if($unique){
+        
+        $master = DynamicMain::where('name',$request->name)->first();
+
+        // print_r($master);die;
+        if($master && $master->master) {
+            return redirect()->back()->with('error','You can not edit a "Main Master"');
+        }
+        if($master){
             return redirect()->back()->with('error','Master Alredy Exist');
         }
 
-        $master= DynamicMain::find($id)->update(['name'=>$request->name]);
-        if($master){
-            return redirect()->route('master')->with('status','Master Added Successfully');
+        $masterUpdated= DynamicMain::find($id)->update(['name'=>$request->name]);
+        if($masterUpdated){
+            return redirect()->route('master')->with('status','Master Updated Successfully');
         }
     }
 
@@ -64,6 +72,11 @@ class MasterController extends Controller
         DynamicMain::where('id', $id)->delete();
 
         return response()->json(['success' => 'Received rule data']);
+    }
+    
+    public function delete($id){
+        $master=DynamicMain::where('id',$id)->first();
+        return view('master.index',['master'=>$master,'masters'=> false]);
     }
 
 }

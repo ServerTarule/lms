@@ -105,13 +105,13 @@
             <div class="sidebar">
                 <ul class="sidebar-menu">
                     @livewire('menus')
-                    <li class="active">
+                    {{--  <li class="active">
                         <a href="/"><i class="fa fa-tachometer"></i><span>Dashboard</span>
                             <span class="pull-right-container">
                             </span>
                         </a>
-                    </li>
-                    <li class="treeview">
+                    </li>--}}
+                    {{-- <li class="treeview">
                         <a href="#">
                             <i class="fa fa-users"></i><span>Menu</span>
                             <span class="pull-right-container">
@@ -123,14 +123,14 @@
 
                         </ul>
 
-                    </li>
-                    <li class="treeview">
+                    </li>--}}
+                     {{--<li class="treeview">
                         <a href="#">
                             <i class="fa fa-users"></i><span>Master</span>
                             <span class="pull-right-container">
                                 <i class="fa fa-angle-left pull-right"></i>
                             </span>
-                        </a>
+                        </a>--}}
                         <ul class="treeview-menu">
                             <li><a href="/master">Create Master</a></li>
                             @livewire('dynamics')
@@ -156,7 +156,7 @@
 {{--                            <li><a href="Grant_authority.php">Permission</a></li>--}}
                         </ul>
                     </li>
-
+                    {{--  
                     <li class="treeview">
                         <a href="#">
                             <i class="fa fa-shopping-basket"></i><span>Rules & Regulations</span>
@@ -168,7 +168,7 @@
                             <li><a href="/rules">Rules</a></li>
                         </ul>
                     </li>
-
+                   
                     <li class="treeview">
                         <a href="#">
                             <i class="fa fa-shopping-basket"></i><span>Employee Management</span>
@@ -183,6 +183,7 @@
                             <li><a href="/employees/permissions">Employee Permissions</a></li>
                         </ul>
                     </li>
+                    
                     <li class="treeview">
                         <a href="#">
                             <i class="fa fa-sliders"></i><span>Roles & Permission</span>
@@ -233,7 +234,7 @@
                             <li><a href="/occasions">Occasion Details</a></li>
                         </ul>
                     </li>
-
+                    --}}
                 </ul>
             </div>
         </aside>
@@ -305,7 +306,8 @@
             // $("#initial_"+count+"").after(`<tr id="initial_`+nextCount+`"><td>`+nextCount+`</td><td><select class="form-control" name="ruleMaster_`+nextCount+`" id="ruleMaster_`+nextCount+`"><option selected disabled>-- Select Condition --</option></select></td><td><button id="removeRow" class="fa fa-minus btn btn-sm btn-danger removeRow" onclick="$('#addRow').prop('disabled', false); let count = $('#ruleMasterRowCount').val(); let previousCount = parseInt(count) - 1; $('#ruleMasterRowCount').val(previousCount); $(this).parent().parent().remove();"></button></td></tr>`);
             // $("#initial_"+count+"").after(`<tr id="initial_`+nextCount+`"><td>`+nextCount+`</td><td><select class="form-control" name="ruleMaster_`+nextCount+`" id="ruleMaster_`+nextCount+`"><option selected disabled>-- Select Condition --</option></select></td><td><button id="removeRow" class="fa fa-minus btn btn-sm btn-danger removeRow""></button></td></tr>`);
             $("#editRuleMasterHeaders").after(
-            `@foreach($masters as $master)
+            `@if($masters)
+            @foreach($masters as $master)
                 <tr id="editInitial_`+ {{ $loop->iteration }} +`">
                     <td>`+ {{ $loop->iteration }} +`</td>
                     <td>
@@ -316,7 +318,7 @@
                         <button id="editRuleRemoveRow" class="fa fa-minus btn btn-sm btn-danger"></button>
                     </td>
                 </tr>
-            @endforeach`);
+            @endforeach @endif`);
             // $("#ruleMasterRowCount").val(nextCount);
             //
             // $("#removeRow").prop("disabled", false);
@@ -915,7 +917,12 @@
             $("#initial_"+count+"").after(`<tr id="initial_`+nextCount+`"><td>`+nextCount+`</td><td><select class="form-control" name="ruleMaster_`+nextCount+`" id="ruleMaster_`+nextCount+`"><option selected disabled>-- Select Condition --</option></select></td><td></td></tr>`);
             // $("#initial_"+count+"").after(`<tr id="initial_`+nextCount+`"><td>`+nextCount+`</td><td><select class="form-control" name="ruleMaster_`+nextCount+`" id="ruleMaster_`+nextCount+`"><option selected disabled>-- Select Condition --</option></select></td><td><button id="removeRow" class="fa fa-minus btn btn-sm btn-danger removeRow" onclick="$('#addRow').prop('disabled', false); let count = $('#ruleMasterRowCount').val(); let previousCount = parseInt(count) - 1; $('#ruleMasterRowCount').val(previousCount); $(this).parent().parent().remove();"></button></td></tr>`);
             // $("#initial_"+count+"").after(`<tr id="initial_`+nextCount+`"><td>`+nextCount+`</td><td><select class="form-control" name="ruleMaster_`+nextCount+`" id="ruleMaster_`+nextCount+`"><option selected disabled>-- Select Condition --</option></select></td><td><button id="removeRow" class="fa fa-minus btn btn-sm btn-danger removeRow""></button></td></tr>`);
-            $("#ruleMaster_"+nextCount+"").append(`@foreach($masters as $master) <option value="{{ $master -> id }}">{{ $master -> name }}</option> @endforeach`);
+            
+            $("#ruleMaster_"+nextCount+"").append(`@if($masters) 
+                @foreach($masters as $master) 
+                <option value="{{ $master -> id }}">{{ $master -> name }}</option> @endforeach
+                @endif`);
+            
             $("#ruleMasterRowCount").val(nextCount);
 
             $("#removeRow").prop("disabled", false);
@@ -1434,10 +1441,13 @@
         $(".update-menu-permission").click(function(){
             const self = this;
             bootbox.confirm({
-                message: "Are you sure? Updating permission(s) on a menu will change permissions for child menus as well.",
+                message: "Do you really want to update permission for this menu item?.",
                 callback: function (confirm) {
                     if(confirm) {
                         processSingleMenuPermissionUpdate(self);
+                    }
+                    else {
+                        window.location.reload();
                     }
                 }
             });
@@ -1512,8 +1522,9 @@
                 error: function (data) {
                     if(data?.responseText) {
                         const jsonResp = JSON.parse(data.responseText);
-                        bootbox.alert(jsonResp.message);
-                        location.reload();
+                        bootbox.confirm(jsonResp.message, function(resp){
+                            location.reload();
+                        });
                     }
 
                 }
@@ -1568,7 +1579,7 @@
                 error: function (jqXHR, exception) {
                     const jsonResp = JSON.parse(data.responseText);
                     alert(jsonResp.message);
-                    location.reload();
+                    //location.reload();
                 },
                 failure: function (data) {
                     console.log("failure response",data);

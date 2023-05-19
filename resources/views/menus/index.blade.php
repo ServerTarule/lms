@@ -43,11 +43,11 @@
                                             </div>
                                             <div class="col-md-4 form-group AUTHORITY">
                                             <input type="text" name="class" placeholder=" Css Class"
-                                                    class="form-control" required>
+                                                    class="form-control">
                                             </div>
                                             <div class="col-md-4 form-group AUTHORITY">
                                             <input type="text" name="icon" placeholder="Css Icon"
-                                                    class="form-control" required>
+                                                    class="form-control">
                                             </div>
 
                                         </div>
@@ -80,6 +80,7 @@
                                         <th>Menu Url</th>
                                         <th>Menu Icon</th>
                                         <th>parent ID</th>
+                                        <th>Parent Name</th>
                                         <th>Menu Preference</th>
                                         <th>Create Date</th>
                                         <th>Modify</th>
@@ -94,7 +95,13 @@
                                             <td>{{ $menu->url }}</td>
                                             <td>{{ $menu->icon }} &nbsp;&nbsp;&nbsp;<i class="{!! $menu->icon !!}"></i></td>
                                             <td>{{ $menu->parent_id }}</td>
-
+                                            <td>
+                                                @if($menu->parent_name)
+                                                {{ $menu->parent_name}}
+                                                @else
+                                                No Parent
+                                                @endif
+                                            </td>
                                             <td>{{ $menu->preference }}</td>
                                             <td>{{ \Carbon\Carbon::parse($menu->created_at)->format('d/m/Y') }}</td>
                                             <td>
@@ -151,12 +158,12 @@
                                             </div>
 
                                             <div class="col-md-4 form-group AUTHORITY">
-                                            <input type="text" name="class" placeholder=" Css Class"
-                                                    class="form-control" value="{{ $menu->class }}" required>
+                                            <input type="text" name="class" placeholder="Css Class"
+                                                    class="form-control" value="{{ $menu->class }}">
                                             </div>
                                             <div class="col-md-4 form-group AUTHORITY">
                                                 <input type="text" name="icon" placeholder="Css Icon"
-                                                    class="form-control" value="{{ $menu->icon }}" required>
+                                                    class="form-control" value="{{ $menu->icon }}">
                                            </div>
                                         </div>
                                         <div class="row float-end ">
