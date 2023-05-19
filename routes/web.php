@@ -213,7 +213,6 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/leads/upload', [LeadController::class, 'upload'])->name('leads.upload')->middleware('can:read master');
     Route::get('/leads/export', [LeadController::class, 'export'])->name('leads.export')->middleware('can:read master');
 //    Route::get('/leadassignment', [LeadController::class, 'assignment'])->name('leads')->middleware('can:read lead');
-    Route::get('/leads/{id}', [LeadController::class, 'showtoedit'])->name('leads.showtoedit')->middleware('can:read master');
 
     //Communications
     Route::get('/communications', [CommunicationController::class, 'index'])->name('communications.index')->middleware('can:read master');

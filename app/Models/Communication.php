@@ -5,7 +5,6 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Communication extends Model
 {
@@ -33,10 +32,4 @@ class Communication extends Model
     {
         return $this->belongsTo(Rule::class);
     }
-
-    public function leads() : BelongsToMany
-    {
-        return $this->belongsToMany(Lead::class, 'communicationleads', 'communication_id', 'lead_id');
-    }
-
 }

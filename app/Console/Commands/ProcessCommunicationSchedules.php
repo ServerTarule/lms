@@ -40,8 +40,8 @@ class ProcessCommunicationSchedules extends Command
     {
         $communicationSchedule = $this->argument('communicationSchedule');
         $communicationSchedule = json_decode($communicationSchedule, true);
-        Log::info("*** Communication Schedule ***");
-        Log::info($communicationSchedule);
+//        Log::info("*** Communication Schedule ***");
+//        Log::info($communicationSchedule);
 
         $ruleId = $communicationSchedule['rule_id'];
         $ruleConditions = RuleCondition::where('rule_id', $ruleId)->orderBy('master_id', 'asc')->get();
@@ -135,7 +135,7 @@ class ProcessCommunicationSchedules extends Command
                 foreach ($leadMatchingRule as $key => $value) {
                     $lead = Lead::where('id', $value)->first();
                     //TODO Validate email
-                    Log::info($lead->email);
+//                    Log::info($lead->email);
                     if($lead->email) {
 //                        Mail::to($lead->email)->send(new Campaign($lead->email));
                         Mail::to($lead->email)->send(new Campaign($template));
