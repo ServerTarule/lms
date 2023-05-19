@@ -25,19 +25,43 @@
                                 </div>
                                 <div class="panel-body">
                                     <ul class="timeline">
-                                        <li class="task active">
-                                            <div class="badge"></div>
-                                            <div class="timeline-body">
-                                                <div class="row">
-                                                    <div class="col-left">
-                                                        <h4 class="title">Rule <small>(Rule-1)</small></h4>
-                                                        <p class="timeline-content"><strong>New Rule Added :</strong> xyz</p>
-                                                        <p class="timeline-content"><strong>Action By :</strong> Sagar</p>
-                                                        <p class="timeline-content"><small>27-12-2022</small></p>
+
+                                            @foreach($audits as $key => $value)
+                                            <li class="task active">
+                                                <div class="badge"></div>
+                                                <div class="timeline-body">
+                                                    <div class="row">
+                                                        <div class="col-left">
+                                                            @php
+                                                                foreach ($value as $k=>$v) {
+                                                                    if ($k == 'id') {
+                                                            @endphp
+                                                            <h4 class="title">Lead - {{$v}}</h4>
+                                                            @php
+                                                                    }
+                                                                    if ($k == 'old') {
+                                                                        $oldValues = $v;
+                                                                        foreach ($oldValues as $oKey => $oValue) {
+                                                            @endphp
+                                                            <p class="timeline-content"><strong>Old {{$oKey}} : {{ $oValue }}</strong></p>
+                                                            @php
+                                                                }
+                                                                    }
+                                                                    if ($k == 'new') {
+                                                                        $newValues = $v;
+                                                                        foreach ($newValues as $nKey => $nValue) {
+                                                            @endphp
+                                                            <p class="timeline-content"><strong>New {{$nKey}} : {{ $nValue }}</strong></p>
+                                                            @php
+                                                                        }
+                                                                    }
+                                                                }
+                                                            @endphp
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        </li>
+                                            </li>
+                                            @endforeach
                                     </ul>
                                 </div>
                             </div>

@@ -216,7 +216,7 @@ Route::middleware(['auth'])->group(function () {
 
     //Logs
     Route::get('/logs', [LogController::class, 'index'])->name('logs.index')->middleware('can:read master');
-    Route::get('/logs/leads/{$id}', [LogController::class, 'leadslogs'])->name('logs.leadslogs')->middleware('can:read master');
+    Route::get('/logs/{$id}', [LogController::class, 'show'])->name('logs.show')->middleware('can:read master');
 
 
     //State

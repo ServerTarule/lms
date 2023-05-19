@@ -83,4 +83,9 @@ class Lead extends Model implements Auditable
         $countryPrefix = '91';
         return $countryPrefix.$this->mobileno;
     }
+
+//    public function masters()
+//    {
+//        return $this->morphToMany(LeadMaster::class, 'model', 'model_has_masters');
+//    }
 }
