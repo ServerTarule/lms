@@ -26,7 +26,7 @@ class TemplateController extends Controller
             'name'=>$request->templateName,
             'message'=>$request->templateMessage,
             'subject'=>$request->templateEmailSubject,
-            'body'=>$request->Comments,
+            'body'=>$request->templateEmailBody,
         ]);
 
         $templates = Template::all();
