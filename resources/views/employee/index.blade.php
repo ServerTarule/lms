@@ -108,7 +108,7 @@
                                         <td><img height="40px" width="40px" /></td>
 
                                         <td>
-								            <a data-toggle="modal" data-target="#editEmployee" class="btn-xs btn-info"> <i class="fa fa-edit"></i></a>
+								            <a data-toggle="modal" data-target="#editEmployee" class="btn-xs btn-info"> <i class="fa fa-edit">Edit</i></a>
 								        </td>
                                         <td>
                                             <a href=""onclick="if (confirm('are you sure you want to cancel?')) window.location.href='/cancel';                                            "

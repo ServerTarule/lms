@@ -45,7 +45,7 @@ class MainMasterController extends Controller
         //$mainmasters = DynamicValue::where('parent_id', $id)->get();
         //Log::info($states);
         //Log::info(count($states));
-        $mainmasters=DB::table('dynamic_values as dm')->select('dm.*','pardm.name as parent_name')->leftJoin('dynamic_values as pardm', 'dm.dependent_id', '=', 'pardm.id')->get()->where('parent_id', $id);
+        $mainmasters=DynamicValue::table('dynamic_values as dm')->select('dm.*','pardm.name as parent_name')->leftJoin('dynamic_values as pardm', 'dm.dependent_id', '=', 'pardm.id')->get()->where('parent_id', $id);
       return view('mainmaster.index', compact('mainmasters', 'master', 'currentStateId','leadStatuses', 'states'));
 
 
@@ -56,6 +56,10 @@ class MainMasterController extends Controller
         $mains = Employee::where('master_id',$id)->get();
         return view('mainmaster.index',compact('employee','master_id','mains'));*/
     }
+
+
+
+
     public function store(Request $request, $id) : RedirectResponse{
         $employee=Employee::where('id',$request->master)->update(['master_id'=>$id]);
         if($employee){
@@ -159,5 +163,12 @@ class MainMasterController extends Controller
             return redirect()->back()->with('status', 'User Remove From Master Successfully');
          }
          return redirect()->back()->with('error', 'Something Went Wrong');
+    }
+
+
+    public function getcitiesBystate(Request $request) : JsonResponse {
+        $stateId = $request->get('stateId');
+        $cities = DynamicValue::where('dependent_id', $stateId)->get()->toArray();
+        return response()->json(['cities' => $cities]);
     }
 }

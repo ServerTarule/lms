@@ -120,6 +120,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/master/main/destroy', [MainMasterController::class, 'destroy'])->name('mainmaster.destroy')->middleware('can:read master');
     Route::get('/master/main/{id}', [MainMasterController::class, 'index'])->name('/master/main/{id}')->middleware('can:read master');
     Route::post('/master/main/{id}', [MainMasterController::class, 'store'])->name('/master/main/{id}')->middleware('can:create master');
+    Route::post('/getcitiesBystate', [MainMasterController::class, 'getcitiesBystate'])->name('/getcitiesBystate')->middleware('can:create master');
 
     // Dynamic Master
     Route::post('/dynamic/destroy', [DynamicMasterController::class, 'destroy'])->name('dynamicmaster.destroy')->middleware('can:read master');
@@ -170,6 +171,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/centers', [CenterController::class, 'index'])->name('centers')->middleware('can:read master');
     Route::post('/addCenter', [CenterController::class, 'addCenter'])->name('addCenter')->middleware('can:read master');
     Route::post('/centers/destroy', [CenterController::class, 'destroy'])->name('centers.destroy')->middleware('can:read master');
+    Route::post('/centers/edit', [CenterController::class, 'edit'])->name('centers.edit')->middleware('can:read master');
 
     //Templates
     Route::get('/templates', [TemplateController::class, 'index'])->name('templates.index')->middleware('can:read master');

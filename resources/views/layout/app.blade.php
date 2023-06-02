@@ -43,6 +43,7 @@
 {{--        });--}}
 
 {{--    </script>--}}
+
 </head>
 
 <body class="sidebar-mini  pace-done sidebar-collapse">
@@ -278,10 +279,17 @@
 {{--    <script src="{{ asset('assets//plugins/fullcalendar/lib/moment.min.js') }}" type="text/javascript"></script>--}}
 {{--    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>--}}
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/5.5.2/bootbox.min.js"></script>
-
+<link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.1/css/toastr.css" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.1/js/toastr.js"></script>
 <script>
         $(document).ready(function() {
-
+            toastr.options.timeOut = 1500; // 1.5s
+            toastr.options.debug=false;
+            toastr.options.positionClass="toast-top-right";
+            toastr.options.onclick=null;
+            toastr.options.fadeIn=300;
+            toastr.options.fadeOut=1000;
+            toastr.options.extendedTimeOut=1000
             {{--$('#day').datepicker({--}}
             {{--    format: '{{ config('app.date_format_javascript') }}',--}}
             {{--    locale: 'en'--}}
@@ -369,7 +377,7 @@
             // });
 
             let conditionMasterValues = <?php echo json_encode($masterValues) ?>;
-            let rule = <?php echo $rule ?>;
+            let rule = '<?php echo $rule;  ?>';
             $.each(conditionMasterValues, function(key, value) {
                 let multipleValues = [];
                 $.each(value, function(k,v) {
@@ -1945,5 +1953,5 @@
         dash();
     </script>
 </body>
-
+@stack('custom-scripts')
 </html>

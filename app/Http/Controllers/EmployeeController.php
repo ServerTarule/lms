@@ -43,8 +43,8 @@ class EmployeeController extends Controller
      */
     public function store(Request $request)
     {
-        // dd($request);
         $usercheck=User::where('email',$request->email)->first();
+        print_r($usercheck); //die;
         if($usercheck){
             return redirect()->back()->with('error','User already exist');
         }
@@ -68,6 +68,7 @@ class EmployeeController extends Controller
             'designation_id'=>$request->designation_id,
             'profile_img'=>$request->profile_img,
         ]);
+
         if($employee){
             return redirect('/employee')->with('status','Employee added successfully');
 
