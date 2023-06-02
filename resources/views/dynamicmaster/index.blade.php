@@ -1,6 +1,7 @@
 @extends('layout.app')
 @section('title', 'Master')
 @section('content')
+    @if(isset($master))
     <div class="row">
         <div class="col-sm-12">
             <div class="panel panel-bd lobidrag">
@@ -96,5 +97,21 @@
             </div>
         </div>
     </div>
-
+    @else
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="panel panel-bd lobidrag">
+                <div class="panel-heading">
+                    <div class="btn-group" id="buttonexport">
+                        <a href="#">
+                            <h4>No master data available</h4>
+                        </a>
+                    </div>
+                </div>
+                <div class="panel-body">
+                </div>
+            </div>
+        </div>
+    </div>
+    @endif
 @endsection
