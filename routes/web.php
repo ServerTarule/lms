@@ -166,6 +166,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/doctors', [DoctorController::class, 'index'])->name('doctors');//->middleware('can:read master');
     Route::post('/doctors/destroy', [DoctorController::class, 'destroy'])->name('doctors.destroy')->middleware('can:read master');
     Route::post('/addDoctors', [DoctorController::class, 'addDoctors'])->name('addDoctors');//->middleware('can:read master');
+    Route::post('/doctors/edit', [DoctorController::class, 'edit'])->name('edit')->middleware('can:read master');
+    Route::post('/doctors/update/{id}', [DoctorController::class, 'updateDoctor'])->name('updateDoctor');//->middleware('can:read master');
 
     //Centers
     Route::get('/centers', [CenterController::class, 'index'])->name('centers')->middleware('can:read master');

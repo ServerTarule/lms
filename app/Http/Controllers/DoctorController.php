@@ -25,23 +25,37 @@ class DoctorController extends Controller
 
     public function addDoctors(Request $request)
     {
-        if (!$doctors = Doctors::where(['name' => $request->addDoctor])->first()) {
-            $doctors = Doctors::create(['name' => $request->addDoctor]);
+        if (!$doctors = Doctors::where(['name' => $request->doctorName])->first()) {
+            $doctors = Doctors::create(['name' => $request->doctorName]);
             return redirect('doctors')->with('status', 'Doctor Created Successfully');
         }
-        return redirect('doctors')->with('error', 'Somethinge went wrong !');
+        return redirect('doctors')->with('error', 'Doctor with this name already exists in the system, please choos other name!');
     }
-//    public function deletedoctors($id)
-//    {
-//
-//
-//        if (!$doctors =Doctors:: find($id)->firstorfail()->delete()) {
-//
-//            return redirect('doctors')->with('status', 'Doctor Deleted Successfully');
-//        }
-//        return redirect('doctors')->with('error', 'Somethinge went wrong !');
-//
-//    }
+
+    
+    public function edit(Request $request): JsonResponse {
+        $doctorId =  $request->get('doctorId');
+        $doctor=Doctors::where('id',$doctorId)->first();
+        return response()->json(['doctor' => $doctor]);
+    }
+
+    public function updateDoctor(Request $request,$doctorId): JsonResponse {
+        $doctors = Doctors::where(['name' => $request->doctorName])->where('id', '!=' , $doctorId)->first();
+        $doctorsArray = (isset($doctors))?$doctors->toArray():[];
+        if (count($doctorsArray) == 0) {
+            $doctor= Doctors::find($doctorId)->update(
+                [
+                    'name'=>$request->get("doctorName")
+                ]
+            );
+            return response()->json(['error'=>false, 'message'=>'Doctor updated successfully.']);
+        }
+        else {
+            return response()->json(['error'=>true, 'message'=>'Doctor with this name already exists in the system, please choos other name!']);
+        }
+        return response()->json(['error'=>true, 'message'=>'Some Error Occured']);
+    }
+
 
     public function destroy(Request $request) : JsonResponse {
         $id = $request->get('id');

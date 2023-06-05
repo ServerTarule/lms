@@ -451,7 +451,6 @@
             }
         });
         $("#centerId").val(id);
-        console.log("========going to fetch data=====");
         $.ajax({
             /* the route pointing to the post function */
             url: '/centers/edit',

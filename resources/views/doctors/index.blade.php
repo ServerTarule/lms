@@ -45,7 +45,7 @@
                                     <td>{{$doctor->name}}</td>
                                     <td>{{$doctor->created_at}}</td>
                                     <td>
-                                        <a onclick="return" class="btn-xs btn-info">
+                                        <a onclick="return editDoctor({{ $doctor->id }})" class="btn-xs btn-info">
                                             <i class="fa fa-edit"></i>
                                         </a>
                                     </td>
@@ -77,10 +77,10 @@
                                 <fieldset>
                                     <!-- Text input-->
                                     <div class="col-md-12 form-group">
-                                        <label class="control-label">Doctor </label>
-                                        <input type="text" name="addDoctor" placeholder="Doctor " class="form-control">
+                                        <label class="control-label">Doctor Name</label>
+                                        <input type="text" name="doctorName" id="doctorNameAdd" placeholder="Doctor " class="form-control">
                                     </div>
-                                    <div class="col-md-12 form-group">
+                                    <div class="col-md-12 text-right form-group">
                                         <div>
                                             <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal">
                                                 Cancel
@@ -96,12 +96,12 @@
             </div>
         </div>
     </div>
-    <div class="modal fade" id="edititem" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal fade" id="editDoctorModal" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header modal-header-primary">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                    <h3><i class="fa fa-plus m-r-5"></i> Edit Doctor </h3>
+                    <h3><i class="fa fa-pencil m-r-5"></i> Edit Doctor </h3>
                 </div>
                 <div class="modal-body">
                     <div class="row">
@@ -110,19 +110,16 @@
                                 <fieldset>
                                     <!-- Text input-->
                                     <div class="col-md-12 form-group">
-                                        <label class="control-label">Doctor </label>
-                                        <input type="text" placeholder="Doctor " class="form-control">
-                                    </div>
-                                    <div class="col-md-12 form-group">
-                                        <div>
-                                            <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal">
-                                                Cancel
-                                            </button>
-                                            <button type="submit" class="btn btn-add btn-sm">Save</button>
-                                        </div>
+                                        <label class="control-label">Doctor Name</label>
+                                        <input type="text" placeholder="Doctor "  id="doctorNameEdit" name="doctorName" class="form-control">
                                     </div>
                                 </fieldset>
                             </form>
+                            <div class="col-md-12 text-right form-group">
+                                <input type="hidden" name="doctorId" id="doctorId" value="">
+                                <button id="updateItemButton" class="btn btn-add btn-sm">Update Doctor</button>
+                                <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal">Cancel</button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -132,3 +129,126 @@
     </section>
     </div>
 @endsection
+
+
+@push('custom-scripts')
+<script type="text/javascript">
+   function editDoctor(doctorId) {
+       
+        getDoctorData(doctorId);
+   }
+
+   function getDoctorData(doctorId) {
+        let CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+        $("#doctorId").val(doctorId);
+        console.log("========going to fetch data=====");
+        $.ajax({
+            /* the route pointing to the post function */
+            url: '/doctors/edit',
+            type: 'POST',
+            /* send the csrf-token and the input to the controller */
+            // data: {_token: CSRF_TOKEN, 'ruleData':JSON.stringify(jsonObject)},
+            data: {
+                _token: CSRF_TOKEN,
+                'doctorId': doctorId
+            },
+            // data: $(this).serialize(),
+            dataType: 'JSON',
+            /* remind that 'data' is the response of the AjaxController */
+            success: function (data) {
+                console.log("----returned data----",data);
+                const doctor = data.doctor;
+                $("#doctorNameEdit").val(doctor?.name);
+                $('#editDoctorModal').modal({
+                    show: 'true'
+                }); 
+            },
+            failure: function (data) {
+                toastr.error("Error occurred while processin!!");
+            }
+        });
+   }
+
+   $("#updateItemButton").click(function(){
+        const doctorId = $("#doctorId").val();
+        let CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+        $.ajax({
+            /* the route pointing to the post function  /doctors/update/{id}*/
+            url: `/doctors/update/${doctorId} `,
+            type: 'POST',
+            /* send the csrf-token and the input to the controller */
+            data: {
+                _token: CSRF_TOKEN,
+                'doctorName':$("#doctorNameEdit").val()
+            },
+            dataType: 'JSON',
+            /* remind that 'data' is the response of the AjaxController */
+            success: function (data) {
+                if(data.error) {
+                    toastr.error(data.message);
+                }
+                else {
+                    toastr.success(data.message);
+                    setTimeout(function(){ 
+                        location.reload();
+                    }, 3000);
+                }
+
+               
+            },
+            failure: function (data) {
+                toastr.error("Error occurred while processing!!");
+            }
+        });
+
+    });
+
+    function deleteDoctor(id) {
+        bootbox.confirm("Are you sure you want to delete this doctor?", function (confirm) {
+            if(confirm){
+                let CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
+                $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }
+                });
+                $.ajax({
+                    /* the route pointing to the post function */
+                    url: '/doctors/destroy',
+                    type: 'POST',
+                    /* send the csrf-token and the input to the controller */
+                    // data: {_token: CSRF_TOKEN, 'ruleData':JSON.stringify(jsonObject)},
+                    data: {
+                        _token: CSRF_TOKEN,
+                        'id': id
+                    },
+                    // data: $(this).serialize(),
+                    dataType: 'JSON',
+                    /* remind that 'data' is the response of the AjaxController */
+                    success: function (data) {
+                        console.log(data);
+                        window.location.href = "/doctors";
+                    },
+                    failure: function (data) {
+                        console.log(data);
+                    }
+                });
+            }
+            else{
+                location.reload();
+            }
+        })
+           
+        }
+</script>
+@endpush
