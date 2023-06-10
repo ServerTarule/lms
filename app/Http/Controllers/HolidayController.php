@@ -16,10 +16,6 @@ class HolidayController extends Controller
     }
 
     public function store(Request $request) {
-
-//        Log::info($request->name);
-//        Log::info($request->day);
-
         $holiday = Holiday::create([
             'name'=>$request->name,
             'day'=>$request->day,
@@ -28,6 +24,30 @@ class HolidayController extends Controller
         $holidays = Holiday::all();
         return redirect()->route('holidays.index', compact('holidays'));
 
+    }
+
+    public function edit(Request $request): JsonResponse {
+        $holidayId =  $request->get('holidayId');
+        $holiday=Holiday::where('id',$holidayId)->first()->toArray();
+        return response()->json(['holiday' => $holiday]);
+    }
+
+    public function updateHoliday(Request $request,$holidayId): JsonResponse {
+        $holidays = Holiday::where(['name' => $request->doctorName])->where('id', '!=' , $holidayId)->first();
+        $holidayArray = (isset($holidays))?$holidays->toArray():[];
+        if (count($holidayArray) == 0) {
+            $holiday= Holiday::find($holidayId)->update(
+                [
+                    'name'=>$request->get("name"),
+                    'day'=>$request->get("day")
+                ]
+            );
+            return response()->json(['error'=>false, 'message'=>'Holiday updated successfully.']);
+        }
+        else {
+            return response()->json(['error'=>true, 'message'=>'Holiday with this name already exists in the system, please choos other name!']);
+        }
+        return response()->json(['error'=>true, 'message'=>'Some Error Occured']);
     }
 
     public function destroy(Request $request) : JsonResponse {

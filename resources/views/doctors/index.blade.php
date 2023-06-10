@@ -72,7 +72,7 @@
                 <div class="modal-body">
                     <div class="row">
                         <div class="col-md-12">
-                            <form class="form-horizontal" method="POST" action="/addDoctors">
+                            <form class="form-horizontal" method="POST" action="/addDoctors" onsubmit="return validateForm()">
                             @csrf <!-- {{ csrf_field() }} -->
                                 <fieldset>
                                     <!-- Text input-->
@@ -133,122 +133,132 @@
 
 @push('custom-scripts')
 <script type="text/javascript">
-   function editDoctor(doctorId) {
-       
-        getDoctorData(doctorId);
-   }
+function editDoctor(doctorId) {
+    getDoctorData(doctorId);
+}
 
-   function getDoctorData(doctorId) {
-        let CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
-        $.ajaxSetup({
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            }
-        });
-        $("#doctorId").val(doctorId);
-        console.log("========going to fetch data=====");
-        $.ajax({
-            /* the route pointing to the post function */
-            url: '/doctors/edit',
-            type: 'POST',
-            /* send the csrf-token and the input to the controller */
-            // data: {_token: CSRF_TOKEN, 'ruleData':JSON.stringify(jsonObject)},
-            data: {
-                _token: CSRF_TOKEN,
-                'doctorId': doctorId
-            },
-            // data: $(this).serialize(),
-            dataType: 'JSON',
-            /* remind that 'data' is the response of the AjaxController */
-            success: function (data) {
-                console.log("----returned data----",data);
-                const doctor = data.doctor;
-                $("#doctorNameEdit").val(doctor?.name);
-                $('#editDoctorModal').modal({
-                    show: 'true'
-                }); 
-            },
-            failure: function (data) {
-                toastr.error("Error occurred while processin!!");
-            }
-        });
-   }
+function getDoctorData(doctorId) {
+    let CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+    $("#doctorId").val(doctorId);
+    console.log("========going to fetch data=====");
+    $.ajax({
+        /* the route pointing to the post function */
+        url: '/doctors/edit',
+        type: 'POST',
+        /* send the csrf-token and the input to the controller */
+        // data: {_token: CSRF_TOKEN, 'ruleData':JSON.stringify(jsonObject)},
+        data: {
+            _token: CSRF_TOKEN,
+            'doctorId': doctorId
+        },
+        // data: $(this).serialize(),
+        dataType: 'JSON',
+        /* remind that 'data' is the response of the AjaxController */
+        success: function (data) {
+            console.log("----returned data----",data);
+            const doctor = data.doctor;
+            $("#doctorNameEdit").val(doctor?.name);
+            $('#editDoctorModal').modal({
+                show: 'true'
+            }); 
+        },
+        failure: function (data) {
+            toastr.error("Error occurred while processin!!");
+        }
+    });
+}
+function validateForm(isEdit=false) {
+    const name = (isEdit)?$("#doctorNameEdit").val().trim():$("#doctorNameAdd").val().trim();
+    if(!name) {
+        toastr.error("Doctor name field is required!");
+        return false;
+    }
+    else {
+        return true;
+    }
 
-   $("#updateItemButton").click(function(){
-        const doctorId = $("#doctorId").val();
-        let CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
-        $.ajaxSetup({
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            }
-        });
-        $.ajax({
-            /* the route pointing to the post function  /doctors/update/{id}*/
-            url: `/doctors/update/${doctorId} `,
-            type: 'POST',
-            /* send the csrf-token and the input to the controller */
-            data: {
-                _token: CSRF_TOKEN,
-                'doctorName':$("#doctorNameEdit").val()
-            },
-            dataType: 'JSON',
-            /* remind that 'data' is the response of the AjaxController */
-            success: function (data) {
-                if(data.error) {
-                    toastr.error(data.message);
-                }
-                else {
-                    toastr.success(data.message);
-                    setTimeout(function(){ 
-                        location.reload();
-                    }, 3000);
-                }
+}
 
-               
-            },
-            failure: function (data) {
-                toastr.error("Error occurred while processing!!");
+$("#updateItemButton").click(function(){
+    validateForm(true);
+    const doctorId = $("#doctorId").val();
+    let CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+    $.ajax({
+        /* the route pointing to the post function  /doctors/update/{id}*/
+        url: `/doctors/update/${doctorId} `,
+        type: 'POST',
+        /* send the csrf-token and the input to the controller */
+        data: {
+            _token: CSRF_TOKEN,
+            'doctorName':$("#doctorNameEdit").val()
+        },
+        dataType: 'JSON',
+        /* remind that 'data' is the response of the AjaxController */
+        success: function (data) {
+            if(data.error) {
+                toastr.error(data.message);
             }
-        });
+            else {
+                toastr.success(data.message);
+                setTimeout(function(){ 
+                    location.reload();
+                }, 3000);
+            }
 
+        
+        },
+        failure: function (data) {
+            toastr.error("Error occurred while processing!!");
+        }
     });
 
-    function deleteDoctor(id) {
-        bootbox.confirm("Are you sure you want to delete this doctor?", function (confirm) {
-            if(confirm){
-                let CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
-                $.ajaxSetup({
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    }
-                });
-                $.ajax({
-                    /* the route pointing to the post function */
-                    url: '/doctors/destroy',
-                    type: 'POST',
-                    /* send the csrf-token and the input to the controller */
-                    // data: {_token: CSRF_TOKEN, 'ruleData':JSON.stringify(jsonObject)},
-                    data: {
-                        _token: CSRF_TOKEN,
-                        'id': id
-                    },
-                    // data: $(this).serialize(),
-                    dataType: 'JSON',
-                    /* remind that 'data' is the response of the AjaxController */
-                    success: function (data) {
-                        console.log(data);
-                        window.location.href = "/doctors";
-                    },
-                    failure: function (data) {
-                        console.log(data);
-                    }
-                });
-            }
-            else{
-                location.reload();
-            }
-        })
-           
+});
+
+function deleteDoctor(id) {
+    bootbox.confirm("Are you sure you want to delete this doctor?", function (confirm) {
+        if(confirm){
+            let CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+            $.ajax({
+                /* the route pointing to the post function */
+                url: '/doctors/destroy',
+                type: 'POST',
+                /* send the csrf-token and the input to the controller */
+                // data: {_token: CSRF_TOKEN, 'ruleData':JSON.stringify(jsonObject)},
+                data: {
+                    _token: CSRF_TOKEN,
+                    'id': id
+                },
+                // data: $(this).serialize(),
+                dataType: 'JSON',
+                /* remind that 'data' is the response of the AjaxController */
+                success: function (data) {
+                    console.log(data);
+                    window.location.href = "/doctors";
+                },
+                failure: function (data) {
+                    console.log(data);
+                }
+            });
         }
+        else{
+            location.reload()   ;
+        }
+    })
+}
 </script>
 @endpush

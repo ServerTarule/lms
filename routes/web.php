@@ -185,6 +185,12 @@ Route::middleware(['auth'])->group(function () {
     //Holidays
     Route::get('/holidays', [HolidayController::class, 'index'])->name('holidays.index')->middleware('can:read master');
     Route::post('/holidays/store', [HolidayController::class, 'store'])->name('holidays.store')->middleware('can:read master');
+    
+    
+    // Route::post('/addDoctors', [DoctorController::class, 'addDoctors'])->name('addDoctors');//->middleware('can:read master');
+    Route::post('/holidays/edit', [HolidayController::class, 'edit'])->name('edit')->middleware('can:read master');
+    Route::post('/holidays/update/{id}', [HolidayController::class, 'updateHoliday'])->name('holidays.updateHoliday');
+
     Route::post('/holidays/destroy', [HolidayController::class, 'destroy'])->name('holidays.destroy')->middleware('can:read master');
 
     //Rules
