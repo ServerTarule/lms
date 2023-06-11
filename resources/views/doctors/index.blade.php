@@ -72,24 +72,24 @@
                 <div class="modal-body">
                     <div class="row">
                         <div class="col-md-12">
-                            <form class="form-horizontal" method="POST" action="/addDoctors" onsubmit="return validateForm()">
-                            @csrf <!-- {{ csrf_field() }} -->
+                            <form class="form-horizontal"id="addItemForm" method="POST">
+                            @csrf 
                                 <fieldset>
-                                    <!-- Text input-->
                                     <div class="col-md-12 form-group">
                                         <label class="control-label">Doctor Name</label>
                                         <input type="text" name="doctorName" id="doctorNameAdd" placeholder="Doctor " class="form-control">
                                     </div>
-                                    <div class="col-md-12 text-right form-group">
-                                        <div>
-                                            <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal">
-                                                Cancel
-                                            </button>
-                                            <button type="submit" class="btn btn-add btn-sm" >Save</button>
-                                        </div>
-                                    </div>
+                                    
                                 </fieldset>
                             </form>
+                            <div class="col-md-12 text-right form-group">
+                                <div>
+                                    <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal">
+                                        Cancel
+                                    </button>
+                                    <button id="addDoctorButton" class="btn btn-add btn-sm" >Save</button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -137,6 +137,51 @@ function editDoctor(doctorId) {
     getDoctorData(doctorId);
 }
 
+$("#addDoctorButton").click(function(){
+    processAdd()
+});
+
+function processAdd () {
+    const isValid = validateForm();
+    if(isValid) {
+        let CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+        $.ajax({
+            /* the route pointing to the post function */
+            url: '/doctors/addDoctors',
+            type: 'POST',
+            /* send the csrf-token and the input to the controller */
+            data: {
+                _token: CSRF_TOKEN,
+                'doctorName':$("#doctorNameAdd").val(),
+            },
+            dataType: 'JSON',
+            /* remind that 'data' is the response of the AjaxController */
+            success: function (data) {
+                if(data.error) {
+                    toastr.error(data.message);
+                }
+                else {
+                    toastr.success(data.message);
+                    $("#addItemForm")[0].reset()
+                    $('#additem').modal('toggle');
+                    setTimeout(function(){ 
+                        location.reload();
+                    }, 3000);
+                }
+            
+            },
+            failure: function (data) {
+                toastr.error("Error occurred while processing!!");
+            }
+        });
+    }
+    
+}
 function getDoctorData(doctorId) {
     let CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
     $.ajaxSetup({

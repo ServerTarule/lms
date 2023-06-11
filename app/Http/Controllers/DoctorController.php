@@ -23,13 +23,13 @@ class DoctorController extends Controller
         return view('doctors.index',compact('doctors'));
     }
 
-    public function addDoctors(Request $request)
+    public function addDoctors(Request $request): JsonResponse 
     {
         if (!$doctors = Doctors::where(['name' => $request->doctorName])->first()) {
             $doctors = Doctors::create(['name' => $request->doctorName]);
-            return redirect('doctors')->with('status', 'Doctor Created Successfully');
+            return response()->json(['error'=>false, 'message'=>'Doctor created successfully.']);
         }
-        return redirect('doctors')->with('error', 'Doctor with this name already exists in the system, please choose other name!');
+        return response()->json(['error'=>true, 'message'=>'Doctor with this name already exists in the system, please choose other name!']);
     }
 
     
