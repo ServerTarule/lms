@@ -94,7 +94,7 @@
                     </div>
                     <div class="row">
                         <div class="col-md-12">
-                            <form class="form-horizontal" action="{{ route('templates.store') }}" onsubmit="return validateForm()" method="POST">
+                            <form class="form-horizontal" id="addItemForm" method="POST">
                                 @csrf
                                 <fieldset>
                                     <div class="col-md-6 form-group">
@@ -121,15 +121,14 @@
                                         <label class="control-label">Email Template Body<sup class="text-danger font-weight-bold">*</sup></label>
                                         <textarea class="ckeditor form-control" id="templateEmailBody" name="templateEmailBody" placeholder="Please type here.."></textarea>
                                     </div>
-
-                                    <div class="col-md-12 form-group text-right">
-                                        <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal">
-                                            Cancel
-                                        </button>
-                                        <button type="submit"  class="btn btn-add btn-sm">Save</button>
-                                    </div>
                                 </fieldset>
                             </form>
+                            <div class="col-md-12 form-group text-right">
+                                <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal">
+                                    Cancel
+                                </button>
+                                <button type="button" id="addItemButton"  class="btn btn-add btn-sm">Save</button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -209,6 +208,7 @@
     $("#templateSubjectDiv").hide();
     $("#templateEmailDiv").hide();
     $("#templateMessageDiv").hide();
+
     $('select[name="templateType"]').change(function() {
         console.log("---$(this).val()----",$(this).val());
         if($(this).val() === 'WhatsApp') {
@@ -279,8 +279,55 @@
 
     }
     
+    $("#addItemButton").click(function(){
+        processAdd()
+    });
 
-
+    function processAdd () {
+        const isValid = validateForm();
+        if(isValid) {
+            let CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+            $.ajax({
+                /* the route pointing to the post function */
+                url: '/templates/store',
+                type: 'POST',
+                /* send the csrf-token and the input to the controller */
+                data: {
+                    _token: CSRF_TOKEN,
+                    'templateName':$("#templateName").val(),
+                    'templateType':$("#templateType").val(),
+                    'templateEmailSubject':$("#templateEmailSubject").val(),
+                    'templateEmailBody':CKEDITOR.instances.templateEmailBody.getData(),
+                    'templateMessage':$("#templateMessage").val()
+                },
+                dataType: 'JSON',
+                /* remind that 'data' is the response of the AjaxController */
+                success: function (data) {
+                    if(data.error) {
+                        toastr.error(data.message);
+                    }
+                    else {
+                        toastr.success(data.message);
+                        $("#addItemForm")[0].reset()
+                        $('#addTemplate').modal('toggle');
+                        setTimeout(function(){ 
+                            location.reload();
+                        }, 3000);
+                    }
+                
+                },
+                failure: function (data) {
+                    toastr.error("Error occurred while processing!!");
+                }
+            });
+        }
+        
+    }
 
     function editTemplate(templateId) {
         getTemplateData(templateId);

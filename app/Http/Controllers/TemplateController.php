@@ -18,21 +18,23 @@ class TemplateController extends Controller
         return view('templates.index',compact( 'templates'));
     }
 
-    public function store(Request $request) : RedirectResponse {
-
-        echo "name ==".$request->templateName;
-        echo "First ==".$request->templateType;
-        echo "Subject ==".$request->templateEmailSubject;
-        echo "content ==".$request->templateMessage;
-        $template = Template::create([
-            'name'=>$request->templateName,
-            'type'=>$request->templateType,
-            'subject'=>($request->templateType == "Email")?$request->templateEmailSubject:"",
-            'content'=>($request->templateType == "Email")?$request->templateEmailBody:$request->templateMessage, 
-        ]);
-
-        $templates = Template::all();
-        return redirect()->route('templates.index', compact('templates'));
+    public function store(Request $request) : JsonResponse {
+        $templates = Template::where(['name' => $request->templateName, 'type'=>$request->templateType])->first();
+        $templateArray = (isset($templates))?$templates->toArray():[];
+        if (count($templateArray) == 0) {
+            $template = Template::create([
+                'name'=>$request->templateName,
+                'type'=>$request->templateType,
+                'subject'=>($request->templateType == "Email")?$request->templateEmailSubject:"",
+                'content'=>($request->templateType == "Email")?$request->templateEmailBody:$request->templateMessage, 
+            ]);
+            $message= 'Template with this name already exists in the system, please choose other name!';
+            return response()->json(['error'=>false, 'message'=>'Template added successfully.']);
+        }
+        else {
+            return response()->json(['error'=>true, 'message'=>'Template with this name already exists in the system, please choose other name!']);
+        }
+        return response()->json(['error'=>true, 'message'=>'Some Error Occured']);
 
     }
 
@@ -44,7 +46,7 @@ class TemplateController extends Controller
     }
 
     public function updateTemplate (Request $request,$templateId): JsonResponse {
-        $templates = Template::where(['name' => $request->templateName])->where('id', '!=' , $templateId)->first();
+        $templates = Template::where(['name' => $request->templateName, 'type'=>$request->templateType])->where('id', '!=' , $templateId)->first();
         $templateArray = (isset($templates))?$templates->toArray():[];
         if (count($templateArray) == 0) {
             $template= Template::find($templateId)->update(
