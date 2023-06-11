@@ -180,6 +180,10 @@ Route::middleware(['auth'])->group(function () {
     //Templates
     Route::get('/templates', [TemplateController::class, 'index'])->name('templates.index')->middleware('can:read master');
     Route::post('/templates/store', [TemplateController::class, 'store'])->name('templates.store')->middleware('can:read master');
+    
+    Route::post('/templates/edit', [TemplateController::class, 'edit'])->name('edit')->middleware('can:read master');
+    Route::post('/templates/update/{id}', [TemplateController::class, 'updateTemplate'])->name('templates.updateTemplate');
+    
     Route::post('/templates/destroy', [TemplateController::class, 'destroy'])->name('templates.destroy')->middleware('can:read master');
 
     //Holidays

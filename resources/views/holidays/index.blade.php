@@ -228,6 +228,42 @@
         });
     }
 
+    function deleteHoliday(id) {
+        bootbox.confirm("Are you sure you want to delete this holiday?", function (resp){
+            if(resp) {
+                let CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
+                $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }
+                });
+                $.ajax({
+                    /* the route pointing to the post function */
+                    url: '/holidays/destroy',
+                    type: 'POST',
+                    /* send the csrf-token and the input to the controller */
+                    // data: {_token: CSRF_TOKEN, 'ruleData':JSON.stringify(jsonObject)},
+                    data: {
+                        _token: CSRF_TOKEN,
+                        'id': id
+                    },
+                    // data: $(this).serialize(),
+                    dataType: 'JSON',
+                    /* remind that 'data' is the response of the AjaxController */
+                    success: function (data) {
+                        console.log(data);
+                        window.location.href = "/holidays";
+                    },
+                    failure: function (data) {
+                        console.log(data);
+                    }
+                });
+            }
+            else{
+                return;
+            }
+        })
+    }
    
 </script>
 @endpush

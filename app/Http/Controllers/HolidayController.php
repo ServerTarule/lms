@@ -45,7 +45,7 @@ class HolidayController extends Controller
             return response()->json(['error'=>false, 'message'=>'Holiday updated successfully.']);
         }
         else {
-            return response()->json(['error'=>true, 'message'=>'Holiday with this name already exists in the system, please choos other name!']);
+            return response()->json(['error'=>true, 'message'=>'Holiday with this name already exists in the system, please choose other name!']);
         }
         return response()->json(['error'=>true, 'message'=>'Some Error Occured']);
     }

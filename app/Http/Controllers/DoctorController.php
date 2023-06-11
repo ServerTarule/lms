@@ -29,7 +29,7 @@ class DoctorController extends Controller
             $doctors = Doctors::create(['name' => $request->doctorName]);
             return redirect('doctors')->with('status', 'Doctor Created Successfully');
         }
-        return redirect('doctors')->with('error', 'Doctor with this name already exists in the system, please choos other name!');
+        return redirect('doctors')->with('error', 'Doctor with this name already exists in the system, please choose other name!');
     }
 
     
@@ -51,7 +51,7 @@ class DoctorController extends Controller
             return response()->json(['error'=>false, 'message'=>'Doctor updated successfully.']);
         }
         else {
-            return response()->json(['error'=>true, 'message'=>'Doctor with this name already exists in the system, please choos other name!']);
+            return response()->json(['error'=>true, 'message'=>'Doctor with this name already exists in the system, please choose other name!']);
         }
         return response()->json(['error'=>true, 'message'=>'Some Error Occured']);
     }
