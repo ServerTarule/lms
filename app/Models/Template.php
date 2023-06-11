@@ -20,10 +20,9 @@ class Template extends Model
     protected $table = 'templates';
 
     protected $fillable = [
-        'type',
         'name',
-        'message',
+        'type',
         'subject',
-        'body'
+        'content',
     ];
 }

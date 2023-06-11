@@ -165,7 +165,7 @@ Route::middleware(['auth'])->group(function () {
     //Doctors
     Route::get('/doctors', [DoctorController::class, 'index'])->name('doctors');//->middleware('can:read master');
     Route::post('/doctors/destroy', [DoctorController::class, 'destroy'])->name('doctors.destroy')->middleware('can:read master');
-    Route::post('/addDoctors', [DoctorController::class, 'addDoctors'])->name('addDoctors');//->middleware('can:read master');
+    Route::post('/doctors/addDoctors', [DoctorController::class, 'addDoctors'])->name('doctors.addDoctors');//->middleware('can:read master');
     Route::post('/doctors/edit', [DoctorController::class, 'edit'])->name('edit')->middleware('can:read master');
     Route::post('/doctors/update/{id}', [DoctorController::class, 'updateDoctor'])->name('updateDoctor');//->middleware('can:read master');
 
@@ -180,11 +180,21 @@ Route::middleware(['auth'])->group(function () {
     //Templates
     Route::get('/templates', [TemplateController::class, 'index'])->name('templates.index')->middleware('can:read master');
     Route::post('/templates/store', [TemplateController::class, 'store'])->name('templates.store')->middleware('can:read master');
+    
+    Route::post('/templates/edit', [TemplateController::class, 'edit'])->name('edit')->middleware('can:read master');
+    Route::post('/templates/update/{id}', [TemplateController::class, 'updateTemplate'])->name('templates.updateTemplate');
+    
     Route::post('/templates/destroy', [TemplateController::class, 'destroy'])->name('templates.destroy')->middleware('can:read master');
 
     //Holidays
     Route::get('/holidays', [HolidayController::class, 'index'])->name('holidays.index')->middleware('can:read master');
     Route::post('/holidays/store', [HolidayController::class, 'store'])->name('holidays.store')->middleware('can:read master');
+    
+    
+    // Route::post('/addDoctors', [DoctorController::class, 'addDoctors'])->name('addDoctors');//->middleware('can:read master');
+    Route::post('/holidays/edit', [HolidayController::class, 'edit'])->name('edit')->middleware('can:read master');
+    Route::post('/holidays/update/{id}', [HolidayController::class, 'updateHoliday'])->name('holidays.updateHoliday');
+
     Route::post('/holidays/destroy', [HolidayController::class, 'destroy'])->name('holidays.destroy')->middleware('can:read master');
 
     //Rules
