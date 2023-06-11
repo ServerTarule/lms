@@ -15,14 +15,20 @@ class HolidayController extends Controller
         return view('holidays.index',compact('holidays'));
     }
 
-    public function store(Request $request) {
-        $holiday = Holiday::create([
-            'name'=>$request->name,
-            'day'=>$request->day,
-        ]);
-
-        $holidays = Holiday::all();
-        return redirect()->route('holidays.index', compact('holidays'));
+    public function store(Request $request): JsonResponse {
+        $holidays = Holiday::where(['day' => $request->get("day"),])->first();
+        $holidayArray = (isset($holidays))?$holidays->toArray():[];
+        if (count($holidayArray) == 0) {
+            $holiday = Holiday::create([
+                'name'=>$request->name,
+                'day'=>$request->day,
+            ]);
+            return response()->json(['error'=>false, 'message'=>'Holiday added successfully.']);
+        }
+        else {
+            return response()->json(['error'=>true, 'message'=>'Holiday at this day/date already exists in the system, please choose other date!']);
+        }
+        return response()->json(['error'=>true, 'message'=>'Some Error Occured']);
 
     }
 
@@ -33,7 +39,7 @@ class HolidayController extends Controller
     }
 
     public function updateHoliday(Request $request,$holidayId): JsonResponse {
-        $holidays = Holiday::where(['name' => $request->doctorName])->where('id', '!=' , $holidayId)->first();
+        $holidays = Holiday::where(['day' => $request->get("day"),])->where('id', '!=' , $holidayId)->first();
         $holidayArray = (isset($holidays))?$holidays->toArray():[];
         if (count($holidayArray) == 0) {
             $holiday= Holiday::find($holidayId)->update(
@@ -45,7 +51,7 @@ class HolidayController extends Controller
             return response()->json(['error'=>false, 'message'=>'Holiday updated successfully.']);
         }
         else {
-            return response()->json(['error'=>true, 'message'=>'Holiday with this name already exists in the system, please choose other name!']);
+            return response()->json(['error'=>true, 'message'=>'Holiday at this day/date already exists in the system, please choose other date!']);
         }
         return response()->json(['error'=>true, 'message'=>'Some Error Occured']);
     }

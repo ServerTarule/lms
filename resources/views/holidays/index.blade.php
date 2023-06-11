@@ -64,7 +64,7 @@
                 <div class="modal-body">
                     <div class="row">
                         <div class="col-md-12">
-                            <form class="form-horizontal" action="{{ route('holidays.store') }}" method="POST" onsubmit="return validateForm()">
+                            <form class="form-horizontal" id="addItemForm" method="POST">
                                 @csrf
                                 <fieldset>
                                     <!-- Text input-->
@@ -76,13 +76,13 @@
                                         <label class="control-label">Date</label>
                                         <input type="date" id="day" name="day" placeholder="dd/mm/yyyy" class="form-control">
                                     </div>
-                                    <div class="col-md-12 text-right form-group">
-                                        <button type="button" class="btn btn-danger btn-sm" onSubmit="addItem()" data-dismiss="modal">Cancel</button>
-                                        <button class="btn btn-add btn-sm">Save</button>
-                                    </div>
+                                    
                                 </fieldset>
-
                             </form>
+                            <div class="col-md-12 text-right form-group">
+                                <button type="button" class="btn btn-danger btn-sm"data-dismiss="modal">Cancel</button>
+                                <button class="btn btn-add btn-sm"  id="addHolidayButton" >Save</button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -145,6 +145,52 @@
         }
         alert("Inside  validation");
     
+    }
+    $("#addHolidayButton").click(function(){
+        processAdd()
+    });
+
+    function processAdd () {
+        const isValid = validateForm();
+        if(isValid) {
+            let CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+            $.ajax({
+                /* the route pointing to the post function */
+                url: '/holidays/store',
+                type: 'POST',
+                /* send the csrf-token and the input to the controller */
+                data: {
+                    _token: CSRF_TOKEN,
+                    'name':$("#name").val(),
+                    'day':$("#day").val()
+                },
+                dataType: 'JSON',
+                /* remind that 'data' is the response of the AjaxController */
+                success: function (data) {
+                    if(data.error) {
+                        toastr.error(data.message);
+                    }
+                    else {
+                        toastr.success(data.message);
+                        $("#addItemForm")[0].reset()
+                        $('#addHoliday').modal('toggle');
+                        setTimeout(function(){ 
+                            location.reload();
+                        }, 3000);
+                    }
+                
+                },
+                failure: function (data) {
+                    toastr.error("Error occurred while processing!!");
+                }
+            });
+        }
+        
     }
     function editHoliday(holidayId) {
         getHolidayData(holidayId);

@@ -28,7 +28,6 @@ class TemplateController extends Controller
                 'subject'=>($request->templateType == "Email")?$request->templateEmailSubject:"",
                 'content'=>($request->templateType == "Email")?$request->templateEmailBody:$request->templateMessage, 
             ]);
-            $message= 'Template with this name already exists in the system, please choose other name!';
             return response()->json(['error'=>false, 'message'=>'Template added successfully.']);
         }
         else {
