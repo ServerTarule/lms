@@ -365,7 +365,7 @@
                     $("#templateTypeEdit").val(templateObject?.type);
                     $("#templateNameEdit").val(templateObject?.name);
                     $("#templateEmailSubjectEdit").val(templateObject?.subject);
-                    const html =  data?.template?.content;
+                    const html =  data?.template?.message;
                     CKEDITOR.instances.templateEmailBodyEdit.setData(html);
                     $("#templateMessageEdit").val(""); 
                }
@@ -375,7 +375,7 @@
                     $("#templateEmailDivEdit").hide();
                     $("#templateTypeEdit").val(templateObject?.type);
                     $("#templateNameEdit").val(templateObject?.name);
-                    $("#templateMessageEdit").val(templateObject?.content);  
+                    $("#templateMessageEdit").val(templateObject?.message);  
                     CKEDITOR.instances.templateEmailBodyEdit.setData("") 
                }
                

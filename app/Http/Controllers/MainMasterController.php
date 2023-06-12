@@ -45,7 +45,7 @@ class MainMasterController extends Controller
         //$mainmasters = DynamicValue::where('parent_id', $id)->get();
         //Log::info($states);
         //Log::info(count($states));
-        $mainmasters=DynamicValue::table('dynamic_values as dm')->select('dm.*','pardm.name as parent_name')->leftJoin('dynamic_values as pardm', 'dm.dependent_id', '=', 'pardm.id')->get()->where('parent_id', $id);
+        $mainmasters=DB::table('dynamic_values as dm')->select('dm.*','pardm.name as parent_name')->leftJoin('dynamic_values as pardm', 'dm.dependent_id', '=', 'pardm.id')->get()->where('parent_id', $id);
       return view('mainmaster.index', compact('mainmasters', 'master', 'currentStateId','leadStatuses', 'states'));
 
 
@@ -169,6 +169,6 @@ class MainMasterController extends Controller
     public function getcitiesBystate(Request $request) : JsonResponse {
         $stateId = $request->get('stateId');
         $cities = DynamicValue::where('dependent_id', $stateId)->get()->toArray();
-        return response()->json(['cities' => $cities]);
+            
     }
 }
