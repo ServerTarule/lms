@@ -23,7 +23,7 @@ return new class extends Migration
             $table->string('alternate_contact');
             $table->unsignedBigInteger('designation_id');
             $table->string('profile_img');
-            $table->timestamps('lead_assigned_at');
+            $table->timestamp('lead_assigned_at');
             $table->softDeletes();
             $table->foreign('user_Id')
                 ->references('id')

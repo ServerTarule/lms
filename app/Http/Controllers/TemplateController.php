@@ -26,7 +26,7 @@ class TemplateController extends Controller
                 'name'=>$request->templateName,
                 'type'=>$request->templateType,
                 'subject'=>($request->templateType == "Email")?$request->templateEmailSubject:"",
-                'content'=>($request->templateType == "Email")?$request->templateEmailBody:$request->templateMessage, 
+                'message'=>($request->templateType == "Email")?$request->templateEmailBody:$request->templateMessage, 
             ]);
             return response()->json(['error'=>false, 'message'=>'Template added successfully.']);
         }
@@ -53,7 +53,7 @@ class TemplateController extends Controller
                     'name'=>$request->templateName,
                     'type'=>$request->templateType,
                     'subject'=>($request->templateType == "Email")?$request->templateEmailSubject:"",
-                    'content'=>($request->templateType == "Email")?$request->templateEmailBody:$request->templateMessage, 
+                    'message'=>($request->templateType == "Email")?$request->templateEmailBody:$request->templateMessage, 
                 ]
             );
             return response()->json(['error'=>false, 'message'=>'Template updated successfully.']);

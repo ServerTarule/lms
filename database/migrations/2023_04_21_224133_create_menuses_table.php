@@ -15,6 +15,13 @@ return new class extends Migration
     {
         Schema::create('menus', function (Blueprint $table) {
             $table->id();
+            $table->string('title');
+            $table->unsignedBigInteger('parent_id')->nullable()->constrained();
+            $table->integer('preference')->nullable()->constrained();
+            $table->string('class');
+            $table->string('icon');
+            $table->string('url');
+            $table->tinyInteger('deleted')->nullable()->constrained();
             $table->timestamps();
         });
     }
