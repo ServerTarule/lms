@@ -7,7 +7,7 @@
                 <div class="panel-heading">
                     <div class="btn-group" id="buttonexport">
                         <a>
-                            <h4>Adminmaster Status</h4>
+                            <h4>Adminmaster Status hhhh {{$myCustomPermissionArray}}</h4>
                         </a>
                     </div>
                 </div>

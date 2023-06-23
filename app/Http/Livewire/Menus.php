@@ -5,7 +5,7 @@ namespace App\Http\Livewire;
 use App\Models\DynamicMain;
 use Livewire\Component;
 use App\Models\Menu;
-
+use Illuminate\Support\Facades\Auth;
 class Menus extends Component
 {
     public function render()
@@ -14,10 +14,11 @@ class Menus extends Component
         $matchThese = [
             ['parent_id', '=', 0],
         ];
+        $user = Auth::user();
+        print_r($user->toArray());
         $menus = Menu::orderby('preference', 'asc')->get();
         $menu = new Menu;
-        $menuHtml = $menu->getHTML($menus);  
-        $menus=Menu::all();
+        $menuHtml = (!empty($menus->toArray()))?$menu->getHTML($menus):'';  
         $html = '
         <ul class="sidebar-menu">
             <li class="active">

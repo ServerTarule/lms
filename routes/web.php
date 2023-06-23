@@ -31,6 +31,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\MenusController;
 use App\Http\Controllers\MenusPermissionController;
+use App\Http\Middleware\CheckYear;
 
 
 /*
@@ -130,7 +131,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/dynamic/edit/{id}', [DynamicMasterController::class, 'update'])->name('/dynamic/edit/{id}')->middleware('can:update master');
 
     // Menu
-    Route::get('/menus', [MenusController::class, 'index'])->name('menus')->middleware('can:read master');
+    Route::get('/menus', [MenusController::class, 'index'])->name('menus')->middleware('check-year');
     Route::post('/menus', [MenusController::class, 'store'])->name('menus')->middleware('can:create master');
     Route::get('/menus/{id}', [MenusController::class, 'edit'])->name('menus/{id}')->middleware('can:update master');
     Route::post('/menus/{id}', [MenusController::class, 'update'])->name('menus/{id}')->middleware('can:update master');
