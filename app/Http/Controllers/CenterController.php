@@ -39,11 +39,11 @@ class CenterController extends Controller
         $center=Center::create([
             'centerDetails'=>$request->get("centerDetails"),
             'mobile'=>$request->get("mobile"),
-            'alternateMobile'=>$request->get("alternateMobile"),
+            'alternateMobile'=>$request->get("alternateMobile") ?? "",
             'state'=>$request->get("state"),
             'city'=>$request->get("city"),
-            'ownerName'=>$request->get("ownerName"),
-            'EmailId'=>$request->get("EmailId"),
+            'ownerName'=>$request->get("ownerName")?? "",
+            'EmailId'=>$request->get("EmailId")?? "",
         ]);
         $doctorId = $request->get("roleId");
         if(isset($doctorId) && $center) {
@@ -84,21 +84,21 @@ class CenterController extends Controller
         if($mobile==null || $mobile=="") {
             $validationMessage .= "Mobile is mandatory field. </br>";
         }
-        if($alternateMobile==null || $alternateMobile=="") {
-            $validationMessage .= "Alternate mobile is mandatory field. </br>";
-        }
+        // if($alternateMobile==null || $alternateMobile=="") {
+        //     $validationMessage .= "Alternate mobile is mandatory field. </br>";
+        // }
         if( $state==0 || $state==null ||  $state=="") {
             $validationMessage .= " State is mandatory field. </br>";
         }
         if( $city==0 || $city==null ||  $city=="") {
             $validationMessage .= " City is mandatory field. </br>";
         }
-        if( $ownerName==null ||  $ownerName=="") {
-            $validationMessage .= " Owner Name is mandatory field. </br>";
-        }
-        if($EmailId==null ||  $EmailId=="") {
-            $validationMessage .= " Email Id Name is mandatory field. </br>";
-        }
+        // if( $ownerName==null ||  $ownerName=="") {
+        //     $validationMessage .= " Owner Name is mandatory field. </br>";
+        // }
+        // if($EmailId==null ||  $EmailId=="") {
+        //     $validationMessage .= " Email Id Name is mandatory field. </br>";
+        // }
         if($doctorId==null ||  count($doctorId)==0) {
             $validationMessage .= " Doctor Name is mandatory field. </br>";
         }

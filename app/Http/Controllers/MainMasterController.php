@@ -169,6 +169,6 @@ class MainMasterController extends Controller
     public function getcitiesBystate(Request $request) : JsonResponse {
         $stateId = $request->get('stateId');
         $cities = DynamicValue::where('dependent_id', $stateId)->get()->toArray();
-            
+        return response()->json(['cities' => $cities]);
     }
 }

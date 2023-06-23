@@ -124,7 +124,7 @@
                             <form  id="addItemForm" class="form-horizontal">
                                 <fieldset>
                                     <div class="col-md-12 form-group">
-                                        <label>Doctor Name <span class="required"> * </span></label>
+                                        <label>Doctor Name <span class="required text-danger"> * </span></label>
                                         <select class="form-control" id="role_id_select" name="role_id[]" rquired multiple>
                                           @foreach ($doctor as $doctors )
                                             <option value="{{$doctors->id}}">{{$doctors->name}}</option>
@@ -132,11 +132,11 @@
                                         </select>
                                     </div>
                                     <div class="col-md-12 form-group">
-                                        <label class="control-label">Center Details </label>
+                                        <label class="control-label">Center Details  <span class="required text-danger"> * </span></label>
                                         <input type="text" id="centerDetails" placeholder="Enter Center Details" name="centerDetails" class="form-control" rquired >
                                     </div>
                                     <div class="col-md-6 form-group">
-                                        <label class="control-label">Mobile Number </label>
+                                        <label class="control-label">Mobile Number  <span class="required text-danger"> * </span></label>
                                         <input type="text" id="mobile" placeholder="Enter Mobile Number" name="mobile" class="form-control">
                                     </div>
                                     <div class="col-md-6 form-group">
@@ -144,16 +144,16 @@
                                         <input type="text"  id="alternateMobile"  placeholder="Enter Alternate Number" name="alternateMobile" class="form-control" rquired >
                                     </div>
                                     <div class="col-md-6 form-group">
-                                        <label class="control-label">State</label>
+                                        <label class="control-label">State  <span class="required text-danger"> * </span></label>
                                        <select class="form-control state-dropdown" name="state" id="state-dropdown" rquired >
-                                            <option value="0">Select State</option>
+                                            <option value="0">Select State </option>
                                             @foreach ($state as $states )
                                               <option value="{{$states->id}}">{{$states->name}}</option>
                                             @endforeach
                                           </select>
                                     </div>
                                     <div class="col-md-6 form-group">
-                                        <label class="control-label">City</label>
+                                        <label class="control-label">City  <span class="required text-danger"> * </span></label>
                                        <select class="form-control city-dropdown" id="city-dropdown" name="city" rquired >
                                             <option value="0">Select City</option>
                                         </select>
@@ -586,10 +586,10 @@
             isValid=false;
         }
 
-        if(alternateMobile == null || alternateMobile =="") {
-            validationMessage += `<li>Please fill alternate mobile number. </li>`; 
-            isValid=false;
-        }
+        // if(alternateMobile == null || alternateMobile =="") {
+        //     validationMessage += `<li>Please fill alternate mobile number. </li>`; 
+        //     isValid=false;
+        // }
         if(state ==0 || state == null) {
             validationMessage += `<li>Please select state. </li>`; 
             isValid=false;
@@ -598,14 +598,14 @@
             validationMessage += `<li>Please select city. </li>`; 
             isValid=false;
         }
-        if(ownerName =="" || city == null) {
-            validationMessage += `<li>Please fill owner name. </li>`; 
-            isValid=false;
-        }
-        if(emailId =="" || emailId == null) {
-            validationMessage += `<li>Please fill email Id. </li>`; 
-            isValid=false;
-        }
+        // if(ownerName =="" || city == null) {
+        //     validationMessage += `<li>Please fill owner name. </li>`; 
+        //     isValid=false;
+        // }
+        // if(emailId =="" || emailId == null) {
+        //     validationMessage += `<li>Please fill email Id. </li>`; 
+        //     isValid=false;
+        // }
 
         if(!isValid) {
             bootbox.alert(validationMessage);
