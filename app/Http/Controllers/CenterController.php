@@ -114,11 +114,11 @@ class CenterController extends Controller
             [
                 'centerDetails'=>$request->get("centerDetails"),
                 'mobile'=>$request->get("mobile"),
-                'alternateMobile'=>$request->get("alternateMobile"),
+                'alternateMobile'=>$request->get("alternateMobile") ?? "",
                 'state'=>$request->get("state"),
                 'city'=>$request->get("city"),
-                'ownerName'=>$request->get("ownerName"),
-                'EmailId'=>$request->get("EmailId"),
+                'ownerName'=>$request->get("ownerName") ?? "",
+                'EmailId'=>$request->get("EmailId") ?? "",
             ]
         );
         $doctorId = $request->get("roleId");

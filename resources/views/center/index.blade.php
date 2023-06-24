@@ -192,7 +192,7 @@
                             <form  method="post" class="form-horizontal">
                                 <fieldset>
                                     <div class="col-md-12 form-group">
-                                        <label>Doctor Name <span class="required"> * </span></label>
+                                        <label>Doctor Name <span class="required text-danger"> * </span></label>
                                         <select class="form-control" name="role_id[]" id="role_id_edit" multiple rquired>
                                           @foreach ($doctor as $doctors )
                                             <option value="{{$doctors->id}}">{{$doctors->name}}</option>
@@ -200,12 +200,12 @@
                                         </select>
                                     </div>
                                     <div class="col-md-12 form-group">
-                                        <label class="control-label">Center Details </label>
+                                        <label class="control-label">Center Details <span class="required text-danger"> * </span></label>
                                         <input type="text" placeholder="Enter Center Details" id="center_details_edit" name="centerDetails" class="form-control" rquired >
                                     </div>
 
                                     <div class="col-md-6 form-group">
-                                        <label class="control-label">Mobile Number </label>
+                                        <label class="control-label">Mobile Number <span class="required text-danger"> * </span> </label>
                                         <input type="text" placeholder="Enter Mobile Number" id="mobile_edit" name="mobile" class="form-control">
                                     </div>
                                     <div class="col-md-6 form-group">
@@ -213,7 +213,7 @@
                                         <input type="text" placeholder="Enter Alternate Number" id="alternate_mobile_edit" name="alternateMobile" class="form-control" rquired >
                                     </div>
                                     <div class="col-md-6 form-group">
-                                        <label class="control-label">State</label>
+                                        <label class="control-label">State <span class="required text-danger"> * </span></label>
                                        <select class="form-control state-dropdown" name="state" id="state_dropdown_edit" rquired>
                                             <option value="0">Select State</option>
                                             @foreach ($state as $states )
@@ -222,7 +222,7 @@
                                           </select>
                                     </div>
                                     <div class="col-md-6 form-group">
-                                        <label class="control-label">City</label>
+                                        <label class="control-label">City <span class="required text-danger"> * </span></label>
                                        <select class="form-control city-dropdown" id="city_dropdown_edit" name="city" rquired>
                                             <option value="0">Select City</option>
                                         </select>
@@ -485,7 +485,7 @@
 
     function deleteCenter(id) {
         bootbox.confirm({
-            message: "Are you sure you want to delete this center?.",
+            message: "Are you sure you want to delete this center?",
             callback: function (confirm) {
                 if(confirm) {
                     processDeleteCenter(id);
