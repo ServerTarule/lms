@@ -118,6 +118,10 @@ class MainMasterController extends Controller
     }
 
     public function update(Request $request,$masterId, $id){
+        $unique = DynamicValue::where('name', '=', $request->name)->where('id', '!=',$id)->first();   
+        if($unique) {
+            return redirect()->back()->with('error', 'Master Already Exist.');
+        }
         if(isset($request->dependentId)) {
             $dynaicmaster= DynamicValue::find($id)->update(
                 [

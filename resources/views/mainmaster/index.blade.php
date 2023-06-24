@@ -49,12 +49,18 @@
                                         @endif
                                     @endif
                                 <div class="form-group col-sm-2">
-                                    <label>Name<span class="required"> * </span></label>
+                                    <label>Name<span class="required text-danger"> * </span></label>
                                 </div>
                                 <div class="form-group col-sm-3">
                                     <input type="text" name="name" placeholder="Main Master Value" class="form-control">
+                                    @if (session('error'))
+                                    <span class="text-danger">{{ session('error') }}</span>
+                                    @endif
+                                    @if (session('status'))
+                                        <span class="text-success">{{ session('status') }}</span>
+                                    @endif
                                 </div>
-
+                                
                                 <div class="col-sm-3">
                                     <div class="form-group">
                                         <button type="submit" class="btn btn-primary btn-sm">Submit</button>
@@ -156,7 +162,7 @@
                                         @endif
                                     @endif
                                         <div class="col-md-1 form-group AUTHORITY">
-                                            <label>Name<span class="required"> * </span></label>
+                                            <label>Name<span class="required text-danger"> * </span></label>
                                         </div>
                                         <div class="col-md-5 form-group AUTHORITY">
                                             <input type="text" name="name" placeholder="Main Master Value"  value="{{$dynaicmaster->name}}"  class="form-control" required>
