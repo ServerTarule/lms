@@ -17,14 +17,14 @@
                             <div class="col-md-3"></div>
                             <div class="col-md-6">
                                 <div class="text-right">
-                                    <form action="/master" method="post">
+                                    <form action="/master" onSubmit="return createMaster()" method="post">
                                         @csrf
                                         <div class="row">
                                             <div class="col-md-12 form-group AUTHORITY">
                                                 <input type="text" name="name" placeholder="Master Name"
                                                     class="form-control" required>
                                                 <div>
-                                                    <button type="submit" class="btn btn-add">Create</button>
+                                                    <button type="submit" class="btn btn-add  {{ (!$userCrudPermissions['add_permission']) ? ' disabled' : '' }}">Create</button>
                                                 </div>
                                             </div>
                                            
@@ -77,7 +77,7 @@
                                             <td>{{ \Carbon\Carbon::parse($master->created_at)->format('d/m/Y') }}</td>
                                             <td>
                                                 @if($master->master == 0)
-                                                    <a href="/master/{{$master->id}}" class="btn-xs btn-info"> <i
+                                                    <a href="/master/edit/{{$master->id}}" class="btn-xs btn-info {{ (!$userCrudPermissions['edit_permission']) ? ' disabled' : '' }}"> <i
                                                             class="fa fa-edit"></i> </a>
                                                 @else
                                                 -
@@ -85,9 +85,15 @@
                                             </td>
                                             <td>
                                                 @if($master->master == 0)
-                                                <a href="#" id="deleteMaster" onclick="deleteMaster({{$master->id}})" class="btn-xs btn-danger">
-                                                    <i class="fa fa-trash-o"></i>
-                                                </a>
+                                                    @if($userCrudPermissions['delete_permission'])
+                                                    <a href="#" id="deleteMaster" onclick="deleteMaster({{$master->id}})" class="btn-xs btn-danger {{ (!$userCrudPermissions['delete_permission']) ? ' disabled' : 'pointer' }}">
+                                                        <i class="fa fa-trash-o"></i>
+                                                    </a>
+                                                    @else
+                                                    <a onclick="deleteMaster({{$master->id}})" class="btn-xs btn-danger {{ (!$userCrudPermissions['delete_permission']) ? ' disabled' : 'pointer' }}">
+                                                        <i class="fa fa-trash-o"></i>
+                                                    </a>
+                                                    @endif
                                                 @else
                                                     -
                                                 @endif
@@ -156,3 +162,69 @@
         </div>
     </div>
 @endsection
+@push('custom-scripts')
+<script>
+function createMaster() {
+    const addPermission  = "{{$userCrudPermissions['add_permission']}}";
+    if(!addPermission) {
+        toastr.error("You are not allowed to add/create master!");
+        return false;
+    }
+    else {
+        return true;
+    }
+
+}
+
+function showMessage (action="edit/update") {
+    toastr.error( `You are not allowed to ${action} master!`);
+}
+
+
+function deleteMaster(id) {
+    const deletePermission  = "{{$userCrudPermissions['delete_permission']}}";
+    if(!deletePermission) {
+        toastr.error("You are not allowed to delete master!");
+        return false;
+    }
+    else {
+        bootbox.confirm("Are you sure you want to delete this master?", function (confirmed) {
+            if(confirmed){
+                let CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
+                $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }
+                });
+                $.ajax({
+                    /* the route pointing to the post function */
+                    url: '/master/destroy',
+                    type: 'POST',
+                    /* send the csrf-token and the input to the controller */
+                    // data: {_token: CSRF_TOKEN, 'ruleData':JSON.stringify(jsonObject)},
+                    data: {
+                        _token: CSRF_TOKEN,
+                        'id': id
+                    },
+                    // data: $(this).serialize(),
+                    dataType: 'JSON',
+                    /* remind that 'data' is the response of the AjaxController */
+                    success: function (data) {
+                        console.log(data);
+                        window.location.href = "/master";
+                    },
+                    error:function(xhr, status, error) {
+                        console.log("error",xhr, xhr.responseText,status,error);
+                        toastr.error( xhr.responseText);
+                    },
+                    failure: function (data) {
+                        console.log(data);
+                    }
+                });
+            }
+        });
+    }
+   
+}
+</script>
+@endpush

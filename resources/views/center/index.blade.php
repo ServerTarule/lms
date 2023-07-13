@@ -22,7 +22,7 @@
             @endif
                 <div class="panel-body">
                     <div class="text-right">
-                        <a class="btn btn-exp btn-sm" data-toggle="modal" data-target="#additem"><i class="fa fa-plus"></i>
+                        <a class="btn btn-exp btn-sm {{ (!$userCrudPermissions['add_permission']) ? ' disabled' : '' }}" data-toggle="modal" data-target="#additem"><i class="fa fa-plus"></i>
                             Add Centers</a>
                     </div>
                     <div class="table-responsive">
@@ -354,6 +354,10 @@
                 }
                
             },
+            error:function(xhr, status, error) {
+                console.log("error",xhr, xhr.responseText,status,error);
+                toastr.error( xhr.responseText);
+            },
             failure: function (data) {
                 toastr.error("Error occurred while processing!!");
             }
@@ -400,6 +404,10 @@
 
                
             },
+            error:function(xhr, status, error) {
+                console.log("error",xhr, xhr.responseText,status,error);
+                toastr.error( xhr.responseText);
+            },
             failure: function (data) {
                 toastr.error("Error occurred while processing!!");
             }
@@ -437,6 +445,10 @@
                 console.log(data);
                 window.location.href = "/centers";
             },
+            error:function(xhr, status, error) {
+                console.log("error",xhr, xhr.responseText,status,error);
+                toastr.error( xhr.responseText);
+            },
             failure: function (data) {
                 toastr.error("Error occurred while processin!!");
             }
@@ -451,7 +463,8 @@
             }
         });
         $("#centerId").val(id);
-        $.ajax({
+            
+            $.ajax({
             /* the route pointing to the post function */
             url: '/centers/edit',
             type: 'POST',
@@ -477,10 +490,17 @@
                 $("#owner_name_edit").val(center.ownerName);
                 $("#email_id_edit").val(center.EmailId);
             },
+            error:function(xhr, status, error) {
+                console.log("error",xhr, xhr.responseText,status,error);
+                toastr.error( xhr.responseText);
+            },
             failure: function (data) {
                 toastr.error("Error occurred while processin!!");
             }
+        
         });
+        
+      
     }
 
     function deleteCenter(id) {
@@ -551,6 +571,10 @@
                     }
                 }
             },
+            error:function(xhr, status, error) {
+                console.log("error",xhr, xhr.responseText,status,error);
+                toastr.error( xhr.responseText);
+            },
             failure: function (data) {
                 toastr.error("Error occurred while processing!!");
             }
@@ -586,11 +610,7 @@
             isValid=false;
         }
 
-        // if(alternateMobile == null || alternateMobile =="") {
-        //     validationMessage += `<li>Please fill alternate mobile number. </li>`; 
-        //     isValid=false;
-        // }
-        if(state ==0 || state == null) {
+         if(state ==0 || state == null) {
             validationMessage += `<li>Please select state. </li>`; 
             isValid=false;
         }
@@ -598,15 +618,7 @@
             validationMessage += `<li>Please select city. </li>`; 
             isValid=false;
         }
-        // if(ownerName =="" || city == null) {
-        //     validationMessage += `<li>Please fill owner name. </li>`; 
-        //     isValid=false;
-        // }
-        // if(emailId =="" || emailId == null) {
-        //     validationMessage += `<li>Please fill email Id. </li>`; 
-        //     isValid=false;
-        // }
-
+       
         if(!isValid) {
             bootbox.alert(validationMessage);
         }

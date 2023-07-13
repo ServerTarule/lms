@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Log;
 class MasterController extends Controller
 {
     public function index(){
+        
         $masters=DynamicMain::all();
         $edit=false;
         return view('master.index',compact('masters','edit'));
@@ -39,6 +40,7 @@ class MasterController extends Controller
     }
 
     public function edit($id){
+        // die("I am here to edit");
         $master=DynamicMain::where('id',$id)->first();
         return view('master.index',['masters'=> false,'master'=>$master,'edit'=>true]);
     }
@@ -67,6 +69,7 @@ class MasterController extends Controller
 //    }
 
     public function destroy(Request $request) : JsonResponse {
+        
         $id = $request->get('id');
         DynamicValue::where('parent_id', $id)->delete();
         DynamicMain::where('id', $id)->delete();

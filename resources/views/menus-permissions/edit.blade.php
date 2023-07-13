@@ -30,6 +30,7 @@
                                             <th>Menu ID</th>
                                             <th>Menu Title</th>
                                             <th>Parent Name</th>
+                                            <th>Menu Url</th>
                                             <th>View</th>
                                             <th>Add</th>
                                             <th>Edit</th>
@@ -55,6 +56,7 @@
                                                         
                                                     </td>
                                                     <td>{{ $menu->parentname ? $menu->parentname: 'No Parent' }}</td>
+                                                    <td>{{ $menu->url }}</td>
                                                     
                                                     <td>
                                                         <label class="switch">

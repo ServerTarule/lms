@@ -7,7 +7,7 @@
                 <div class="panel-heading">
                     <div class="btn-group" id="buttonexport">
                         <a>
-                            <h4>Adminmaster Status hhhh {{$myCustomPermissionArray}}</h4>
+                            <h4>Adminmaster Status</h4>
                         </a>
                     </div>
                 </div>
@@ -19,8 +19,11 @@
             @endif
                 <div class="panel-body">
                     <div class="text-right">
-                        <a class="btn btn-exp btn-sm" data-toggle="modal" data-target="#additem"><i class="fa fa-plus"></i>
-                            Add Employee</a>
+                        @if($userCrudPermissions['add_permission']) 
+                            <a class="btn btn-exp btn-sm" data-toggle="modal" data-target="#additem"><i class="fa fa-plus"></i>Add Employee</a>
+                        @else
+                        <a class="btn btn-exp btn-sm disabled" data-toggle="modal" data-target="#additem"><i class="fa fa-plus"></i>Add Employee</a>
+                        @endif
                     </div>
                     <div class="table-responsive">
                         <table id="dataTableExample1" class="table table-bordered table-striped table-hover">
@@ -108,13 +111,25 @@
                                         <td><img height="40px" width="40px" /></td>
 
                                         <td>
-								            <a data-toggle="modal" data-target="#editEmployee" class="btn-xs btn-info"> <i class="fa fa-edit">Edit</i></a>
+                                            @if($userCrudPermissions['edit_permission']) 
+								                <a data-toggle="modal" data-target="#editEmployee" class="btn-xs btn-info"> <i class="fa fa-edit">Edit</i></a>
+                                            @else
+                                                <a data-toggle="modal" onClick="return editEmployee()" class="btn-xs btn-info disabled"> <i class="fa fa-edit">Edit</i></a>
+                                            @endif
 								        </td>
                                         <td>
-                                            <a href=""onclick="if (confirm('are you sure you want to cancel?')) window.location.href='/cancel';                                            "
-                                                class="btn-xs btn-info" style="background: #337ab7;">
-                                                <span>Active</span>
-                                            </a>
+                                            @if($userCrudPermissions['edit_permission']) 
+                                                <a href="" onclick="if (confirm('are you sure you want to cancel?')) window.location.href='/cancel';                                            "
+                                                    class="btn-xs btn-info" style="background: #337ab7;">
+                                                    <span>Active</span>
+                                                </a>
+                                            @else
+                                                <a onclick="return cancelEmployee() "
+                                                    class="btn-xs btn-info disabled" style="background: #337ab7;">
+                                                    <span>Active</span>
+                                                </a>                                      
+                                            @endif
+                                            
                                         </td>
                                         {{-- <td>
                                             <label class="switch">
@@ -313,3 +328,16 @@
                </div>
 
 @endsection
+
+@push('custom-scripts')
+<script type="text/javascript">
+    function editEmployee () {
+        toastr.error("You are not allowed to add employee(s)!");
+        return false;
+    }
+    function cancelEmployee() {
+        toastr.error("You are not allowed to perform this action!");
+        return false;
+    }
+</script>
+@endpush

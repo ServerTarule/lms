@@ -52,10 +52,8 @@
 
                                         </div>
                                         <div class="row float-end">
-
-                                        <!-- <div class="container-md">100% wide until medium breakpoint</div> -->
                                         <div class="col-md-12 form-group border AUTHORITY">
-                                                <button type="submit" class=" btn btn-success ">Create</button>
+                                                <button type="submit" class=" btn btn-success " disabled="{{$userCrudPermissions['add_permission']}}">Create</button>
                                             </div>
                                         </div>
 

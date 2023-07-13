@@ -95,8 +95,7 @@ class RoleController extends Controller
     public function destroy(Request $request) : JsonResponse {
         $id = $request->get('id');
         Role::where('id', $id)->delete();
-
-        return response()->json(['success' => 'Received rule data']);
+        return response()->json(['success' => true, 'message'=>'Data successfully deleted!']);
     }
 
     public function assign()

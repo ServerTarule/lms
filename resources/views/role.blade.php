@@ -60,7 +60,7 @@
                         <div class="row">
                             <div class="col-md-3"></div>
                             <div class="col-md-6">
-                                <form method="POST" action="/createrole">
+                                <form method="POST" action="/createrole" onSubmit="return submitCreateRoleForm()">
                                     @csrf
                                     <div class="row">
                                         <div class="col-md-5">
@@ -77,7 +77,8 @@
                                         </div>
                                         <div class="col-md-2">
                                             <div class="form-group">
-                                                <button class="btn btn-sm btn-primary btn-submit bg-primary">Create
+
+                                                <button class="btn btn-sm btn-primary btn-submit bg-primary {{ (!$userCrudPermissions['add_permission']) ? ' disabled' : '' }}">Create
                                                 </button>
                                             </div>
                                         </div>
@@ -114,13 +115,24 @@
                                         <td>{{ $loop->iteration }}</td>
                                         <td>{{ $role->name }}</td>
                                         <td>
-                                            <a href="/role/{{ $role->id }}" class="btn-xs btn-info"> <i
+                                            @if($userCrudPermissions['edit_permission'])
+                                                <a href="/role/{{ $role->id }}" class="btn-xs btn-info"> <i
                                                     class="fa fa-edit"></i> </a>
+                                            @else
+                                                <a class="btn-xs btn-info {{(!$userCrudPermissions['edit_permission']) ? ' disabled' : '' }}"> <i
+                                                    class="fa fa-edit {{(!$userCrudPermissions['edit_permission']) ? ' disabled' : '' }}"></i> </a>
+                                            @endif
                                         </td>
                                         <td>
+                                            @if($userCrudPermissions['delete_permission'])
                                             <a href="#" id="deleteRole" onclick="deleteRole( {{ $role->id }})" class="btn-xs btn-danger">
                                                 <i class="fa fa-trash-o"></i>
                                             </a>
+                                            @else
+                                            <a  onclick="deleteRole( {{ $role->id }})" class="btn-xs btn-danger {{(!$userCrudPermissions['edit_permission']) ? ' disabled' : '' }}">
+                                                <i class="fa fa-trash-o"></i>
+                                            </a>
+                                            @endif
                                         </td>
                                     </tr>
                                 @endforeach
@@ -133,3 +145,67 @@
         </div>
     </div>
 @endsection
+@push('custom-scripts')
+<script>
+    function submitCreateRoleForm() {
+        const addPermission  = "{{$userCrudPermissions['add_permission']}}";
+        if(!addPermission) {
+            toastr.error("You are not allowed to add/create role!");
+            return false;
+        }
+        else {
+            return true;
+        }
+    }
+
+    function deleteRole(id) {
+        const deletePermission  = "{{$userCrudPermissions['delete_permission']}}";
+        if(!deletePermission) {
+            toastr.error("You are not allowed to delete role!");
+            return false;
+        }
+        else if(deletePermission){
+            bootbox.confirm(`Are you sure you want to delete this role?`, function (cofirm) {
+                if(confirm) {
+                    let CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
+                    $.ajaxSetup({
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        }
+                    });
+                    $.ajax({
+                        /* the route pointing to the post function */
+                        url: '/role/destroy',
+                        type: 'POST',
+                        /* send the csrf-token and the input to the controller */
+                        // data: {_token: CSRF_TOKEN, 'ruleData':JSON.stringify(jsonObject)},
+                        data: {
+                            _token: CSRF_TOKEN,
+                            'id': id
+                        },
+                        // data: $(this).serialize(),
+                        dataType: 'JSON',
+                        /* remind that 'data' is the response of the AjaxController */
+                        success: function (data) {
+                            toastr.success( data.message);
+                        },
+                        error:function(xhr, status, error) {
+                            console.log("error",xhr, xhr.responseText,status,error);
+                            toastr.error( xhr.responseText);
+                        },
+                        failure: function (data) {
+                            console.log(data);
+                        }
+                    });
+                }
+                else{
+                    return false;
+                }
+                
+            })       
+        }
+        
+    }
+
+</script>
+@endpush
