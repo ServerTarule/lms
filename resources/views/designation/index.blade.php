@@ -18,14 +18,14 @@
 
                             <div class="col-md-4">
                                 <div class="text-right">
-                                    <form action="/designation" method="post">
+                                    <form action="/designation" onSubmit="return addDesignation()" method="post">
                                         @csrf
                                         <div class="row">
                                             <div class="col-md-12 form-group AUTHORITY">
                                                 <input type="text" name="name" placeholder="Designation Name"
                                                     class="form-control" required>
                                                 <div>
-                                                    <button type="submit" class="btn btn-add">Create</button>
+                                                    <button type="submit" class="btn btn-add {{ (!$userCrudPermissions['add_permission']) ? ' disabled' : '' }}">Create</button>
                                                 </div>
                                             </div>
                                         </div>
@@ -62,14 +62,24 @@
                                             <td>{{ \Carbon\Carbon::parse($designation->created_at)->format('d/m/Y') }}
                                             </td>
                                             <td>
+                                            @if ($userCrudPermissions['edit_permission'])
                                                 <a href="/designation/{{ $designation->id }}" class="btn-xs btn-info"> <i
                                                         class="fa fa-edit"></i> </a>
+                                            @else
+                                                <a  onclick="showMessage()" class="btn-xs btn-info disabled"><i class="fa fa-edit"></i> </a>
+                                            @endif
                                             </td>
                                             <td>
-                                                <a onclick="return confirm('Are you sure want to delete this?')"
-                                                    class="btn-xs btn-info" style="background: red;"> <i
-                                                        class="fa fa-trash-o"></i>
-                                                </a>
+                                                @if ($userCrudPermissions['edit_permission'])
+                                                    <a onclick="return confirm('Are you sure want to delete this?')"
+                                                        class="btn-xs btn-info" style="background: red;"> <i
+                                                            class="fa fa-trash-o"></i>
+                                                    </a>
+                                                @else
+                                                <a onclick="showMessage('delete')"
+                                                        class="btn-xs btn-info disabled" style="background: red;"> <i
+                                                            class="fa fa-trash-o disabled"></i>
+                                                    </a>                                                @endif
                                             </td>
                                         </tr>
                                     @endforeach
@@ -117,3 +127,23 @@
     </div>
 
 @endsection
+@push('custom-scripts')
+<script>
+function addDesignation() {
+    const addPermission  = "{{$userCrudPermissions['add_permission']}}";
+    if(!addPermission) {
+        toastr.error("You are not allowed to add/create designation!");
+        return false;
+    }
+    else {
+        return true;
+    }
+
+    
+}
+
+function showMessage (action="edit/update") {
+    toastr.error( `You are not allowed to ${action} designation!`);
+}
+</script>
+@endpush
