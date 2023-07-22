@@ -81,7 +81,7 @@ Route::middleware(['auth'])->group(function () {
     // Employee
     Route::get('/employee', [EmployeeController::class, 'index'])->name('employee')->middleware('can:read employee');
     Route::get('/addemployee', [EmployeeController::class, 'create'])->name('addemployee')->middleware('can:create employee');
-    Route::post('/createemployee', [EmployeeController::class, 'store'])->name('createemployee')->middleware('can:create employee');
+    Route::post('/employee/createemployee', [EmployeeController::class, 'store'])->name('createemployee')->middleware('can:create employee');
     //Route::post('/updateEmployee', [EmployeeController::class, 'update'])->name('updateEmployee')->middleware('can:update employee');
     Route::post('/employee/updateEmployee/{id}', [EmployeeController::class, 'updateEmployee'])->name('updateEmployee')->middleware('can:read master');
 

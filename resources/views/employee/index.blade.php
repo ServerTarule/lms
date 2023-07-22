@@ -105,7 +105,13 @@
                                         <td>
                                             {{$employe->designation->name}}
                                         </td>
-                                        <td><img height="40px" width="40px" /></td>
+                                        <td>
+                                            @if ($employe->profile_img)
+                                                <img src="{{$employe->profile_img}}" height="40px" width="40px" />
+                                            @elseif (!$employe->profile_img || $employe->profile_img =='user.png')
+                                                No Image
+                                            @endif
+                                        </td>
 
                                         <!-- <td>
 								            <a data-toggle="modal" data-target="#editEmployee" class="btn-xs btn-info"> <i class="fa fa-edit">Edit</i></a>
@@ -146,7 +152,8 @@
                 <div class="modal-body">
                     <div class="row">
                         <div class="col-md-12">
-                            <form  method="post" class="form-horizontal" onSubmit="return  submitAddForm()" action="/createemployee">
+                        <!-- onSubmit="return  submitAddForm()" -->
+                            <form  method="post" id="addEmployeeForm" class="form-horizontal" enctype="multipart/form-data"  action="/createemployee">
                                 @csrf
                                 <fieldset>
                                     <!-- <span class="required text-danger"> * </span> -->
@@ -193,11 +200,11 @@
                                     </div>
                                     <div class="col-md-6 form-group">
                                         <label class="control-label">Alternate Mobile Number </label>
-                                        <input type="text" placeholder="Alternate Mobile Number" name="alternate_contact" class="form-control">
+                                        <input type="text" placeholder="Alternate Mobile Number" id="alternate_contact" name="alternate_contact" class="form-control">
                                     </div>
                                     <div class="col-md-6 form-group">
                                         <label class="control-label">Designation Type</label>
-                                       <select class="form-control" name="designation_id">
+                                       <select class="form-control" name="designation_id" id="designation_id">
                                             @foreach ($designation as $designations )
                                               <option value="{{$designations->id}}">{{$designations->name}}</option>
                                             @endforeach
@@ -205,8 +212,8 @@
                                     </div>
                                     <div class="col-md-6 form-group">
                                         <label class="control-label">Profile Image </label>
-                                        <input type="file" class="form-control" name="" disabled>
-                                        <input type="hidden" class="form-control" value="user.png" name="profile_img">
+                                        <input type="file" class="form-control" id="profile_image" name="file">
+                                        <!-- <input type="hidden" class="form-control" value="user.png" name="profile_img"> -->
                                     </div>
                                     <!--   <div class="col-md-6 form-group">
                                     <label class="control-label">Max/Per Day</label>
@@ -216,15 +223,16 @@
                                     <label class="control-label">Max/Per Weekly</label>
                                     <input type="text" placeholder="Enter Value" class="form-control">
                                  </div> -->
-                                    <div class="col-md-12 form-group">
-                                        <div>
-                                            <button type="button" class="btn btn-danger btn-sm"
-                                                data-dismiss="modal">Cancel</button>
-                                            <button type="submit" class="btn btn-add btn-sm">Save</button>
-                                        </div>
-                                    </div>
+                                    
                                 </fieldset>
                             </form>
+                            <div class="col-md-12 form-group">
+                                <div>
+                                    <button type="button" class="btn btn-danger btn-sm"
+                                        data-dismiss="modal">Cancel</button>
+                                    <button type="submit" class="btn btn-add btn-sm" onclick="return processAdd()">Save</button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -242,7 +250,7 @@
                         <div class="modal-body">
                            <div class="row">
                               <div class="col-md-12">
-                                 <form class="form-horizontal">
+                                 <form class="form-horizontal" id="updateEmployeeForm">
                                     <fieldset>
                                         <div class="col-md-12 form-group">
                                             <label>Admin Name </label>
@@ -261,7 +269,7 @@
                                         </div> -->
                                        <div class="col-md-6 form-group">
                                           <label class="control-label">Employee Name <span class="required text-danger"> * </span> </label>
-                                          <input type="text" placeholder="Enter Employee Name" id="emp_name_edit" class="form-control">
+                                          <input type="text" placeholder="Enter Employee Name" name="name" id="emp_name_edit" class="form-control">
                                        </div>
 
                                         <div class="col-md-6 form-group">
@@ -307,7 +315,8 @@
                                         </div>
                                         <div class="col-md-6 form-group">
                                           <label class="control-label">Profile Image  </label>
-                                          <input type="file" class="form-control" disabled>
+                                          <!-- <input type="file" class="form-control" disabled> -->
+                                          <input type="file" class="form-control" id="profile_image_edit" name="file">
                                        </div>
                                        <div class="col-md-6 form-group">
                                           <label class="control-label">Password</label>
@@ -324,10 +333,10 @@
                                        </div> -->
                                        
                                     </fieldset>
-                                 </form>
-                                 <div class="col-md-12 text-right form-group">
                                     <input type="hidden" id="employeeId" value="" name="employeeId">
                                     <input type="hidden" id="userId" value="" name="userId">
+                                 </form>
+                                 <div class="col-md-12 text-right form-group">
                                     <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal">Cancel</button>
                                     <button id="updateItemutton" class="btn btn-add btn-sm">Update Employee</button>
                                 </div>
@@ -344,7 +353,9 @@
 <script>
 
 function submitAddForm(isEdit = false) {
-    return validateForm();
+   //return true;
+   processAdd () 
+    // return validateForm();
 }
 
 function editEmployee(id) {
@@ -361,6 +372,7 @@ function validateForm(isEdit=false) {
     const role_id = (isEdit)?$("#role_id_edit").val():$("#role_id").val();
     const emp_name = (isEdit)?$("#emp_name_edit").val():$("#emp_name").val();
     const contact = (isEdit)?$("#contact_edit").val():$("#contact").val();
+    const contactAlternate = (isEdit)?$("#alternate_contact_edit").val():$("#alternate_contact").val();
     const userType = (isEdit)?$("#user_type_edit").val():$("#user_type").val();
     const email = (isEdit)?$("#email_edit").val():$("#email").val();
     const password = (isEdit)?$("#password_edit").val():$("#password").val();
@@ -375,15 +387,40 @@ function validateForm(isEdit=false) {
         validationMessage += `<li>Please fill employee name. </li>`; 
         
     }
-
+    console.log("--contact--",contact);
     if(contact == null || contact =="") {
+        console.log("No Mobile*************")
         validationMessage += `<li>Please fill mobile number. </li>`; 
         isValid=false;
     }
-
+    else if(!(contact == null || contact =="")) {
+        const isContactValid = isValidCotact(contact);
+        console.log("##########isContactValid############",isContactValid);
+        if(!isContactValid) {
+            validationMessage+=`<li>Please fill valid mobile number. </li>`;
+            isValid=false;
+        }
+    }
+   
     if(email == null || email ==  "") {
         validationMessage += `<li>Please fill email field. </li>`; 
         isValid=false;
+    }
+    else if(!(email == null || email ==  "") ) {
+        const isEmailValid = !isValidEmail(email);
+        if(isEmailValid) {
+            console.log();
+            validationMessage += `<li>Please fill valid email Id. </li>`; 
+            isValid=false;
+        }
+    }
+    if(!(contactAlternate == null || contactAlternate =="")) {
+        const isAlterNateContactValid = isValidCotact(contactAlternate);
+        console.log("##########isAlterNateContactValid############",isAlterNateContactValid);
+        if(!isAlterNateContactValid) {
+            validationMessage+=`<li>Please fill valid alternate mobile number. </li>`;
+            isValid=false;
+        }
     }
 
     if((password ==0 || password == null) && !isEdit) {
@@ -448,6 +485,7 @@ function getDataForEdit(id) {
 
 $("#updateItemutton").click(function(){
     const isValid = validateForm(true);
+    // return false;
     if(isValid) {
         const password = $("#password_edit").val();
         // alert("----password----"+password);
@@ -475,25 +513,56 @@ function processUpdate () {
     });
     const employeeId = $("#employeeId").val();
     const userId = $("#userId").val();
+    var form_data = new FormData($('#updateEmployeeForm')[0]);
     // alert("I am here"+employeeId+"----"+userId);
     $.ajax({
         /* the route pointing to the post function */
         url: `/employee/updateEmployee/${employeeId} `,
         type: 'POST',
         /* send the csrf-token and the input to the controller */
-        data: {
-            _token: CSRF_TOKEN,
-            'role_id':$("#role_id_edit").val(),
-            'name':$("#emp_name_edit").val(),
-            'contact':$("#contact_edit").val(),
-            'userId':$("#userId").val(),
-            'alternate_contact':$("#alternate_contact_edit").val(),
-            'email':$("#email_edit").val(),
-            'password':$("#password_edit").val(),
-            'dob':$("#dob_edit").val(),
-            'doj':$("#doj_edit").val(),
-            'designation_id':$("#designation_id_edit").val()
+        contentType: false,
+        processData: false,
+        data:  form_data,
+        dataType: 'JSON',
+        /* remind that 'data' is the response of the AjaxController */
+        success: function (data) {
+            if(data.error) {
+                toastr.error(data.message);
+            }
+            else {
+                toastr.success(data.message);
+                setTimeout(function(){ 
+                    location.reload();
+                }, 3000);
+            }
         },
+        failure: function (data) {
+            toastr.error("Error occurred while processing!!");
+        }
+    });
+
+}
+
+
+
+function processAdd () {
+    validateForm();
+    let CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+    var form_data = new FormData($('#addEmployeeForm')[0]);
+    console.log("---form_data-----",form_data);
+    $.ajax({
+        /* the route pointing to the post function */
+        url: `/employee/createemployee`,
+        type: 'POST',
+        contentType: false,
+        processData: false,
+        /* send the csrf-token and the input to the controller */
+        data:  form_data,
         dataType: 'JSON',
         /* remind that 'data' is the response of the AjaxController */
         success: function (data) {
