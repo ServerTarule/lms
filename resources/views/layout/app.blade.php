@@ -282,376 +282,156 @@
 <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.1/css/toastr.css" rel="stylesheet"/>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.1/js/toastr.js"></script>
 <script src="//cdn.ckeditor.com/4.14.1/standard/ckeditor.js"></script>
-<script>
-        $(document).ready(function() {
-            toastr.options.timeOut = 1500; // 1.5s
-            toastr.options.debug=false;
-            toastr.options.positionClass="toast-top-right";
-            toastr.options.onclick=null;
-            toastr.options.fadeIn=300;
-            toastr.options.fadeOut=1000;
-            toastr.options.extendedTimeOut=1000
-            {{--$('#day').datepicker({--}}
-            {{--    format: '{{ config('app.date_format_javascript') }}',--}}
-            {{--    locale: 'en'--}}
-            {{--});--}}
+<script type="text/javascript">
+    $(document).ready(function() {
+        toastr.options.timeOut = 1500; // 1.5s
+        toastr.options.debug=false;
+        toastr.options.positionClass="toast-top-right";
+        toastr.options.onclick=null;
+        toastr.options.fadeIn=300;
+        toastr.options.fadeOut=1000;
+        toastr.options.extendedTimeOut=1000
+        // {{--$('#day').datepicker({--}}
+        // {{--    format: '{{ config('app.date_format_javascript') }}',--}}
+        // {{--    locale: 'en'--}}
+        // {{--});--}}
 
-            // $('.table').DataTable({
-            //     aLengthMenu: [
-            //         [50, 100, 200, 500, -1],
-            //         [50, 100, 200, 500, "All"]
-            //     ],
-            //     'iDisplayLength': 100,
-            //     scrollX: true,
-            //     responsive: true,
-            //     "scrollY": 400,
-            //     "scrollCollapse": true,
-            //     fixedColumns: {
-            //         leftColumns: 4
-            //     }
-            // });
-            let count = $("#editRuleMasterRowCount").val();
-            // $("#initial_"+count+"").after(`<tr id="initial_`+nextCount+`"><td>`+nextCount+`</td><td><select class="form-control" name="ruleMaster_`+nextCount+`" id="ruleMaster_`+nextCount+`"><option selected disabled>-- Select Condition --</option></select></td><td><button id="removeRow" class="fa fa-minus btn btn-sm btn-danger removeRow" onclick="$(this).parent().parent().remove();"></button></td></tr>`);
-            // $("#initial_"+count+"").after(`<tr id="initial_`+nextCount+`"><td>`+nextCount+`</td><td><select class="form-control" name="ruleMaster_`+nextCount+`" id="ruleMaster_`+nextCount+`"><option selected disabled>-- Select Condition --</option></select></td><td><button id="removeRow" class="fa fa-minus btn btn-sm btn-danger removeRow" onclick="$('#addRow').prop('disabled', false); let count = $('#ruleMasterRowCount').val(); let previousCount = parseInt(count) - 1; $('#ruleMasterRowCount').val(previousCount); $(this).parent().parent().remove();"></button></td></tr>`);
-            // $("#initial_"+count+"").after(`<tr id="initial_`+nextCount+`"><td>`+nextCount+`</td><td><select class="form-control" name="ruleMaster_`+nextCount+`" id="ruleMaster_`+nextCount+`"><option selected disabled>-- Select Condition --</option></select></td><td><button id="removeRow" class="fa fa-minus btn btn-sm btn-danger removeRow""></button></td></tr>`);
-            $("#editRuleMasterHeaders").after(
-            `@if($masters)
+        // $('.table').DataTable({
+        //     aLengthMenu: [
+        //         [50, 100, 200, 500, -1],
+        //         [50, 100, 200, 500, "All"]
+        //     ],
+        //     'iDisplayLength': 100,
+        //     scrollX: true,
+        //     responsive: true,
+        //     "scrollY": 400,
+        //     "scrollCollapse": true,
+        //     fixedColumns: {
+        //         leftColumns: 4
+        //     }
+        // });
+        let count = $("#editRuleMasterRowCount").val();
+        // $("#initial_"+count+"").after(`<tr id="initial_`+nextCount+`"><td>`+nextCount+`</td><td><select class="form-control" name="ruleMaster_`+nextCount+`" id="ruleMaster_`+nextCount+`"><option selected disabled>-- Select Condition --</option></select></td><td><button id="removeRow" class="fa fa-minus btn btn-sm btn-danger removeRow" onclick="$(this).parent().parent().remove();"></button></td></tr>`);
+        // $("#initial_"+count+"").after(`<tr id="initial_`+nextCount+`"><td>`+nextCount+`</td><td><select class="form-control" name="ruleMaster_`+nextCount+`" id="ruleMaster_`+nextCount+`"><option selected disabled>-- Select Condition --</option></select></td><td><button id="removeRow" class="fa fa-minus btn btn-sm btn-danger removeRow" onclick="$('#addRow').prop('disabled', false); let count = $('#ruleMasterRowCount').val(); let previousCount = parseInt(count) - 1; $('#ruleMasterRowCount').val(previousCount); $(this).parent().parent().remove();"></button></td></tr>`);
+        // $("#initial_"+count+"").after(`<tr id="initial_`+nextCount+`"><td>`+nextCount+`</td><td><select class="form-control" name="ruleMaster_`+nextCount+`" id="ruleMaster_`+nextCount+`"><option selected disabled>-- Select Condition --</option></select></td><td><button id="removeRow" class="fa fa-minus btn btn-sm btn-danger removeRow""></button></td></tr>`);
+        $("#editRuleMasterHeaders").after(
+        `@if($masters)
             @foreach($masters as $master)
-                <tr id="editInitial_`+ {{ $loop->iteration }} +`">
-                    <td>`+ {{ $loop->iteration }} +`</td>
-                    <td>
-                        <select class="form-control" name="editRuleMaster_`+ {{ $loop->iteration }} +`" id="editRuleMaster_`+ {{ $loop->iteration }} +`"><option value="{{ $master -> id }}">{{ $master -> name }}</option> </select>
-                    </td>
-                    <td>
-                        <button id="editRuleAddRow" class="fa fa-plus btn btn-sm btn-primary"></button>
-                        <button id="editRuleRemoveRow" class="fa fa-minus btn btn-sm btn-danger"></button>
-                    </td>
-                </tr>
-            @endforeach @endif`);
-            // $("#ruleMasterRowCount").val(nextCount);
-            //
-            // $("#removeRow").prop("disabled", false);
-            // $("#addRow").prop("disabled", false);
-            //
-            // if ($("#ruleMasterRowCount").val() == 5) {
-            //     $("#addRow").prop("disabled", true);
-            // }
+            <tr id="editInitial_`+ {{ $loop->iteration }} +`">
+                <td>`+ {{ $loop->iteration }} +`</td>
+                <td>
+                    <select class="form-control" name="editRuleMaster_`+ {{ $loop->iteration }} +`" id="editRuleMaster_`+ {{ $loop->iteration }} +`"><option value="{{ $master -> id }}">{{ $master -> name }}</option> </select>
+                </td>
+                <td>
+                    <button id="editRuleAddRow" class="fa fa-plus btn btn-sm btn-primary"></button>
+                    <button id="editRuleRemoveRow" class="fa fa-minus btn btn-sm btn-danger"></button>
+                </td>
+            </tr>
+            @endforeach 
+            @endif`
+        );
+/*            // $("#ruleMasterRowCount").val(nextCount);
+        //
+        // $("#removeRow").prop("disabled", false);
+        // $("#addRow").prop("disabled", false);
+        //
+        // if ($("#ruleMasterRowCount").val() == 5) {
+        //     $("#addRow").prop("disabled", true);
+        // }
 
-            // let ruleMasterData = $('#ruleMasters').val();
-            //
-            // if (ruleMasterData != undefined) {
-            //     $.each(JSON.parse(ruleMasterData), function( key, value ) {
-            //         console.log('id: ' + value.id + ' | name: ' +value.name);
-            //         console.log($('#ruleMaster_'+value.id).val());
-            //         console.log($('#ruleCondition_'+value.id).val());
-            //     });
-            // }
+        // let ruleMasterData = $('#ruleMasters').val();
+        //
+        // if (ruleMasterData != undefined) {
+        //     $.each(JSON.parse(ruleMasterData), function( key, value ) {
+        //         console.log('id: ' + value.id + ' | name: ' +value.name);
+        //         console.log($('#ruleMaster_'+value.id).val());
+        //         console.log($('#ruleCondition_'+value.id).val());
+        //     });
+        // }
 
-            // $("#addRow").click(function () {
-            //     var count = $("#count").val();
-            //     count = parseInt(count) + 1;
-            //     var html;
-            //     html += '<tr>';
-            //     html += '<td>' + count + '</td>';
-            //     html += '<td>';
-            //     html += '<select class="form-control">';
-            //     html += '<option selected disabled>-- Select Condition --</option>';
-            //     html += '<option>Treatment Type</option>';
-            //     html += '<option>Case Type</option>';
-            //     html += '<option>Case Status</option>';
-            //     html += '<option>Location</option>';
-            //     html += '<option>State </option>';
-            //     html += '<option>City</option>';
-            //     html += '<option>Master 1</option>';
-            //     html += '<option>Master 2</option>';
-            //     html += '<option>Master 3</option>';
-            //     html += '</select>';
-            //     html += '</td>';
-            //     html += '<td><button class="fa fa-minus btn btn-sm btn-danger removeRow" onclick="$(this).parent().parent().remove();"></button></td>';
-            //     html += '</tr>';
-            //     $("#count").val(count);
-            //     $("#initial").after(html);
-            // });
+        // $("#addRow").click(function () {
+        //     var count = $("#count").val();
+        //     count = parseInt(count) + 1;
+        //     var html;
+        //     html += '<tr>';
+        //     html += '<td>' + count + '</td>';
+        //     html += '<td>';
+        //     html += '<select class="form-control">';
+        //     html += '<option selected disabled>-- Select Condition --</option>';
+        //     html += '<option>Treatment Type</option>';
+        //     html += '<option>Case Type</option>';
+        //     html += '<option>Case Status</option>';
+        //     html += '<option>Location</option>';
+        //     html += '<option>State </option>';
+        //     html += '<option>City</option>';
+        //     html += '<option>Master 1</option>';
+        //     html += '<option>Master 2</option>';
+        //     html += '<option>Master 3</option>';
+        //     html += '</select>';
+        //     html += '</td>';
+        //     html += '<td><button class="fa fa-minus btn btn-sm btn-danger removeRow" onclick="$(this).parent().parent().remove();"></button></td>';
+        //     html += '</tr>';
+        //     $("#count").val(count);
+        //     $("#initial").after(html);
+        // });
 
-            // $("#ruleNameNext").click(function(){
-            //     $("ruleNameForm").submit(); // Submit the form
-            // });
-
-            let conditionMasterValues = <?php echo json_encode($masterValues) ?>;
-            let rule = '<?php echo $rule;  ?>';
-            $.each(conditionMasterValues, function(key, value) {
-                let multipleValues = [];
-                $.each(value, function(k,v) {
-                    // console.log(v);
-                    if (v === 'and' || v === 'or') {
-                        $("#ruleCondition_"+key+"").val(v);
-                    }
-                    multipleValues.push(v);
-                });
-                $("#ruleMaster_"+key+"").val(multipleValues);
+        // $("#ruleNameNext").click(function(){
+        //     $("ruleNameForm").submit(); // Submit the form
+        // });
+*/
+        let conditionMasterValues = <?php echo json_encode($masterValues) ?>;
+        let rule = '<?php echo $rule;  ?>';
+        $.each(conditionMasterValues, function(key, value) {
+            let multipleValues = [];
+            $.each(value, function(k,v) {
+                // console.log(v);
+                if (v === 'and' || v === 'or') {
+                    $("#ruleCondition_"+key+"").val(v);
+                }
+                multipleValues.push(v);
             });
-            $('input:radio[name="ruleType"]').filter('[value="'+rule['ruletype']+'"]').attr('checked', true);
-            $("#ruleFrequency").val(rule['rulefrequency']);
-            $('#ruleSchedule option[value="'+rule['ruleschedule']+'"]').attr("selected", "selected");
-
-            if (rule['ruletype'] === 'inbound') {
-;                $("#ruleFrequency").attr('disabled','disabled');
-                $("#ruleSchedule").attr('disabled','disabled');
-            } else {
-                $("#ruleFrequency").removeAttr('disabled');
-                $("#ruleSchedule").removeAttr('disabled');
-            }
-
+            $("#ruleMaster_"+key+"").val(multipleValues);
         });
-    </script>
-    <script>
+        $('input:radio[name="ruleType"]').filter('[value="'+rule['ruletype']+'"]').attr('checked', true);
+        $("#ruleFrequency").val(rule['rulefrequency']);
+        $('#ruleSchedule option[value="'+rule['ruleschedule']+'"]').attr("selected", "selected");
 
-        function deleteRule(id) {
-            if(confirm("Are you sure you want to delete this rule?")){
-                let CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
-                $.ajaxSetup({
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    }
-                });
-                $.ajax({
-                    /* the route pointing to the post function */
-                    url: '/conditions/destroy',
-                    type: 'POST',
-                    /* send the csrf-token and the input to the controller */
-                    // data: {_token: CSRF_TOKEN, 'ruleData':JSON.stringify(jsonObject)},
-                    data: {
-                        _token: CSRF_TOKEN,
-                        'id': id
-                    },
-                    // data: $(this).serialize(),
-                    dataType: 'JSON',
-                    /* remind that 'data' is the response of the AjaxController */
-                    success: function (data) {
-                        console.log(data);
-                        window.location.href = "/rules";
-                    },
-                    failure: function (data) {
-                        console.log(data);
-                    }
-                });
-            }
-            else{
-                return false;
-            }
+        if (rule['ruletype'] === 'inbound') {
+            $("#ruleFrequency").attr('disabled','disabled');
+            $("#ruleSchedule").attr('disabled','disabled');
+        } else {
+            $("#ruleFrequency").removeAttr('disabled');
+            $("#ruleSchedule").removeAttr('disabled');
         }
 
-        function deleteMaster(id) {
-            if(confirm("Are you sure you want to delete this master?")){
-                let CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
-                $.ajaxSetup({
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    }
-                });
-                $.ajax({
-                    /* the route pointing to the post function */
-                    url: '/master/destroy',
-                    type: 'POST',
-                    /* send the csrf-token and the input to the controller */
-                    // data: {_token: CSRF_TOKEN, 'ruleData':JSON.stringify(jsonObject)},
-                    data: {
-                        _token: CSRF_TOKEN,
-                        'id': id
-                    },
-                    // data: $(this).serialize(),
-                    dataType: 'JSON',
-                    /* remind that 'data' is the response of the AjaxController */
-                    success: function (data) {
-                        console.log(data);
-                        window.location.href = "/master";
-                    },
-                    failure: function (data) {
-                        console.log(data);
-                    }
-                });
-            }
-            else{
-                return false;
-            }
-        }
+    });
+    
+   
 
-        function deleteMainMaster(id, masterid) {
-            if(confirm("Are you sure you want to delete this?")){
-                let CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
-                $.ajaxSetup({
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    }
-                });
-                $.ajax({
-                    /* the route pointing to the post function */
-                    url: '/master/main/destroy',
-                    type: 'POST',
-                    /* send the csrf-token and the input to the controller */
-                    // data: {_token: CSRF_TOKEN, 'ruleData':JSON.stringify(jsonObject)},
-                    data: {
-                        _token: CSRF_TOKEN,
-                        'id': id
-                    },
-                    // data: $(this).serialize(),
-                    dataType: 'JSON',
-                    /* remind that 'data' is the response of the AjaxController */
-                    success: function (data) {
-                        console.log(data);
-                        window.location.href = "/master/main/"+masterid;
-                    },
-                    failure: function (data) {
-                        console.log(data);
-                    }
-                });
-            }
-            else{
-                return false;
-            }
+    function isValidEmail(emailId) {
+        //let validRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+        let regex = new RegExp('[a-z0-9]+@[a-z]+\.[a-z]{2,3}');
+        if (emailId && regex.test(emailId)) {
+            return true;
+        } else {
+            return false;
         }
+    }
 
-        function deleteDynamicMaster(id, masterid) {
-            if(confirm("Are you sure you want to delete this master?")){
-                let CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
-                $.ajaxSetup({
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    }
-                });
-                $.ajax({
-                    /* the route pointing to the post function */
-                    url: '/dynamic/destroy',
-                    type: 'POST',
-                    /* send the csrf-token and the input to the controller */
-                    // data: {_token: CSRF_TOKEN, 'ruleData':JSON.stringify(jsonObject)},
-                    data: {
-                        _token: CSRF_TOKEN,
-                        'id': id
-                    },
-                    // data: $(this).serialize(),
-                    dataType: 'JSON',
-                    /* remind that 'data' is the response of the AjaxController */
-                    success: function (data) {
-                        console.log(data);
-                        window.location.href = "/dynamic/"+masterid;
-                    },
-                    failure: function (data) {
-                        console.log(data);
-                    }
-                });
-            }
-            else{
-                return false;
-            }
+    function isValidCotact(mobileNumber) {
+        var mobileNumberPattern = /^[1-9]{1}[0-9]{9}$/;
+        if (!mobileNumberPattern.test(mobileNumber)) {
+            console.info("Please enter a 10 digit mobile number.");
+            return false;
         }
-
-        function deleteLeave(id, employeeid) {
-            if(confirm("Are you sure you want to delete this leave?")){
-                let CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
-                $.ajaxSetup({
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    }
-                });
-                $.ajax({
-                    /* the route pointing to the post function */
-                    url: '/leaves/destroy',
-                    type: 'POST',
-                    /* send the csrf-token and the input to the controller */
-                    // data: {_token: CSRF_TOKEN, 'ruleData':JSON.stringify(jsonObject)},
-                    data: {
-                        _token: CSRF_TOKEN,
-                        'id': id
-                    },
-                    // data: $(this).serialize(),
-                    dataType: 'JSON',
-                    /* remind that 'data' is the response of the AjaxController */
-                    success: function (data) {
-                        console.log(data);
-                        window.location.href = "/leaves/"+employeeid;
-                    },
-                    failure: function (data) {
-                        console.log(data);
-                    }
-                });
-            }
-            else{
-                return false;
-            }
+        else {
+            console.info("Valid mobile number.");
+            return true;
         }
+    }
 
-        function deleteRole(id) {
-            if(confirm("Are you sure you want to delete this role?")){
-                let CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
-                $.ajaxSetup({
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    }
-                });
-                $.ajax({
-                    /* the route pointing to the post function */
-                    url: '/role/destroy',
-                    type: 'POST',
-                    /* send the csrf-token and the input to the controller */
-                    // data: {_token: CSRF_TOKEN, 'ruleData':JSON.stringify(jsonObject)},
-                    data: {
-                        _token: CSRF_TOKEN,
-                        'id': id
-                    },
-                    // data: $(this).serialize(),
-                    dataType: 'JSON',
-                    /* remind that 'data' is the response of the AjaxController */
-                    success: function (data) {
-                        console.log(data);
-                        window.location.href = "/role";
-                    },
-                    failure: function (data) {
-                        console.log(data);
-                    }
-                });
-            }
-            else{
-                return false;
-            }
-        }
-
-        function deleteCommunication(id) {
-            if(confirm("Are you sure you want to delete this schedule?")){
-                let CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
-                $.ajaxSetup({
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    }
-                });
-                $.ajax({
-                    /* the route pointing to the post function */
-                    url: '/communications/destroy',
-                    type: 'POST',
-                    /* send the csrf-token and the input to the controller */
-                    // data: {_token: CSRF_TOKEN, 'ruleData':JSON.stringify(jsonObject)},
-                    data: {
-                        _token: CSRF_TOKEN,
-                        'id': id
-                    },
-                    // data: $(this).serialize(),
-                    dataType: 'JSON',
-                    /* remind that 'data' is the response of the AjaxController */
-                    success: function (data) {
-                        console.log(data);
-                        window.location.href = "/communications";
-                    },
-                    failure: function (data) {
-                        console.log(data);
-                    }
-                });
-            }
-            else{
-                return false;
-            }
-        }
-
-        function editCommunication(id) {
+    function deleteRule(id) {
+        if(confirm("Are you sure you want to delete this rule?")){
             let CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
             $.ajaxSetup({
                 headers: {
@@ -660,8 +440,8 @@
             });
             $.ajax({
                 /* the route pointing to the post function */
-                url: '/communications/'+id,
-                type: 'GET',
+                url: '/conditions/destroy',
+                type: 'POST',
                 /* send the csrf-token and the input to the controller */
                 // data: {_token: CSRF_TOKEN, 'ruleData':JSON.stringify(jsonObject)},
                 data: {
@@ -672,49 +452,21 @@
                 dataType: 'JSON',
                 /* remind that 'data' is the response of the AjaxController */
                 success: function (data) {
-                    let communicationSchedule = data['schedule'];
-                    let type = communicationSchedule['type'];
-                    $('#communicationId').val(communicationSchedule['id']);
-                    $('.ruleId').val(communicationSchedule['rule_id']);
-                    $('.communicationTemplateType').val(type);
-
-                    if(type === 'WhatsApp') {
-                        $(".communicationTemplateMessageDiv").show();
-                        $(".communicationTemplateSubjectDiv").hide();
-                        $(".communicationTemplateBodyDiv").hide();
-                    }
-
-                    if(type === 'Email') {
-                        $(".communicationTemplateMessageDiv").hide();
-                        $(".communicationTemplateSubjectDiv").show();
-                        $(".communicationTemplateBodyDiv").show();
-                    }
-
-                    $('.communicationTemplateId').val(communicationSchedule['template_id']);
-                    $('.communicationTemplateSubject').val(communicationSchedule['subject']);
-                    $('.communicationTemplateMessage').val(communicationSchedule['message']);
-                    $('.communicationTemplateBody').val(communicationSchedule['content']);
-
-                    let schedule = communicationSchedule['schedule'];
-
-                    if (schedule === 'now') {
-                        $('input:radio[name="schedule"]').filter('[value="'+schedule+'"]').attr('checked', true);
-                        $("#editCommunicationNowDiv *").prop('disabled',true);
-                        $("#editCommunicationScheduleDiv *").prop('disabled',true);
-                    } else {
-                        $("#editCommunicationScheduleDiv *").prop('disabled',false);
-                        $("#editCommunicationNowDiv *").prop('disabled',false);
-                    }
-
-                    $('#editSchedule').modal('show');
+                    console.log(data);
+                    window.location.href = "/rules";
                 },
                 failure: function (data) {
                     console.log(data);
                 }
             });
         }
+        else{
+            return false;
+        }
+    }
 
-        function editLead(id) {
+    function deleteMaster(id) {
+        if(confirm("Are you sure you want to delete this master?")){
             let CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
             $.ajaxSetup({
                 headers: {
@@ -723,8 +475,8 @@
             });
             $.ajax({
                 /* the route pointing to the post function */
-                url: '/leads/'+id,
-                type: 'GET',
+                url: '/master/destroy',
+                type: 'POST',
                 /* send the csrf-token and the input to the controller */
                 // data: {_token: CSRF_TOKEN, 'ruleData':JSON.stringify(jsonObject)},
                 data: {
@@ -735,88 +487,360 @@
                 dataType: 'JSON',
                 /* remind that 'data' is the response of the AjaxController */
                 success: function (data) {
-                    let lead = data['lead'];
-                    let leadmasters = data['leadmasters'];
-                    $('.leadId').val(lead['id']);
-                    $('.leadName').val(lead['name']);
-                    $('.leadEmail').val(lead['email']);
-                    $('.leadMobile').val(lead['mobileno']);
-                    $('.leadAlternateMobile').val(lead['altmobileno']);
-                    $('.leadReceivedDate').val(lead['receiveddate']);
+                    console.log(data);
+                    window.location.href = "/master";
+                },
+                failure: function (data) {
+                    console.log(data);
+                }
+            });
+        }
+        else{
+            return false;
+        }
+    }
 
-                    $.each(leadmasters, function(key, value) {
-                        if(value != null) {
-                            let mastervalue = value['mastervalue_id'];
-                            if (mastervalue == null) {
-                                mastervalue = 0;
-                            }
-                            $(".leadMaster_"+value['master_id']+"").val(mastervalue);
+    function deleteMainMaster(id, masterid) {
+        if(confirm("Are you sure you want to delete this?")){
+            let CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+            $.ajax({
+                /* the route pointing to the post function */
+                url: '/master/main/destroy',
+                type: 'POST',
+                /* send the csrf-token and the input to the controller */
+                // data: {_token: CSRF_TOKEN, 'ruleData':JSON.stringify(jsonObject)},
+                data: {
+                    _token: CSRF_TOKEN,
+                    'id': id
+                },
+                // data: $(this).serialize(),
+                dataType: 'JSON',
+                /* remind that 'data' is the response of the AjaxController */
+                success: function (data) {
+                    console.log(data);
+                    window.location.href = "/master/main/"+masterid;
+                },
+                failure: function (data) {
+                    console.log(data);
+                }
+            });
+        }
+        else{
+            return false;
+        }
+    }
+
+    function deleteDynamicMaster(id, masterid) {
+        if(confirm("Are you sure you want to delete this master?")){
+            let CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+            $.ajax({
+                /* the route pointing to the post function */
+                url: '/dynamic/destroy',
+                type: 'POST',
+                /* send the csrf-token and the input to the controller */
+                // data: {_token: CSRF_TOKEN, 'ruleData':JSON.stringify(jsonObject)},
+                data: {
+                    _token: CSRF_TOKEN,
+                    'id': id
+                },
+                // data: $(this).serialize(),
+                dataType: 'JSON',
+                /* remind that 'data' is the response of the AjaxController */
+                success: function (data) {
+                    console.log(data);
+                    window.location.href = "/dynamic/"+masterid;
+                },
+                failure: function (data) {
+                    console.log(data);
+                }
+            });
+        }
+        else{
+            return false;
+        }
+    }
+
+    function deleteLeave(id, employeeid) {
+        if(confirm("Are you sure you want to delete this leave?")){
+            let CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+            $.ajax({
+                /* the route pointing to the post function */
+                url: '/leaves/destroy',
+                type: 'POST',
+                /* send the csrf-token and the input to the controller */
+                // data: {_token: CSRF_TOKEN, 'ruleData':JSON.stringify(jsonObject)},
+                data: {
+                    _token: CSRF_TOKEN,
+                    'id': id
+                },
+                // data: $(this).serialize(),
+                dataType: 'JSON',
+                /* remind that 'data' is the response of the AjaxController */
+                success: function (data) {
+                    console.log(data);
+                    window.location.href = "/leaves/"+employeeid;
+                },
+                failure: function (data) {
+                    console.log(data);
+                }
+            });
+        }
+        else{
+            return false;
+        }
+    }
+
+    function deleteRole(id) {
+        if(confirm("Are you sure you want to delete this role?")){
+            let CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+            $.ajax({
+                /* the route pointing to the post function */
+                url: '/role/destroy',
+                type: 'POST',
+                /* send the csrf-token and the input to the controller */
+                // data: {_token: CSRF_TOKEN, 'ruleData':JSON.stringify(jsonObject)},
+                data: {
+                    _token: CSRF_TOKEN,
+                    'id': id
+                },
+                // data: $(this).serialize(),
+                dataType: 'JSON',
+                /* remind that 'data' is the response of the AjaxController */
+                success: function (data) {
+                    console.log(data);
+                    window.location.href = "/role";
+                },
+                failure: function (data) {
+                    console.log(data);
+                }
+            });
+        }
+        else{
+            return false;
+        }
+    }
+
+    function deleteCommunication(id) {
+        if(confirm("Are you sure you want to delete this schedule?")){
+            let CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+            $.ajax({
+                /* the route pointing to the post function */
+                url: '/communications/destroy',
+                type: 'POST',
+                /* send the csrf-token and the input to the controller */
+                // data: {_token: CSRF_TOKEN, 'ruleData':JSON.stringify(jsonObject)},
+                data: {
+                    _token: CSRF_TOKEN,
+                    'id': id
+                },
+                // data: $(this).serialize(),
+                dataType: 'JSON',
+                /* remind that 'data' is the response of the AjaxController */
+                success: function (data) {
+                    console.log(data);
+                    window.location.href = "/communications";
+                },
+                failure: function (data) {
+                    console.log(data);
+                }
+            });
+        }
+        else{
+            return false;
+        }
+    }
+
+    function editCommunication(id) {
+        let CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+        $.ajax({
+            /* the route pointing to the post function */
+            url: '/communications/'+id,
+            type: 'GET',
+            /* send the csrf-token and the input to the controller */
+            // data: {_token: CSRF_TOKEN, 'ruleData':JSON.stringify(jsonObject)},
+            data: {
+                _token: CSRF_TOKEN,
+                'id': id
+            },
+            // data: $(this).serialize(),
+            dataType: 'JSON',
+            /* remind that 'data' is the response of the AjaxController */
+            success: function (data) {
+                let communicationSchedule = data['schedule'];
+                let type = communicationSchedule['type'];
+                $('#communicationId').val(communicationSchedule['id']);
+                $('.ruleId').val(communicationSchedule['rule_id']);
+                $('.communicationTemplateType').val(type);
+
+                if(type === 'WhatsApp') {
+                    $(".communicationTemplateMessageDiv").show();
+                    $(".communicationTemplateSubjectDiv").hide();
+                    $(".communicationTemplateBodyDiv").hide();
+                }
+
+                if(type === 'Email') {
+                    $(".communicationTemplateMessageDiv").hide();
+                    $(".communicationTemplateSubjectDiv").show();
+                    $(".communicationTemplateBodyDiv").show();
+                }
+
+                $('.communicationTemplateId').val(communicationSchedule['template_id']);
+                $('.communicationTemplateSubject').val(communicationSchedule['subject']);
+                $('.communicationTemplateMessage').val(communicationSchedule['message']);
+                $('.communicationTemplateBody').val(communicationSchedule['content']);
+
+                let schedule = communicationSchedule['schedule'];
+
+                if (schedule === 'now') {
+                    $('input:radio[name="schedule"]').filter('[value="'+schedule+'"]').attr('checked', true);
+                    $("#editCommunicationNowDiv *").prop('disabled',true);
+                    $("#editCommunicationScheduleDiv *").prop('disabled',true);
+                } else {
+                    $("#editCommunicationScheduleDiv *").prop('disabled',false);
+                    $("#editCommunicationNowDiv *").prop('disabled',false);
+                }
+
+                $('#editSchedule').modal('show');
+            },
+            failure: function (data) {
+                console.log(data);
+            }
+        });
+    }
+
+    function editLead(id) {
+        let CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+        $.ajax({
+            /* the route pointing to the post function */
+            url: '/leads/'+id,
+            type: 'GET',
+            /* send the csrf-token and the input to the controller */
+            // data: {_token: CSRF_TOKEN, 'ruleData':JSON.stringify(jsonObject)},
+            data: {
+                _token: CSRF_TOKEN,
+                'id': id
+            },
+            // data: $(this).serialize(),
+            dataType: 'JSON',
+            /* remind that 'data' is the response of the AjaxController */
+            success: function (data) {
+                let lead = data['lead'];
+                let leadmasters = data['leadmasters'];
+                $('.leadId').val(lead['id']);
+                $('.leadName').val(lead['name']);
+                $('.leadEmail').val(lead['email']);
+                $('.leadMobile').val(lead['mobileno']);
+                $('.leadAlternateMobile').val(lead['altmobileno']);
+                $('.leadReceivedDate').val(lead['receiveddate']);
+
+                $.each(leadmasters, function(key, value) {
+                    if(value != null) {
+                        let mastervalue = value['mastervalue_id'];
+                        if (mastervalue == null) {
+                            mastervalue = 0;
                         }
-                    });
+                        $(".leadMaster_"+value['master_id']+"").val(mastervalue);
+                    }
+                });
 
-                    $('#editSingleLead').modal('show');
-                },
-                failure: function (data) {
-                    console.log(data);
-                }
-            });
-        }
-
-        function handleChange(cb) {
-            console.log("Changed, new value = " + cb.checked);
-            $(cb).attr('value', cb.checked);
-        }
-
-        $("#editLeadDetails").click(function(){
-            let leadMasters = <?php echo json_encode($leadMasters) ?>;
-            $.each(leadMasters, function(key, value) {
-                if(value != null) {
-                    $("#leadMaster_"+key+"").val(value);
-                }
-            });
-        });
-
-        $("#addRow").click(function (e) {
-            e.preventDefault();
-            let count = $("#ruleMasterRowCount").val();
-            console.log(count);
-            let nextCount = parseInt(count) + 1;
-            console.log(nextCount);
-            // $("#initial_"+count+"").after(`<tr id="initial_`+nextCount+`"><td>`+nextCount+`</td><td><select class="form-control" name="ruleMaster_`+nextCount+`" id="ruleMaster_`+nextCount+`"><option selected disabled>-- Select Condition --</option></select></td><td><button id="removeRow" class="fa fa-minus btn btn-sm btn-danger removeRow" onclick="$(this).parent().parent().remove();"></button></td></tr>`);
-            $("#initial_"+count+"").after(`<tr id="initial_`+nextCount+`"><td>`+nextCount+`</td><td><select class="form-control" name="ruleMaster_`+nextCount+`" id="ruleMaster_`+nextCount+`"><option selected disabled>-- Select Condition --</option></select></td><td></td></tr>`);
-            // $("#initial_"+count+"").after(`<tr id="initial_`+nextCount+`"><td>`+nextCount+`</td><td><select class="form-control" name="ruleMaster_`+nextCount+`" id="ruleMaster_`+nextCount+`"><option selected disabled>-- Select Condition --</option></select></td><td><button id="removeRow" class="fa fa-minus btn btn-sm btn-danger removeRow" onclick="$('#addRow').prop('disabled', false); let count = $('#ruleMasterRowCount').val(); let previousCount = parseInt(count) - 1; $('#ruleMasterRowCount').val(previousCount); $(this).parent().parent().remove();"></button></td></tr>`);
-            // $("#initial_"+count+"").after(`<tr id="initial_`+nextCount+`"><td>`+nextCount+`</td><td><select class="form-control" name="ruleMaster_`+nextCount+`" id="ruleMaster_`+nextCount+`"><option selected disabled>-- Select Condition --</option></select></td><td><button id="removeRow" class="fa fa-minus btn btn-sm btn-danger removeRow""></button></td></tr>`);
-            
-            $("#ruleMaster_"+nextCount+"").append(`@if($masters) 
-                @foreach($masters as $master) 
-                <option value="{{ $master -> id }}">{{ $master -> name }}</option> @endforeach
-                @endif`);
-            
-            $("#ruleMasterRowCount").val(nextCount);
-
-            $("#removeRow").prop("disabled", false);
-            $("#addRow").prop("disabled", false);
-
-            if ($("#ruleMasterRowCount").val() == 5) {
-                $("#addRow").prop("disabled", true);
+                $('#editSingleLead').modal('show');
+            },
+            failure: function (data) {
+                console.log(data);
             }
         });
+    }
 
-        $("#removeRow").click(function (e) {
-            e.preventDefault();
-            let count = $("#ruleMasterRowCount").val();
-            $("#initial_"+count+"").remove();
-            let previousCount = parseInt(count) - 1;
-            $("#ruleMasterRowCount").val(previousCount);
+    function handleChange(cb) {
+        console.log("Changed, new value = " + cb.checked);
+        $(cb).attr('value', cb.checked);
+    }
 
-            $("#removeRow").prop("disabled", false);
-            $("#addRow").prop("disabled", false);
-
-            if ($("#ruleMasterRowCount").val() == 1) {
-                $("#removeRow").prop("disabled", true);
+    $("#editLeadDetails").click(function(){
+        let leadMasters = <?php echo json_encode($leadMasters) ?>;
+        $.each(leadMasters, function(key, value) {
+            if(value != null) {
+                $("#leadMaster_"+key+"").val(value);
             }
-
         });
+    });
+
+    $("#addRow").click(function (e) {
+        e.preventDefault();
+        let count = $("#ruleMasterRowCount").val();
+        console.log(count);
+        let nextCount = parseInt(count) + 1;
+        console.log(nextCount);
+        // $("#initial_"+count+"").after(`<tr id="initial_`+nextCount+`"><td>`+nextCount+`</td><td><select class="form-control" name="ruleMaster_`+nextCount+`" id="ruleMaster_`+nextCount+`"><option selected disabled>-- Select Condition --</option></select></td><td><button id="removeRow" class="fa fa-minus btn btn-sm btn-danger removeRow" onclick="$(this).parent().parent().remove();"></button></td></tr>`);
+        $("#initial_"+count+"").after(`<tr id="initial_`+nextCount+`"><td>`+nextCount+`</td><td><select class="form-control" name="ruleMaster_`+nextCount+`" id="ruleMaster_`+nextCount+`"><option selected disabled>-- Select Condition --</option></select></td><td></td></tr>`);
+        // $("#initial_"+count+"").after(`<tr id="initial_`+nextCount+`"><td>`+nextCount+`</td><td><select class="form-control" name="ruleMaster_`+nextCount+`" id="ruleMaster_`+nextCount+`"><option selected disabled>-- Select Condition --</option></select></td><td><button id="removeRow" class="fa fa-minus btn btn-sm btn-danger removeRow" onclick="$('#addRow').prop('disabled', false); let count = $('#ruleMasterRowCount').val(); let previousCount = parseInt(count) - 1; $('#ruleMasterRowCount').val(previousCount); $(this).parent().parent().remove();"></button></td></tr>`);
+        // $("#initial_"+count+"").after(`<tr id="initial_`+nextCount+`"><td>`+nextCount+`</td><td><select class="form-control" name="ruleMaster_`+nextCount+`" id="ruleMaster_`+nextCount+`"><option selected disabled>-- Select Condition --</option></select></td><td><button id="removeRow" class="fa fa-minus btn btn-sm btn-danger removeRow""></button></td></tr>`);
+        
+        $("#ruleMaster_"+nextCount+"").append(`@if($masters) 
+            @foreach($masters as $master) 
+            <option value="{{ $master -> id }}">{{ $master -> name }}</option> @endforeach
+            @endif`);
+        
+        $("#ruleMasterRowCount").val(nextCount);
+
+        $("#removeRow").prop("disabled", false);
+        $("#addRow").prop("disabled", false);
+
+        if ($("#ruleMasterRowCount").val() == 5) {
+            $("#addRow").prop("disabled", true);
+        }
+    });
+
+    $("#removeRow").click(function (e) {
+        e.preventDefault();
+        let count = $("#ruleMasterRowCount").val();
+        $("#initial_"+count+"").remove();
+        let previousCount = parseInt(count) - 1;
+        $("#ruleMasterRowCount").val(previousCount);
+
+        $("#removeRow").prop("disabled", false);
+        $("#addRow").prop("disabled", false);
+
+        if ($("#ruleMasterRowCount").val() == 1) {
+            $("#removeRow").prop("disabled", true);
+        }
+
+    });
 
         // {
         //     "Actors": [
