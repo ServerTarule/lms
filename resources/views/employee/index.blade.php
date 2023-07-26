@@ -546,40 +546,44 @@ function processUpdate () {
 
 
 function processAdd () {
-    validateForm();
-    let CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
-    $.ajaxSetup({
-        headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        }
-    });
-    var form_data = new FormData($('#addEmployeeForm')[0]);
-    console.log("---form_data-----",form_data);
-    $.ajax({
-        /* the route pointing to the post function */
-        url: `/employee/createemployee`,
-        type: 'POST',
-        contentType: false,
-        processData: false,
-        /* send the csrf-token and the input to the controller */
-        data:  form_data,
-        dataType: 'JSON',
-        /* remind that 'data' is the response of the AjaxController */
-        success: function (data) {
-            if(data.error) {
-                toastr.error(data.message);
+    const isValid = validateForm();
+    if(isValid) {
+        console.log("----I am going to add----");
+        let CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             }
-            else {
-                toastr.success(data.message);
-                setTimeout(function(){ 
-                    location.reload();
-                }, 3000);
+        });
+        var form_data = new FormData($('#addEmployeeForm')[0]);
+        console.log("---form_data-----",form_data);
+        $.ajax({
+            /* the route pointing to the post function */
+            url: `/employee/createemployee`,
+            type: 'POST',
+            contentType: false,
+            processData: false,
+            /* send the csrf-token and the input to the controller */
+            data:  form_data,
+            dataType: 'JSON',
+            /* remind that 'data' is the response of the AjaxController */
+            success: function (data) {
+                if(data.error) {
+                    toastr.error(data.message);
+                }
+                else {
+                    toastr.success(data.message);
+                    setTimeout(function(){ 
+                        location.reload();
+                    }, 3000);
+                }
+            },
+            failure: function (data) {
+                toastr.error("Error occurred while processing!!");
             }
-        },
-        failure: function (data) {
-            toastr.error("Error occurred while processing!!");
-        }
-    });
+        }); 
+    }
+    
 
 }
 
