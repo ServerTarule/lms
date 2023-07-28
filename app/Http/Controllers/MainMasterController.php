@@ -24,8 +24,8 @@ class MainMasterController extends Controller
                   'edit'=>false
               ]);
         }
-        $leadStatuses = null;
-        $states = null;
+        $leadStatuses = [];
+        $states = [];
         $currentStateId = null;
         //Log::info($master->name);
         if(isset($master) && $master->name == 'Lead Stages') {
@@ -118,7 +118,12 @@ class MainMasterController extends Controller
     }
 
     public function update(Request $request,$masterId, $id){
-        $unique = DynamicValue::where('name', '=', $request->name)->where('id', '!=',$id)->first();   
+        if(isset($request->dependentId)) {
+            $unique = DynamicValue::where('name', '=', $request->name)->where('dependent_id', '=',$request->dependentId)->where('id', '!=',$id)->first();   
+        }
+        else {
+            $unique = DynamicValue::where('name', '=', $request->name)->where('id', '!=',$id)->first();   
+        }
         if($unique) {
             return redirect()->back()->with('error', 'Master Already Exist.');
         }

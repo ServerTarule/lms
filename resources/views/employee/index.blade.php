@@ -35,11 +35,14 @@
                                     <th scope="col">
                                         <a>Admin Name</a>
                                     </th>
-                                    <th scope="col">
+                                    <!-- <th scope="col">
                                         <a>Employee ID</a>
-                                    </th>
+                                    </th> -->
                                     <th scope="col">
                                         <a>Mobile No</a>
+                                    </th>
+                                    <th scope="col">
+                                        <a>Designation Type</a>
                                     </th>
                                     <th scope="col">
                                         <a>User Type</a>
@@ -47,9 +50,9 @@
                                     <th scope="col">
                                         <a>Email id</a>
                                     </th>
-                                    <th scope="col">
+                                    <!-- <th scope="col">
                                         <a>Password</a>
-                                    </th>
+                                    </th> -->
                                     <th scope="col">
                                         <a>DOB</a>
                                     </th>
@@ -59,9 +62,12 @@
                                     <th scope="col">
                                         <a>Alternate Mobile No</a>
                                     </th>
-                                    <th scope="col">
+                                    <!-- <th scope="col">
                                         <a>Designation Type</a>
-                                    </th>
+                                    </th> -->
+
+                                    
+
                                     <th scope="col">
                                         <a>Profile Image</a>
                                     </th>
@@ -88,23 +94,28 @@
                                         <td>{{ $employe->id }}</td>
                                         <td>{{$employe->name }}</td>
                                         <td>{{ $employe->name }}</td>
-                                        <td>123456</td>
                                         <td>{{ $employe->contact }}</td>
                                         <td>
-                                            {{$employe->designation_id}}
-
+                                            {{$employe->designation->name}}
+                                        </td>
+                                        <td>
+                                            @if ($employe->role)
+                                                {{$employe->role->name}}
+                                            @else
+                                                N/A
+                                            @endif
                                         </td>
                                         <td>
                                             {{$employe->user->email}}
                                         </td>
-                                        <td>*******</td>
+                                        <!-- <td>*******</td> -->
                                         <td>{{$employe->dob}}</td>
                                         <td>{{$employe->doj}}</td>
                                         <td>{{$employe->alternate_contact}}</td>
 
-                                        <td>
+                                        <!-- <td>
                                             {{$employe->designation->name}}
-                                        </td>
+                                        </td> -->
                                         <td>
                                             @if ($employe->profile_img)
                                                 <img src="{{$employe->profile_img}}" height="40px" width="40px" />
@@ -158,8 +169,8 @@
                                 <fieldset>
                                     <!-- <span class="required text-danger"> * </span> -->
                                     <div class="col-md-12 form-group">
-                                        <label>Admin Name </label>
-                                        <select class="form-control" name="role_id" id="role_id" multiple>
+                                        <label>Admin Name (User)</label>
+                                        <select class="form-control" name="admin_name" id="admin_name" multiple>
                                           @foreach ($user as $users )
                                             <option value="{{$users->id}}">{{$users->name}}</option>
                                           @endforeach
@@ -175,8 +186,9 @@
                                         <input type="text" placeholder="Enter Mobile Number" id="contact" name="contact" class="form-control">
                                     </div>
                                     <div class="col-md-6 form-group">
-                                        <label class="control-label">User Type</label>
-                                        <select class="form-control" name="user_type"  id="user_type"  disabled>
+                                        <label class="control-label">User Type (Role) <span class="required text-danger"> * </span></label>
+                                        <select class="form-control" name="role_id"  id="role_id">
+                                            <option value="0">Select User Type</option>
                                             @foreach ($role as $roles )
                                               <option value="{{$roles->id}}">{{$roles->name}}</option>
                                             @endforeach
@@ -253,8 +265,8 @@
                                  <form class="form-horizontal" id="updateEmployeeForm">
                                     <fieldset>
                                         <div class="col-md-12 form-group">
-                                            <label>Admin Name </label>
-                                            <select class="form-control" name="role_id" id="role_id_edit" multiple>
+                                            <label>Admin Name (User) </label>
+                                            <select class="form-control" name="admin_name" id="admin_name_edit" multiple>
                                             @foreach ($user as $users )
                                                 <option value="{{$users->id}}">{{$users->name}}</option>
                                             @endforeach
@@ -281,8 +293,9 @@
                                           <input type="text" placeholder="" name="" id="user_type_edit" class="form-control">
                                        </div> -->
                                         <div class="col-md-6 form-group">
-                                            <label class="control-label">User Type  <span class="required text-danger"> * </span></label>
-                                            <select class="form-control" name="user_type"  id="user_type_edit"  disabled>
+                                            <label class="control-label">User Type (Role) <span class="required text-danger"> * </span></label>
+                                            <select class="form-control" name="role_id"  id="role_id_edit">
+                                                <option value="0">Select User Type</option>
                                                 @foreach ($role as $roles )
                                                 <option value="{{$roles->id}}">{{$roles->name}}</option>
                                                 @endforeach
@@ -353,9 +366,7 @@
 <script>
 
 function submitAddForm(isEdit = false) {
-   //return true;
    processAdd () 
-    // return validateForm();
 }
 
 function editEmployee(id) {
@@ -369,6 +380,7 @@ function editEmployee(id) {
 function validateForm(isEdit=false) {
     let isValid = true;
     let validationMessage = "<b>Please follow below instruction before submitting form.</b><ul>";
+    const admin_name = (isEdit)?$("#admin_name_edit").val():$("#admin_name").val();
     const role_id = (isEdit)?$("#role_id_edit").val():$("#role_id").val();
     const emp_name = (isEdit)?$("#emp_name_edit").val():$("#emp_name").val();
     const contact = (isEdit)?$("#contact_edit").val():$("#contact").val();
@@ -378,10 +390,16 @@ function validateForm(isEdit=false) {
     const password = (isEdit)?$("#password_edit").val():$("#password").val();
     const dob = (isEdit)?$("#dob_edit").val():$("#dob").val();
     const doj = (isEdit)?$("#doj_edit").val():$("#doj").val();
-    // if(role_id == null || role_id?.length < 1) {
+
+    // if(admin_name == null || admin_name?.length < 1) {
     //     validationMessage += `<li>Please select an admin. </li>`; 
     //     isValid=false;
     // }
+
+    if(role_id == null ||role_id == 0 || role_id?.length < 1) {
+        validationMessage += `<li>Please select an user type. </li>`; 
+        isValid=false;
+    }
     if(emp_name == null || emp_name =="") {
         isValid=false;
         validationMessage += `<li>Please fill employee name. </li>`; 
@@ -543,8 +561,6 @@ function processUpdate () {
 
 }
 
-
-
 function processAdd () {
     const isValid = validateForm();
     if(isValid) {
@@ -574,7 +590,7 @@ function processAdd () {
                 else {
                     toastr.success(data.message);
                     setTimeout(function(){ 
-                        location.reload();
+                        // location.reload();
                     }, 3000);
                 }
             },
