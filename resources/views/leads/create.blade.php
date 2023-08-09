@@ -72,18 +72,22 @@
                             <div class="row">
                                 <fieldset>
                                     @foreach($masters as $master)
+                                        
                                         <div class="form-group col-sm-3">
-                                            <label>{{ $master->name }}{{--<span class="required"> * </span>--}}</label>
-                                            <select class="form-control" name="leadMaster" id="leadMaster_{{ $master -> id }}">
+                                            <label>{{ $master->name }} {{ $master->id }} {{--<span class="required"> * </span>--}}</label>
+                                            <select class="form-control" name="leadMaster" onChange="getDependentData(event)" id="leadMaster_{{ $master -> id }}">
                                                 <option>-- Select Condition --</option>
-                                                @php
-                                                    $values = $master->values()->get();
-                                                @endphp
-                                                @foreach($values as $value)
-                                                    <option value="{{ $value->id }}">{{ $value->name }}</option>
-                                                @endforeach
+                                                @if(!in_array($master->id, $masterIdsToMakeDynamic))
+                                                    @php
+                                                        $values = $master->values()->get();
+                                                    @endphp
+                                                    @foreach($values as $value)
+                                                        <option value="{{ $value->id }}">{{ $value->name }}</option>
+                                                    @endforeach
+                                                @endif
                                             </select>
                                         </div>
+                                        
                                     @endforeach
                                     <div class="col-sm-12">
                                         <label>Remark</label>
@@ -107,3 +111,103 @@
         </div>
     </div>
 @endsection
+
+
+@push('custom-scripts')
+<script type="text/javascript">
+
+const masterDependentObj = {7:8,3:4};
+function getDependentData (event,masterName){
+    
+    var selectElement = event.target;
+    alert('====selectElement====='+selectElement);
+    var value = selectElement.value;
+    alert('====value====='+value);
+    const masterId = value;//$(`#${curretElement}`)
+    alert(masterId);
+    const dependentId = masterDependentObj[masterId];
+    const dependentElementId =  `leadMaster_${dependentId}`;
+    const firstOption = `<option value="0">Select ${masterName}</option> `;
+    $(`#${dependentElementId}`).html(`${firstOption}`);
+    if(parseInt(masterId) > 0) {
+        let CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+        $.ajax({
+            url: '/getDependentMaster',
+            type: 'POST',
+            data: {
+                _token: CSRF_TOKEN,
+                'parentId': masterId
+            },
+            dataType: 'JSON',
+            success: function (result) {
+                let cities = [];
+
+                if(result?.cities) {
+                    cities = result?.cities??[];
+                    cities.forEach(city=>{
+                        const option = `<option value="${city.id}">${city.name}</option>`;
+                        $(`#${dependentElementId}`).append(`${option}`);
+                    })
+                }
+                if(masterId > 0) {
+                    $(`#${dependentElementId}`).val(dependentId);
+                }
+            },
+            failure: function (result) {
+                toastr.error('Error occurred while fetching related data!');
+            }
+        });
+    }
+}
+
+// $("#leadMaster_7").change(function(){
+//         const stateId = $(this).val();
+//         getCityForState(stateId);
+//     });
+
+    function getCityForState(stateId, cityId=0) {
+        const firstOption = `<option value="0">Select City</option> `;
+        $("#leadMaster_8").html(`${firstOption}`);
+        if(parseInt(stateId) > 0) {
+            let CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+            $.ajax({
+                url: '/getcitiesBystate',
+                type: 'POST',
+                data: {
+                    _token: CSRF_TOKEN,
+                    'stateId': stateId
+                },
+                dataType: 'JSON',
+                success: function (result) {
+                    let cities = [];
+
+                    if(result?.cities) {
+                        cities = result?.cities??[];
+                        cities.forEach(city=>{
+                            const option = `<option value="${city.id}">${city.name}</option>`;
+                            $("#leadMaster_8").append(`${option}`);
+                        })
+                    }
+                    if(cityId > 0) {
+                        $("#leadMaster_8").val(cityId);
+                    }
+                },
+                failure: function (result) {
+                    toastr.error('Error occurred while fetching city data!');
+                }
+            });
+        }
+    }
+
+</script>
+@endpush

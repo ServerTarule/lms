@@ -10,7 +10,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\DB;
+    use Illuminate\Support\Facades\DB;
 
 class MainMasterController extends Controller
 {
@@ -179,5 +179,12 @@ class MainMasterController extends Controller
         $stateId = $request->get('stateId');
         $cities = DynamicValue::where('dependent_id', $stateId)->get()->toArray();
         return response()->json(['cities' => $cities]);
+    }
+
+
+    public function getDependentMaster(Request $request) : JsonResponse {
+        $parentId = $request->get('parentId');
+        $dependentValues = DynamicValue::where('dependent_id', $parentId)->get()->toArray();
+        return response()->json(['dependentValues' => $dependentValues]);
     }
 }

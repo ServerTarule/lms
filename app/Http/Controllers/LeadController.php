@@ -33,6 +33,7 @@ class LeadController extends Controller
     public function index() : View
     {
         $leads = Lead::all();
+        
         //Get all Masters
         $masters=DynamicMain::where('master', '1')->get();
         return view('leads.index', compact('leads', 'masters'));
@@ -50,7 +51,7 @@ class LeadController extends Controller
             $leadKV['Email Id'] = $l->email;
         }
         foreach ($leadmaster as $lm) {
-            $leadKV[$lm->master->name] = $lm->mastervalue?->name;
+            $leadKV[$lm->master->name] = $lm->mastervalue->name;
         }
         foreach ($lead as $l) {
             $leadKV['Received Date'] = date("d/m/Y", strtotime($l->receiveddate));
@@ -72,8 +73,16 @@ class LeadController extends Controller
 
     public function create() : View
     {
+        $masterIdsParentToMakeDynamic =[3,7];
+        $masterIdsToMakeDynamic =[4,8];
         $masters=DynamicMain::where('master', '1')->get();
-        return view('leads.create', compact('masters'));
+        if(isset($_GET["isTest"]) && isset($masters)) {
+            print_r($masters->toArray());
+
+        }
+       
+        // die;
+        return view('leads.create', compact('masters','masterIdsToMakeDynamic'));
     }
 
     public function store(Request $request) : JsonResponse {
@@ -148,6 +157,7 @@ class LeadController extends Controller
     public function call() : View
     {
         $leads = Lead::all();
+    // print_r($leads);
         $leadMasterNames = array();
         foreach ($leads as $key=>$value) {
             $leadMasters = LeadMaster::where('lead_id', $value->id)->get();
