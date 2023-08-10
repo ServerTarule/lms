@@ -33,7 +33,6 @@ class LeadController extends Controller
     public function index() : View
     {
         $leads = Lead::all();
-        
         //Get all Masters
         $masters=DynamicMain::where('master', '1')->get();
         return view('leads.index', compact('leads', 'masters'));
@@ -59,6 +58,30 @@ class LeadController extends Controller
         return view('leads.show', compact('leadKV'));
     }
 
+    public function edit($id) {
+        $lead = Lead::find($id);
+        $leadmasters = LeadMaster::where('lead_id', $id)->get();
+        $masters=DynamicMain::where('master', '1')->get();
+        $masterIdsParentToMakeDynamic =[3,7];
+        $masterIdsToMakeDynamic =[4,8];
+        if(isset($_GET["isTest"]) && isset($masters)) {
+            print_r($masters->toArray());
+        }
+        $leadmastersArr = [];
+        if(isset($leadmasters)) {
+            $leadmastersArr = $leadmasters->toArray();
+        }
+        // print_r($leadmastersArr);
+        $leadMasterToUse =[];
+        foreach($leadmastersArr as $leadmastersElement) {
+            $leadMasterToUse[$leadmastersElement["master_id"]] = $leadmastersElement["mastervalue_id"];
+        }
+        // print_r($leadMasterToUse);
+        // die;
+
+        return view('leads.edit', compact('masters','lead','leadmasters','leadMasterToUse','masterIdsToMakeDynamic'));
+    }
+
     public function showtoedit($id) : JsonResponse {
         $lead = Lead::find($id);
         $leadmasters = LeadMaster::where('lead_id', $id)->get();
@@ -78,56 +101,55 @@ class LeadController extends Controller
         $masters=DynamicMain::where('master', '1')->get();
         if(isset($_GET["isTest"]) && isset($masters)) {
             print_r($masters->toArray());
-
         }
-       
-        // die;
         return view('leads.create', compact('masters','masterIdsToMakeDynamic'));
     }
 
     public function store(Request $request) : JsonResponse {
-
-        $name = $request->get('name');
-        $email = $request->get('email');
-        $mobileno = $request->get('mobileno');
-        $altmobileno = $request->get('altmobileno');
-        $receiveddate = $request->get('receiveddate');
-        $remark = $request->get('remark');
-
-        $leadMasterData = $request->get('leadMasterData');
-
-        $lead = Lead::create([
-            'name' => $name,
-            'email' => $email,
-            'mobileno' => $mobileno,
-            'altmobileno' => $altmobileno,
-            'receiveddate' => $receiveddate,
-            'remark' => $remark]
-        );
-
-        $leadId = $lead->id;
-
-        $leadMasters = json_decode( $leadMasterData, true );
-
-        foreach($leadMasters as $leadMaster) {
-
-            $masterId = $leadMaster['master'];
-            $masterValueId = $leadMaster['masterValue'];
-
-            $dataItem = [];
-            $dataItem['lead_id'] = $leadId;
-            $dataItem['master_id'] = $masterId;
-            $dataItem['mastervalue_id'] = $masterValueId;
-
-            LeadMaster::unguard();
-            LeadMaster::create($dataItem);
-            LeadMaster::reguard();
-
+         try {
+            $name = $request->get('name');
+            $email = $request->get('email');
+            $mobileno = $request->get('mobileno');
+            $altmobileno = $request->get('altmobileno');
+            $receiveddate = $request->get('receiveddate');
+            $remark = $request->get('remark');
+    
+            $leadMasterData = $request->get('leadMasterData');
+    
+            $lead = Lead::create([
+                'name' => $name,
+                'email' => $email,
+                'mobileno' => $mobileno,
+                'altmobileno' => $altmobileno,
+                'receiveddate' => $receiveddate,
+                'remark' => $remark]
+            );
+    
+            $leadId = $lead->id;
+    
+            $leadMasters = json_decode( $leadMasterData, true );
+    
+            foreach($leadMasters as $leadMaster) {
+    
+                $masterId = $leadMaster['master'];
+                $masterValueId = $leadMaster['masterValue'];
+    
+                $dataItem = [];
+                $dataItem['lead_id'] = $leadId;
+                $dataItem['master_id'] = $masterId;
+                $dataItem['mastervalue_id'] = $masterValueId;
+    
+                LeadMaster::unguard();
+                LeadMaster::create($dataItem);
+                LeadMaster::reguard();
+    
+            }
+            LeadReceived::dispatch($lead);
+            return response()->json(['success' => 'Received rule data']);
         }
-
-        LeadReceived::dispatch($lead);
-
-        return response()->json(['success' => 'Received rule data']);
+        catch (Request $e) {
+            throw new \Exception($e->getMessage());
+        }
     }
 
     public function updateone(Request $request) : RedirectResponse

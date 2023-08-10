@@ -185,6 +185,7 @@ class MainMasterController extends Controller
     public function getDependentMaster(Request $request) : JsonResponse {
         $parentId = $request->get('parentId');
         $dependentValues = DynamicValue::where('dependent_id', $parentId)->get()->toArray();
+        // print_r($dependentValues);
         return response()->json(['dependentValues' => $dependentValues]);
     }
 }

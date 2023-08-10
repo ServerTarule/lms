@@ -1,5 +1,5 @@
 @extends('layout.app')
-@section('title', 'Add Lead')
+@section('title', 'Edit Lead')
 @section('subtitle', 'List of lead')
 @section('content')
     <div class="row">
@@ -23,22 +23,22 @@
                                 <fieldset>
                                     <div class="form-group col-sm-5">
                                         <label>Name <span class="text-danger required"> * </span></label>
-                                        <input class="form-control Reg" id="name" name="name" placeholder="Enter Name" required="required" type="text" value="" />
+                                        <input class="form-control Reg" id="name" name="name" placeholder="Enter Name" required="required" value="{{$lead->name}}" type="text" value="" />
                                     </div>
                                     <div class="form-group col-sm-5">
                                         <label>Email Id </label>
                                         <!-- <span class="text-danger required"> * </span> -->
-                                        <input class="form-control EmailId" id="email" name="email" placeholder="Enter EmailId" type="text" value="" />
+                                        <input class="form-control EmailId" id="email" name="email" value="{{$lead->email}}" placeholder="Enter EmailId" type="text" value="" />
                                         <span class="required" id="rqrmail" style="color: red; width: -5%; display: none;"> Please Enter Valid Email </span>
                                     </div>
                                     <div class="form-group col-sm-5">
                                         <label>Mobile Number <span class="text-danger required"> * </span> <span class="spnmobile" style="color: red;"></span></label>
-                                        <input class="form-control Reg MobileNo"  max-length="10"  id="mobileno" name="mobileno" maxlength="10" {{--onkeypress="return isNumberKey(event)"--}} placeholder="Enter MobileNumber" required="required" type="text" value="" />
+                                        <input class="form-control Reg MobileNo"  max-length="10"  id="mobileno" name="mobileno" value="{{$lead->mobileno}}" maxlength="10" {{--onkeypress="return isNumberKey(event)"--}} placeholder="Enter MobileNumber" required="required" type="text" value="" />
                                         <span class="required" id="rqrNumber" style="color: red; width: -5%; display: none;"> Please Enter Mobile Number </span>
                                     </div>
                                     <div class="form-group col-sm-5">
                                         <label for="emp_name">Alternate MobileNo.</label>
-                                        <input class="form-control AlterMobile_No" id="altmobileno" name="altmobileno" maxlength="10" {{--onkeypress="return isNumberKey(event)"--}} placeholder="Enter Mobile Number" type="text" value="" />
+                                        <input class="form-control AlterMobile_No" id="altmobileno" name="altmobileno" value="{{$lead->altmobileno}}" maxlength="10" {{--onkeypress="return isNumberKey(event)"--}} placeholder="Enter Mobile Number" type="text" value="" />
                                         <span class="required" id="rqrAlterNumber" max-length="10" style="color: red; width: -5%; display: none;"> Please Enter Mobile Number</span>
                                     </div>
                                     <div class="form-group col-sm-5">
@@ -51,9 +51,10 @@
                                             id="receiveddate"
                                             name="receivedDate"
                                             placeholder="Enter Received Date"
-                                            value="{{ now()->setTimezone('T')->format('Y-m-dTh:m') }}"
+                                            value="{{$lead->receivedDate ?? now()->setTimezone('T')->format('Y-m-dTh:m')}}"
                                             type="datetime-local"
                                         />
+                                        <!-- {{ now()->setTimezone('T')->format('Y-m-dTh:m') }} -->
                                     </div>
                                 </fieldset>
                             </div>
@@ -97,14 +98,18 @@
                                             <select class="form-control" name="leadMaster" onChange="getDependentData(event)" data-masterid="{{$master->id}}" id="leadMaster_{{ $master -> id }}">
                                                 <option value="0">-
                                                     - Select {{ $master->name }} -- 
-                                                    
                                                 </option>
                                                 @if(!in_array($master->id, $masterIdsToMakeDynamic))
                                                     @php
                                                         $values = $master->values()->get();
                                                     @endphp
                                                     @foreach($values as $value)
-                                                        <option value="{{ $value->id }}">{{ $value->name }}</option>
+                                                        @php
+                                                            $valueToSelect = $leadMasterToUse[$master->id];
+                                                            $selectedText = '';
+                                                            $selectedText = $valueToSelect == $value->id ? 'selected' :'';
+                                                        @endphp
+                                                        <option value="{{ $value->id }}"  {{$selectedText}}>{{ $value->name }}</option>
                                                     @endforeach
                                                 @endif
                                             </select>
@@ -138,8 +143,17 @@
 @push('custom-scripts')
 <script type="text/javascript">
 
+
+
     const masterDependentObj = {7:8,3:4};
-    const masterDependentObjName = {7:"City",3:'Lead Stages'};
+
+    const masterDependentObjName = {7:"Cities",3:'Lead Stages'};
+
+    masterDependentObj.foreach(function(masterDependentEle,masterDependentKey) {
+        console.log("--masterDependentEle---",masterDependentEle);
+        console.log("--masterDependentKey---",masterDependentKey);
+
+    })
     function getDependentData (event,masterName){
         const selectElement = event.target;
         const parentId = selectElement.value;

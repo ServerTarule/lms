@@ -218,6 +218,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/leads', [LeadController::class, 'index'])->name('leads.index')->middleware('can:read master');
     Route::get('/leads/show/{id}', [LeadController::class, 'show'])->name('leads.show')->middleware('can:read master');
     Route::get('/leads/create', [LeadController::class, 'create'])->name('leads.create')->middleware('can:read master');
+    Route::get('/leads/edit/{id}', [LeadController::class, 'edit'])->name('leads.edit')->middleware('can:read master');
     Route::post('/leads/store', [LeadController::class, 'store'])->name('leads.store')->middleware('can:read master');
     Route::post('/leads/update', [LeadController::class, 'updateone'])->name('leads.updateone')->middleware('can:read master');
 

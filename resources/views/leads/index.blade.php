@@ -12,13 +12,14 @@
                         </a>
                     </div>
                 </div>
-
                 <div class="panel-body">
                     <div class="text-center">
                         <a onclick="document.getElementById('modal-18').classList.toggle('transformX-0');" class="btn btn-primary btn-sm"><i class="fa fa-eye"></i> Filter</a>
                         <a class="btn btn-success btn-sm" data-toggle="modal" data-target="#upload"><i class="fa fa-upload"></i> Bulk Upload</a>
                         <a href="/leads/create" class="btn btn-info btn-sm"><i class="fa fa-plus"></i> Add lead</a>
                     </div>
+                </div>
+                <div class="panel-body">
                     <div class="table-responsive">
                         <table id="dataTableExample1" class="table table-bordered table-striped table-hover">
                             <thead>
@@ -91,7 +92,7 @@
                                     <div class="col-md-12 form-group">
                                         <label class="control-label">Choose Excel File</label>
                                         <input type="file" name="file" class="custom-file-input" id="customFile">
-{{--                                        <input type="file" name="file"  placeholder="Enter Source " class="form-control">--}}
+{{--                                        <input type="file" name="file"  accept=".csv, .xls, .xlsx" placeholder="Enter Source " class="form-control">--}}
                                     </div>
                                     <div class="col-md-12 form-group">
                                         <div>
@@ -328,3 +329,56 @@
         </div>
     </div>
 @endsection
+
+
+@push('custom-scripts')
+<script type="text/javascript">
+    function editLead(id) {
+        let CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+        $.ajax({
+            /* the route pointing to the post function */
+            url: '/leads/'+id,
+            type: 'GET',
+            /* send the csrf-token and the input to the controller */
+            // data: {_token: CSRF_TOKEN, 'ruleData':JSON.stringify(jsonObject)},
+            data: {
+                _token: CSRF_TOKEN,
+                'id': id
+            },
+            // data: $(this).serialize(),
+            dataType: 'JSON',
+            /* remind that 'data' is the response of the AjaxController */
+            success: function (data) {
+                let lead = data['lead'];
+                let leadmasters = data['leadmasters'];
+                $('.leadId').val(lead['id']);
+                $('.leadName').val(lead['name']);
+                $('.leadEmail').val(lead['email']);
+                $('.leadMobile').val(lead['mobileno']);
+                $('.leadAlternateMobile').val(lead['altmobileno']);
+                $('.leadReceivedDate').val(lead['receiveddate']);
+
+                $.each(leadmasters, function(key, value) {
+                    if(value != null) {
+                        let mastervalue = value['mastervalue_id'];
+                        if (mastervalue == null) {
+                            mastervalue = 0;
+                        }
+                        $(".leadMaster_"+value['master_id']+"").val(mastervalue);
+                    }
+                });
+
+                $('#editSingleLead').modal('show');
+            },
+            failure: function (data) {
+                console.log(data);
+            }
+        });
+    }
+</script>
+@endpush
