@@ -72,14 +72,14 @@ class LeadController extends Controller
             $leadmastersArr = $leadmasters->toArray();
         }
         // print_r($leadmastersArr);
-        $leadMasterToUse =[];
+        $leadMasterKeyValueArray =[];
         foreach($leadmastersArr as $leadmastersElement) {
-            $leadMasterToUse[$leadmastersElement["master_id"]] = $leadmastersElement["mastervalue_id"];
+            $leadMasterKeyValueArray[$leadmastersElement["master_id"]] = $leadmastersElement["mastervalue_id"];
         }
-        // print_r($leadMasterToUse);
+        // print_r($leadMasterKeyValueArray);
         // die;
 
-        return view('leads.edit', compact('masters','lead','leadmasters','leadMasterToUse','masterIdsToMakeDynamic'));
+        return view('leads.edit', compact('masters','lead','leadmasters','leadMasterKeyValueArray','masterIdsToMakeDynamic'));
     }
 
     public function showtoedit($id) : JsonResponse {
@@ -150,6 +150,61 @@ class LeadController extends Controller
         catch (Request $e) {
             throw new \Exception($e->getMessage());
         }
+    }
+
+    public function updatelead(Request $request, $id) : JsonResponse 
+    {
+        // die("---hellooo");
+        
+
+        try {
+            // $leadId = $id;//$request->get('leadId');
+            
+            $lead = Lead::find($id);
+
+            // print_r($lead->receiveddate);
+            // echo "^^^^^^=====";
+            // print_r($request->get('receiveddate'));
+            // die($request->get("name"));
+            $lead->name = $request->get('name');
+            $lead->email = $request->get('email');
+            $lead->mobileno = $request->get('mobileno');
+            $lead->altmobileno = $request->get('altmobileno');
+            $lead->receiveddate = $request->get('receiveddate');//$receiveddate,
+            $lead->remark = $request->get('remark');  
+            // print_r($lead);  
+            // 'remark' => $remark]
+            $savedResponse = $lead->save();
+            if($savedResponse) {
+               
+                $leadMasters = LeadMaster::where('lead_id', $id)->orderBy('master_id', 'ASC')->get();
+                // print_r($leadMasters);
+                // echo "<pre>";print_r($request->get('leadMasterData')); 
+                $leadMasterDataPosted = $request->get('leadMasterData');
+                foreach ($leadMasters as $key => $value) {
+                    // echo "Key ===".$key;
+                    // echo "value ===".$value;
+                    // echo "Hello Value for".$value->mastervalue_id.'==== '.$request->get('leadMaster_'.$value->master_id);
+                    $value->mastervalue_id = $leadMasterDataPosted['leadMaster_'.$value->master_id];
+                    // echo "---now New Value is--";print_r($value);//die;
+                    $value->save();
+                }
+
+                // $leads = Lead::all();
+                // //Get all Masters
+                // $masters=DynamicMain::where('master', '1')->get();
+                //return redirect()->route('leads.index', compact('leads', 'masters'));
+            }
+            else {
+                return response()->json(['status'=>false, 'message'=>'Leads data (General information & remark) could not be updated.']);
+            }
+            
+            return response()->json(['success' => 'Leads data updated successfully']);
+        }
+        catch (Request $e) {
+            throw new \Exception($e->getMessage());
+        }
+
     }
 
     public function updateone(Request $request) : RedirectResponse

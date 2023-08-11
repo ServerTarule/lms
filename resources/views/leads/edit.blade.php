@@ -51,7 +51,7 @@
                                             id="receiveddate"
                                             name="receivedDate"
                                             placeholder="Enter Received Date"
-                                            value="{{$lead->receivedDate ?? now()->setTimezone('T')->format('Y-m-dTh:m')}}"
+                                            value="{{$lead->receiveddate ?? now()->setTimezone('T')->format('Y-m-dTh:m')}}"
                                             type="datetime-local"
                                         />
                                         <!-- {{ now()->setTimezone('T')->format('Y-m-dTh:m') }} -->
@@ -105,7 +105,7 @@
                                                     @endphp
                                                     @foreach($values as $value)
                                                         @php
-                                                            $valueToSelect = $leadMasterToUse[$master->id];
+                                                            $valueToSelect = $leadMasterKeyValueArray[$master->id];
                                                             $selectedText = '';
                                                             $selectedText = $valueToSelect == $value->id ? 'selected' :'';
                                                         @endphp
@@ -119,16 +119,18 @@
                                     <div class="col-sm-12">
                                         <label>Remark</label>
                                         <div class="form-group">
-                                            <textarea class="form-control Remark" cols="20" id="remark" name="remark" rows="2"></textarea>
+                                            <textarea class="form-control Remark" cols="20" id="remark" name="remark" rows="2">{{$lead->remark}}</textarea>
                                         </div>
                                     </div>
+                                    <input class="leadId" type="hidden" id="leadId" value="{{$lead->id}}" name="leadId"  />
                                     <div class="col-sm-12">
                                         <div class="form-group">
-                                            <button type="submit" id="leadMasterSubmit" class="btn btn-primary btn-sm">Submit</button>
+                                            <button type="submit" id="leadMasterSubmitUpdate" class="btn btn-primary btn-sm">Submit</button>
                                             <button type="reset" id="leadMasterReset" class="btn btn-danger btn-sm">Clear</button>
                                         </div>
                                     </div>
                                     <input type="hidden" name="leadMasters" id="leadMasters" value="{{ $masters }}">
+                                    
                                 </fieldset>
                             </div>
                         </div>
@@ -148,49 +150,82 @@
     const masterDependentObj = {7:8,3:4};
 
     const masterDependentObjName = {7:"Cities",3:'Lead Stages'};
+    // const leadMasterKeyValueArray =  ' print_r($leadMasterKeyValueArray); ?>'
+    const leadMasterKeyValueArray =  {{ Js::from($leadMasterKeyValueArray) }};
+console.log("---leadMasterKeyValueArray---",leadMasterKeyValueArray)
+    // Object.entries(obj)
+    for (const [parentMasterId, childMasterId] of Object.entries(masterDependentObj)) {
+        console.log(`${parentMasterId} ${childMasterId}`); // "a 5", "b 7", "c 9"
+        const parentElementId =  `leadMaster_${parentMasterId}`;
+        const parentIdValue = $(`#${parentElementId}`).val();
+        console.log("--childMasterId---",childMasterId);
+        const masterName = masterDependentObjName[parentMasterId];
+        //$leadMasterKeyValueArray[$master->id]
+        
+        const selectedValue = leadMasterKeyValueArray[childMasterId];
+        console.log("==selectedValue==",selectedValue)
+        getDataFromDb(parentIdValue, childMasterId, masterName, selectedValue)
+    }
 
-    masterDependentObj.foreach(function(masterDependentEle,masterDependentKey) {
-        console.log("--masterDependentEle---",masterDependentEle);
-        console.log("--masterDependentKey---",masterDependentKey);
+    // masterDependentObj.foreach(function(masterDependentEle,masterDependentKey) {
+    //     console.log("--masterDependentEle---",masterDependentEle);
+    //     console.log("--masterDependentKey---",masterDependentKey);
 
-    })
+    // })
     function getDependentData (event,masterName){
         const selectElement = event.target;
         const parentId = selectElement.value;
         const masterId = $(selectElement).data('masterid');
         const dependentId = masterDependentObj[masterId];
         const dependentName = masterDependentObjName[masterId];
-        const dependentElementId =  `leadMaster_${dependentId}`;
+        
         if(parseInt(parentId) > 0) {
-            let CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                }
-            });
-            $.ajax({
-                url: '/getDependentMaster',
-                type: 'POST',
-                data: {
-                    _token: CSRF_TOKEN,
-                    'parentId': parentId
-                },
-                dataType: 'JSON',
-                success: function (result) {
-                    let dependentValues = [];
-                    if(result?.dependentValues) {
-                        dependentValues = result?.dependentValues??[];
-                        dependentValues.forEach(dependentValue=>{
-                            const option = `<option value="${dependentValue.id}">${dependentValue.name}</option>`;
-                            $(`#${dependentElementId}`).append(`${option}`);
-                        })
-                    }
-                },
-                failure: function (result) {
-                    toastr.error('Error occurred while fetching related data!');
-                }
-            });
+            getDataFromDb(parentId, dependentId, dependentName)
         }
+    }
+
+    function getDataFromDb(parentId, dependentId, masterName='Option', dependentValueToSelect = 0) {
+        console.log("----parentId----",parentId);
+        const dependentElementId =  `leadMaster_${dependentId}`;
+        console.log("--dependentElementId-----",dependentElementId);
+        let CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
+        const option = `<option value="0">-- Select  ${masterName}--</option>`;
+        $(`#${dependentElementId}`).html(`${option}`);
+        let selectedText = '';
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+        $.ajax({
+            url: '/getDependentMaster',
+            type: 'POST',
+            data: {
+                _token: CSRF_TOKEN,
+                'parentId': parentId
+            },
+            dataType: 'JSON',
+            success: function (result) {
+                console.log("=====result====",result)
+                let dependentValues = [];
+                if(result?.dependentValues) {
+                    dependentValues = result?.dependentValues??[];
+                   
+                    dependentValues.forEach(dependentValue=>{
+                        if(dependentValueToSelect == `${dependentValue.id}`) {
+                            //selectedText = 'selected';
+                        }
+                        const option = `<option value="${dependentValue.id}" ${selectedText}>${dependentValue.name} </option>`;
+                        $(`#${dependentElementId}`).append(`${option}`);
+                    });
+
+                    $(`#${dependentElementId}`).val(`${dependentValueToSelect}`);
+                }
+            },
+            failure: function (result) {
+                toastr.error('Error occurred while fetching related data!');
+            }
+        });
     }
 
     function getCityForState(stateId, cityId=0) {
@@ -251,6 +286,9 @@
             validationError += `<li>Mobile number field is mandatory field.</li>`;
             isValid =false;
         }
+        else if(mobileno) {
+            //don noting
+        }
         if(!receiveddate || receiveddate == null) {
             validationError += `<li>Received date field is mandatory field.</li>`;
             isValid =false;
@@ -262,8 +300,9 @@
         return isValid;
     }
 
-    $("#leadMasterSubmit").click(function() {
-        const isValid = true;//validateForm();
+    $("#leadMasterSubmitUpdate").click(function() {
+        const isValid = validateForm();
+        // alert("I am valid or not"+isValid);
         if(isValid) {
             let leadMastersData = $('#leadMasters').val();
             let name = $('#name').val();
@@ -271,9 +310,12 @@
             let mobileno = $('#mobileno').val();
             let altmobileno = $('#altmobileno').val();
             let receiveddate = $('#receiveddate').val();
+            // alert("===value of receiveddate =="+receiveddate);
             let remark = $('#remark').val();
-            let items = [];
-
+            let items = {};
+            // items[0] = 0;
+            const leadId =  $("#leadId").val();
+            console.log("----leadMastersData----",leadMastersData)
             $.each(JSON.parse(leadMastersData), function (key, value) { 
                 let itemValue = {};
                 // let master = []
@@ -281,22 +323,24 @@
                 let masterOperations = [];
 
                 // master.push(value.id);
-                itemValue ["master"] = value.id;
+                // itemValue ["master"] = value.id;
                 // $('#ruleMaster_' + value.id + ' :selected').each(function (i, sel) {
                 //     masterValues.push($(sel).val());
                 // });
                 let $masterValue = $('#leadMaster_' + value.id + ' :selected').val();
-                if ($masterValue != "-- Select Condition --") {
-                    itemValue ["masterValue"] = $masterValue;
-                } else {
-                    itemValue ["masterValue"] = null;
-                }
+                
+                items['leadMaster_'+value.id] = $masterValue?$masterValue:0;
+                // if ($masterValue != "-- Select Condition --") {
+                //     itemValue ["masterValue"] = $masterValue;
+                // } else {
+                //     itemValue ["masterValue"] = null;
+                // }
                 // $('#ruleCondition_' + value.id + ' :selected').each(function (i, sel) {
                 //     masterOperations.push($(sel).val());
                 // });
                 // itemValue ["masterOperations"] = masterOperations;
 
-                items.push(itemValue);
+                // items.push(itemValue);
 
             });
        
@@ -304,9 +348,11 @@
        
 
             console.log("---items--",items);
+            // const leadMasterKeyValueArray =  {{ Js::from($leadMasterKeyValueArray) }};
             //jsonObject.masters = item;
             //jsonObject.push(items)
             // console.log(JSON.stringify(items));
+            // console.log("--leadMasterKeyValueArray--",leadMasterKeyValueArray);
             
         
             let CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
@@ -315,12 +361,26 @@
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 }
             });
+            
+            //<form class="form-horizontal"  action="{{ route('leads.updateone') }}" method="POST">
             $.ajax({
                 /* the route pointing to the post function */
-                url: '/leads/store',
+                url: `/leads/updatelead/${leadId}`,
                 type: 'POST',
                 /* send the csrf-token and the input to the controller */
                 // data: {_token: CSRF_TOKEN, 'ruleData':JSON.stringify(jsonObject)},
+                // data: {
+                //     _token: CSRF_TOKEN,
+                //     'leadName': name,
+                //     'leadEmail': email,
+                //     'leadMobile': mobileno,
+                //     'leadAlternateMobile': altmobileno,
+                //     'receiveddate': receiveddate,
+                //     'remark': remark,
+                //     'leadId':leadId,
+                //     'leadMasterData':leadMastersData//JSON.stringify(leadMastersData),
+                    
+                // },
                 data: {
                     _token: CSRF_TOKEN,
                     'name': name,
@@ -329,7 +389,7 @@
                     'altmobileno': altmobileno,
                     'receiveddate': receiveddate,
                     'remark': remark,
-                    'leadMasterData':JSON.stringify(items)
+                    'leadMasterData':items
                 },
                 // data: $(this).serialize(),
                 dataType: 'JSON',

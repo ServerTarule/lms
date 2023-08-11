@@ -29,9 +29,9 @@
                                             </div>
                                            
                                         </div>
-                                        <div class="text-center">
-                                            <input type="checkbox" name="main" id="checkbox">
-                                            <label for="checkbox">Please tick the checkbox if its Main Master</label>
+                                        <div class="text-center" style="display:none">
+                                            <input type="checkbox" name="main" id="checkbox" disabled>
+                                            <label for="checkbox" style="font-size:large"><span> &nbsp;Please tick the checkbox if its Main Master </span>&nbsp; <i class="fa fa-info-circle" title='This checkbox is disabled for now as we already have all the main master data available in the system.' aria-hidden="true"></i></label>
                                         </div>
                                     </form>
                                 </div>

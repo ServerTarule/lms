@@ -65,7 +65,8 @@
 {{--                                                class="fa fa-edit"></i> </a>--}}
 {{--                                    </td>--}}
                                     <td>
-                                        <a href="#" id="editLead" onclick="editLead( {{ $lead->id }})" class="btn-xs btn-info"><i class="fa fa-edit"></i></a>
+                                    <a href="/leads/edit/{{$lead->id}}" id="editLead" class="btn-xs btn-info"><i class="fa fa-edit"></i></a>
+                                    <!-- <a href="#" id="editLead" onclick="editLead( {{ $lead->id }})" class="btn-xs btn-info">Pop<i class="fa fa-edit"></i></a> -->
                                     </td>
                             @endforeach
                             </tbody>

@@ -148,6 +148,8 @@
         const dependentName = masterDependentObjName[masterId];
         const dependentElementId =  `leadMaster_${dependentId}`;
         if(parseInt(parentId) > 0) {
+            const optionBlank = `<option value="">--Select value---</option>`;
+            $(`#${dependentElementId}`).html(`${optionBlank}`);
             let CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
             $.ajaxSetup({
                 headers: {
@@ -249,7 +251,7 @@
     }
 
     $("#leadMasterSubmit").click(function() {
-        const isValid = true;//validateForm();
+        const isValid = validateForm();
         if(isValid) {
             let leadMastersData = $('#leadMasters').val();
             let name = $('#name').val();
