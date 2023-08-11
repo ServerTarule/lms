@@ -50,7 +50,8 @@ class LeadController extends Controller
             $leadKV['Email Id'] = $l->email;
         }
         foreach ($leadmaster as $lm) {
-            $leadKV[$lm->master->name] = $lm->mastervalue->name;
+            // $leadKV[$lm->master->name] = $lm->mastervalue->name;
+            $leadKV[$lm->master->name] = $lm->mastervalue?->name;
         }
         foreach ($lead as $l) {
             $leadKV['Received Date'] = date("d/m/Y", strtotime($l->receiveddate));
