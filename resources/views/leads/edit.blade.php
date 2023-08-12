@@ -341,6 +341,9 @@
         const stateId = $("#state-dropdown").val();
         const cityId = $("#city-dropdown").val();
         console.log("selectedCenterId ===",centerId,"--Called --getCenterForStateAndCity----values of state is -- ", stateId,'----value of city id is ---', cityId)
+        const firstOption = `<option value="0">Select Center</option> `;
+        // $("#leadMaster_8").html(`${firstOption}`);
+        $("#center-detail").html(`${firstOption}`);
         if(parseInt(stateId) > 0  && parseInt(cityId) > 0 ) {
             let CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
             $.ajaxSetup({
