@@ -19,11 +19,11 @@
                         <th>Action Types</th>
                         <th>State</th>
                         <th>City</th>
-                        <th>Assigned By</th>
-                        <th>Center Recommended</th>
-                        <th>Center Change</th>
+                        <!-- <th>Assigned By</th> -->
+                        <!-- <th>Center Recommended</th> -->
+                        <!-- <th>Center Change</th> -->
                         <th>Edit</th>
-                        <th>Upload</th>
+                        <!-- <th>Upload</th> -->
                     </tr>
                 </thead>
                 <tbody>
@@ -31,22 +31,24 @@
                 @foreach ($leadKV as $key => $value)
                     <td>{{$value}}</td>
                 @endforeach
-                    <td></td>
-                    <td></td>
-                    <td>
-                        <a href="#" class="btn btn-primary CenterRecommended" data-toggle="modal" data-target="#CenterChange"><span>Center Change</span></a>
-                        <input type="hidden" class="ModuleName" value="FirstCallingDetails" />
+                <input type="hidden" class="ModuleName" value="FirstCallingDetails" />
                         <input type="hidden" id="leadId" name="leadId" value="{{$leadKVForEdit['id']}}" />
-                    </td>
+                        <!-- <td></td> -->
+                        <!-- <td></td> -->
+                    <!-- <td>
+                        <a href="#" class="btn btn-primary CenterRecommended" data-toggle="modal" data-target="#CenterChange"><span>Center Change</span></a>
+                        
+                    </td> -->
                     <td>
-                        <a href="#" data-toggle="modal" data-target="#editLead" id="editLeadDetails" class="btn btn-primary"><i class="fa fa-edit"></i></a>
+                        <!-- <a href="#" data-toggle="modal" data-target="#editLead" id="editLeadDetails" class="btn btn-primary"><i class="fa fa-edit">Edit Lead Model</i></a> -->
+                        <a href="/leads/calls/edit/{{$leadKVForEdit['id']}}" class="btn btn-primary"><i class="fa fa-edit"></i></a>
                     </td>
-                    <td>
+                    <!-- <td>
                         <span class="divupld">
                             <label for="myupld" class="myupldicon"><i class="fa fa-cloud-upload"></i></label>
                             <input type="file" id="myupld" multiple="" />
                         </span>
-                    </td>
+                    </td> -->
                 </tr>
                 </tbody>
             </table>
@@ -88,7 +90,7 @@
                 <tr class="tblheadclr2" style="text-align: center;">
                     <th>S.No</th>
                     <th>Employee</th>
-                    <th>Type</th>
+                    <!-- <th>Type</th> -->
                     <th>Calling Date</th>
 {{--                    <th>Lead Status</th>--}}
                     <th>Next Reminder Date</th>
@@ -100,7 +102,7 @@
                     <tr>
                             <td>{{ $loop->iteration }}</td>
                             <td>{{ $leadCall->employee?->name }}</td>
-                            <td>{{ $leadCall->type }}</td>
+                            <!-- <td>{{ $leadCall->type }}</td> -->
                             <td>{{ \Carbon\Carbon::parse($leadCall->called_at)->format('d/m/Y') }}</td>
 {{--                            <td>{{ $leadCall->leadstatus?->name }}</td>--}}
                             <td>{{ \Carbon\Carbon::parse($leadCall->remind_at)->format('d/m/Y') }}</td>

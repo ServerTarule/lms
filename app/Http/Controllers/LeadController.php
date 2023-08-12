@@ -27,9 +27,11 @@ use Illuminate\Support\Facades\Notification;
 use Illuminate\View\View;
 use Maatwebsite\Excel\Facades\Excel;
 use function PHPUnit\Framework\isNull;
+use Illuminate\Support\Facades\DB;
 
 class LeadController extends Controller
 {
+    private $isFirstCalling = false;
     public function index() : View
     {
         $leads = Lead::all();
@@ -51,7 +53,17 @@ class LeadController extends Controller
         }
         foreach ($leadmaster as $lm) {
             // $leadKV[$lm->master->name] = $lm->mastervalue->name;
-            $leadKV[$lm->master->name] = $lm->mastervalue?->name;
+            // if(isset($lm->master)) {
+            //     $leadKV[$lm->master->name] = $lm->mastervalue?->name;
+
+            // }
+
+            if(isset($lm->mastervalue) && isset($lm->master)) {
+                $leadKV[$lm->master->name] = $lm->mastervalue->name;
+            }
+            else if(isset($lm->master) && !isset($lm->mastervalue)){
+                $leadKV[$lm->master->name] = "N/A";
+            }
         }
         foreach ($lead as $l) {
             $leadKV['Received Date'] = date("d/m/Y", strtotime($l->receiveddate));
@@ -79,8 +91,33 @@ class LeadController extends Controller
         }
         // print_r($leadMasterKeyValueArray);
         // die;
+        $isFirstCalling = false;
+        return view('leads.edit', compact('masters','lead','leadmasters','leadMasterKeyValueArray','masterIdsToMakeDynamic','isFirstCalling'));
+    }
 
-        return view('leads.edit', compact('masters','lead','leadmasters','leadMasterKeyValueArray','masterIdsToMakeDynamic'));
+    public function showcalledit($id) {
+        $lead = Lead::find($id);
+        $leadmasters = LeadMaster::where('lead_id', $id)->get();
+        $masters=DynamicMain::where('master', '1')->get();
+        $masterIdsParentToMakeDynamic =[3,7];
+        $masterIdsToMakeDynamic =[4,8];
+        if(isset($_GET["isTest"]) && isset($masters)) {
+            print_r($masters->toArray());
+        }
+        $leadmastersArr = [];
+        if(isset($leadmasters)) {
+            $leadmastersArr = $leadmasters->toArray();
+        }
+        // print_r($leadmastersArr);
+        $leadMasterKeyValueArray =[];
+        foreach($leadmastersArr as $leadmastersElement) {
+            $leadMasterKeyValueArray[$leadmastersElement["master_id"]] = $leadmastersElement["mastervalue_id"];
+        }
+        // print_r($leadMasterKeyValueArray);
+        // die;
+        $isFirstCalling = true;
+        $state=DB::table('dynamic_values as dm')->select('dm.*')->where('dm.parent_id','7')->join('dynamic_mains as dym', 'dm.parent_id', '=', 'dym.id')->get();
+        return view('leads.edit', compact('masters','lead','state','leadmasters','leadMasterKeyValueArray','masterIdsToMakeDynamic','isFirstCalling'));
     }
 
     public function showtoedit($id) : JsonResponse {
@@ -155,52 +192,70 @@ class LeadController extends Controller
 
     public function updatelead(Request $request, $id) : JsonResponse 
     {
-        // die("---hellooo");
-        
-
         try {
-            // $leadId = $id;//$request->get('leadId');
+            $centerId = 0;
+            $stateId = 0;
+            $cityId = 0;
+            if($request->get('isFirstCalling')) {
+                $centerId = $request->get('centerId');
+                $stateId = $request->get('state');
+                $cityId = $request->get('city');
+            }
+            // echo $centerId;
             
             $lead = Lead::find($id);
-
-            // print_r($lead->receiveddate);
-            // echo "^^^^^^=====";
-            // print_r($request->get('receiveddate'));
-            // die($request->get("name"));
             $lead->name = $request->get('name');
             $lead->email = $request->get('email');
             $lead->mobileno = $request->get('mobileno');
             $lead->altmobileno = $request->get('altmobileno');
-            $lead->receiveddate = $request->get('receiveddate');//$receiveddate,
-            $lead->remark = $request->get('remark');  
-            // print_r($lead);  
-            // 'remark' => $remark]
+            $lead->receiveddate = $request->get('receiveddate');
+            $lead->remark = $request->get('remark');
+            $lead->center_id = $centerId;  
+            $lead->state = $stateId;  
+            $lead->city = $cityId;  
             $savedResponse = $lead->save();
             if($savedResponse) {
-               
                 $leadMasters = LeadMaster::where('lead_id', $id)->orderBy('master_id', 'ASC')->get();
-                // print_r($leadMasters);
+                // print_r($leadMasters->toArray());   
                 // echo "<pre>";print_r($request->get('leadMasterData')); 
                 $leadMasterDataPosted = $request->get('leadMasterData');
+                // print_r($leadMasterDataPosted); //die;
                 foreach ($leadMasters as $key => $value) {
                     // echo "Key ===".$key;
                     // echo "value ===".$value;
                     // echo "Hello Value for".$value->mastervalue_id.'==== '.$request->get('leadMaster_'.$value->master_id);
-                    $value->mastervalue_id = $leadMasterDataPosted['leadMaster_'.$value->master_id];
+                    if(isset($leadMasterDataPosted['leadMaster_'.$value->master_id])) {
+                        $value->mastervalue_id = $leadMasterDataPosted['leadMaster_'.$value->master_id];
+                    }
+                    else {
+                        $value->mastervalue_id = 0;
+                    }
                     // echo "---now New Value is--";print_r($value);//die;
                     $value->save();
                 }
 
+                $allowedExtension = ['png','jpg','jpeg','gif'];
+                $profilImg="";
+                if($request->file) {
+                    $fileExtension = $request->file('file')->extension();
+                    if(!in_array($fileExtension,$allowedExtension)) {
+                        return response()->json(['status'=>false, 'message'=>'This extension of file not accepted!']);
+                    }
+                    $name = time().'_'.$request->file->getClientOriginalName();
+                    $profilImg = "uploads/".$name;
+                    $filePath = $request->file->move(public_path('uploads'), $name);
+                }
                 // $leads = Lead::all();
                 // //Get all Masters
                 // $masters=DynamicMain::where('master', '1')->get();
                 //return redirect()->route('leads.index', compact('leads', 'masters'));
             }
             else {
-                return response()->json(['status'=>false, 'message'=>'Leads data (General information & remark) could not be updated.']);
+                return response()->json(['status'=>false, 'message'=>'Data (General information & remark) could not be updated.']);
             }
-            
-            return response()->json(['success' => 'Leads data updated successfully']);
+            return response()->json(['status'=>true, 'message'=>'Data updated successfully.']);
+
+            // return response()->json(['success' => 'Leads data updated successfully']);
         }
         catch (Request $e) {
             throw new \Exception($e->getMessage());
@@ -310,9 +365,20 @@ class LeadController extends Controller
             $leadKV['email'] = $l->email;
         }
         $leadMasters = array();
+        // echo "Count = ".count($leadmaster);
+        $count = 0;
         foreach ($leadmaster as $lm) {
+            $count++;
+            // echo "------COUNT -----".$count;
+            // print_r($lm->mastervalue->toArray());
             $leadMasters[$lm->master_id] = $lm->mastervalue_id;
-            $leadKV[$lm->master->name] = $lm->mastervalue?->name;
+            if(isset($lm->mastervalue) && isset($lm->master)) {
+                $leadKV[$lm->master->name] = $lm->mastervalue?->name;
+            }
+            else if(isset($lm->master) && !isset($lm->mastervalue)){
+                $leadKV[$lm->master->name] = "N/A";
+            }
+            
         }
 
         $leadId = null;
@@ -328,7 +394,9 @@ class LeadController extends Controller
             $leadKVForEdit['remark'] = $l->remark;
         }
         foreach ($leadmaster as $lm) {
-            $leadKVForEdit[$lm->master->name] = $lm->mastervalue?->name;
+            if(isset($lm->master)) {
+                $leadKVForEdit[$lm->master->name] = $lm->mastervalue?->name;
+            }
         }
 
         $employees = Employee::all();

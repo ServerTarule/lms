@@ -58,7 +58,10 @@ class Lead extends Model implements Auditable
         'altmobileno',
         'receiveddate',
         'remark',
-        'employee_id'
+        'employee_id',
+        'state',
+        'city',
+        'center_id'
     ];
 
     public function employee() : BelongsTo
