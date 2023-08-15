@@ -2,6 +2,7 @@
 @section('title', 'First Calling')
 @section('subtitle', 'Call Details')
 @section('content')
+    @if($lead)
     <div class="row">
         <div class="col-sm-12">                   
             <div class="panel panel-bd lobidrag">
@@ -35,7 +36,13 @@
                                         <td>{{$value}}</td>
                                     @endforeach
                                     <input type="hidden" class="ModuleName" value="FirstCallingDetails" />
-                                    <input type="hidden" id="leadId" name="leadId" value="{{$leadKVForEdit['id']}}" />
+                                    @php
+                                        $leadKVForEditId = 0;
+                                        if(isset($leadKVForEdit) &&  isset($leadKVForEdit['id'])) {
+                                            $leadKVForEditId = $leadKVForEdit['id'];
+                                        }
+                                    @endphp
+                                    <input type="hidden" id="leadId" name="leadId" value="{{$leadKVForEditId}}" />
                                     <td>
                                         <a href="#" id="lead-edit-button" class="btn btn-primary"><i class="fa fa-edit"></i></a>
                                     </td>
@@ -43,6 +50,30 @@
                             </tbody>
                         </table>
                     </div>
+                    @if($lead) 
+                    <div class="panel-body">
+                        <hr>
+                        <div class="row">
+                            <div class="form-group col-sm-6">
+                                <label>Lead Assigned To : </label> 
+                                @if($lead->employee) 
+                                    {{$lead->employee->name}}
+                                @else
+                                    Not Assigned Yet
+                                @endif
+                            </div>
+                            <div class="form-group col-sm-6">
+                                <label>Lead Assigned At : </label> 
+                                @if($lead->employee) 
+                                    {{$lead->employee->lead_assigned_at}}
+                                @else
+                                    Not Assigned Yet
+                                @endif
+                            </div>  
+                        </div>
+                        <hr>
+                    </div>
+                    @endif
                     
                     <div class="panel panel-bd lobidrag" id="edit-lead-div" style="display:none">
                         <div class="panel-heading">
@@ -50,6 +81,7 @@
                                 <h4>Edit Lead Information</h4>
                             </div>
                         </div>
+                        @if($lead)
                         <form  method="post" id="updateLeadForm" class="form-horizontal" enctype="multipart/form-data" >
                         @csrf
                             <div class="panel-body">
@@ -240,6 +272,12 @@
                                                 <textarea class="form-control Remark" cols="20" id="remark" name="remark" rows="2">{{$lead->remark}}</textarea>
                                             </div>
                                         </div>
+                                        @php
+                                            $leadIdForHiddenField = 0;
+                                            if(isset($lead) &&  isset($lead->id)) {
+                                                $leadIdForHiddenField = $lead->id;
+                                            }
+                                        @endphp
                                         <input class="leadId" type="hidden" id="leadId" value="{{$lead->id}}" name="leadId"  />
                                         <input type="hidden" name="leadMasters" id="leadMasters" value="{{ $masters }}">                                 
                                     </fieldset>
@@ -301,6 +339,7 @@
                                 </div>
                             </div>
                         </div>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -343,7 +382,6 @@
         </div>
     </div>
                 
-    
     <div class="modal fade" id="sendEmail" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" style="max-width:750px;width:100%">
             <div class="modal-content">
@@ -366,7 +404,11 @@
                                         </select>
                                     </div>
                                     <div class="col-md-12 form-group">
+                                        @if(isset($leadKV) && isset($leadKV['email']))
                                         <input type="email" placeholder="Enter Email Id" id="leadEmailId" name="leadEmailId" value="{{$leadKV['email']}}" class="form-control" />
+                                        @else
+                                        No Email Id Found For Sending Email
+                                        @endif
                                     </div>
                                     <div class="col-md-12 form-group">
                                         <input type="text" placeholder="Email Subject" id="leadEmailSubject" name="leadEmailSubject" class="form-control" />
@@ -413,7 +455,11 @@
                                         </select>
                                     </div>
                                     <div class="col-md-12 form-group">
+                                        @if(isset($leadKV) && isset($leadKV['mobileno']))
                                         <input placeholder="Enter Mobile Number Ex: +91-0000000000" name="leadWhatsAppMobileNo" id="leadWhatsAppMobileNo" value="{{$leadKV['mobileno']}}" class="form-control" />
+                                        @else
+                                            No mobile no Found For Sending WhatsApp Message
+                                        @endif
                                     </div>
                                     <div class="col-md-12 form-group">
                                         <textarea placeholder="Description" class="form-control" name="leadWhatsAppMessage" id="leadWhatsAppMessage"></textarea>
@@ -431,17 +477,24 @@
             </div>
         </div>
     </div>
+@else
 
+No Information Found
+
+@endif
 @endsection
 @push('custom-scripts')
 <script type="text/javascript">
     const masterDependentObj = {7:8,3:4};
     const isFirstCalling = {{Js::from($isFirstCalling)}};
+    @if($lead)
     const state = {{Js::from($lead->state)}};
+
     const city = {{Js::from($lead->city)}};
     const selectedCenterId = {{Js::from($lead->center_id)}};
     const masterDependentObjName = {7:"Cities",3:'Lead Stages'};
     const leadMasterKeyValueArray =  {{ Js::from($leadMasterKeyValueArray) }};
+    @endif
 </script>
 <script type="text/javascript" src="{{ URL::asset('/customjs/lead-edit.js') }}"></script>
 <script>
