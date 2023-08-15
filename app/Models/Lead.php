@@ -68,6 +68,8 @@ class Lead extends Model implements Auditable
     {
         return $this->belongsTo(Employee::class);
     }
+
+    
     public function leadmasters() : HasMany {
         return $this->hasMany(LeadMaster::class,'lead_id');
     }
@@ -79,6 +81,10 @@ class Lead extends Model implements Auditable
 
     public function leadcalls() : HasMany {
         return $this->hasMany(LeadCall::class,'lead_id');
+    }
+
+    public function leadFiles() : HasMany {
+        return $this->hasMany(LeadFiles::class,'lead_id');
     }
 
     public function routeNotificationForWhatsApp()

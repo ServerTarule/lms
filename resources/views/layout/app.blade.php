@@ -20,11 +20,14 @@
     <link href="{{ asset('assets/plugins/monthly/monthly.css') }}" rel="stylesheet" type="text/css" />
     <link href="{{ asset('assets/plugins/fullcalendar/fullcalendar.min.css') }}" rel="stylesheet" type="text/css" />
     <link href="{{ asset('assets/dist/css/stylecrm.css') }}" rel="stylesheet" type="text/css" />
+    
 {{--    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.min.css" rel="stylesheet" />--}}
     <link href="http://lasik.tarule.in/css/dataTables.bootstrap.min.css" rel="stylesheet" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:ital,wght@0,200;0,300;0,400;0,600;0,700;0,900;1,200;1,300;1,400;1,600;1,700;1,900&display=swap" rel="stylesheet" />
+
+    
     @livewireStyles
 
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.5/index.global.min.js'></script>
@@ -284,6 +287,12 @@
 <script src="//cdn.ckeditor.com/4.14.1/standard/ckeditor.js"></script>
 <script type="text/javascript">
     $(document).ready(function() {
+        $('.defaultDataTable').dataTable( {
+            paginate: true,
+            pageLength: 10,
+            "aLengthMenu": [10, 25, 50, 100]
+            // scrollY: 300
+        });
         toastr.options.timeOut = 1500; // 1.5s
         toastr.options.debug=false;
         toastr.options.positionClass="toast-top-right";
@@ -738,53 +747,7 @@
         });
     }
 
-    function editLead(id) {
-        let CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
-        $.ajaxSetup({
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            }
-        });
-        $.ajax({
-            /* the route pointing to the post function */
-            url: '/leads/'+id,
-            type: 'GET',
-            /* send the csrf-token and the input to the controller */
-            // data: {_token: CSRF_TOKEN, 'ruleData':JSON.stringify(jsonObject)},
-            data: {
-                _token: CSRF_TOKEN,
-                'id': id
-            },
-            // data: $(this).serialize(),
-            dataType: 'JSON',
-            /* remind that 'data' is the response of the AjaxController */
-            success: function (data) {
-                let lead = data['lead'];
-                let leadmasters = data['leadmasters'];
-                $('.leadId').val(lead['id']);
-                $('.leadName').val(lead['name']);
-                $('.leadEmail').val(lead['email']);
-                $('.leadMobile').val(lead['mobileno']);
-                $('.leadAlternateMobile').val(lead['altmobileno']);
-                $('.leadReceivedDate').val(lead['receiveddate']);
-
-                $.each(leadmasters, function(key, value) {
-                    if(value != null) {
-                        let mastervalue = value['mastervalue_id'];
-                        if (mastervalue == null) {
-                            mastervalue = 0;
-                        }
-                        $(".leadMaster_"+value['master_id']+"").val(mastervalue);
-                    }
-                });
-
-                $('#editSingleLead').modal('show');
-            },
-            failure: function (data) {
-                console.log(data);
-            }
-        });
-    }
+    
 
     function handleChange(cb) {
         console.log("Changed, new value = " + cb.checked);
