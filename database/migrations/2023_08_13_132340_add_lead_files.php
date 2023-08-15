@@ -14,8 +14,25 @@ return new class extends Migration
     public function up()
     {
     
-        DB::statement('CREATE TABLE `lms`.`lead_files` (`id` BIGINT NOT NULL AUTO_INCREMENT , `lead_id` BIGINT NOT NULL , `file_name` VARCHAR(256) NOT NULL , `file_path` TEXT NOT NULL , `file_size` INT(11) NOT NULL , `file_type` INT(11) NOT NULL , `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP , `updated_at` TIMESTAMP NOT NULL , `deleted` BOOLEAN NOT NULL DEFAULT FALSE , PRIMARY KEY (`id`)) ENGINE = InnoDB');
-        DB::statement('ALTER TABLE `lead_files` ADD FOREIGN KEY (`lead_id`) REFERENCES `leads`(`id`) ON DELETE RESTRICT ON UPDATE RESTRICT');
+        DB::statement('CREATE TABLE `leadfiles` (
+            `id` bigint(20) NOT NULL,
+            `lead_id` int(20) NOT NULL,
+            `file_name` varchar(256) NOT NULL,
+            `file_path` text NOT NULL,
+            `file_size` int(11) NOT NULL,
+            `file_type` varchar(256) NOT NULL,
+            `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+            `updated_at` timestamp NULL DEFAULT NULL,
+            `deleted` tinyint(1) NOT NULL DEFAULT 0
+          ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci');
+        DB::statement('ALTER TABLE `leadfiles`
+        ADD PRIMARY KEY (`id`)');
+
+        DB::statement('ALTER TABLE `leadfiles`
+        ADD PRIMARY KEY (`id`)');
+        DB::statement('ALTER TABLE `leadfiles`
+        MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+        COMMIT');
     }
 
     /**
@@ -25,6 +42,7 @@ return new class extends Migration
      */
     public function down()
     {
+        DB::statement("DROP TABLE `lms`.`leadfiles`");
         //
     }
 };
