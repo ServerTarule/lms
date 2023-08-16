@@ -133,7 +133,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/dynamic/edit/{id}', [DynamicMasterController::class, 'update'])->name('/dynamic/edit/{id}')->middleware('can:update master');
 
     // Menu
-    Route::get('/menus', [MenusController::class, 'index'])->name('menus')->middleware('can:read master');
+    Route::get('/menus', [MenusController::class, 'index'])->name('menus');
     Route::post('/menus', [MenusController::class, 'store'])->name('menus')->middleware('can:create master');
     Route::get('/menus/{id}', [MenusController::class, 'edit'])->name('menus/{id}')->middleware('can:update master');
     Route::post('/menus/{id}', [MenusController::class, 'update'])->name('menus/{id}')->middleware('can:update master');
@@ -166,11 +166,11 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/locations', [LocationController::class, 'index'])->name('cities')->middleware('can:read lead');
 
     //Doctors
-    Route::get('/doctors', [DoctorController::class, 'index'])->name('doctors');//->middleware('can:read master');
+    Route::get('/doctors', [DoctorController::class, 'index'])->name('doctors')->middleware('can:read master');
     Route::post('/doctors/destroy', [DoctorController::class, 'destroy'])->name('doctors.destroy')->middleware('can:read master');
-    Route::post('/doctors/addDoctors', [DoctorController::class, 'addDoctors'])->name('doctors.addDoctors');//->middleware('can:read master');
+    Route::post('/doctors/addDoctors', [DoctorController::class, 'addDoctors'])->name('doctors.addDoctors')->middleware('can:read master');
     Route::post('/doctors/edit', [DoctorController::class, 'edit'])->name('edit')->middleware('can:read master');
-    Route::post('/doctors/update/{id}', [DoctorController::class, 'updateDoctor'])->name('updateDoctor');//->middleware('can:read master');
+    Route::post('/doctors/update/{id}', [DoctorController::class, 'updateDoctor'])->name('updateDoctor')->middleware('can:read master');
 
     //Centers
     Route::get('/centers', [CenterController::class, 'index'])->name('centers')->middleware('can:read master');
@@ -179,6 +179,8 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/centers/edit', [CenterController::class, 'edit'])->name('centers.edit')->middleware('can:read master');
     Route::post('/centers/checkdoctors/{isEdit}', [CenterController::class, 'checkdoctors'])->name('centers.checkdoctors')->middleware('can:read master');
     Route::post('/centers/updateCenter/{id}', [CenterController::class, 'updateCenter'])->name('updateCenter')->middleware('can:read master');
+
+    Route::post('/centers/getCenterByLocation', [CenterController::class, 'getCenterWithRespetToStateAndCity'])->name('getCenterWithRespetToStateAndCity')->middleware('can:read master');
 
     //Templates
     Route::get('/templates', [TemplateController::class, 'index'])->name('templates.index')->middleware('can:read master');
@@ -194,7 +196,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/holidays/store', [HolidayController::class, 'store'])->name('holidays.store')->middleware('can:read master');
     
     
-    // Route::post('/addDoctors', [DoctorController::class, 'addDoctors'])->name('addDoctors');//->middleware('can:read master');
+    // Route::post('/addDoctors', [DoctorController::class, 'addDoctors'])->name('addDoctors')->middleware('can:read master');
     Route::post('/holidays/edit', [HolidayController::class, 'edit'])->name('edit')->middleware('can:read master');
     Route::post('/holidays/update/{id}', [HolidayController::class, 'updateHoliday'])->name('holidays.updateHoliday');
 
@@ -227,6 +229,7 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/leads/calls', [LeadController::class, 'call'])->name('leads.call')->middleware('can:read master');
     Route::get('/leads/calls/{id}', [LeadController::class, 'showcall'])->name('leads.showcall')->middleware('can:read master');
+    Route::get('/leads/calls/edit/{id}', [LeadController::class, 'showcalledit'])->name('leads.showcalledit')->middleware('can:read master');
     Route::post('/leads/calls/{id}', [LeadController::class, 'update'])->name('leads.update')->middleware('can:read master');
     Route::post('/leads/calls/{id}/email', [LeadController::class, 'email'])->name('leads.email')->middleware('can:read master');
     Route::post('/leads/calls/{id}/whatsapp', [LeadController::class, 'whatsapp'])->name('leads.whatsapp')->middleware('can:read master');

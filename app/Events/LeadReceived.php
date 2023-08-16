@@ -11,6 +11,7 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 
 class LeadReceived implements ShouldQueue
 {
@@ -25,6 +26,7 @@ class LeadReceived implements ShouldQueue
      */
     public function __construct($lead)
     {
+        Log::info("inside Lead recieved file");
         $this->lead = $lead;
     }
 
