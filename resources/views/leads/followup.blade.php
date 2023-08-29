@@ -3,7 +3,7 @@
 @section('subtitle', 'List of Leads Assigned')
 @section('content')
     <div class="col-sm-12">
-         <div class="panel-body">
+         {{-- <div class="panel-body">
                 <nav>
                     <ul class="nav nav-tabs" id="nav-tab" role="tablist">
                         <li class="active">
@@ -34,7 +34,7 @@
                     <p>Sint sit mollit irure quis est nostrud cillum consequat Lorem esse do quis dolor esse fugiat sunt do. Eu ex commodo veniam Lorem aliquip laborum occaecat qui Lorem esse mollit dolore anim cupidatat. Deserunt officia id Lorem nostrud aute id commodo elit eiusmod enim irure amet eiusmod qui reprehenderit nostrud tempor. Fugiat ipsum excepteur in aliqua non et quis aliquip ad irure in labore cillum elit enim. Consequat aliquip incididunt ipsum et minim laborum laborum laborum et cillum labore. Deserunt adipisicing cillum id nulla minim nostrud labore eiusmod et amet. Laboris consequat consequat commodo non ut non aliquip reprehenderit nulla anim occaecat. Sunt sit ullamco reprehenderit irure ea ullamco Lorem aute nostrud magna.</p>
                     </div>
                 </div>
-        </div>
+        </div> --}}
         <div class="panel-body">
             <ul class="nav nav-tabs">
 
