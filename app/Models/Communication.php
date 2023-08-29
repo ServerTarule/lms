@@ -19,6 +19,7 @@ class Communication extends Model
         'subject',
         'content',
         'schedule',
+        'schedule_unit',
         'words',
         'template_id',
         'rule_id'

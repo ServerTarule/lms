@@ -84,16 +84,16 @@
             <div class="col-md-12" id="outboundDiv">
                 <div class="col-md-2 form-group">
                     <label class="control-label">Frequency</label>
-                    <input type="number" id="ruleFrequency" name="ruleFrequency" placeholder="Enter Frequency" class="form-control">
+                    <input type="number" id="ruleFrequency" name="ruleFrequency" placeholder="Enter Frequency" value="{{$rule->ruleFrequency}}" class="form-control">
                 </div>
                 <div class="col-md-2 form-group">
                     <label class="control-label">Schedule</label>
                     <select class="form-control" name="ruleSchedule" id="ruleSchedule" >
                         <option value="NA">-- Select Schedule --</option>
-                        <option value="Days">Days</option>
-                        <option value="Weeks">Weeks</option>
-                        <option value="Months">Months</option>
-                        <option value="Years">Years</option>
+                        <option value="Days" @if($rule->ruleSchedule == 'Days') selected @endif>Days</option>
+                        <option value="Weeks"  @if($rule->ruleSchedule == 'Weeks') selected @endif>Weeks</option>
+                        <option value="Months"  @if($rule->ruleSchedule == 'Months') selected @endif>Weeks>Months</option>
+                        <option value="Years"  @if($rule->ruleSchedule == 'Years') selected @endif>Weeks>Years</option>
                     </select>
                 </div>
             </div>

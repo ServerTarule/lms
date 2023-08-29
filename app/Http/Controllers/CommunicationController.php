@@ -20,85 +20,99 @@ use Illuminate\Support\Facades\Notification;
 use Illuminate\View\View;
 use Lorisleiva\CronTranslator\CronTranslator;
 
+use App\Channels\WaclubWhatsApp;
+
 class CommunicationController extends Controller
 {
+    public $scheduleUnitArray = [
+        'DAILY'=>'Daily',
+        'WEEKLY'=>'Weekly',
+        'FORTNIGHTLY'=>'Fortnightly',
+        'MONTHLY'=>'Monthly',
+        'QUARTERLY'=>'Quarterly',
+        'HALFYEARLY'=>'Half Yearly',
+        'YEARLY'=>'Yearly',
+    ];
+    public $daysArray = [
+        '1'=>'Monday',
+        '2'=>'Tuesday',
+        '3'=>'Wednesday',
+        '4'=>'Thursday',
+        '5'=>'Friday',
+        '6'=>'Saturday',
+        '0'=>'Sunday',
+    ];
     public function index()
     {
         $rules = Rule::all();
         $templates = Template::all();
         $communications = Communication::all();
-        return view('communications.index', compact('rules', 'templates', 'communications'));
+        $scheduleUnitArray = $this->scheduleUnitArray;
+        $daysArray = $this->daysArray;
+        return view('communications.index', compact('rules', 'templates', 'communications','scheduleUnitArray','daysArray'));
     }
 
     public function show($id) : JsonResponse {
         $communication = Communication::where('id', $id)->get()->first();
+
+        $schedule = $communication->schedule;
+
+        if(strtolower($schedule) !== 'now') {
+            $scheduleArr = explode(" ",$schedule);
+            // print_r($scheduleArr);
+            $minute= $scheduleArr[0];
+            $hour= $scheduleArr[1];
+
+
+        }
+
+        // die;
         return response()->json([
             'schedule' => $communication,
             'success' => 'Received rule data'
         ]);
     }
 
-    public function store(Request $request) : RedirectResponse {
-
+    public function store(Request $request) : JsonResponse {
         Log::info("*** Communication Request ***");
         Log::info($request);
         $communicationType = $request->schedule;
-
+        $comType = $request->communicationTemplateBody;
+        // echo "-----".$communicationTemplateBody = ($comType==='Email')?$request->communicationTemplateBody:'';
+        // die;
         if ($communicationType == 'scheduled') {
+            if(!$request->input('scheduleUnit')) {
+                return response()->json(['status'=>false, 'message'=>'Please selet schedule unit, if you have opted for scheduled job.']);
 
+            }
             $communicationTemplateType = $request->communicationTemplateType;
             $communicationTemplateId = $request->communicationTemplateId;
             $communicationTemplateMessage = $request->communicationTemplateMessage;
-            $communicationTemplateSubject = $request->communicationTemplateSubject;
+            $communicationTemplateSubject = $request->communicationTemplateSubject??"Email From CFL";
             $communicationTemplateBody = $request->communicationTemplateBody;
-
             $scheduleUnit = $request->scheduleUnit;
             $dayOfWeek = $request->dayOfWeek;
             $dayOfMonth = $request->dayOfMonth;
-
             $ruleId = $request->ruleId;
-
             $minuteHour = $request->minuteHour;
-            $schedule = null;
-
-            if ($scheduleUnit == 'DAILY') {
-                $dayOfWeek = "*";
-                $dayOfMonth = "*";
-            }
-
-            if ($scheduleUnit == 'WEEKLY') {
-                $dayOfMonth = "*";
-            }
-
-            if(!is_null($minuteHour)) {
-                $hour = substr($minuteHour, 0, 2);
-                $min = substr($minuteHour, 3, 2);
-                $schedule = $min.' '.$hour.' '.$dayOfMonth.' '.'*'.' '.$dayOfWeek;
-            }
-
+            $schedule = $this->getCronSchedule($scheduleUnit,$dayOfWeek,$dayOfMonth, $minuteHour);
             $words = CronTranslator::translate($schedule);
-
-//        Log::info($minuteHour);
-//        Log::info($schedule);
-
-            //0 0 * * *
-            //MIN HR DAY-OF-MONTH MONTH DAY-OF-WEEK
-
             $communicationSchedule = Communication::create([
                 'type'=>$communicationTemplateType,
                 'message'=>$communicationTemplateMessage,
                 'subject'=>$communicationTemplateSubject,
                 'content'=>$communicationTemplateBody,
                 'schedule'=>$schedule,
+                'schedule_unit' => $request->input('scheduleUnit')?$request->input('scheduleUnit'):'',
                 'words'=>$words,
                 'template_id'=>$communicationTemplateId,
                 'rule_id'=>$ruleId
             ]);
-        } else if ($communicationType == 'now') {
 
+            // print_r($communicationSchedule);die;
+        } else if ($communicationType == 'now') {
             $ruleId = $request->ruleId;
             $ruleConditions = RuleCondition::where('rule_id', $ruleId)->orderBy('master_id', 'asc')->get();
-
             $leadIdsMatchingRuleCondition = array();
             foreach ($ruleConditions as $ruleCondition) {
                 $matchCase = ['master_id' => $ruleCondition->master_id, 'mastervalue_id' => $ruleCondition->mastervalue_id];
@@ -107,9 +121,7 @@ class CommunicationController extends Controller
                     $leadIdsMatchingRuleCondition[] = $leadMasterMatchingRuleConditionMaster->lead_id;
                 }
             }
-
             $uniqueLeadIdsMatchingRuleCondition = collect($leadIdsMatchingRuleCondition)->unique();
-
             $leadMatchingRule = array();
             foreach ($uniqueLeadIdsMatchingRuleCondition as $leadId) {
                 $leadMasters = LeadMaster::where('lead_id', $leadId)->where('mastervalue_id', '<>', null)->orderBy('master_id', 'asc')->get();
@@ -133,7 +145,6 @@ class CommunicationController extends Controller
                         }
                     }
                 }
-
                 $leadEve = implode(" ", $leadEvaluation);
                 $leadEve2 = explode(" ", $leadEve);
                 $lastWordInLeadEvaluation = $leadEve2[count($leadEve2) - 1];
@@ -144,22 +155,19 @@ class CommunicationController extends Controller
                 if ($leadValue) {
                     $leadMatchingRule[] = $leadId;
                 }
-
             }
-
             $communicationSchedule = Communication::create([
                 'type'=>$request->communicationTemplateType,
-                'message'=>$request->communicationTemplateMessage,
-                'subject'=>$request->communicationTemplateSubject,
-                'content'=>$request->communicationTemplateBody,
+                'message'=>($comType==='WhatsApp')?$request->communicationTemplateMessage:'',
+                'subject'=>($comType==='Email')?$request->communicationTemplateSubject:'',
+                'content'=>($comType==='Email')?$request->communicationTemplateBody:'',
                 'schedule'=>'now',
+                'schedule_unit' => '',
                 'words'=>'now',
                 'template_id'=>$request->communicationTemplateId,
                 'rule_id'=>$request->ruleId
             ]);
-
             if (!empty($leadMatchingRule)) {
-
                 foreach ($leadMatchingRule as $key => $value) {
                     $employee=CommunicationLead::create([
                         'communication_id'=>$communicationSchedule->id,
@@ -167,94 +175,154 @@ class CommunicationController extends Controller
                         'lead_id'=>$value
                     ]);
                 }
-
                 if($request->communicationTemplateType == 'SMS') {
                     //SEND SMS HERE
                 } else if ($request->communicationTemplateType == 'Email') {
-
                     $templateId = $request->communicationTemplateId;
                     $template = Template::where('id', $templateId)->first();
-
                     foreach ($leadMatchingRule as $key => $value) {
                         $lead = Lead::where('id', $value)->first();
                         //TODO Validate email
-                        Log::info($lead->email);
-                        if($lead->email) {
-//                        Mail::to($lead->email)->send(new Campaign($lead->email));
-                            Mail::to($lead->email)->send(new Campaign($template));
+                        if($lead) {
+                            Log::info($lead->email);
+                            if($lead->email) {
+                                $template->message = $request->communicationTemplateBody;
+                                $template->subject = $request->communicationTemplateSubject;
+                                $mailableObj = new Campaign($template);
+                                try{
+                                    Mail::to($lead->email)->send($mailableObj);
+                                }
+                                catch (Request $e) {
+                                    throw new \Exception($e->getMessage());
+                                }
+                            }
                         }
+                        else {
+                            //
+                            // return response()->json(['status'=>false, 'message'=>`Communication schedule  has been saved successfully, But email could not be sent `]);
+                        }
+                       
                     }
 
                 } else if ($request->communicationTemplateType == 'WhatsApp') {
                     foreach ($leadMatchingRule as $key => $value) {
                         $lead = Lead::where('id', $value)->first();
                         //TODO Validate mobile
-                        if($lead->mobileno) {
-                            Notification::send($lead, new LeadConnect($lead));
+                        if($lead && $lead->mobileno) {
+                            try{
+                                $response = WaclubWhatsApp::sendMessage("+918010078232",$request->communicationTemplateMessage);
+                            }
+                            catch (Request $e) {
+                                throw new \Exception($e->getMessage());
+                            }
                         }
                     }
                 }
 
             }
-
-//        return Command::SUCCESS;
         }
-
         $communications = Communication::all();
-        return redirect()->route('communications.index', compact('communications'));
-
+        return response()->json(['status'=>true, 'message'=>'Communication schedule  has been saved successfully.']);
     }
 
-    public function update(Request $request) : RedirectResponse {
 
-        $id = $request->input('communicationId');
-        $communication = Communication::where('id', $id)->get()->first();
-
-        $communication->rule_id = $request->input('ruleId');
-        $communication->type = $request->input('communicationTemplateType');
-        $communication->template_id = $request->input('communicationTemplateId');
-        $communication->subject = $request->input('communicationTemplateSubject');
-        $communication->message = $request->input('communicationTemplateMessage');
-        $communication->content = $request->input('communicationTemplateBody');
-        $communication->schedule = $request->input('schedule');
-
-        $communicationType = $request->input('schedule');
-        $words = null;
-        if ($communicationType == 'scheduled') {
-
-            $scheduleUnit = $request->input('scheduleUnit');
-            $dayOfWeek = $request->input('dayOfWeek');
-            $dayOfMonth = $request->input('dayOfMonth');
-            $minuteHour = $request->input('minuteHour');
-
-            $schedule = null;
-
-            if ($scheduleUnit == 'DAILY') {
-                $dayOfWeek = "*";
-                $dayOfMonth = "*";
-            }
-
-            if ($scheduleUnit == 'WEEKLY') {
-                $dayOfMonth = "*";
-            }
-
-            if (!is_null($minuteHour)) {
-                $hour = substr($minuteHour, 0, 2);
-                $min = substr($minuteHour, 3, 2);
-                $schedule = $min . ' ' . $hour . ' ' . $dayOfMonth . ' ' . '*' . ' ' . $dayOfWeek;
-            }
-
-            $words = CronTranslator::translate($schedule);
-        } else if ($communicationType == 'now') {
-            $words = 'now';
+    public function getCronSchedule($scheduleUnit,$dayOfWeek,$dayOfMonth, $minuteHour) {
+        $month="*";
+        $schedule = null;
+        if ($scheduleUnit == 'DAILY') {
+            $dayOfWeek = "*";
+            $dayOfMonth = "*";
         }
 
-        $communication->words = $words;
+        if ($scheduleUnit == 'WEEKLY') {
+            $dayOfMonth = "*";
+        }
 
-        $communication->save();
+        if ($scheduleUnit == 'FORTNIGHTLY') {
+            $dayOfWeek = "*";
+            $dayOfMonth = "1,15";
+            // 0 5 1,15 * * "commande"
+        }
 
-        $communications = Communication::all();
-        return redirect()->route('communications.index', compact('communications'));
+        if ($scheduleUnit == 'MONTHLY') {
+            $dayOfWeek = "*";
+        }
+
+        if ($scheduleUnit == 'QUARTERLY') {
+            $dayOfWeek = "*";
+            $dayOfMonth = "1";
+            $month="*/3";
+        }
+
+        if ($scheduleUnit == 'HALFYEARLY') {
+            $dayOfWeek = "*";
+            $dayOfMonth = "1";
+            $month="*/6";
+        }
+
+        if ($scheduleUnit == 'YEARLY') {
+            $dayOfWeek = "*";
+            $dayOfMonth = "1";
+            $month="1";
+        }
+
+
+        if (!is_null($minuteHour)) {
+            $hour = substr($minuteHour, 0, 2);
+            $min = substr($minuteHour, 3, 2);
+            $schedule = $min . ' ' . $hour . ' ' . $dayOfMonth . ' ' . $month . ' ' . $dayOfWeek;
+        }
+        else {
+            //for 12 oclock morning
+            $schedule = 0 . ' ' . 0 . ' ' . $dayOfMonth . ' ' . '*' . ' ' . $dayOfWeek;
+        }
+        return $schedule;
+    }
+
+    public function update(Request $request) : JsonResponse {
+        // "WhatsApp"
+// die($request->input('communicationTemplateType'));
+        try{
+            $id = $request->input('communicationId');
+            $communication = Communication::where('id', $id)->get()->first();
+            $communication->rule_id = $request->input('ruleId');
+            $communication->type = $request->input('communicationTemplateType');
+            $communication->template_id = $request->input('communicationTemplateId');
+            $communication->subject = ($request->input('communicationTemplateType')==='Email')?$request->input('communicationTemplateSubject'):'';
+            $communication->message = ($request->input('communicationTemplateType')==='WhatsApp')?$request->input('communicationTemplateMessage'):'';
+            $communication->content = ($request->input('communicationTemplateType')==='Email')?$request->input('communicationTemplateBody'):'';
+            $communication->schedule_unit = $request->input('scheduleUnit')?$request->input('scheduleUnit'):'';
+            $communicationType = $request->input('schedule');
+            $words = null;
+            if ($communicationType == 'scheduled') {
+                $scheduleUnit = $request->input('scheduleUnit');
+                $dayOfWeek = $request->input('dayOfWeek');
+                $dayOfMonth = $request->input('dayOfMonth');
+                $minuteHour = $request->input('minuteHour');
+                $schedule = $this->getCronSchedule($scheduleUnit,$dayOfWeek,$dayOfMonth, $minuteHour);
+                $communication->schedule = $schedule;
+                $words = CronTranslator::translate($schedule);
+
+                // print("Traslated time");
+                // print_r($words);
+
+                // die("----hello----");
+            } else if ($communicationType == 'now') {
+                // $communication->frequency_expression = "";
+                $communication->schedule = 'now';
+                $words = 'now';
+            }
+
+            $communication->words = $words;
+
+            $communication->save();
+
+            $communications = Communication::all();
+            return response()->json(['status'=>true, 'message'=>'Communication schedule  has been saved successfully.']);
+        }
+        catch (Request $e) {
+            throw new \Exception($e->getMessage());
+        }
 
     }
 

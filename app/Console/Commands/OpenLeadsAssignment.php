@@ -30,9 +30,10 @@ class OpenLeadsAssignment extends Command
      */
     public function handle()
     {
+        Log::info("CRON JOB - I am being called every minute");
         Log::info("CRON JOB - Open Leads Assignment");
         $openLeads = Lead::whereNull('employee_id')->get();
-        // Log::info($openLeads);
+        Log::info($openLeads);
         foreach ($openLeads as $openLead) {
             $employee = Employee::orderBy('lead_assigned_at', 'ASC')->first();
             $employeeId = $employee->id;

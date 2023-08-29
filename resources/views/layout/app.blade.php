@@ -293,7 +293,7 @@
             "aLengthMenu": [10, 25, 50, 100]
             // scrollY: 300
         });
-        toastr.options.timeOut = 1500; // 1.5s
+        toastr.options.timeOut = 7000; // 1.5s
         toastr.options.debug=false;
         toastr.options.positionClass="toast-top-right";
         toastr.options.onclick=null;
@@ -401,6 +401,8 @@
             });
             $("#ruleMaster_"+key+"").val(multipleValues);
         });
+
+        console.log("---rule['rulefrequency']---",typeof rule);
         $('input:radio[name="ruleType"]').filter('[value="'+rule['ruletype']+'"]').attr('checked', true);
         $("#ruleFrequency").val(rule['rulefrequency']);
         $('#ruleSchedule option[value="'+rule['ruleschedule']+'"]').attr("selected", "selected");
@@ -684,68 +686,6 @@
         }
     }
 
-    function editCommunication(id) {
-        let CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
-        $.ajaxSetup({
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            }
-        });
-        $.ajax({
-            /* the route pointing to the post function */
-            url: '/communications/'+id,
-            type: 'GET',
-            /* send the csrf-token and the input to the controller */
-            // data: {_token: CSRF_TOKEN, 'ruleData':JSON.stringify(jsonObject)},
-            data: {
-                _token: CSRF_TOKEN,
-                'id': id
-            },
-            // data: $(this).serialize(),
-            dataType: 'JSON',
-            /* remind that 'data' is the response of the AjaxController */
-            success: function (data) {
-                let communicationSchedule = data['schedule'];
-                let type = communicationSchedule['type'];
-                $('#communicationId').val(communicationSchedule['id']);
-                $('.ruleId').val(communicationSchedule['rule_id']);
-                $('.communicationTemplateType').val(type);
-
-                if(type === 'WhatsApp') {
-                    $(".communicationTemplateMessageDiv").show();
-                    $(".communicationTemplateSubjectDiv").hide();
-                    $(".communicationTemplateBodyDiv").hide();
-                }
-
-                if(type === 'Email') {
-                    $(".communicationTemplateMessageDiv").hide();
-                    $(".communicationTemplateSubjectDiv").show();
-                    $(".communicationTemplateBodyDiv").show();
-                }
-
-                $('.communicationTemplateId').val(communicationSchedule['template_id']);
-                $('.communicationTemplateSubject').val(communicationSchedule['subject']);
-                $('.communicationTemplateMessage').val(communicationSchedule['message']);
-                $('.communicationTemplateBody').val(communicationSchedule['content']);
-
-                let schedule = communicationSchedule['schedule'];
-
-                if (schedule === 'now') {
-                    $('input:radio[name="schedule"]').filter('[value="'+schedule+'"]').attr('checked', true);
-                    $("#editCommunicationNowDiv *").prop('disabled',true);
-                    $("#editCommunicationScheduleDiv *").prop('disabled',true);
-                } else {
-                    $("#editCommunicationScheduleDiv *").prop('disabled',false);
-                    $("#editCommunicationNowDiv *").prop('disabled',false);
-                }
-
-                $('#editSchedule').modal('show');
-            },
-            failure: function (data) {
-                console.log(data);
-            }
-        });
-    }
 
     
 
@@ -1075,35 +1015,59 @@
             });
         });
 
-        $('select[name="templateType"]').change(function() {
-            if($(this).val() === 'WhatsApp') {
-                $("#templateMessageDiv").show();
-                $("#templateSubjectDiv").hide();
-                $("#templateEmailDiv").hide();
-            }
-
-            if($(this).val() === 'Email') {
-                $("#templateMessageDiv").hide();
-                $("#templateSubjectDiv").show();
-                $("#templateEmailDiv").show();
-            }
-        });
+        
 
         $('select[name="communicationTemplateType"]').change(function() {
+            setTemplateNamesDisplay(this)
+
+        });
+
+        function setTemplateNamesDisplay(self) {
             console.log("Here");
-            if($(this).val() === 'WhatsApp') {
-                $("#communicationTemplateMessageDiv").show();
-                $("#communicationTemplateSubjectDiv").hide();
-                $("#communicationTemplateBodyDiv").hide();
+            const typeData = $(self).attr('data');
+            console.log("==typeData=="+typeData);
+            let extension='';
+            if(typeData === 'Edit') {
+                extension = typeData;
             }
-
-            if($(this).val() === 'Email') {
-                $("#communicationTemplateMessageDiv").hide();
-                $("#communicationTemplateSubjectDiv").show();
-                $("#communicationTemplateBodyDiv").show();
+            if($(self).val() === 'WhatsApp') {
+                $(`#communicationTemplateMessageDiv${extension}`).show(1000);
+                $(`#communicationTemplateSubjectDiv${extension}`).hide(1000);
+                $(`#communicationTemplateBodyDiv${extension}`).hide(1000);
+                
             }
+            else if($(self).val() === 'Email') {
+                console.log(`#communicationTemplateMessageDiv${extension}`)
+                $(`#communicationTemplateMessageDiv${extension}`).hide(1000);
+                $(`#communicationTemplateSubjectDiv${extension}`).show(1000);
+                $(`#communicationTemplateBodyDiv${extension}`).show(1000);
+                
+            }
+            else {
+                $(`#communicationTemplateMessageDiv${extension}`).hide(1000);
+                $(`#communicationTemplateSubjectDiv${extension}`).hide(1000);
+                $(`#communicationTemplateBodyDiv${extension}`).hide(1000);
+                $("#communicationTemplateMessage").val("");
+                if(typeData === 'Edit') {
+                    CKEDITOR.replace("communicationTemplateBodyEdit", {
+                        height: 100
+                    });
+                    CKEDITOR.instances.communicationTemplateBodyEdit.setData("");
+                }
+                else {
+                    CKEDITOR.replace("communicationTemplateBody", {
+                        height: 100
+                    });
+                    CKEDITOR.instances.communicationTemplateBody.setData("");
+                }
+            }
+            let templateType = $(self).val();
+            setTemplateNames(templateType, false)
+        }
+        function setTemplateNames(templateType, isEdit, templateNameValue = '', subject = '', message='' ){
 
-            let templateType = $(this).val();
+            //here templateNameValue = templateNameValue saved in db wrt communication
+            // alert('templateType'+templateType+'==isEdit----'+isEdit+'===templateNameValue==='+templateNameValue);
             $(".removableTemplate").remove();
             if(templateType !== 'NA') {
                 $.ajax({
@@ -1112,9 +1076,25 @@
                     dataType: 'JSON',
                     success: function (data) {
                         let templates = data.template;
+                        console.log("---fetched templates===",templates);
                         templates.forEach(function(template) {
-                            $("#communicationTemplateId, #editCommunicationTemplateId").append(`<option class="removableTemplate" value="`+template.id+`">`+template.name+`</option>`);
+                            $("#communicationTemplateId, #editCommunicationTemplateId #communicationTemplateIdEdit").append(`<option class="removableTemplate" value="`+template.id+`">`+template.name+`</option>`);
+                            // if(isEdit) {
+                                if(template.id == templateNameValue) {
+                                    $("#communicationTemplateIdEdit").append(`<option class="removableTemplate" value="`+template.id+`" selected>`+template.name+`</option>`);
+
+                                }
+                                else {
+                                    $("#communicationTemplateIdEdit").append(`<option class="removableTemplate" value="`+template.id+`">`+template.name+`</option>`);
+                                }
+                            // }
                         });
+                        if(isEdit) {
+                            setTimeout(() => {
+                                const thatSelector = $("#communicationTemplateIdEdit");
+                                fetchRelatedTemplatesData(thatSelector,subject, message)
+                            }, 3000);
+                        }
 
                     },
                     failure: function (data) {
@@ -1122,8 +1102,59 @@
                     }
                 });
             }
+        }
 
+        $('select[name="communicationTemplateId"]').change(function() {
+            // alert("Going to fetch template content");
+            fetchRelatedTemplatesData(this);
         });
+
+        function fetchRelatedTemplatesData(self, subject=null, message=null) {
+            // alert("fetchRelatedTemplatesData");
+            const typeData = $(self).attr('data');
+            console.log("==typeData=="+typeData);
+            let editText='';
+            if(typeData === 'Edit') {
+                editText = typeData;
+            }
+            let templateId = $(self).val();
+            if(templateId !== 'NA') {
+                $.ajax({
+                   url: '/communications/templates/'+templateId,
+                   type: 'GET',
+                   dataType: 'JSON',
+                   success: function (data) {
+                       console.log("-----data of template---",data);
+                       if (data.template.type === 'Email') {
+                            const syubjectData = subject?subject:data.template.subject;
+                            const bodyData = message?message:data.template.message;
+                            
+                            if(typeData === 'Edit') {
+                                $("#communicationTemplateSubjectEdit").val(syubjectData);
+                                CKEDITOR.replace("communicationTemplateBodyEdit", {
+                                    height: 100
+                                });
+                                CKEDITOR.instances.communicationTemplateBodyEdit.setData(bodyData);
+                            }
+                            else {
+                                $("#communicationTemplateSubject").val(syubjectData);
+                                CKEDITOR.replace("communicationTemplateBody", {
+                                    height: 100
+                                });
+                                CKEDITOR.instances.communicationTemplateBody.setData(bodyData);
+                            }
+                        } else if (data.template.type === 'WhatsApp') {
+                            const msgData = message?message:data.template.message;
+                            $("#communicationTemplateMessage").val(msgData)
+                       }
+                   },
+                   failure: function (data) {
+                       console.log(data);
+                   }
+               });
+           }
+        }
+
 
         $("#communicationSchedule, .communicationSchedule").click(function() {
             $("#communicationScheduleDiv *, #editCommunicationScheduleDiv *").prop('disabled',false);
@@ -1143,24 +1174,6 @@
 
         $("#outboundRule").click(function() {
             $("#outboundDiv *").prop('disabled',false);
-        });
-
-        $('select[name="scheduleUnit"]').change(function() {
-            if($(this).val() === 'DAILY') {
-                // $("#dayOfWeekDiv *, #dayOfMonthDiv *").prop('disabled',false);
-                // $("#dayOfWeekDiv").val('NA').change();
-                // $("#dayOfMonthDiv").val('NA').change();
-                $("#dayOfWeekDiv *, #dayOfMonthDiv *").prop('disabled',true);
-                $("#minuteHour").val("00:00");
-            } else if ($(this).val() === 'WEEKLY') {
-                $("#dayOfWeekDiv *").prop('disabled',false);
-                $("#dayOfMonthDiv *").prop('disabled',true);
-                $("#minuteHour").val("00:00");
-            } else if ($(this).val() === 'MONTHLY') {
-                $("#dayOfWeekDiv *, #dayOfMonthDiv *").prop('disabled',false);
-            } else {
-                $("#dayOfWeekDiv *, #dayOfMonthDiv *").prop('disabled',false);
-            }
         });
 
         $("#employeePermissionSubmit").click(function(){
@@ -1311,6 +1324,47 @@
             });
         }
 
+       
+        $('select[name="leadEmailTemplateId"]').change(function() {
+
+            let templateId = $(this).val();
+
+            if(templateId !== 'NA') {
+                $.ajax({
+                    url: '/communications/templates/'+templateId,
+                    type: 'GET',
+                    dataType: 'JSON',
+                    success: function (data) {
+                        console.log(data);
+                        $("#leadEmailSubject").val(data.template.subject);
+                        $("#leadEmailBody").val(data.template.body);
+                    },
+                    failure: function (data) {
+                        console.log(data);
+                    }
+                });
+            }
+        });
+
+        $('select[name="leadWhatsAppTemplateId"]').change(function() {
+
+            let templateId = $(this).val();
+
+            if(templateId !== 'NA') {
+                $.ajax({
+                    url: '/communications/templates/'+templateId,
+                    type: 'GET',
+                    dataType: 'JSON',
+                    success: function (data) {
+                        $("#leadWhatsAppMessage").val(data.template.message);
+                    },
+                    failure: function (data) {
+                        console.log(data);
+                    }
+                });
+            }
+        });
+
         $("#employeeMenuPermissionbtn").click(function(){
             let employeeId = $("#employeeId").val();
             let allPermissions = $("#allPermissions").val();
@@ -1365,71 +1419,6 @@
                     console.log("failure response",data);
                 }
             });
-        });
-
-
-            $('select[name="communicationTemplateId"]').change(function() {
-
-            let templateId = $(this).val();
-
-            if(templateId !== 'NA') {
-                $.ajax({
-                   url: '/communications/templates/'+templateId,
-                   type: 'GET',
-                   dataType: 'JSON',
-                   success: function (data) {
-                       console.log(data);
-                       if (data.template.type === 'Email') {
-                           $("#communicationTemplateSubject").val(data.template.subject);
-                       } else if (data.template.type === 'WhatsApp') {
-                            $("#communicationTemplateMessage").val(data.template.message)
-                       }
-                   },
-                   failure: function (data) {
-                       console.log(data);
-                   }
-               });
-           }
-        });
-
-        $('select[name="leadEmailTemplateId"]').change(function() {
-
-            let templateId = $(this).val();
-
-            if(templateId !== 'NA') {
-                $.ajax({
-                    url: '/communications/templates/'+templateId,
-                    type: 'GET',
-                    dataType: 'JSON',
-                    success: function (data) {
-                        console.log(data);
-                        $("#leadEmailSubject").val(data.template.subject);
-                        $("#leadEmailBody").val(data.template.body);
-                    },
-                    failure: function (data) {
-                        console.log(data);
-                    }
-                });
-            }
-        });
-
-        $('select[name="leadWhatsAppTemplateId"]').change(function() {
-
-            let templateId = $(this).val();
-
-            if(templateId !== 'NA') {
-                $.ajax({
-                    url: '/communications/templates/'+templateId,
-                    type: 'GET',
-                    dataType: 'JSON',
-                    success: function (data) {
-                        $("#leadWhatsAppMessage").val(data.template.message);
-                    },
-                    failure: function (data) {
-                        console.log(data);
-                    }
-                });
-            }
         });
 
         // Lead Call Send Email
@@ -1639,9 +1628,6 @@
 
     </script>--}}
     <script>
-        CKEDITOR.replace("communicationTemplateBody", {
-            height: 200
-        });
         CKEDITOR.replace("templateEmailBody", {
             height: 200
         });
@@ -1719,7 +1705,7 @@
             //counter
             $('.count-number').counterUp({
                 delay: 10,
-                time: 5000
+                time: 2000
             });
         }
         dash();
