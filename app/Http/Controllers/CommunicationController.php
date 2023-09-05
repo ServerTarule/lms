@@ -79,7 +79,7 @@ class CommunicationController extends Controller
         $communicationType = $request->schedule;
         $comType = $request->communicationTemplateBody;
         // echo "-----".$communicationTemplateBody = ($comType==='Email')?$request->communicationTemplateBody:'';
-        // die;
+        $ruleId = $request->ruleId;
         if ($communicationType == 'scheduled') {
             if(!$request->input('scheduleUnit')) {
                 return response()->json(['status'=>false, 'message'=>'Please selet schedule unit, if you have opted for scheduled job.']);
@@ -114,19 +114,39 @@ class CommunicationController extends Controller
             $ruleId = $request->ruleId;
             $ruleConditions = RuleCondition::where('rule_id', $ruleId)->orderBy('master_id', 'asc')->get();
             $leadIdsMatchingRuleCondition = array();
+        //    echo "************************";
+        //     print_r($ruleConditions);
             foreach ($ruleConditions as $ruleCondition) {
+                // echo "************************";
+                // print_r($ruleCondition);
+            
                 $matchCase = ['master_id' => $ruleCondition->master_id, 'mastervalue_id' => $ruleCondition->mastervalue_id];
+                
+                // echo "***********matchCase*************";
+                // print_r($matchCase);
+
                 $leadMastersMatchingRuleConditionMaster = LeadMaster::where($matchCase)->get();
+                
                 foreach ($leadMastersMatchingRuleConditionMaster as $leadMasterMatchingRuleConditionMaster) {
                     $leadIdsMatchingRuleCondition[] = $leadMasterMatchingRuleConditionMaster->lead_id;
                 }
+
+               
             }
             $uniqueLeadIdsMatchingRuleCondition = collect($leadIdsMatchingRuleCondition)->unique();
             $leadMatchingRule = array();
             foreach ($uniqueLeadIdsMatchingRuleCondition as $leadId) {
+
                 $leadMasters = LeadMaster::where('lead_id', $leadId)->where('mastervalue_id', '<>', null)->orderBy('master_id', 'asc')->get();
+                
                 $leadMastersCount = count($leadMasters);
                 $leadEvaluation = array();
+
+                // echo "***********leadMastersCount for ---lead id ---$leadId---************ \n*";
+                // print_r($leadMastersCount);
+
+
+                
 
                 foreach ($ruleConditions as $ruleCondition) {
                     foreach ($leadMasters as $leadMaster) {
@@ -145,16 +165,33 @@ class CommunicationController extends Controller
                         }
                     }
                 }
+
+
                 $leadEve = implode(" ", $leadEvaluation);
                 $leadEve2 = explode(" ", $leadEve);
+
+               
                 $lastWordInLeadEvaluation = $leadEve2[count($leadEve2) - 1];
+                
+                
+               
                 if ($lastWordInLeadEvaluation == "OR" || $lastWordInLeadEvaluation == "AND") {
                     $leadEve .= ' 0';
                 }
+
+                
                 $leadValue = eval("return ($leadEve);");
+
+                
                 if ($leadValue) {
                     $leadMatchingRule[] = $leadId;
                 }
+
+                echo "\n***********leadMatchingRule final--************* \n";
+
+                print_r($leadMatchingRule);
+                echo " \n final ^^^^^^";
+                continue;
             }
             $communicationSchedule = Communication::create([
                 'type'=>$request->communicationTemplateType,
@@ -209,8 +246,10 @@ class CommunicationController extends Controller
                         $lead = Lead::where('id', $value)->first();
                         //TODO Validate mobile
                         if($lead && $lead->mobileno) {
+                            echo "\n --mobileno-".$lead->mobileno."\n";
+                            
                             try{
-                                $response = WaclubWhatsApp::sendMessage("+918010078232",$request->communicationTemplateMessage);
+                                $response = WaclubWhatsApp::sendMessage('+91'.$lead->mobileno,$request->communicationTemplateMessage);
                             }
                             catch (Request $e) {
                                 throw new \Exception($e->getMessage());
@@ -219,8 +258,9 @@ class CommunicationController extends Controller
                     }
                 }
 
-            }
+            }   
         }
+        die;
         $communications = Communication::all();
         return response()->json(['status'=>true, 'message'=>'Communication schedule  has been saved successfully.']);
     }

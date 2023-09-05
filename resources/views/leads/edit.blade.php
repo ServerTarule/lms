@@ -142,7 +142,7 @@
                                                         @php
                                                             
                                                             $parentMasterName = "";
-                                                            if($master->id == 4) {
+                                                            if(isset($master) &&isset($master->id) && $master->id == 4) {
                                                                 $parentMasterName = "Lead Status";
                                                             }
                                                             else {
@@ -158,13 +158,13 @@
                                                     <option value="0">-
                                                         - Select {{ $master->name }} -- 
                                                     </option>
-                                                    @if(!in_array($master->id, $masterIdsToMakeDynamic))
+                                                    @if(isset($master) &&isset($master->id) && !in_array($master->id, $masterIdsToMakeDynamic))
                                                         @php
                                                             $values = $master->values()->get();
                                                         @endphp
                                                         @foreach($values as $value)
                                                             @php
-                                                                $valueToSelect = $leadMasterKeyValueArray[$master->id];
+                                                                $valueToSelect = (isset($leadMasterKeyValueArray) && count($leadMasterKeyValueArray) > 0)?$leadMasterKeyValueArray[$master->id]:"";
                                                                 $selectedText = '';
                                                                 $selectedText = $valueToSelect == $value->id ? 'selected' :'';
                                                             @endphp

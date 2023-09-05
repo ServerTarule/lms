@@ -148,7 +148,7 @@
         const dependentName = masterDependentObjName[masterId];
         const dependentElementId =  `leadMaster_${dependentId}`;
         if(parseInt(parentId) > 0) {
-            const optionBlank = `<option value="">--Select value---</option>`;
+            const optionBlank = `<option value="0">--Select value---</option>`;
             $(`#${dependentElementId}`).html(`${optionBlank}`);
             let CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
             $.ajaxSetup({

@@ -91,7 +91,7 @@ class LeadController extends Controller
             $leadMasterKeyValueArray[$leadmastersElement["master_id"]] = $leadmastersElement["mastervalue_id"];
         }
         // print_r($leadMasterKeyValueArray);
-        // die;
+        // die("------------------");
         $isFirstCalling = false;
         return view('leads.edit', compact('masters','lead','leadmasters','leadMasterKeyValueArray','masterIdsToMakeDynamic','isFirstCalling'));
     }
@@ -154,7 +154,7 @@ class LeadController extends Controller
             $remark = $request->get('remark');
     
             $leadMasterData = $request->get('leadMasterData');
-    
+            
             $lead = Lead::create([
                 'name' => $name,
                 'email' => $email,
@@ -164,28 +164,34 @@ class LeadController extends Controller
                 'remark' => $remark]
             );
     
-            $leadId = $lead->id;
-    
+           $leadId = $lead->id;
             $leadMasters = json_decode( $leadMasterData, true );
     
+            // print_r($leadMasters);die("hellooo");
+            
             foreach($leadMasters as $leadMaster) {
     
-                $masterId = $leadMaster['master'];
-                $masterValueId = $leadMaster['masterValue'];
+                // echo "master".$leadMaster['master'];
+                // echo "\n";
+                // echo  "Value".$leadMaster['masterValue'];
+                // echo "\n";
     
                 $dataItem = [];
                 $dataItem['lead_id'] = $leadId;
-                $dataItem['master_id'] = $masterId;
-                $dataItem['mastervalue_id'] = $masterValueId;
-    
+                $dataItem['master_id'] = $leadMaster['master'];
+                $dataItem['mastervalue_id'] = isset($leadMaster['masterValue'])?$leadMaster['masterValue']:0;
+    // print_r($dataItem);
+    // echo "\n";
+    // continue;
+
                 LeadMaster::unguard();
                 LeadMaster::create($dataItem);
                 LeadMaster::reguard();
     
             }
 
-            
-            LeadReceived::dispatch($lead);
+            // die('====================');
+            // LeadReceived::dispatch($lead);
             return response()->json(['success' => 'Received rule data']);
         }
         catch (Request $e) {
@@ -196,6 +202,7 @@ class LeadController extends Controller
     public function updatelead(Request $request, $id) : JsonResponse 
     {
         try {
+            
             if(!$id) {
                 return response()->json(['status'=>false, 'message'=>'Data could not be updated, id for which information is to updated not found.']);
             }
@@ -222,16 +229,27 @@ class LeadController extends Controller
                 $lead->city = $cityId;  
             }
             $savedResponse = $lead->save();
+           
             if($savedResponse) {
                 $leadMasters = LeadMaster::where('lead_id', $id)->orderBy('master_id', 'ASC')->get();
+                // print_r($leadMasters); 
+                // die("--ssss".$savedResponse);
                 $leadMasterDataPosted = $request->get('leadMasterData');
+                // print_r($leadMasterDataPosted);
                 foreach ($leadMasters as $key => $value) {
+
+                    // echo "Posted value";
+                    // print_r($leadMasterDataPosted['leadMaster_'.$value->master_id]);
+
                     if(isset($leadMasterDataPosted['leadMaster_'.$value->master_id])) {
                         $value->mastervalue_id = $leadMasterDataPosted['leadMaster_'.$value->master_id];
                     }
                     else {
                         $value->mastervalue_id = 0;
                     }
+// echo "000000000000000000000000000000000000";
+                    // print_r($value);
+                    // die("------------leadMasterDataPosted----------");
                     $value->save();
                 }
 
