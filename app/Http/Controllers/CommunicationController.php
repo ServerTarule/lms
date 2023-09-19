@@ -193,32 +193,36 @@ class CommunicationController extends Controller
     public function getDayCountForFrequency($ruleId) {
         $result = ["date"=>date('Y-m-d'),"count"=>0];
         //$ruleFrequency,$ruleSchedule
+        
         $ruleData = Rule::find($ruleId);
-        $ruleFrequency = $ruleData->ruleFrequency;
-        $ruleSchedule = $ruleData->ruleSchedule;
-        $timeToReduceFromCurrentTime = $ruleFrequency." ".$ruleSchedule;
-        $dateAtGivenFrequency= date('Y-m-d', strtotime("-$timeToReduceFromCurrentTime"));
-        // echo "\n dateAtGivenFrequency = ".$dateAtGivenFrequency;
-        $today = date_create(date('Y-m-d'));
-        // echo "\n today";
-        // print_r($today);
-        $pastDate = date_create($dateAtGivenFrequency);
-        // echo "\n pastDate";
-        // print_r($pastDate);
-        $dateDiff = date_diff($today, $pastDate);
-        // echo "\n date_diff == ";
-        // print_r($dateDiff);
-        $dateDiffCount = $dateDiff->days;
-         // echo "\n dateDiffCount == ";
-        // print_r($dateDiffCount);
-        $result["date"] = $dateAtGivenFrequency;
-        $result["count"] = $dateDiffCount;
+        if($ruleData) {
+            $ruleData = $ruleData->toArray();
+            $ruleFrequency = $ruleData["rulefrequency"];
+            $ruleSchedule = $ruleData["ruleschedule"];
+            $timeToReduceFromCurrentTime = $ruleFrequency." ".$ruleSchedule;
+            $dateAtGivenFrequency= date('Y-m-d', strtotime("-$timeToReduceFromCurrentTime"));
+            // echo "\n dateAtGivenFrequency = ".$dateAtGivenFrequency;
+            $today = date_create(date('Y-m-d'));
+            // echo "\n today";
+            // print_r($today);
+            $pastDate = date_create($dateAtGivenFrequency);
+            // echo "\n pastDate";
+            // print_r($pastDate);
+            $dateDiff = date_diff($today, $pastDate);
+            // echo "\n date_diff == ";
+            // print_r($dateDiff);
+            $dateDiffCount = $dateDiff->days;
+             // echo "\n dateDiffCount == ";
+            // print_r($dateDiffCount);
+            $result["date"] = $dateAtGivenFrequency;
+            $result["count"] = $dateDiffCount;
+        }
+       
         return $result;
     }
     public function getLeadMatchingRule($ruleId) {
         $dateDiffResult = $this->getDayCountForFrequency($ruleId);
         $dateDiffCount = $dateDiffResult["count"];
-        // echo "\n Query =".$query = "SELECT id FROM  leads  WHERE  created_at BETWEEN DATE_SUB(CURDATE(), INTERVAL $timeToReduceFromCurrentTime) AND CURDATE()";
         $query = "SELECT id, DATEDIFF(CURDATE(), created_at) AS days,created_at FROM  leads where DATEDIFF(CURDATE(), created_at) = $dateDiffCount";
         // echo "\n Query =".$query;
         $leadsWithDateCondotion = DB::select($query);
