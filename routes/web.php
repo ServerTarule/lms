@@ -248,6 +248,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/communications/templates/{id}', [CommunicationController::class, 'templates'])->name('/communications/templates/{id}')->middleware('can:read master');
     Route::get('/communications/{id}', [CommunicationController::class, 'show'])->name('communications.show')->middleware('can:read master');
     Route::get('/communications/{id}/leads', [CommunicationController::class, 'leads'])->name('/communications/{id}/leads')->middleware('can:read master');
+    Route::get('/communications/getDayCount/{ruleId}', [CommunicationController::class, 'getDayCountForFrequency'])->name('communications.getDayCountForFrequency')->middleware('can:read master');
 
     //Other Management
     Route::get('/blogs', [BlogController::class, 'index'])->name('blogs.index')->middleware('can:read master');

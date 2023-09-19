@@ -90,10 +90,10 @@
                     <label class="control-label">Schedule</label>
                     <select class="form-control" name="ruleSchedule" id="ruleSchedule" >
                         <option value="NA">-- Select Schedule --</option>
-                        <option value="Days" @if($rule->ruleSchedule == 'Days') selected @endif>Days</option>
-                        <option value="Weeks"  @if($rule->ruleSchedule == 'Weeks') selected @endif>Weeks</option>
-                        <option value="Months"  @if($rule->ruleSchedule == 'Months') selected @endif>Weeks>Months</option>
-                        <option value="Years"  @if($rule->ruleSchedule == 'Years') selected @endif>Weeks>Years</option>
+                        <option value="Day" @if($rule->ruleSchedule == 'Day') selected @endif>Day(s)</option>
+                        <option value="Week"  @if($rule->ruleSchedule == 'Week') selected @endif>Week(s)</option>
+                        <option value="Month"  @if($rule->ruleSchedule == 'Month') selected @endif>Month(s)</option>
+                        <option value="Year"  @if($rule->ruleSchedule == 'Year') selected @endif>Year(s)</option>
                     </select>
                 </div>
             </div>

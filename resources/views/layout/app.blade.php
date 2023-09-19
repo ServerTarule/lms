@@ -1166,15 +1166,7 @@
             $("#communicationScheduleDiv *, #editCommunicationScheduleDiv *").prop('disabled',true);
         });
 
-        $("#inboundRule").click(function() {
-            $("#outboundDiv *").prop('disabled',true);
-            $("#ruleFrequency").val('');
-            $("#ruleSchedule").val('NA');
-        });
-
-        $("#outboundRule").click(function() {
-            $("#outboundDiv *").prop('disabled',false);
-        });
+        
 
         $("#employeePermissionSubmit").click(function(){
 

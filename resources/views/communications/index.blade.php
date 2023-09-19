@@ -99,12 +99,23 @@
                 <div class="modal-body">
                     <div class="row">
                         <div class="col-md-12">
+                            <div class="alert alert-warning" style="padding:5px!important; display:none">
+                                <i class="fa fa-exclamation-triangle" aria-hidden="true">
+                                    <span id="showMessage" class="font-italic">
+                                        
+                                    </span>
+                                </i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
                         <form  method="post" id="addScheduleForm" class="form-horizontal" enctype="multipart/form-data" >
                                 @csrf
                                 <fieldset>
                                     <div class="col-md-4 form-group">
                                         <label class="control-label">Rule</label>
-                                        <select data="Add" name="ruleId" id="ruleId" class="form-control">
+                                        <select data="Add" name="ruleId" id="ruleId" class="form-control" onChange="return getDateCountForRule(0)">
                                             <option value="">--Select Rule--</option>
                                             @foreach($rules as $rule)
                                                 <option value="{{ $rule->id }}">{{ $rule->name }}</option>
@@ -197,6 +208,18 @@
                     <h3><i class="fa fa-pencil m-r-5"></i> Email/WhatsApp Scheduler</h3>
                 </div>
                 <div class="modal-body">
+                    
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="alert alert-warning" style="padding:5px!important;  display:none">
+                                <i class="fa fa-exclamation-triangle" aria-hidden="true">
+                                    <span id="showMessageEdit" class="font-italic">
+                                        
+                                    </span>
+                                </i>
+                            </div>
+                        </div>
+                    </div>
                     <div class="row">
                         <div class="col-md-12">
                             <form  method="post" id="updateScheduleForm" class="form-horizontal" enctype="multipart/form-data" >
@@ -205,7 +228,7 @@
                                 <fieldset>
                                     <div class="col-md-4 form-group">
                                         <label class="control-label">Rule</label>
-                                        <select data="Edit" name="ruleId" id="ruleIdEdit" class="form-control ruleId">
+                                        <select data="Edit" name="ruleId" id="ruleIdEdit" class="form-control ruleId" onChange="getDateCountForRule(1)">
                                             <option value="">--Select Rule--</option>
                                             @foreach($rules as $rule)
                                                 <option value="{{ $rule->id }}">{{ $rule->name }}</option>
@@ -324,10 +347,10 @@
 @endsection
 @push('custom-scripts')
 <script type="text/javascript">
+// alert("heeheheheh");
 // CKEDITOR.replace("communicationTemplateBody", {
 //     height: 100
 // });
-
 
 
 $('select[name="templateType"]').change(function() {
@@ -488,7 +511,6 @@ function processAdd () {
     // form_data.append(`isFirstCalling`,isFirstCalling);
     let communicationTemplateBody = "";
     if(CKEDITOR.instances.communicationTemplateBody) {
-        // alert("not edit===="+CKEDITOR.instances.communicationTemplateBody.getData());
         communicationTemplateBody = CKEDITOR.instances.communicationTemplateBody.getData()
     }
     form_data.append(`communicationTemplateBody`, communicationTemplateBody)
@@ -512,7 +534,7 @@ function processAdd () {
                 $("#addScheduleForm")[0].reset()
                 $('#addSchedule').modal('toggle');
                 setTimeout(function(){ 
-                    // location.reload();
+                    location.reload();
                 }, 3000);
             }
             
@@ -569,9 +591,11 @@ function changeValuesWrtScheduleUnit(self) {
         $(`#dayOfMonth${editText}`).prop('disabled',true);
     }
 }
+
 $('select[name="scheduleUnit"]').change(function() {
     changeValuesWrtScheduleUnit(this);
 });
+
 function editCommunication(id) {
     let CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
     $.ajaxSetup({
@@ -704,6 +728,46 @@ function editCommunication(id) {
     //     $(this).hide()
     //     //scheduleUnitFieldSet/allowEditing
     // })
+}
+
+
+function getDateCountForRule(isEdit) {
+    let ruleId = $("#ruleId").val();
+    if(isEdit == 1) {
+        ruleId = $("#ruleIdEdit").val();
+    }
+    const apiUrl = `/communications/getDayCount/${ruleId}`;
+    if(ruleId) {
+        let CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+        $.ajax({
+            /* the route pointing to the post function */
+            url: apiUrl,
+            type: 'GET',
+            /* send the csrf-token and the input to the controller */
+            dataType: 'JSON',
+            /* remind that 'data' is the response of the AjaxController */
+            success: function (data) {
+                console.log(data);
+                //i.e. on ${data.date}
+                const message = `On selecting this rule system will consider leads created before ${data.count} days i.e. on ${data.date} for sending message.`;
+                // $("#showMessage").html(`On selecting this rule you will `);
+                toastr.warning(message);
+                // toastr.error(validationMessage);
+            },
+            error: function (data) {
+                console.log(data);
+            },
+            failure: function (data) {
+                console.log(data);
+            }
+        });
+    
+    }
 }
 </script>
 @endpush

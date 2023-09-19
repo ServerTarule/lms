@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\View\View;
 use Lorisleiva\CronTranslator\CronTranslator;
-
+use Illuminate\Support\Facades\DB;
 use App\Channels\WaclubWhatsApp;
 
 class CommunicationController extends Controller
@@ -77,8 +77,6 @@ class CommunicationController extends Controller
         Log::info("*** Communication Request ***");
         Log::info($request);
         $communicationType = $request->schedule;
-        $comType = $request->communicationTemplateBody;
-        // echo "-----".$communicationTemplateBody = ($comType==='Email')?$request->communicationTemplateBody:'';
         $ruleId = $request->ruleId;
         if ($communicationType == 'scheduled') {
             if(!$request->input('scheduleUnit')) {
@@ -112,92 +110,14 @@ class CommunicationController extends Controller
             // print_r($communicationSchedule);die;
         } else if ($communicationType == 'now') {
             $ruleId = $request->ruleId;
-            $ruleConditions = RuleCondition::where('rule_id', $ruleId)->orderBy('master_id', 'asc')->get();
-            $leadIdsMatchingRuleCondition = array();
-        //    echo "************************";
-        //     print_r($ruleConditions);
-            foreach ($ruleConditions as $ruleCondition) {
-                // echo "************************";
-                // print_r($ruleCondition);
-            
-                $matchCase = ['master_id' => $ruleCondition->master_id, 'mastervalue_id' => $ruleCondition->mastervalue_id];
-                
-                // echo "***********matchCase*************";
-                // print_r($matchCase);
-
-                $leadMastersMatchingRuleConditionMaster = LeadMaster::where($matchCase)->get();
-                
-                foreach ($leadMastersMatchingRuleConditionMaster as $leadMasterMatchingRuleConditionMaster) {
-                    $leadIdsMatchingRuleCondition[] = $leadMasterMatchingRuleConditionMaster->lead_id;
-                }
-
-               
-            }
-            $uniqueLeadIdsMatchingRuleCondition = collect($leadIdsMatchingRuleCondition)->unique();
-            $leadMatchingRule = array();
-            foreach ($uniqueLeadIdsMatchingRuleCondition as $leadId) {
-
-                $leadMasters = LeadMaster::where('lead_id', $leadId)->where('mastervalue_id', '<>', null)->orderBy('master_id', 'asc')->get();
-                
-                $leadMastersCount = count($leadMasters);
-                $leadEvaluation = array();
-
-                // echo "***********leadMastersCount for ---lead id ---$leadId---************ \n*";
-                // print_r($leadMastersCount);
-
-
-                
-
-                foreach ($ruleConditions as $ruleCondition) {
-                    foreach ($leadMasters as $leadMaster) {
-                        if ($ruleCondition->master_id == $leadMaster->master_id && $ruleCondition->mastervalue_id == $leadMaster->mastervalue_id) {
-                            if ($leadMastersCount == 1) {
-                                $leadEvaluation[] = true;
-                                break;
-                            } else {
-                                $leadEvaluation[] = true;
-                                if (!is_null($ruleCondition->condition)) {
-                                    $leadEvaluation[] = strtoupper($ruleCondition->condition);
-                                }
-                            }
-                        } else {
-                            // LEAD IS NOT MATCHING WITH RULE
-                        }
-                    }
-                }
-
-
-                $leadEve = implode(" ", $leadEvaluation);
-                $leadEve2 = explode(" ", $leadEve);
-
-               
-                $lastWordInLeadEvaluation = $leadEve2[count($leadEve2) - 1];
-                
-                
-               
-                if ($lastWordInLeadEvaluation == "OR" || $lastWordInLeadEvaluation == "AND") {
-                    $leadEve .= ' 0';
-                }
-
-                
-                $leadValue = eval("return ($leadEve);");
-
-                
-                if ($leadValue) {
-                    $leadMatchingRule[] = $leadId;
-                }
-
-                echo "\n***********leadMatchingRule final--************* \n";
-
-                print_r($leadMatchingRule);
-                echo " \n final ^^^^^^";
-                continue;
-            }
+            //Get Lead Matching With Rule
+            $leadMatchingRule = $this->getLeadMatchingRule($ruleId);
+            // print_r($leadMatchingRule); //die;
             $communicationSchedule = Communication::create([
                 'type'=>$request->communicationTemplateType,
-                'message'=>($comType==='WhatsApp')?$request->communicationTemplateMessage:'',
-                'subject'=>($comType==='Email')?$request->communicationTemplateSubject:'',
-                'content'=>($comType==='Email')?$request->communicationTemplateBody:'',
+                'message'=>$request->communicationTemplateMessage,
+                'subject'=>$request->communicationTemplateSubject,
+                'content'=>$request->communicationTemplateBody,
                 'schedule'=>'now',
                 'schedule_unit' => '',
                 'words'=>'now',
@@ -205,19 +125,17 @@ class CommunicationController extends Controller
                 'rule_id'=>$request->ruleId
             ]);
             if (!empty($leadMatchingRule)) {
-                foreach ($leadMatchingRule as $key => $value) {
-                    $employee=CommunicationLead::create([
-                        'communication_id'=>$communicationSchedule->id,
-                        'rule_id'=>$ruleId,
-                        'lead_id'=>$value
-                    ]);
-                }
                 if($request->communicationTemplateType == 'SMS') {
                     //SEND SMS HERE
                 } else if ($request->communicationTemplateType == 'Email') {
                     $templateId = $request->communicationTemplateId;
                     $template = Template::where('id', $templateId)->first();
                     foreach ($leadMatchingRule as $key => $value) {
+                        $employee=CommunicationLead::create([
+                            'communication_id'=>$communicationSchedule->id,
+                            'rule_id'=>$ruleId,
+                            'lead_id'=>$value
+                        ]);
                         $lead = Lead::where('id', $value)->first();
                         //TODO Validate email
                         if($lead) {
@@ -228,6 +146,7 @@ class CommunicationController extends Controller
                                 $mailableObj = new Campaign($template);
                                 try{
                                     Mail::to($lead->email)->send($mailableObj);
+                                    return response()->json(['status'=>false, 'message'=>`Communication schedule  has been saved successfully, and email has also been sent `]);
                                 }
                                 catch (Request $e) {
                                     throw new \Exception($e->getMessage());
@@ -235,23 +154,31 @@ class CommunicationController extends Controller
                             }
                         }
                         else {
-                            //
-                            // return response()->json(['status'=>false, 'message'=>`Communication schedule  has been saved successfully, But email could not be sent `]);
+                            //In Case Error Occurred While Sending Email
+                            return response()->error(['status'=>false, 'message'=>`Communication schedule  has been saved successfully, But email could not be sent `]);
                         }
                        
                     }
 
                 } else if ($request->communicationTemplateType == 'WhatsApp') {
                     foreach ($leadMatchingRule as $key => $value) {
+                        // echo "\n --Lead Id To send Message  --".$value."\n";
+                        $employee=CommunicationLead::create([
+                            'communication_id'=>$communicationSchedule->id,
+                            'rule_id'=>$ruleId,
+                            'lead_id'=>$value
+                        ]);
                         $lead = Lead::where('id', $value)->first();
+                        // print_r($lead->toArray());
                         //TODO Validate mobile
                         if($lead && $lead->mobileno) {
-                            echo "\n --mobileno-".$lead->mobileno."\n";
-                            
+                            // echo "\n --mobileno-".$lead->mobileno."\n";
                             try{
-                                $response = WaclubWhatsApp::sendMessage('+91'.$lead->mobileno,$request->communicationTemplateMessage);
+                                WaclubWhatsApp::sendMessage('+91'.$lead->mobileno,$request->communicationTemplateMessage);
+                                // return response()->json(['status'=>false, 'message'=>`Communication schedule has been saved successfully, and whatsapp message has also been sent `]);
                             }
                             catch (Request $e) {
+                                // echo "Error ".$e->getMessage();
                                 throw new \Exception($e->getMessage());
                             }
                         }
@@ -260,11 +187,105 @@ class CommunicationController extends Controller
 
             }   
         }
-        die;
-        $communications = Communication::all();
-        return response()->json(['status'=>true, 'message'=>'Communication schedule  has been saved successfully.']);
+        return response()->json(['status'=>true, 'message'=>'Communication schedule has been processed successfully.']);
     }
 
+    public function getDayCountForFrequency($ruleId) {
+        $result = ["date"=>date('Y-m-d'),"count"=>0];
+        //$ruleFrequency,$ruleSchedule
+        $ruleData = Rule::find($ruleId);
+        $ruleFrequency = $ruleData->ruleFrequency;
+        $ruleSchedule = $ruleData->ruleSchedule;
+        $timeToReduceFromCurrentTime = $ruleFrequency." ".$ruleSchedule;
+        $dateAtGivenFrequency= date('Y-m-d', strtotime("-$timeToReduceFromCurrentTime"));
+        // echo "\n dateAtGivenFrequency = ".$dateAtGivenFrequency;
+        $today = date_create(date('Y-m-d'));
+        // echo "\n today";
+        // print_r($today);
+        $pastDate = date_create($dateAtGivenFrequency);
+        // echo "\n pastDate";
+        // print_r($pastDate);
+        $dateDiff = date_diff($today, $pastDate);
+        // echo "\n date_diff == ";
+        // print_r($dateDiff);
+        $dateDiffCount = $dateDiff->days;
+         // echo "\n dateDiffCount == ";
+        // print_r($dateDiffCount);
+        $result["date"] = $dateAtGivenFrequency;
+        $result["count"] = $dateDiffCount;
+        return $result;
+    }
+    public function getLeadMatchingRule($ruleId) {
+        $dateDiffResult = $this->getDayCountForFrequency($ruleId);
+        $dateDiffCount = $dateDiffResult["count"];
+        // echo "\n Query =".$query = "SELECT id FROM  leads  WHERE  created_at BETWEEN DATE_SUB(CURDATE(), INTERVAL $timeToReduceFromCurrentTime) AND CURDATE()";
+        $query = "SELECT id, DATEDIFF(CURDATE(), created_at) AS days,created_at FROM  leads where DATEDIFF(CURDATE(), created_at) = $dateDiffCount";
+        // echo "\n Query =".$query;
+        $leadsWithDateCondotion = DB::select($query);
+        // echo "\n leadsWithDateCondotion =";
+        // print_r($leadsWithDateCondotion);
+        // echo "\n ^^^^^^";
+        // die;
+
+        $dateCondtionSaisfyingLead = [];
+        foreach($leadsWithDateCondotion as $leadWithDateCondotion) {
+            $dateCondtionSaisfyingLead[] = $leadWithDateCondotion->id;
+        }
+       
+        $ruleConditions = RuleCondition::where('rule_id', $ruleId)->orderBy('master_id', 'asc')->get();
+        $leadIdsMatchingRuleCondition = array();
+        // echo "###############dateCondtionSaisfyingLead#########";
+        // print_r($dateCondtionSaisfyingLead);
+        // echo "########################";
+        foreach ($ruleConditions as $ruleCondition) {
+            $matchCase = ['master_id' => $ruleCondition->master_id, 'mastervalue_id' => $ruleCondition->mastervalue_id];
+            // echo "Match Cases";
+            // print_r($matchCase);
+            $leadMastersMatchingRuleConditionMaster = LeadMaster::where($matchCase)->get();
+            // print_r($leadMastersMatchingRuleConditionMaster->toArray());
+            foreach ($leadMastersMatchingRuleConditionMaster as $leadMasterMatchingRuleConditionMaster) {
+                $leadIdsMatchingRuleCondition[] = $leadMasterMatchingRuleConditionMaster->lead_id;
+            }
+        }
+        // print_r($leadIdsMatchingRuleCondition);
+        // die("hello there");
+        $uniqueLeadIdsMatchingRuleCondition = collect($leadIdsMatchingRuleCondition)->unique();
+        $leadMatchingRule = array();
+        $leadIdsWithDateAndRuleConditions = array_intersect($dateCondtionSaisfyingLead,$uniqueLeadIdsMatchingRuleCondition->toArray());
+        foreach ($leadIdsWithDateAndRuleConditions as $leadId) {
+            $leadMasters = LeadMaster::where('lead_id', $leadId)->where('mastervalue_id', '<>', null)->orderBy('master_id', 'asc')->get();
+            $leadMastersCount = count($leadMasters);
+            $leadEvaluation = array();
+            foreach ($ruleConditions as $ruleCondition) {
+                foreach ($leadMasters as $leadMaster) {
+                    if ($ruleCondition->master_id == $leadMaster->master_id && $ruleCondition->mastervalue_id == $leadMaster->mastervalue_id) {
+                        if ($leadMastersCount == 1) {
+                            $leadEvaluation[] = true;
+                            break;
+                        } else {
+                            $leadEvaluation[] = true;
+                            if (!is_null($ruleCondition->condition)) {
+                                $leadEvaluation[] = strtoupper($ruleCondition->condition);
+                            }
+                        }
+                    } else {
+                        // LEAD IS NOT MATCHING WITH RULE
+                    }
+                }
+            }
+            $leadEve = implode(" ", $leadEvaluation);
+            $leadEve2 = explode(" ", $leadEve);   
+            $lastWordInLeadEvaluation = $leadEve2[count($leadEve2) - 1];
+            if ($lastWordInLeadEvaluation == "OR" || $lastWordInLeadEvaluation == "AND") {
+                $leadEve .= ' 0';
+            }
+            $leadValue = eval("return ($leadEve);");
+            if ($leadValue) {
+                $leadMatchingRule[] = $leadId;
+            }
+        }
+        return $leadMatchingRule;
+    }
 
     public function getCronSchedule($scheduleUnit,$dayOfWeek,$dayOfMonth, $minuteHour) {
         $month="*";

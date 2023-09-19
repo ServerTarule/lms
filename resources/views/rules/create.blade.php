@@ -75,3 +75,11 @@
         </div>
     </div>
 @endsection
+
+
+@push('custom-scripts')
+<script type="text/javascript">
+    
+
+</script>
+@endpush

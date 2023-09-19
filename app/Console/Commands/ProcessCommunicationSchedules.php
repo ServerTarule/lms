@@ -15,7 +15,8 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Notification;
 use App\Channels\WaclubWhatsApp;
-
+use Illuminate\Support\Facades\DB;
+use App\Models\Rule;
 class ProcessCommunicationSchedules extends Command
 {
     /**
@@ -40,95 +41,22 @@ class ProcessCommunicationSchedules extends Command
     public function handle(Request $request)
     {
 
-        Log::info("I am handling");
+        // Log::info("I am handling");
         $communicationSchedule = $this->argument('communicationSchedule');
-        Log::info("#############################START#############");
-        Log::info($communicationSchedule);
-        Log::info("#############################END#############");
+        // Log::info("#############################START#############");
+        // Log::info($communicationSchedule);
+        // Log::info("#############################END#############");
         $communicationSchedule = json_decode($communicationSchedule, true);
-        Log::info("*** Communication Schedule ***");
-        Log::info($communicationSchedule);
-
         $ruleId = $communicationSchedule['rule_id'];
-        $ruleConditions = RuleCondition::where('rule_id', $ruleId)->orderBy('master_id', 'asc')->get();
-//        Log::info("*** Rule Conditions ***");
-//        Log::info($ruleConditions);
+        // Log::info("*** Communication Schedule JSON Decode ***");
+        // Log::info($communicationSchedule);
+       
+        $leadMatchingRuleOld = $this->getLeadMatchingRuleOld($ruleId);
+        Log::info("*** leadMatchingRuleOld ***");
+        Log::info($leadMatchingRuleOld);
+        $leadMatchingRule = $this->getLeadMatchingRule($ruleId);
 
-        $leadIdsMatchingRuleCondition = array();
-        Log::info("I am handling -----222-");
-        Log::info($ruleConditions);
-        foreach ($ruleConditions as $ruleCondition) {
-            $matchCase = ['master_id' => $ruleCondition->master_id, 'mastervalue_id' => $ruleCondition->mastervalue_id];
-            $leadMastersMatchingRuleConditionMaster = LeadMaster::where($matchCase)->get();
-            foreach ($leadMastersMatchingRuleConditionMaster as $leadMasterMatchingRuleConditionMaster) {
-                $leadIdsMatchingRuleCondition[] = $leadMasterMatchingRuleConditionMaster->lead_id;
-            }
-        }
-
-        $uniqueLeadIdsMatchingRuleCondition = collect($leadIdsMatchingRuleCondition)->unique();
-//        Log::info("*** Unique Leads Ids ***");
-//        Log::info($uniqueLeadIdsMatchingRuleCondition);
-
-        $leadMatchingRule = array();
-
-        Log::info("I am uniqueLeadIdsMatchingRuleCondition ------");
-        Log::info($uniqueLeadIdsMatchingRuleCondition);
-        foreach ($uniqueLeadIdsMatchingRuleCondition as $leadId) {
-            $leadMasters = LeadMaster::where('lead_id', $leadId)->where('mastervalue_id', '<>', null)->orderBy('master_id', 'asc')->get();
-            $leadMastersCount = count($leadMasters);
-//            Log::info("*** Lead Master Count ***");
-//            Log::info($leadMastersCount);
-            $leadEvaluation = array();
-
-            Log::info("I am ruleConditions ------");
-            Log::info($ruleConditions);
-            foreach ($ruleConditions as $ruleCondition) {
-                foreach ($leadMasters as $leadMaster) {
-                    if ($ruleCondition->master_id == $leadMaster->master_id && $ruleCondition->mastervalue_id == $leadMaster->mastervalue_id) {
-                        if ($leadMastersCount == 1) {
-                            $leadEvaluation[] = true;
-                            break;
-                        } else {
-                            $leadEvaluation[] = true;
-                            if (!is_null($ruleCondition->condition)) {
-                                $leadEvaluation[] = strtoupper($ruleCondition->condition);
-                            }
-                        }
-                    } else {
-                        // LEAD IS NOT MATCHING WITH RULE
-                    }
-                }
-            }
-
-//            Log::info("*** Lead Evaluation ***");
-//            Log::info($leadEvaluation);
-            $leadEve = implode(" ", $leadEvaluation);
-//            Log::info("*** Lead Evaluation - Implode ***");
-//            Log::info($leadEve);
-            $leadEve2 = explode(" ", $leadEve);
-//            Log::info("*** Lead Evaluation - Explode ***");
-//            Log::info($leadEve2);
-
-            $lastWordInLeadEvaluation = $leadEve2[count($leadEve2) - 1];
-//            Log::info("*** Last word in lead evaluation ***");
-//            Log::info($lastWordInLeadEvaluation);
-            if ($lastWordInLeadEvaluation == "OR" || $lastWordInLeadEvaluation == "AND") {
-                $leadEve .= ' 0';
-            }
-//            Log::info("*** Lead Evaluation - lead evaluation ***");
-//            Log::info($leadEve);
-            $leadValue = eval("return ($leadEve);");
-//            Log::info("*** Lead Evaluation - lead value ***");
-//            Log::info($leadValue);
-            if ($leadValue) {
-                $leadMatchingRule[] = $leadId;
-            }
-//            Log::info("*** Lead Evaluation - Matching leads ***");
-//            Log::info($leadMatchingRule);
-
-        }
-
-        Log::info("I am leadMatchingRule ------");
+        Log::info(" ***********leadMatchingRuleNew***********");
         Log::info($leadMatchingRule);
         if (!empty($leadMatchingRule)) {
             Log::info("******leadMatchingRule is noot empty****");
@@ -141,10 +69,8 @@ class ProcessCommunicationSchedules extends Command
                 Log::info("******Logging Employee ****");
                 Log::info($employee);
             }
-
             Log::info("******type ****");
             Log::info($communicationSchedule['type']);
-
             if($communicationSchedule['type'] == 'SMS') {
                 Log::info("******SMS condition ****");
                 //SEND SMS HERE
@@ -223,6 +149,186 @@ class ProcessCommunicationSchedules extends Command
 
         }
        return Command::SUCCESS;
+    }
+
+
+    public function getDayCountForFrequency($ruleId) {
+        $result = ["date"=>date('Y-m-d'),"count"=>0];
+        $ruleData = Rule::find($ruleId);
+        // Log::info("====ruleData=====");
+        // Log::info($ruleData);
+        $ruleFrequency = $ruleData->ruleFrequency;
+        $ruleSchedule = $ruleData->ruleSchedule;
+        $timeToReduceFromCurrentTime = $ruleFrequency." ".$ruleSchedule;
+        $dateAtGivenFrequency= date('Y-m-d', strtotime("-$timeToReduceFromCurrentTime"));
+        $today = date_create(date('Y-m-d'));
+        $pastDate = date_create($dateAtGivenFrequency);
+        $dateDiff = date_diff($today, $pastDate);
+        $dateDiffCount = $dateDiff->days;
+        $result["date"] = $dateAtGivenFrequency;
+        $result["count"] = $dateDiffCount;
+        // Log::info("====result=====");
+        // Log::info($result);
+        return $result;
+    }
+    public function getLeadMatchingRule($ruleId) {
+        $dateDiffResult = $this->getDayCountForFrequency($ruleId);
+        $dateDiffCount = $dateDiffResult["count"];
+        $query = "SELECT id, DATEDIFF(CURDATE(), created_at) AS days,created_at FROM  leads where DATEDIFF(CURDATE(), created_at) = $dateDiffCount";
+        $leadsWithDateCondotion = DB::select($query);
+        Log::info("====query=====");
+        Log::info($query);
+        $dateCondtionSaisfyingLead = [];
+        foreach($leadsWithDateCondotion as $leadWithDateCondotion) {
+            $dateCondtionSaisfyingLead[] = $leadWithDateCondotion->id;
+        }
+       
+        $ruleConditions = RuleCondition::where('rule_id', $ruleId)->orderBy('master_id', 'asc')->get();
+        $leadIdsMatchingRuleCondition = array();
+        
+        // Log::info("====dateCondtionSaisfyingLead=====");
+        // Log::info($dateCondtionSaisfyingLead);
+        foreach ($ruleConditions as $ruleCondition) {
+            $matchCase = ['master_id' => $ruleCondition->master_id, 'mastervalue_id' => $ruleCondition->mastervalue_id];
+             
+            $leadMastersMatchingRuleConditionMaster = LeadMaster::where($matchCase)->get();
+            foreach ($leadMastersMatchingRuleConditionMaster as $leadMasterMatchingRuleConditionMaster) {
+                $leadIdsMatchingRuleCondition[] = $leadMasterMatchingRuleConditionMaster->lead_id;
+            }
+        }
+        $uniqueLeadIdsMatchingRuleCondition = collect($leadIdsMatchingRuleCondition)->unique();
+        $leadMatchingRule = array();
+        $leadIdsWithDateAndRuleConditions = array_intersect($dateCondtionSaisfyingLead,$uniqueLeadIdsMatchingRuleCondition->toArray());
+        foreach ($leadIdsWithDateAndRuleConditions as $leadId) {
+            $leadMasters = LeadMaster::where('lead_id', $leadId)->where('mastervalue_id', '<>', null)->orderBy('master_id', 'asc')->get();
+            $leadMastersCount = count($leadMasters);
+            $leadEvaluation = array();
+            foreach ($ruleConditions as $ruleCondition) {
+                foreach ($leadMasters as $leadMaster) {
+                    if ($ruleCondition->master_id == $leadMaster->master_id && $ruleCondition->mastervalue_id == $leadMaster->mastervalue_id) {
+                        if ($leadMastersCount == 1) {
+                            $leadEvaluation[] = true;
+                            break;
+                        } else {
+                            $leadEvaluation[] = true;
+                            if (!is_null($ruleCondition->condition)) {
+                                $leadEvaluation[] = strtoupper($ruleCondition->condition);
+                            }
+                        }
+                    } else {
+                        // LEAD IS NOT MATCHING WITH RULE
+                    }
+                }
+            }
+            $leadEve = implode(" ", $leadEvaluation);
+            $leadEve2 = explode(" ", $leadEve);   
+            $lastWordInLeadEvaluation = $leadEve2[count($leadEve2) - 1];
+            if ($lastWordInLeadEvaluation == "OR" || $lastWordInLeadEvaluation == "AND") {
+                $leadEve .= ' 0';
+            }
+            $leadValue = eval("return ($leadEve);");
+            if ($leadValue) {
+                $leadMatchingRule[] = $leadId;
+            }
+        }
+        return $leadMatchingRule;
+    }
+    function getLeadMatchingRuleOld($ruleId) {
+        $dateDiffResult = $this->getDayCountForFrequency($ruleId);
+        $dateDiffCount = $dateDiffResult["count"];
+        $query = "SELECT id, DATEDIFF(CURDATE(), created_at) AS days,created_at FROM  leads where DATEDIFF(CURDATE(), created_at) = $dateDiffCount";
+        $leadsWithDateCondotion = DB::select($query);
+        Log::info("====query=====");
+        Log::info($query);
+        $dateCondtionSaisfyingLead = [];
+        foreach($leadsWithDateCondotion as $leadWithDateCondotion) {
+            $dateCondtionSaisfyingLead[] = $leadWithDateCondotion->id;
+        }
+
+        Log::info("I am dateCondtionSaisfyingLead ------");
+        Log::info($dateCondtionSaisfyingLead);
+
+        $ruleConditions = RuleCondition::where('rule_id', $ruleId)->orderBy('master_id', 'asc')->get();
+        //Log::info("*** Rule Conditions ***");
+        //Log::info($ruleConditions);
+        $leadIdsMatchingRuleCondition = array();
+        // Log::info("I am handling -----222-");
+        // Log::info($ruleConditions);
+        foreach ($ruleConditions as $ruleCondition) {
+            $matchCase = ['master_id' => $ruleCondition->master_id, 'mastervalue_id' => $ruleCondition->mastervalue_id];
+            $leadMastersMatchingRuleConditionMaster = LeadMaster::where($matchCase)->get();
+            foreach ($leadMastersMatchingRuleConditionMaster as $leadMasterMatchingRuleConditionMaster) {
+                $leadIdsMatchingRuleCondition[] = $leadMasterMatchingRuleConditionMaster->lead_id;
+            }
+        }
+        $uniqueLeadIdsMatchingRuleCondition = collect($leadIdsMatchingRuleCondition)->unique();
+        
+        $leadMatchingRule = array();
+        Log::info("I am uniqueLeadIdsMatchingRuleCondition ------");
+        Log::info($uniqueLeadIdsMatchingRuleCondition);
+        $leadIdsWithDateAndRuleConditions = array_intersect($dateCondtionSaisfyingLead,$uniqueLeadIdsMatchingRuleCondition->toArray());
+        
+        Log::info("I am intersect result i.e. leadIdsWithDateAndRuleConditions >>>>>------");
+        Log::info($leadIdsWithDateAndRuleConditions);
+
+        Log::info("Old Was >>>>>------");
+        Log::info($uniqueLeadIdsMatchingRuleCondition);
+
+        foreach ($leadIdsWithDateAndRuleConditions as $leadId) {
+        // foreach ($uniqueLeadIdsMatchingRuleCondition as $leadId) {
+            $leadMasters = LeadMaster::where('lead_id', $leadId)->where('mastervalue_id', '<>', null)->orderBy('master_id', 'asc')->get();
+            $leadMastersCount = count($leadMasters);
+            //Log::info("*** Lead Master Count ***");
+            //Log::info($leadMastersCount);
+            $leadEvaluation = array();
+
+            // Log::info("I am ruleConditions ------");
+            // Log::info($ruleConditions);
+            foreach ($ruleConditions as $ruleCondition) {
+                foreach ($leadMasters as $leadMaster) {
+                    if ($ruleCondition->master_id == $leadMaster->master_id && $ruleCondition->mastervalue_id == $leadMaster->mastervalue_id) {
+                        if ($leadMastersCount == 1) {
+                            $leadEvaluation[] = true;
+                            break;
+                        } else {
+                            $leadEvaluation[] = true;
+                            if (!is_null($ruleCondition->condition)) {
+                                $leadEvaluation[] = strtoupper($ruleCondition->condition);
+                            }
+                        }
+                    } else {
+                        // LEAD IS NOT MATCHING WITH RULE
+                    }
+                }
+            }
+
+            //  Log::info("*** Lead Evaluation ***");
+            //  Log::info($leadEvaluation);
+            $leadEve = implode(" ", $leadEvaluation);
+            // Log::info("*** Lead Evaluation - Implode ***");
+            //Log::info($leadEve);
+            $leadEve2 = explode(" ", $leadEve);
+            //Log::info("*** Lead Evaluation - Explode ***");
+            //Log::info($leadEve2);
+
+            $lastWordInLeadEvaluation = $leadEve2[count($leadEve2) - 1];
+            //Log::info("*** Last word in lead evaluation ***");
+            //Log::info($lastWordInLeadEvaluation);
+            if ($lastWordInLeadEvaluation == "OR" || $lastWordInLeadEvaluation == "AND") {
+                $leadEve .= ' 0';
+            }
+            //Log::info("*** Lead Evaluation - lead evaluation ***");
+            //Log::info($leadEve);
+            $leadValue = eval("return ($leadEve);");
+            //Log::info("*** Lead Evaluation - lead value ***");
+            //Log::info($leadValue);
+            if ($leadValue) {
+                $leadMatchingRule[] = $leadId;
+            }
+            //Log::info("*** Lead Evaluation - Matching leads ***");
+            //Log::info($leadMatchingRule);
+            return $leadMatchingRule;
+        }
     }
 
 }
