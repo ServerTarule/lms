@@ -389,7 +389,7 @@
         // });
 */
         let conditionMasterValues = <?php echo json_encode($masterValues) ?>;
-        let rule = '<?php echo $rule;  ?>';
+        let rule = JSON.parse('<?php echo $rule;  ?>');
         $.each(conditionMasterValues, function(key, value) {
             let multipleValues = [];
             $.each(value, function(k,v) {
@@ -402,9 +402,9 @@
             $("#ruleMaster_"+key+"").val(multipleValues);
         });
 
-        console.log("---rule['rulefrequency']---",typeof rule);
+        // console.log("---rule['rulefrequency']---",rule, rule['ruleFrequency'], typeof rule);
         $('input:radio[name="ruleType"]').filter('[value="'+rule['ruletype']+'"]').attr('checked', true);
-        $("#ruleFrequency").val(rule['rulefrequency']);
+        //$("#ruleFrequency").val(rule['rulefrequency']);
         $('#ruleSchedule option[value="'+rule['ruleschedule']+'"]').attr("selected", "selected");
 
         if (rule['ruletype'] === 'inbound') {

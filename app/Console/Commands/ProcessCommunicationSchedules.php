@@ -157,8 +157,8 @@ class ProcessCommunicationSchedules extends Command
         $ruleData = Rule::find($ruleId);
         // Log::info("====ruleData=====");
         // Log::info($ruleData);
-        $ruleFrequency = $ruleData->ruleFrequency;
-        $ruleSchedule = $ruleData->ruleSchedule;
+        $ruleFrequency = $ruleData->ruleFrequency ?? $ruleData->rulefrequency;
+        $ruleSchedule = $ruleData->ruleSchedule ?? $ruleData->ruleschedule;
         $timeToReduceFromCurrentTime = $ruleFrequency." ".$ruleSchedule;
         $dateAtGivenFrequency= date('Y-m-d', strtotime("-$timeToReduceFromCurrentTime"));
         $today = date_create(date('Y-m-d'));

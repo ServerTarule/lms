@@ -144,6 +144,7 @@ class EmployeeController extends Controller
     public function updateEmployee(Request $request,$employeeId): JsonResponse {
         $request->password;
         $userId = $request->userId;
+      
         $request->name;
         $dataToUpdate = [
             'name'=>$request->name,
@@ -173,7 +174,7 @@ class EmployeeController extends Controller
         $emp = Employee::find($employeeId);
         $employee=Employee::find($employeeId)->update([
             'name'=>$request->name,
-            // 'role_id'=>$request->role_id,
+            'role_id'=>$request->role_id,
             'contact'=>$request->contact,
             'user_id'=>$userId,
             'dob'=>$request->dob,

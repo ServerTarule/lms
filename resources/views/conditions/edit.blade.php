@@ -84,7 +84,7 @@
             <div class="col-md-12" id="outboundDiv">
                 <div class="col-md-2 form-group">
                     <label class="control-label">Frequency</label>
-                    <input type="number" id="ruleFrequency" name="ruleFrequency" placeholder="Enter Frequency" value="{{$rule->ruleFrequency}}" class="form-control">
+                    <input type="number" id="ruleFrequency" name="ruleFrequency" placeholder="Enter Frequency" value="{{$rule->rulefrequency or $rule->ruleFrequency}}" class="form-control">
                 </div>
                 <div class="col-md-2 form-group">
                     <label class="control-label">Schedule</label>

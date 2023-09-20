@@ -183,7 +183,7 @@
 
                                     <div class="col-md-6 form-group">
                                         <label class="control-label">Mobile Number <span class="required text-danger"> * </span></label>
-                                        <input type="text" placeholder="Enter Mobile Number" id="contact" name="contact" class="form-control">
+                                        <input type="text" placeholder="Enter Mobile Number" id="contact" maxlength="10" name="contact" class="form-control">
                                     </div>
                                     <div class="col-md-6 form-group">
                                         <label class="control-label">User Type (Role) <span class="required text-danger"> * </span></label>
@@ -212,7 +212,7 @@
                                     </div>
                                     <div class="col-md-6 form-group">
                                         <label class="control-label">Alternate Mobile Number </label>
-                                        <input type="text" placeholder="Alternate Mobile Number" id="alternate_contact" name="alternate_contact" class="form-control">
+                                        <input type="text" placeholder="Alternate Mobile Number" id="alternate_contact" maxlength="10"  name="alternate_contact" class="form-control">
                                     </div>
                                     <div class="col-md-6 form-group">
                                         <label class="control-label">Designation Type</label>
@@ -257,7 +257,7 @@
                      <div class="modal-content">
                         <div class="modal-header modal-header-primary">
                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                           <h3><i class="fa fa-plus m-r-5"></i> Edit EMPLOYEE </h3>
+                           <h3><i class="fa fa-pencil m-r-5"></i> Edit EMPLOYEE </h3>
                         </div>
                         <div class="modal-body">
                            <div class="row">
@@ -286,7 +286,7 @@
 
                                         <div class="col-md-6 form-group">
                                           <label class="control-label">Mobile Number <span class="required text-danger"> * </span> </label>
-                                          <input type="text" placeholder="Enter Mobile Number" name="contact" id="contact_edit" class="form-control">
+                                          <input type="text" placeholder="Enter Mobile Number" maxlength="10" name="contact" id="contact_edit" class="form-control">
                                        </div>
                                         <!-- <div class="col-md-6 form-group">
                                           <label class="control-label">User Type</label>
@@ -316,7 +316,7 @@
                                        </div>        
                                        <div class="col-md-6 form-group">
                                             <label class="control-label">Alternate Mobile Number </label>
-                                            <input type="text" placeholder="Alternate Mobile Number" name="alternate_contact" id="alternate_contact_edit" class="form-control">
+                                            <input type="text" placeholder="Alternate Mobile Number" maxlength="10"  name="alternate_contact" id="alternate_contact_edit" class="form-control">
                                         </div>
                                         <div class="col-md-6 form-group">
                                             <label class="control-label">Designation Type <span class="required text-danger"> * </span></label>
@@ -485,11 +485,13 @@ function getDataForEdit(id) {
         /* remind that 'data' is the response of the AjaxController */
         success: function (data) {
             const employee = data.employee;
+            console.log("data===",data,"--employee--",employee);
             const user = data.user;
             $("#emp_name_edit").val(employee.name);
             $("#contact_edit").val(employee.contact);
             $("#email_edit").val(user.email);
             $("#dob_edit").val(employee.dob);
+            $("#role_id_edit").val(employee.role_id);
             $("#doj_edit").val(employee.doj);
             $("#alternate_contact_edit").val(employee.alternate_contact);
             $("#designation_id_edit").val(employee.designation_id);

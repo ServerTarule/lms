@@ -388,7 +388,7 @@ function validateForm(isEdit=false) {
     const communicationNow = (isEdit)?$("#communicationNowEdit").val():$("#communicationNow").val();
     const scheduleUnit = (isEdit)?$("#scheduleUnitEdit").val():$("#scheduleUnit").val();
     const dayOfWeek = (isEdit)?$("#dayOfWeekEdit").val():$("#dayOfWeek").val();
-    const dayOfMonth = (isEdit)?$("#dayOfMonthEdit").val():$("#dayOfMonthEdit").val();
+    const dayOfMonth = (isEdit)?$("#dayOfMonthEdit").val():$("#dayOfMonth").val();
     const minuteHour = (isEdit)?$("#minuteHourEdit").val():$("#minuteHour").val();
     if(!rule || rule == null || rule == "") {
         validationMessage += `<li>Please select a rule. </li>`; 

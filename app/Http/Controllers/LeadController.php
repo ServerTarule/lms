@@ -199,6 +199,36 @@ class LeadController extends Controller
         }
     }
 
+    public function updateleaddate($id,$d, $m,$y, $f='create')  {
+
+        echo "<pre>";
+        if(!$id) {
+            return response()->json(['status'=>false, 'message'=>'Date could not be updated, id for which information is to updated not found.']);
+        }
+        $field =  'created_at';
+        if($f == 'update') {
+            $field =  'updated_at';
+        }
+        echo "\n date string =".$dateStr = $y."-".$m."-".$d;
+        $timestamp = strtotime($dateStr);
+        echo "\n Date to be updated in DB = ".$date = date('Y-m-d H:i:s',$timestamp);
+        echo "\n Field to be updated of table = ".$field;
+        $lead = Lead::find($id);
+        $savedResponse = 0;
+        if($lead && $field == 'updated_at') {
+            $lead->updated_at = $date;
+            $savedResponse = $lead->save();
+
+        }
+        else if($lead && $field == 'created_at') {
+            $lead->created_at = $date;
+            $savedResponse = $lead->save();
+        }
+       
+        if($savedResponse == 1) {
+            echo " \n The field `$field` updated for lead with id $lead->id and name `$lead->name`";
+        }
+    }
     public function updatelead(Request $request, $id) : JsonResponse 
     {
         try {

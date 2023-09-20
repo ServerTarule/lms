@@ -197,8 +197,20 @@ class CommunicationController extends Controller
         $ruleData = Rule::find($ruleId);
         if($ruleData) {
             $ruleData = $ruleData->toArray();
-            $ruleFrequency = $ruleData["rulefrequency"];
-            $ruleSchedule = $ruleData["ruleschedule"];
+            if(isset($ruleData["rulefrequency"])){
+                $ruleFrequency = $ruleData["rulefrequency"];
+            }
+            else if(isset($ruleData["ruleFrequency"])) {
+                $ruleFrequency = $ruleData["ruleFrequency"];
+            }
+
+            if(isset($ruleData["ruleschedule"])){
+                $ruleSchedule = $ruleData["ruleschedule"];
+            }
+            else if(isset($ruleData["ruleSchedule"])) {
+                $ruleSchedule = $ruleData["ruleSchedule"];
+            }
+            
             $timeToReduceFromCurrentTime = $ruleFrequency." ".$ruleSchedule;
             $dateAtGivenFrequency= date('Y-m-d', strtotime("-$timeToReduceFromCurrentTime"));
             // echo "\n dateAtGivenFrequency = ".$dateAtGivenFrequency;
