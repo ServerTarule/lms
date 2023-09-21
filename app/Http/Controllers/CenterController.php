@@ -161,5 +161,13 @@ class CenterController extends Controller
        
         return response()->json(['doctorsDetail' => $doctorsDetail]);        
     }
+
+
+    public function getCenterWithRespetToStateAndCity(Request $request): JsonResponse {
+        $stateId =  $request->get('stateId');
+        $cityId =  $request->get('cityId');
+        $centers = Center::where('state',$stateId)->where('city',$cityId)->get()->toArray();;
+        return response()->json(['centers' => $centers]);
+    }
 }
 

@@ -20,11 +20,14 @@
     <link href="{{ asset('assets/plugins/monthly/monthly.css') }}" rel="stylesheet" type="text/css" />
     <link href="{{ asset('assets/plugins/fullcalendar/fullcalendar.min.css') }}" rel="stylesheet" type="text/css" />
     <link href="{{ asset('assets/dist/css/stylecrm.css') }}" rel="stylesheet" type="text/css" />
+    
 {{--    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.min.css" rel="stylesheet" />--}}
     <link href="http://lasik.tarule.in/css/dataTables.bootstrap.min.css" rel="stylesheet" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:ital,wght@0,200;0,300;0,400;0,600;0,700;0,900;1,200;1,300;1,400;1,600;1,700;1,900&display=swap" rel="stylesheet" />
+
+    
     @livewireStyles
 
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.5/index.global.min.js'></script>
@@ -284,7 +287,13 @@
 <script src="//cdn.ckeditor.com/4.14.1/standard/ckeditor.js"></script>
 <script type="text/javascript">
     $(document).ready(function() {
-        toastr.options.timeOut = 1500; // 1.5s
+        $('.defaultDataTable').dataTable( {
+            paginate: true,
+            pageLength: 10,
+            "aLengthMenu": [10, 25, 50, 100]
+            // scrollY: 300
+        });
+        toastr.options.timeOut = 7000; // 1.5s
         toastr.options.debug=false;
         toastr.options.positionClass="toast-top-right";
         toastr.options.onclick=null;
@@ -380,7 +389,7 @@
         // });
 */
         let conditionMasterValues = <?php echo json_encode($masterValues) ?>;
-        let rule = '<?php echo $rule;  ?>';
+        let rule = JSON.parse('<?php echo $rule;  ?>');
         $.each(conditionMasterValues, function(key, value) {
             let multipleValues = [];
             $.each(value, function(k,v) {
@@ -392,8 +401,10 @@
             });
             $("#ruleMaster_"+key+"").val(multipleValues);
         });
+
+        // console.log("---rule['rulefrequency']---",rule, rule['ruleFrequency'], typeof rule);
         $('input:radio[name="ruleType"]').filter('[value="'+rule['ruletype']+'"]').attr('checked', true);
-        $("#ruleFrequency").val(rule['rulefrequency']);
+        //$("#ruleFrequency").val(rule['rulefrequency']);
         $('#ruleSchedule option[value="'+rule['ruleschedule']+'"]').attr("selected", "selected");
 
         if (rule['ruletype'] === 'inbound') {
@@ -675,116 +686,8 @@
         }
     }
 
-    function editCommunication(id) {
-        let CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
-        $.ajaxSetup({
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            }
-        });
-        $.ajax({
-            /* the route pointing to the post function */
-            url: '/communications/'+id,
-            type: 'GET',
-            /* send the csrf-token and the input to the controller */
-            // data: {_token: CSRF_TOKEN, 'ruleData':JSON.stringify(jsonObject)},
-            data: {
-                _token: CSRF_TOKEN,
-                'id': id
-            },
-            // data: $(this).serialize(),
-            dataType: 'JSON',
-            /* remind that 'data' is the response of the AjaxController */
-            success: function (data) {
-                let communicationSchedule = data['schedule'];
-                let type = communicationSchedule['type'];
-                $('#communicationId').val(communicationSchedule['id']);
-                $('.ruleId').val(communicationSchedule['rule_id']);
-                $('.communicationTemplateType').val(type);
 
-                if(type === 'WhatsApp') {
-                    $(".communicationTemplateMessageDiv").show();
-                    $(".communicationTemplateSubjectDiv").hide();
-                    $(".communicationTemplateBodyDiv").hide();
-                }
-
-                if(type === 'Email') {
-                    $(".communicationTemplateMessageDiv").hide();
-                    $(".communicationTemplateSubjectDiv").show();
-                    $(".communicationTemplateBodyDiv").show();
-                }
-
-                $('.communicationTemplateId').val(communicationSchedule['template_id']);
-                $('.communicationTemplateSubject').val(communicationSchedule['subject']);
-                $('.communicationTemplateMessage').val(communicationSchedule['message']);
-                $('.communicationTemplateBody').val(communicationSchedule['content']);
-
-                let schedule = communicationSchedule['schedule'];
-
-                if (schedule === 'now') {
-                    $('input:radio[name="schedule"]').filter('[value="'+schedule+'"]').attr('checked', true);
-                    $("#editCommunicationNowDiv *").prop('disabled',true);
-                    $("#editCommunicationScheduleDiv *").prop('disabled',true);
-                } else {
-                    $("#editCommunicationScheduleDiv *").prop('disabled',false);
-                    $("#editCommunicationNowDiv *").prop('disabled',false);
-                }
-
-                $('#editSchedule').modal('show');
-            },
-            failure: function (data) {
-                console.log(data);
-            }
-        });
-    }
-
-    function editLead(id) {
-        let CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
-        $.ajaxSetup({
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            }
-        });
-        $.ajax({
-            /* the route pointing to the post function */
-            url: '/leads/'+id,
-            type: 'GET',
-            /* send the csrf-token and the input to the controller */
-            // data: {_token: CSRF_TOKEN, 'ruleData':JSON.stringify(jsonObject)},
-            data: {
-                _token: CSRF_TOKEN,
-                'id': id
-            },
-            // data: $(this).serialize(),
-            dataType: 'JSON',
-            /* remind that 'data' is the response of the AjaxController */
-            success: function (data) {
-                let lead = data['lead'];
-                let leadmasters = data['leadmasters'];
-                $('.leadId').val(lead['id']);
-                $('.leadName').val(lead['name']);
-                $('.leadEmail').val(lead['email']);
-                $('.leadMobile').val(lead['mobileno']);
-                $('.leadAlternateMobile').val(lead['altmobileno']);
-                $('.leadReceivedDate').val(lead['receiveddate']);
-
-                $.each(leadmasters, function(key, value) {
-                    if(value != null) {
-                        let mastervalue = value['mastervalue_id'];
-                        if (mastervalue == null) {
-                            mastervalue = 0;
-                        }
-                        $(".leadMaster_"+value['master_id']+"").val(mastervalue);
-                    }
-                });
-
-                $('#editSingleLead').modal('show');
-            },
-            failure: function (data) {
-                console.log(data);
-            }
-        });
-    }
+    
 
     function handleChange(cb) {
         console.log("Changed, new value = " + cb.checked);
@@ -1078,82 +981,6 @@
             });
         });
 
-        $("#leadMasterSubmit").click(function(){
-
-            let leadMastersData = $('#leadMasters').val();
-
-            let name = $('#name').val();
-            let email = $('#email').val();
-            let mobileno = $('#mobileno').val();
-            let altmobileno = $('#altmobileno').val();
-            let receiveddate = $('#receiveddate').val();
-            let remark = $('#remark').val();
-            let items = [];
-            $.each(JSON.parse(leadMastersData), function (key, value) {
-
-                let itemValue = {};
-                // let master = []
-                // let masterValues = [];
-                let masterOperations = [];
-
-                // master.push(value.id);
-                itemValue ["master"] = value.id;
-                // $('#ruleMaster_' + value.id + ' :selected').each(function (i, sel) {
-                //     masterValues.push($(sel).val());
-                // });
-                let $masterValue = $('#leadMaster_' + value.id + ' :selected').val();
-                if ($masterValue != "-- Select Condition --") {
-                    itemValue ["masterValue"] = $masterValue;
-                } else {
-                    itemValue ["masterValue"] = null;
-                }
-                // $('#ruleCondition_' + value.id + ' :selected').each(function (i, sel) {
-                //     masterOperations.push($(sel).val());
-                // });
-                // itemValue ["masterOperations"] = masterOperations;
-
-                items.push(itemValue);
-
-            });
-            //jsonObject.masters = item;
-            //jsonObject.push(items)
-            // console.log(JSON.stringify(items));
-
-
-            let CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                }
-            });
-            $.ajax({
-                /* the route pointing to the post function */
-                url: '/leads/store',
-                type: 'POST',
-                /* send the csrf-token and the input to the controller */
-                // data: {_token: CSRF_TOKEN, 'ruleData':JSON.stringify(jsonObject)},
-                data: {
-                    _token: CSRF_TOKEN,
-                    'name': name,
-                    'email': email,
-                    'mobileno': mobileno,
-                    'altmobileno': altmobileno,
-                    'receiveddate': receiveddate,
-                    'remark': remark,
-                    'leadMasterData':JSON.stringify(items)
-                },
-                // data: $(this).serialize(),
-                dataType: 'JSON',
-                /* remind that 'data' is the response of the AjaxController */
-                success: function (data) {
-                    console.log(data);
-                    window.location.href = "/leads";
-                },
-                failure: function (data) {
-                    console.log(data);
-                }
-            });
-        });
 
         $("#mastersTab").click(function(){
 
@@ -1188,35 +1015,59 @@
             });
         });
 
-        $('select[name="templateType"]').change(function() {
-            if($(this).val() === 'WhatsApp') {
-                $("#templateMessageDiv").show();
-                $("#templateSubjectDiv").hide();
-                $("#templateEmailDiv").hide();
-            }
-
-            if($(this).val() === 'Email') {
-                $("#templateMessageDiv").hide();
-                $("#templateSubjectDiv").show();
-                $("#templateEmailDiv").show();
-            }
-        });
+        
 
         $('select[name="communicationTemplateType"]').change(function() {
+            setTemplateNamesDisplay(this)
+
+        });
+
+        function setTemplateNamesDisplay(self) {
             console.log("Here");
-            if($(this).val() === 'WhatsApp') {
-                $("#communicationTemplateMessageDiv").show();
-                $("#communicationTemplateSubjectDiv").hide();
-                $("#communicationTemplateBodyDiv").hide();
+            const typeData = $(self).attr('data');
+            console.log("==typeData=="+typeData);
+            let extension='';
+            if(typeData === 'Edit') {
+                extension = typeData;
             }
-
-            if($(this).val() === 'Email') {
-                $("#communicationTemplateMessageDiv").hide();
-                $("#communicationTemplateSubjectDiv").show();
-                $("#communicationTemplateBodyDiv").show();
+            if($(self).val() === 'WhatsApp') {
+                $(`#communicationTemplateMessageDiv${extension}`).show(1000);
+                $(`#communicationTemplateSubjectDiv${extension}`).hide(1000);
+                $(`#communicationTemplateBodyDiv${extension}`).hide(1000);
+                
             }
+            else if($(self).val() === 'Email') {
+                console.log(`#communicationTemplateMessageDiv${extension}`)
+                $(`#communicationTemplateMessageDiv${extension}`).hide(1000);
+                $(`#communicationTemplateSubjectDiv${extension}`).show(1000);
+                $(`#communicationTemplateBodyDiv${extension}`).show(1000);
+                
+            }
+            else {
+                $(`#communicationTemplateMessageDiv${extension}`).hide(1000);
+                $(`#communicationTemplateSubjectDiv${extension}`).hide(1000);
+                $(`#communicationTemplateBodyDiv${extension}`).hide(1000);
+                $("#communicationTemplateMessage").val("");
+                if(typeData === 'Edit') {
+                    CKEDITOR.replace("communicationTemplateBodyEdit", {
+                        height: 100
+                    });
+                    CKEDITOR.instances.communicationTemplateBodyEdit.setData("");
+                }
+                else {
+                    CKEDITOR.replace("communicationTemplateBody", {
+                        height: 100
+                    });
+                    CKEDITOR.instances.communicationTemplateBody.setData("");
+                }
+            }
+            let templateType = $(self).val();
+            setTemplateNames(templateType, false)
+        }
+        function setTemplateNames(templateType, isEdit, templateNameValue = '', subject = '', message='' ){
 
-            let templateType = $(this).val();
+            //here templateNameValue = templateNameValue saved in db wrt communication
+            // alert('templateType'+templateType+'==isEdit----'+isEdit+'===templateNameValue==='+templateNameValue);
             $(".removableTemplate").remove();
             if(templateType !== 'NA') {
                 $.ajax({
@@ -1225,9 +1076,25 @@
                     dataType: 'JSON',
                     success: function (data) {
                         let templates = data.template;
+                        console.log("---fetched templates===",templates);
                         templates.forEach(function(template) {
-                            $("#communicationTemplateId, #editCommunicationTemplateId").append(`<option class="removableTemplate" value="`+template.id+`">`+template.name+`</option>`);
+                            $("#communicationTemplateId, #editCommunicationTemplateId #communicationTemplateIdEdit").append(`<option class="removableTemplate" value="`+template.id+`">`+template.name+`</option>`);
+                            // if(isEdit) {
+                                if(template.id == templateNameValue) {
+                                    $("#communicationTemplateIdEdit").append(`<option class="removableTemplate" value="`+template.id+`" selected>`+template.name+`</option>`);
+
+                                }
+                                else {
+                                    $("#communicationTemplateIdEdit").append(`<option class="removableTemplate" value="`+template.id+`">`+template.name+`</option>`);
+                                }
+                            // }
                         });
+                        if(isEdit) {
+                            setTimeout(() => {
+                                const thatSelector = $("#communicationTemplateIdEdit");
+                                fetchRelatedTemplatesData(thatSelector,subject, message)
+                            }, 3000);
+                        }
 
                     },
                     failure: function (data) {
@@ -1235,8 +1102,59 @@
                     }
                 });
             }
+        }
 
+        $('select[name="communicationTemplateId"]').change(function() {
+            // alert("Going to fetch template content");
+            fetchRelatedTemplatesData(this);
         });
+
+        function fetchRelatedTemplatesData(self, subject=null, message=null) {
+            // alert("fetchRelatedTemplatesData");
+            const typeData = $(self).attr('data');
+            console.log("==typeData=="+typeData);
+            let editText='';
+            if(typeData === 'Edit') {
+                editText = typeData;
+            }
+            let templateId = $(self).val();
+            if(templateId !== 'NA') {
+                $.ajax({
+                   url: '/communications/templates/'+templateId,
+                   type: 'GET',
+                   dataType: 'JSON',
+                   success: function (data) {
+                       console.log("-----data of template---",data);
+                       if (data.template.type === 'Email') {
+                            const syubjectData = subject?subject:data.template.subject;
+                            const bodyData = message?message:data.template.message;
+                            
+                            if(typeData === 'Edit') {
+                                $("#communicationTemplateSubjectEdit").val(syubjectData);
+                                CKEDITOR.replace("communicationTemplateBodyEdit", {
+                                    height: 100
+                                });
+                                CKEDITOR.instances.communicationTemplateBodyEdit.setData(bodyData);
+                            }
+                            else {
+                                $("#communicationTemplateSubject").val(syubjectData);
+                                CKEDITOR.replace("communicationTemplateBody", {
+                                    height: 100
+                                });
+                                CKEDITOR.instances.communicationTemplateBody.setData(bodyData);
+                            }
+                        } else if (data.template.type === 'WhatsApp') {
+                            const msgData = message?message:data.template.message;
+                            $("#communicationTemplateMessage").val(msgData)
+                       }
+                   },
+                   failure: function (data) {
+                       console.log(data);
+                   }
+               });
+           }
+        }
+
 
         $("#communicationSchedule, .communicationSchedule").click(function() {
             $("#communicationScheduleDiv *, #editCommunicationScheduleDiv *").prop('disabled',false);
@@ -1248,33 +1166,7 @@
             $("#communicationScheduleDiv *, #editCommunicationScheduleDiv *").prop('disabled',true);
         });
 
-        $("#inboundRule").click(function() {
-            $("#outboundDiv *").prop('disabled',true);
-            $("#ruleFrequency").val('');
-            $("#ruleSchedule").val('NA');
-        });
-
-        $("#outboundRule").click(function() {
-            $("#outboundDiv *").prop('disabled',false);
-        });
-
-        $('select[name="scheduleUnit"]').change(function() {
-            if($(this).val() === 'DAILY') {
-                // $("#dayOfWeekDiv *, #dayOfMonthDiv *").prop('disabled',false);
-                // $("#dayOfWeekDiv").val('NA').change();
-                // $("#dayOfMonthDiv").val('NA').change();
-                $("#dayOfWeekDiv *, #dayOfMonthDiv *").prop('disabled',true);
-                $("#minuteHour").val("00:00");
-            } else if ($(this).val() === 'WEEKLY') {
-                $("#dayOfWeekDiv *").prop('disabled',false);
-                $("#dayOfMonthDiv *").prop('disabled',true);
-                $("#minuteHour").val("00:00");
-            } else if ($(this).val() === 'MONTHLY') {
-                $("#dayOfWeekDiv *, #dayOfMonthDiv *").prop('disabled',false);
-            } else {
-                $("#dayOfWeekDiv *, #dayOfMonthDiv *").prop('disabled',false);
-            }
-        });
+        
 
         $("#employeePermissionSubmit").click(function(){
 
@@ -1424,6 +1316,47 @@
             });
         }
 
+       
+        $('select[name="leadEmailTemplateId"]').change(function() {
+
+            let templateId = $(this).val();
+
+            if(templateId !== 'NA') {
+                $.ajax({
+                    url: '/communications/templates/'+templateId,
+                    type: 'GET',
+                    dataType: 'JSON',
+                    success: function (data) {
+                        console.log(data);
+                        $("#leadEmailSubject").val(data.template.subject);
+                        $("#leadEmailBody").val(data.template.body);
+                    },
+                    failure: function (data) {
+                        console.log(data);
+                    }
+                });
+            }
+        });
+
+        $('select[name="leadWhatsAppTemplateId"]').change(function() {
+
+            let templateId = $(this).val();
+
+            if(templateId !== 'NA') {
+                $.ajax({
+                    url: '/communications/templates/'+templateId,
+                    type: 'GET',
+                    dataType: 'JSON',
+                    success: function (data) {
+                        $("#leadWhatsAppMessage").val(data.template.message);
+                    },
+                    failure: function (data) {
+                        console.log(data);
+                    }
+                });
+            }
+        });
+
         $("#employeeMenuPermissionbtn").click(function(){
             let employeeId = $("#employeeId").val();
             let allPermissions = $("#allPermissions").val();
@@ -1478,71 +1411,6 @@
                     console.log("failure response",data);
                 }
             });
-        });
-
-
-            $('select[name="communicationTemplateId"]').change(function() {
-
-            let templateId = $(this).val();
-
-            if(templateId !== 'NA') {
-                $.ajax({
-                   url: '/communications/templates/'+templateId,
-                   type: 'GET',
-                   dataType: 'JSON',
-                   success: function (data) {
-                       console.log(data);
-                       if (data.template.type === 'Email') {
-                           $("#communicationTemplateSubject").val(data.template.subject);
-                       } else if (data.template.type === 'WhatsApp') {
-                            $("#communicationTemplateMessage").val(data.template.message)
-                       }
-                   },
-                   failure: function (data) {
-                       console.log(data);
-                   }
-               });
-           }
-        });
-
-        $('select[name="leadEmailTemplateId"]').change(function() {
-
-            let templateId = $(this).val();
-
-            if(templateId !== 'NA') {
-                $.ajax({
-                    url: '/communications/templates/'+templateId,
-                    type: 'GET',
-                    dataType: 'JSON',
-                    success: function (data) {
-                        console.log(data);
-                        $("#leadEmailSubject").val(data.template.subject);
-                        $("#leadEmailBody").val(data.template.body);
-                    },
-                    failure: function (data) {
-                        console.log(data);
-                    }
-                });
-            }
-        });
-
-        $('select[name="leadWhatsAppTemplateId"]').change(function() {
-
-            let templateId = $(this).val();
-
-            if(templateId !== 'NA') {
-                $.ajax({
-                    url: '/communications/templates/'+templateId,
-                    type: 'GET',
-                    dataType: 'JSON',
-                    success: function (data) {
-                        $("#leadWhatsAppMessage").val(data.template.message);
-                    },
-                    failure: function (data) {
-                        console.log(data);
-                    }
-                });
-            }
         });
 
         // Lead Call Send Email
@@ -1752,9 +1620,6 @@
 
     </script>--}}
     <script>
-        CKEDITOR.replace("communicationTemplateBody", {
-            height: 200
-        });
         CKEDITOR.replace("templateEmailBody", {
             height: 200
         });
@@ -1832,7 +1697,7 @@
             //counter
             $('.count-number').counterUp({
                 delay: 10,
-                time: 5000
+                time: 2000
             });
         }
         dash();

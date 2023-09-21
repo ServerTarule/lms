@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Role;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Support\Facades\DB;
 
 class EmployeeController extends Controller
 {
@@ -20,7 +21,30 @@ class EmployeeController extends Controller
      */
     public function index()
     {
+        // $employee=Employee::all();
+
+        $employees= DB::table('employees as e')
+        ->select('e.*', 'd.name as designation_type', 'u.name as user_name','r.name as role_name')
+        ->leftJoin('designations as d', function($join){
+            $join->on('e.designation_id', '=', 'd.id');
+        })
+        ->leftJoin('users as u', function($join){
+            $join->on('e.user_id', '=', 'u.id');
+        })
+        ->leftJoin('roles as r', function($join){
+            $join->on('e.role_id', '=', 'r.id');
+        })->get();
+        
         $employee=Employee::all();
+
+        // foreach($employee as $employe) {
+        //     echo "---------------+++++++++++++++++++--------------";
+        //     print_r($employe->role);
+            
+        //     echo "---------------*******************--------------";
+        // }
+        // die;
+
         $user=User::all();
         $role=Role::all();
         $designation=Designation::all();
@@ -45,6 +69,8 @@ class EmployeeController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request): JsonResponse {
+
+        // echo "Role Id = ".$request->role_id;
         $allowedExtension = ['png','jpg','jpeg','gif'];
         $profilImg="";
         if($request->file) {
@@ -68,7 +94,7 @@ class EmployeeController extends Controller
         if(!$user){
             return response()->json(['status'=>false, 'message'=>'Something Went Wrong!']);
         }
-        $employee=Employee::create([
+        $postArray = [
             'name'=>$request->name,
             'role_id'=>$request->role_id,
             'contact'=>$request->contact,
@@ -78,7 +104,8 @@ class EmployeeController extends Controller
             'alternate_contact'=>$request->alternate_contact,
             'designation_id'=>$request->designation_id,
             'profile_img'=>$profilImg,
-        ]);
+        ];
+        $employee=Employee::create($postArray);
         if($employee){
             return response()->json(['status'=>true, 'message'=>'Employee added successfully!']);
         }
@@ -117,6 +144,7 @@ class EmployeeController extends Controller
     public function updateEmployee(Request $request,$employeeId): JsonResponse {
         $request->password;
         $userId = $request->userId;
+      
         $request->name;
         $dataToUpdate = [
             'name'=>$request->name,
@@ -146,7 +174,7 @@ class EmployeeController extends Controller
         $emp = Employee::find($employeeId);
         $employee=Employee::find($employeeId)->update([
             'name'=>$request->name,
-            // 'role_id'=>$request->role_id,
+            'role_id'=>$request->role_id,
             'contact'=>$request->contact,
             'user_id'=>$userId,
             'dob'=>$request->dob,

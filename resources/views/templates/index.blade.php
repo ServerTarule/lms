@@ -205,6 +205,15 @@
 @endsection
 @push('custom-scripts')
 <script>
+    // alert("mee");
+    // CKEDITOR.replace("templateEmailBody", {
+    //     height: 100
+    // });
+
+        // CKEDITOR.replace("templateEmailBodyEdit", {
+        //     height: 100
+        // });
+
     $("#templateSubjectDiv").hide();
     $("#templateEmailDiv").hide();
     $("#templateMessageDiv").hide();
@@ -234,7 +243,6 @@
             $("#templateMessageDivEdit").show();
             $("#templateSubjectDivEdit").hide();
             $("#templateEmailDivEdit").hide();
-            CKEDITOR.instances.templateEmailBodyEdit.setData("");
             $("#templateEmailSubjectEdit").val("");
         }
 
@@ -243,6 +251,8 @@
             $("#templateSubjectDivEdit").show();
             $("#templateEmailDivEdit").show();
             $("#templateMessageEdit").val("")
+            // CKEDITOR.instances.templateEmailBodyEdit.setData("");
+
         }
     });
 
@@ -280,6 +290,7 @@
     }
     
     $("#addItemButton").click(function(){
+        alert("I am here");
         processAdd()
     });
 
@@ -341,6 +352,9 @@
             }
         });
         $("#templateId").val(templateId);
+        CKEDITOR.replace("templateEmailBodyEdit", {
+            height: 100
+        });
         CKEDITOR.instances.templateEmailBodyEdit.setData("");
         $("#templateMessageEdit").val(""); 
         $.ajax({
@@ -366,6 +380,7 @@
                     $("#templateNameEdit").val(templateObject?.name);
                     $("#templateEmailSubjectEdit").val(templateObject?.subject);
                     const html =  data?.template?.message;
+                    console.log("==html===",html);
                     CKEDITOR.instances.templateEmailBodyEdit.setData(html);
                     $("#templateMessageEdit").val(""); 
                }

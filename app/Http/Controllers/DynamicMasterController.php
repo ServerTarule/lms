@@ -19,15 +19,7 @@ class DynamicMasterController extends Controller
 
     public function store(Request $request, $id)
     {
-        $unique = DynamicValue::where(['parent_id' => $id, 'name' => $request->name])->first();
-        if ($unique) {
-            return redirect()->back()->with('error', 'Value Already Exists');
-        }
         $dependentId = null;
-
-        //Log::info($request->leadStatusMasterId);
-        //Log::info($request->leadStatusId);
-
         if ($request->leadStatusMasterId != null) {
             $dependentId = $request->leadStatusMasterId;
         }
@@ -35,6 +27,20 @@ class DynamicMasterController extends Controller
         if ($request->stateMasterId != null) {
             $dependentId = $request->stateMasterId;
         }
+        // echo $dependentId;
+        if($dependentId) {
+            //->where('dependent_id', '!=', $dependentId)
+            $unique = DynamicValue::where(['parent_id' => $id, 'name' => $request->name,'dependent_id'=>$dependentId])->first();
+
+        }
+        else {
+            $unique = DynamicValue::where(['parent_id' => $id, 'name' => $request->name])->first();
+        }
+        // print_r($unique );die;
+        if ($unique) {
+            return redirect()->back()->with('error', 'Value "'.$request->name.'"Already Exists');
+        }
+        
 
         $value = DynamicValue::create([
             'name' => $request->name,

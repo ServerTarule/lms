@@ -5,8 +5,8 @@
     <div class="row">
         <div class="col-sm-12">
             <div class="text-right">
-                <a href="{{ route('rules.create') }}" class="btn btn-exp btn-sm"><i class="fa fa-eye"></i>< Back</a>
-{{--                <a href="{{  route('rules.create.condition', compact('ruleName', 'ruleMaster')) }}" class="btn btn-exp btn-sm"><i class="fa fa-eye"></i>< Back</a>--}}
+                <a href="{{ asset('rules.create') }}" class="btn btn-exp btn-sm"><i class="fa fa-eye"></i>< Back</a>
+{{--                <a href="{{ asset('{{  route('rules.create.condition', compact('ruleName', 'ruleMaster')) }}') }}" class="btn btn-exp btn-sm"><i class="fa fa-eye"></i>< Back</a>--}}
             </div>
             <div class="row">
 {{--                <form method="post" id="ruleConditionForm" name="ruleConditionForm" action="/rules/create/condition">--}}
@@ -96,10 +96,10 @@
                     </div>
                         <div class="col-md-12">
                             <div class="col-md-2 form-group">
-                                <label class="control-label"><input type="radio" value="inbound" id="inboundRule" name="ruleType"/> Inbound</label>
+                                <label class="control-label"><input type="radio" value="inbound" id="inboundRule" name="ruleType" checked/> Inbound</label>
                             </div>
                             <div class="col-md-2 form-group">
-                                <label class="control-label"><input type="radio" value="outbound" id="outboundRule" name="ruleType" checked/>   Outbound</label>
+                                <label class="control-label"><input type="radio" value="outbound" id="outboundRule" name="ruleType" />   Outbound</label>
                             </div>
                         </div>
                         <div class="col-md-12" id="outboundDiv">
@@ -111,10 +111,10 @@
                                 <label class="control-label">Schedule</label>
                                 <select class="form-control" name="ruleSchedule" id="ruleSchedule" >
                                     <option value="NA">-- Select Schedule --</option>
-                                    <option value="Days">Days</option>
-                                    <option value="Weeks">Weeks</option>
-                                    <option value="Months">Months</option>
-                                    <option value="Years">Years</option>
+                                    <option value="Day">Day(s)</option>
+                                    <option value="Week">Week(s)</option>
+                                    <option value="Month">Month(s)</option>
+                                    <option value="Year">Year(s)</option>
                                 </select>
                             </div>
                         </div>
@@ -159,3 +159,26 @@
         </div>
     </div>
 @endsection
+
+@push('custom-scripts')
+<script type="text/javascript">
+    $( document ).ready(function() {
+        function disableOutbound(){
+            $("#outboundDiv *").prop('disabled',true);
+            $("#ruleFrequency").val('');
+            $("#ruleSchedule").val('NA');
+        }
+        $("#inboundRule").click(function() {
+            disableOutbound();
+        });
+
+        $("#outboundRule").click(function() {
+            $("#outboundDiv *").prop('disabled',false);
+        });
+
+        disableOutbound();     
+    });
+   
+
+</script>
+@endpush

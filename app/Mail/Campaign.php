@@ -54,7 +54,7 @@ class Campaign extends Mailable
         return new Content(
             markdown: 'communications.campaigns',
             with: [
-                'emailBody' => $this->template->body,
+                'emailBody' => $this->template->message,
             ],
         );
     }

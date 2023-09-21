@@ -13,46 +13,43 @@
                     </div>
                 </div>
                 <div class="panel-body">
+                    <input type="hidden" id="mainMasterId" value="{{ $master->id }}">
                     <div>
-                        <form action="/dynamic/{{ $master->id }}" method="post">
+                        <form action="/dynamic/{{ $master->id }}" onsubmit="return saveMasterValues();" method="post">
                             @csrf
                             <div class="row">
-                                @if ( $mainmasters)
-                                    @if($leadStatuses)
-                                        @if( count($leadStatuses) != 0 )
+                                @if ($mainmasters)
+                                        @if(count($leadStatuses) > 0 || $master->id == '4')
                                             <div class="form-group col-sm-2">
-                                                <label>Select Lead Status<span class="required"> * </span></label>
+                                                <label>Select Lead Status<span class="required text-danger"> * </span></label>
                                             </div>
                                             <div class="form-group col-sm-2">
-                                                <select class="form-control" name="leadStatusMasterId" id="leadStatusMasterId">
-                                                    <option disabled>-- Select Lead Status --</option>
+                                                <select class="form-control" name="leadStatusMasterId" id="leadStatusMasterIdAdd">
+                                                    <option value="0">-- Select Lead Status --</option>
                                                         @foreach($leadStatuses as $leadStatus)
                                                             <option value="{{ $leadStatus->id }}">{{ $leadStatus->name }}</option>
                                                         @endforeach
                                                 </select>
                                             </div>
                                         @endif
-                                    @endif
-                                    @if($states)
-                                        @if( count($states) != 0 )
+                                        @if(count($states) > 0 || $master->id == '8')
                                             <div class="form-group col-sm-2">
-                                                <label>Select State <span class="required"> * </span></label>
+                                                <label>Select State <span class="required text-danger"> * </span></label>
                                             </div>
                                             <div class="form-group col-sm-2">
-                                                <select class="form-control" name="stateMasterId" id="stateMasterId">
-                                                    <option disabled>-- Select State --</option>
+                                                <select class="form-control" name="stateMasterId" id="stateMasterIdAdd">
+                                                    <option value="0">-- Select State --</option>
                                                     @foreach($states as $state)
                                                         <option value="{{ $state->id }}" {{$state->id  == $currentStateId ? 'selected' : ''}}>{{ $state->name }}</option>
                                                     @endforeach
                                                 </select>
                                             </div>
                                         @endif
-                                    @endif
                                 <div class="form-group col-sm-2">
                                     <label>Name<span class="required text-danger"> * </span></label>
                                 </div>
                                 <div class="form-group col-sm-3">
-                                    <input type="text" name="name" placeholder="Main Master Value" class="form-control">
+                                    <input type="text" name="name" placeholder="Main Master Value" id="masterValueFieldId" class="form-control">
                                     @if (session('error'))
                                     <span class="text-danger">{{ session('error') }}</span>
                                     @endif
@@ -143,17 +140,17 @@
                     <div class="row">
                         <div class="col-md-12">
                             <div class="text-right">
-                                <form action="/master/main/update-value/{{ $master->id }}/{{$dynaicmaster->id}}" method="post">
+                                <form action="/master/main/update-value/{{ $master->id }}/{{$dynaicmaster->id}}" onsubmit="return saveMasterValues(true);" method="post">
                                     @csrf
                                     <div class="row">
                                     @if($dependentMasterData)
                                         @if( count($dependentMasterData) != 0 )
                                             <div class="col-md-2 form-group AUTHORITY">
-                                                    <label>Select {{$dependentLabel}} *</label>
+                                                    <label>Select {{$dependentLabel}} <span class="required text-danger"> * </span></label>
                                                 </div>
                                                 <div class="col-md-4 form-group AUTHORITY">
-                                                    <select class="form-control" name="dependentId" id="stateMasterId">
-                                                        <option disabled>-- Select Value --</option>
+                                                    <select class="form-control" name="dependentId" id="parentMasterIdEdit">
+                                                        <option value="0">-- Select Value --</option>
                                                             @foreach($dependentMasterData as $dependentMasterDt)
                                                                 <option value="{{ $dependentMasterDt->id }}" {{$dependentMasterDt->id  == $currentDependentId ? 'selected' : ''}}>{{ $dependentMasterDt->name }}</option>
                                                             @endforeach
@@ -165,7 +162,7 @@
                                             <label>Name<span class="required text-danger"> * </span></label>
                                         </div>
                                         <div class="col-md-5 form-group AUTHORITY">
-                                            <input type="text" name="name" placeholder="Main Master Value"  value="{{$dynaicmaster->name}}"  class="form-control" required>
+                                            <input type="text" name="name"  id="masterValueFieldId" placeholder="Main Master Value"  value="{{$dynaicmaster->name}}"  class="form-control">
                                         </div>
                                         
                                         
@@ -244,3 +241,71 @@
 </div>
 @endif                    
 @endsection
+@push('custom-scripts')
+<script>
+function saveMasterValues(isEdit=false) {
+    let isValid =  true;
+    const mainMasterId =  $("#mainMasterId").val();
+    switch(mainMasterId) {
+        case "1":
+        case "2":
+        case "3":
+        case "5":
+        case "6":
+        case "7":
+            isValid = validatForm("masterValueFieldId");
+            return isValid;
+        break;
+        
+        case "4":
+            let  leadStatusMasterId = isEdit?"parentMasterIdEdit":"leadStatusMasterIdAdd";
+            isValid = validatForm("masterValueFieldId",leadStatusMasterId);
+            return isValid;
+        break;
+        case "8":
+            let  stateMasterId = isEdit?"parentMasterIdEdit":"stateMasterIdAdd";
+
+            // alert("--stateMasterId--"+stateMasterId);
+            
+            
+            isValid = validatForm("masterValueFieldId",stateMasterId);
+            // return false;
+            return isValid;
+        break;
+       
+        default:
+            // isValid = validatForm("masterValueFieldId");
+            return isValid;
+        break;
+    }
+    return isValid;
+}
+
+function validatForm(masterInputId = "masterValueFieldId", masterParentInputId=null ){
+    if(!masterParentInputId && !masterInputId){
+        return false;
+    }
+    else {
+        // alert("--masterParentInputId--"+masterParentInputId)
+        masterParentInputValue = $("#"+masterParentInputId).val();
+        // alert("-----masterParentInputValue---"+masterParentInputValue+"----"+typeof masterParentInputValue);
+        masterInputValue = $("#"+masterInputId).val();
+        // alert("-----masterInputValue---"+masterInputValue);
+        // console.log("===masterInputValue===",masterInputValue);
+        if(masterParentInputId && (!masterParentInputValue || masterParentInputValue =="" || masterParentInputValue =="0"))  {
+            // alert("parent value is not there")
+            toastr.error("Please select required value from dropdown!");
+            return false;
+        }
+        else if(!masterInputValue || masterInputValue =="") {
+            toastr.error("Please fill name!");
+            return false;
+        }
+        else {
+            // alert("----------------else--------------- !");
+            return true;
+        }
+    }
+}
+</script>
+@endpush                

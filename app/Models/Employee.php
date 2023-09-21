@@ -24,6 +24,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\Designation $designation
+ * * @property-read \App\Models\Role $role
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Lead> $leads
  * @property-read int|null $leads_count
  * @property-read \App\Models\User $user
@@ -44,7 +45,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @method static \Illuminate\Database\Eloquent\Builder|Employee whereProfileImg($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Employee whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Employee whereUserId($value)
- * @mixin \Eloquent
+ * @method static \Illuminate\Database\Eloquent\Builder|Employee whereRoleId($value)
+ *  @mixin \Eloquent
  */
 class Employee extends Model
 {
@@ -53,6 +55,7 @@ class Employee extends Model
         'name',
         'contact',
         'user_id',
+        'role_id',
         'dob',
         'doj',
         'alternate_contact',
@@ -69,6 +72,11 @@ class Employee extends Model
     public function designation() : BelongsTo
     {
         return $this->belongsTo(Designation::class);
+    }
+
+    public function role() : BelongsTo
+    {
+        return $this->belongsTo(Role::class);
     }
 
     // Relationship With Leads

@@ -10,7 +10,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\DB;
+    use Illuminate\Support\Facades\DB;
 
 class MainMasterController extends Controller
 {
@@ -24,8 +24,8 @@ class MainMasterController extends Controller
                   'edit'=>false
               ]);
         }
-        $leadStatuses = null;
-        $states = null;
+        $leadStatuses = [];
+        $states = [];
         $currentStateId = null;
         //Log::info($master->name);
         if(isset($master) && $master->name == 'Lead Stages') {
@@ -118,7 +118,12 @@ class MainMasterController extends Controller
     }
 
     public function update(Request $request,$masterId, $id){
-        $unique = DynamicValue::where('name', '=', $request->name)->where('id', '!=',$id)->first();   
+        if(isset($request->dependentId)) {
+            $unique = DynamicValue::where('name', '=', $request->name)->where('dependent_id', '=',$request->dependentId)->where('id', '!=',$id)->first();   
+        }
+        else {
+            $unique = DynamicValue::where('name', '=', $request->name)->where('id', '!=',$id)->first();   
+        }
         if($unique) {
             return redirect()->back()->with('error', 'Master Already Exist.');
         }
@@ -174,5 +179,13 @@ class MainMasterController extends Controller
         $stateId = $request->get('stateId');
         $cities = DynamicValue::where('dependent_id', $stateId)->get()->toArray();
         return response()->json(['cities' => $cities]);
+    }
+
+
+    public function getDependentMaster(Request $request) : JsonResponse {
+        $parentId = $request->get('parentId');
+        $dependentValues = DynamicValue::where('dependent_id', $parentId)->get()->toArray();
+        // print_r($dependentValues);
+        return response()->json(['dependentValues' => $dependentValues]);
     }
 }

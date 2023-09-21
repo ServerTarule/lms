@@ -26,7 +26,12 @@ class Kernel extends ConsoleKernel
 
         $communicationSchedules = Communication::all();
         foreach ($communicationSchedules as $communicationSchedule) {
+            
             if ($communicationSchedule->schedule != 'now') {
+                // echo "Going to print schedule";
+                // print_r($communicationSchedule->schedule);
+                // echo "Going to print schedule";
+                // print_r($communicationSchedule->schedule);
                 $schedule->command('processcommunicationschedules:cron', [$communicationSchedule])->cron($communicationSchedule->schedule);
             }
         }
