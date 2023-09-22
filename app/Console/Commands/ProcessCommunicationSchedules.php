@@ -174,7 +174,7 @@ class ProcessCommunicationSchedules extends Command
     public function getLeadMatchingRule($ruleId) {
         $dateDiffResult = $this->getDayCountForFrequency($ruleId);
         $dateDiffCount = $dateDiffResult["count"];
-        $query = "SELECT id, DATEDIFF(CURDATE(), created_at) AS days,created_at FROM  leads where DATEDIFF(CURDATE(), created_at) = $dateDiffCount";
+        $query = "SELECT id, DATEDIFF(CURDATE(), updated_at) AS days,updated_at FROM  leads where DATEDIFF(CURDATE(), updated_at) = $dateDiffCount";
         $leadsWithDateCondotion = DB::select($query);
         Log::info("====query=====");
         Log::info($query);
@@ -236,7 +236,7 @@ class ProcessCommunicationSchedules extends Command
     function getLeadMatchingRuleOld($ruleId) {
         $dateDiffResult = $this->getDayCountForFrequency($ruleId);
         $dateDiffCount = $dateDiffResult["count"];
-        $query = "SELECT id, DATEDIFF(CURDATE(), created_at) AS days,created_at FROM  leads where DATEDIFF(CURDATE(), created_at) = $dateDiffCount";
+        $query = "SELECT id, DATEDIFF(CURDATE(), updated_at) AS days,updated_at FROM  leads where DATEDIFF(CURDATE(), updated_at) = $dateDiffCount";
         $leadsWithDateCondotion = DB::select($query);
         Log::info("====query=====");
         Log::info($query);

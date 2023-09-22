@@ -111,8 +111,7 @@ class CommunicationController extends Controller
         } else if ($communicationType == 'now') {
             $ruleId = $request->ruleId;
             //Get Lead Matching With Rule
-            $leadMatchingRule = $this->getLeadMatchingRule($ruleId);
-            // print_r($leadMatchingRule); //die;
+            
             $communicationSchedule = Communication::create([
                 'type'=>$request->communicationTemplateType,
                 'message'=>$request->communicationTemplateMessage,
@@ -124,70 +123,77 @@ class CommunicationController extends Controller
                 'template_id'=>$request->communicationTemplateId,
                 'rule_id'=>$request->ruleId
             ]);
-            if (!empty($leadMatchingRule)) {
-                if($request->communicationTemplateType == 'SMS') {
-                    //SEND SMS HERE
-                } else if ($request->communicationTemplateType == 'Email') {
-                    $templateId = $request->communicationTemplateId;
-                    $template = Template::where('id', $templateId)->first();
-                    foreach ($leadMatchingRule as $key => $value) {
-                        $employee=CommunicationLead::create([
-                            'communication_id'=>$communicationSchedule->id,
-                            'rule_id'=>$ruleId,
-                            'lead_id'=>$value
-                        ]);
-                        $lead = Lead::where('id', $value)->first();
-                        //TODO Validate email
-                        if($lead) {
-                            Log::info($lead->email);
-                            if($lead->email) {
-                                $template->message = $request->communicationTemplateBody;
-                                $template->subject = $request->communicationTemplateSubject;
-                                $mailableObj = new Campaign($template);
-                                try{
-                                    Mail::to($lead->email)->send($mailableObj);
-                                    return response()->json(['status'=>false, 'message'=>`Communication schedule  has been saved successfully, and email has also been sent `]);
-                                }
-                                catch (Request $e) {
-                                    throw new \Exception($e->getMessage());
-                                }
-                            }
-                        }
-                        else {
-                            //In Case Error Occurred While Sending Email
-                            return response()->error(['status'=>false, 'message'=>`Communication schedule  has been saved successfully, But email could not be sent `]);
-                        }
-                       
-                    }
+            $this->sendNotification($ruleId,$request,$communicationSchedule);
+             
+        }
+        return response()->json(['status'=>true, 'message'=>'Communication schedule has been processed successfully.']);
+    }
 
-                } else if ($request->communicationTemplateType == 'WhatsApp') {
-                    foreach ($leadMatchingRule as $key => $value) {
-                        // echo "\n --Lead Id To send Message  --".$value."\n";
-                        $employee=CommunicationLead::create([
-                            'communication_id'=>$communicationSchedule->id,
-                            'rule_id'=>$ruleId,
-                            'lead_id'=>$value
-                        ]);
-                        $lead = Lead::where('id', $value)->first();
-                        // print_r($lead->toArray());
-                        //TODO Validate mobile
-                        if($lead && $lead->mobileno) {
-                            // echo "\n --mobileno-".$lead->mobileno."\n";
+    public function sendNotification($ruleId, $request, $communicationSchedule) {
+        $leadMatchingRule = $this->getLeadMatchingRule($ruleId);
+        // print_r($leadMatchingRule); //die;
+        if (!empty($leadMatchingRule)) {
+            if($request->communicationTemplateType == 'SMS') {
+                //SEND SMS HERE
+            } else if ($request->communicationTemplateType == 'Email') {
+                $templateId = $request->communicationTemplateId;
+                $template = Template::where('id', $templateId)->first();
+                foreach ($leadMatchingRule as $key => $value) {
+                    $employee=CommunicationLead::create([
+                        'communication_id'=>$communicationSchedule->id,
+                        'rule_id'=>$ruleId,
+                        'lead_id'=>$value
+                    ]);
+                    $lead = Lead::where('id', $value)->first();
+                    //TODO Validate email
+                    if($lead) {
+                        Log::info($lead->email);
+                        if($lead->email) {
+                            $template->message = $request->communicationTemplateBody;
+                            $template->subject = $request->communicationTemplateSubject;
+                            $mailableObj = new Campaign($template);
                             try{
-                                WaclubWhatsApp::sendMessage('+91'.$lead->mobileno,$request->communicationTemplateMessage);
-                                // return response()->json(['status'=>false, 'message'=>`Communication schedule has been saved successfully, and whatsapp message has also been sent `]);
+                                Mail::to($lead->email)->send($mailableObj);
+                                return response()->json(['status'=>false, 'message'=>`Communication schedule  has been saved successfully, and email has also been sent `]);
                             }
                             catch (Request $e) {
-                                // echo "Error ".$e->getMessage();
                                 throw new \Exception($e->getMessage());
                             }
                         }
                     }
+                    else {
+                        //In Case Error Occurred While Sending Email
+                        return response()->error(['status'=>false, 'message'=>`Communication schedule  has been saved successfully, But email could not be sent `]);
+                    }
+                   
                 }
 
-            }   
-        }
-        return response()->json(['status'=>true, 'message'=>'Communication schedule has been processed successfully.']);
+            } else if ($request->communicationTemplateType == 'WhatsApp') {
+                foreach ($leadMatchingRule as $key => $value) {
+                    // echo "\n --Lead Id To send Message  --".$value."\n";
+                    $employee=CommunicationLead::create([
+                        'communication_id'=>$communicationSchedule->id,
+                        'rule_id'=>$ruleId,
+                        'lead_id'=>$value
+                    ]);
+                    $lead = Lead::where('id', $value)->first();
+                    // print_r($lead->toArray());
+                    //TODO Validate mobile
+                    if($lead && $lead->mobileno) {
+                        // echo "\n --mobileno-".$lead->mobileno."\n";
+                        try{
+                            WaclubWhatsApp::sendMessage('+91'.$lead->mobileno,$request->communicationTemplateMessage);
+                            // return response()->json(['status'=>false, 'message'=>`Communication schedule has been saved successfully, and whatsapp message has also been sent `]);
+                        }
+                        catch (Request $e) {
+                            // echo "Error ".$e->getMessage();
+                            throw new \Exception($e->getMessage());
+                        }
+                    }
+                }
+            }
+
+        }  
     }
 
     public function getDayCountForFrequency($ruleId) {
@@ -235,7 +241,7 @@ class CommunicationController extends Controller
     public function getLeadMatchingRule($ruleId) {
         $dateDiffResult = $this->getDayCountForFrequency($ruleId);
         $dateDiffCount = $dateDiffResult["count"];
-        $query = "SELECT id, DATEDIFF(CURDATE(), created_at) AS days,created_at FROM  leads where DATEDIFF(CURDATE(), created_at) = $dateDiffCount";
+        $query = "SELECT id, DATEDIFF(CURDATE(), updated_at) AS days,updated_at FROM  leads where DATEDIFF(CURDATE(), updated_at) = $dateDiffCount";
         // echo "\n Query =".$query;
         $leadsWithDateCondotion = DB::select($query);
         // echo "\n leadsWithDateCondotion =";
@@ -252,7 +258,7 @@ class CommunicationController extends Controller
         $leadIdsMatchingRuleCondition = array();
         // echo "###############dateCondtionSaisfyingLead#########";
         // print_r($dateCondtionSaisfyingLead);
-        // echo "########################";
+        // echo "########################";die;
         foreach ($ruleConditions as $ruleCondition) {
             $matchCase = ['master_id' => $ruleCondition->master_id, 'mastervalue_id' => $ruleCondition->mastervalue_id];
             // echo "Match Cases";
@@ -360,6 +366,7 @@ class CommunicationController extends Controller
         // "WhatsApp"
 // die($request->input('communicationTemplateType'));
         try{
+            $ruleId = $request->input('ruleId');
             $id = $request->input('communicationId');
             $communication = Communication::where('id', $id)->get()->first();
             $communication->rule_id = $request->input('ruleId');
@@ -393,8 +400,9 @@ class CommunicationController extends Controller
             $communication->words = $words;
 
             $communication->save();
-
-            $communications = Communication::all();
+            if ($communicationType == 'now') {
+                $this->sendNotification($ruleId,$request,$communication);
+            }
             return response()->json(['status'=>true, 'message'=>'Communication schedule  has been saved successfully.']);
         }
         catch (Request $e) {

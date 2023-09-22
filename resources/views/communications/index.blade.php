@@ -754,7 +754,7 @@ function getDateCountForRule(isEdit) {
             success: function (data) {
                 console.log(data);
                 //i.e. on ${data.date}
-                const message = `On selecting this rule system will consider leads created before ${data.count} days i.e. on ${data.date} for sending message.`;
+                const message = `On selecting this rule system will consider leads which has been updated before ${data.count} days i.e. on ${data.date} for sending message.`;
                 // $("#showMessage").html(`On selecting this rule you will `);
                 toastr.warning(message);
                 // toastr.error(validationMessage);
