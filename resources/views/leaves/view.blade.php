@@ -48,12 +48,26 @@
                                         <td></td>
                                         <td>{{ \Carbon\Carbon::parse($leave->created_at)->format('d/m/Y') }}</td>
                                         <td>
-                                            <a data-toggle="modal" data-target="#edititem" class="btn-xs btn-info"> <i class="fa fa-pencil"></i>  </a>
+                                            {{-- <a data-toggle="modal" data-target="#edititem" class="btn-xs btn-info"> <i class="fa fa-pencil"></i>  </a> --}}
+                                            @if($userCrudPermissions['edit_permission']) 
+                                                <a data-toggle="modal" data-target="#edititem" class="btn-xs btn-info"> <i class="fa fa-pencil"></i>  </a>
+                                            @else
+                                                <a data-toggle="modal" onClick="return showMessage()" class="btn-xs btn-info {{ (!$userCrudPermissions['edit_permission']) ? ' disabled' : '' }}"> <i class="fa fa-pencil"></i>  </a>
+                                            @endif
                                         </td>
                                         <td>
-                                            <a href="#" id="deleteLeave" onclick="deleteLeave({{ $leave->id }}, {{ $leave->employee_id }})" class="btn-xs btn-danger">
+                                            {{-- <a href="#" id="deleteLeave" onclick="deleteLeave({{ $leave->id }}, {{ $leave->employee_id }})" class="btn-xs btn-danger">
                                                 <i class="fa fa-trash-o"></i>
-                                            </a>
+                                            </a> --}}
+                                            @if($userCrudPermissions['delete_permission']) 
+                                                <a href="#" id="deleteLeave" onclick="deleteLeave({{ $leave->id }}, {{ $leave->employee_id }})" class="btn-xs btn-danger {{ (!$userCrudPermissions['delete_permission']) ? ' disabled' : '' }}">
+                                                    <i class="fa fa-trash-o"></i>
+                                                </a>
+                                            @else
+                                                <a href="#"  onclick="showMessage()" class="btn-xs btn-danger">
+                                                    <i class="fa fa-trash-o"></i>
+                                                </a>                                            
+                                            @endif
                                         </td>
                                         {{-- <td>
                                             <label class="switch">
@@ -134,3 +148,51 @@
                </div>
          </div>
 @endsection
+
+@push('custom-scripts')
+<script>
+function showMessage() {
+    toastr.error("You are not allowed to perform this action!")
+}
+function deleteLeave(id, employeeid) {
+    bootbox.confirm("Are you sure you want to delete this leave?", function (confirmed) {
+        if(confirmed){
+            let CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+            $.ajax({
+                /* the route pointing to the post function */
+                url: '/leaves/destroy',
+                type: 'POST',
+                /* send the csrf-token and the input to the controller */
+                // data: {_token: CSRF_TOKEN, 'ruleData':JSON.stringify(jsonObject)},
+                data: {
+                    _token: CSRF_TOKEN,
+                    'id': id
+                },
+                // data: $(this).serialize(),
+                dataType: 'JSON',
+                /* remind that 'data' is the response of the AjaxController */
+                success: function (data) {
+                    console.log(data);
+                    window.location.href = "/leaves/"+employeeid;
+                },
+                error:function(xhr, status, error) {
+                    console.log("error",xhr, xhr.responseText,status,error);
+                    toastr.error( xhr.responseText);
+                },
+                failure: function (data) {
+                    console.log(data);
+                }
+            });
+        }
+        else{
+            return false;
+        }
+    })    
+}
+</script>
+@endpush

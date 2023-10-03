@@ -19,8 +19,11 @@
             @endif
                 <div class="panel-body">
                     <div class="text-right">
-                        <a class="btn btn-exp btn-sm" data-toggle="modal" data-target="#additem"><i class="fa fa-plus"></i>
-                            Add Employee</a>
+                        @if($userCrudPermissions['add_permission']) 
+                            <a class="btn btn-exp btn-sm" data-toggle="modal" data-target="#additem"><i class="fa fa-plus"></i>Add Employee</a>
+                        @else
+                        <a class="btn btn-exp btn-sm disabled" data-toggle="modal" data-target="#additem"><i class="fa fa-plus"></i>Add Employee</a>
+                        @endif
                     </div>
                     <div class="table-responsive">
                         <table id="dataTableExample1" class="table table-bordered table-striped table-hover">
@@ -128,13 +131,24 @@
 								            <a data-toggle="modal" data-target="#editEmployee" class="btn-xs btn-info"> <i class="fa fa-edit">Edit</i></a>
 								        </td> -->
                                         <td>
-                                            <a onclick="return editEmployee({{ $employe->id }})" class="btn-xs btn-info"> <i class="fa fa-edit"></i></a>
+                                            @if($userCrudPermissions['edit_permission']) 
+                                                <a data-toggle="modal" data-target="return editEmployee({{ $employe->id }})" class="btn-xs btn-info"> <i class="fa fa-edit">Edit</i></a>
+                                            @else
+                                                <a data-toggle="modal" onClick="return cancelEmployee()" class="btn-xs btn-info disabled"> <i class="fa fa-edit">Edit</i></a> 
+                                            @endif                                        
                                         </td>
                                         <td>
-                                            <a href=""onclick="if (confirm('are you sure you want to cancel?')) window.location.href='/cancel';                                            "
-                                                class="btn-xs btn-info" style="background: #337ab7;">
-                                                <span>Active</span>
-                                            </a>
+                                            @if($userCrudPermissions['delete_permission']) 
+                                                <a href="" onclick="if (confirm('are you sure you want to cancel?')) window.location.href='/cancel';                                            "
+                                                    class="btn-xs btn-info" style="background: #337ab7;">
+                                                    <span>Active</span>
+                                                </a>
+                                            @else
+                                                <a onclick="return cancelEmployee() "
+                                                    class="btn-xs btn-info disabled" style="background: #337ab7;">
+                                                    <span>Active</span>
+                                                </a>                                      
+                                            @endif
                                         </td>
                                         {{-- <td>
                                             <label class="switch">
@@ -376,6 +390,10 @@ function editEmployee(id) {
     getDataForEdit(id);
 }
 
+function cancelEmployee() {
+    toastr.error("You are not allowed to perform this action!");
+    return false;
+}
 
 function validateForm(isEdit=false) {
     let isValid = true;

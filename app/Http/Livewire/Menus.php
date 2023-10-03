@@ -5,7 +5,7 @@ namespace App\Http\Livewire;
 use App\Models\DynamicMain;
 use Livewire\Component;
 use App\Models\Menu;
-
+use Illuminate\Support\Facades\Auth;
 class Menus extends Component
 {
     public function render()
@@ -16,7 +16,8 @@ class Menus extends Component
         ];
         $menus = Menu::orderby('preference', 'asc')->get();
         $menu = new Menu;
-        $menuHtml = $menu->getHTML($menus);  
+        // $menuHtml = $menu->getHTML($menus);  
+        $menuHtml = (!empty($menus->toArray()))?$menu->getHTML($menus):'';  
         $menus=Menu::all();
         $html = '
         <ul class="sidebar-menu">

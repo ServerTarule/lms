@@ -22,7 +22,7 @@
             @endif
                 <div class="panel-body">
                     <div class="text-right">
-                        <a class="btn btn-exp btn-sm" data-toggle="modal" data-target="#additem"><i class="fa fa-plus"></i>
+                        <a class="btn btn-exp btn-sm {{ (!$userCrudPermissions['add_permission']) ? ' disabled' : '' }}" data-toggle="modal" data-target="#additem"><i class="fa fa-plus"></i>
                             Add Centers</a>
                     </div>
                     <div class="table-responsive">
@@ -356,7 +356,11 @@
             },
             failure: function (data) {
                 toastr.error("Error occurred while processing!!");
-            }
+            },
+            error:function(xhr, status, error) {
+                console.log("error",xhr, xhr.responseText,status,error);
+                toastr.error( xhr.responseText);
+            },
         });
     }
 
@@ -402,7 +406,11 @@
             },
             failure: function (data) {
                 toastr.error("Error occurred while processing!!");
-            }
+            },
+            error:function(xhr, status, error) {
+                console.log("error",xhr, xhr.responseText,status,error);
+                toastr.error( xhr.responseText);
+            },
         });
 
     }
@@ -439,7 +447,11 @@
             },
             failure: function (data) {
                 toastr.error("Error occurred while processin!!");
-            }
+            },
+            error:function(xhr, status, error) {
+                console.log("error",xhr, xhr.responseText,status,error);
+                toastr.error( xhr.responseText);
+            },
         });
     }
 
@@ -479,6 +491,10 @@
             },
             failure: function (data) {
                 toastr.error("Error occurred while processin!!");
+            },
+            error:function(xhr, status, error) {
+                console.log("error",xhr, xhr.responseText,status,error);
+                toastr.error( xhr.responseText);
             }
         });
     }
@@ -550,6 +566,10 @@
                         processAdd();
                     }
                 }
+            },
+            error:function(xhr, status, error) {
+                console.log("error",xhr, xhr.responseText,status,error);
+                toastr.error( xhr.responseText);
             },
             failure: function (data) {
                 toastr.error("Error occurred while processing!!");

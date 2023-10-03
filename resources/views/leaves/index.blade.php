@@ -20,7 +20,7 @@
             @endif
                 <div class="panel-body">
                     <div class="text-right">
-                        <a class="btn btn-exp btn-sm" data-toggle="modal" data-target="#additem"><i class="fa fa-plus"></i>
+                        <a class="btn btn-exp btn-sm {{ (!$userCrudPermissions['add_permission']) ? ' disabled' : '' }}" data-toggle="modal" data-target="#additem"><i class="fa fa-plus"></i>
                             Add Leave</a>
                     </div>
                     <div class="table-responsive">

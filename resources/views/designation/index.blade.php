@@ -70,7 +70,7 @@
                                             @endif
                                             </td>
                                             <td>
-                                                @if ($userCrudPermissions['edit_permission'])
+                                                @if ($userCrudPermissions['delete_permission'])
                                                     <a onclick="return confirm('Are you sure want to delete this?')"
                                                         class="btn-xs btn-info" style="background: red;"> <i
                                                             class="fa fa-trash-o"></i>
