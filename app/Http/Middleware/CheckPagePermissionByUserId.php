@@ -10,7 +10,7 @@ use Spatie\Permission\Exceptions\UnauthorizedException;
 
 class CheckPagePermissionByUserId
 {
-    /**
+    /**`
      * Handle an incoming request.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -26,13 +26,10 @@ class CheckPagePermissionByUserId
        
         $user = Auth::user();
         $userId = $user->id;
-        $url = $request->url();
         $currentPath = trim($menuUrl);
         if($useCurrentUrl){
             
         }
-        // echo $currentPath;
-        // abort(403, "Can't perform this action!");
         $query = "SELECT m.title, m.url,mp.id as mId,mp.menu_id, mp.employee_id,mp.add_permission,mp.edit_permission,mp.view_permission,mp.delete_permission from menus m INNER JOIN menu_permissions mp  on m.id = mp.menu_id 
         where mp.employee_id = $userId and m.url = '$currentPath'";
         $menuPermissions = DB::select($query);

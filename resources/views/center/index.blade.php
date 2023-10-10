@@ -21,9 +21,17 @@
                 <span style="color:#b10000;">{{ session('error') }}</span>
             @endif
                 <div class="panel-body">
-                    <div class="text-right">
-                        <a class="btn btn-exp btn-sm {{ (!$userCrudPermissions['add_permission']) ? ' disabled' : '' }}" data-toggle="modal" data-target="#additem"><i class="fa fa-plus"></i>
-                            Add Centers</a>
+                    <div class="text-right"> 
+                        @if ((isset($userCrudPermissions['add_permission'] ) &&  $userCrudPermissions['add_permission'] != 1))
+                            <span class="text-danger"><i  style="" class="fa fa-xs fa fa-exclamation-triangle" aria-hidden="true" title="You are not authorized to perform this action."> Unauthorized to add centers.  </i></span>
+                            <a class="btn btn-exp btn-sm" onclick="return showMessage()" {{ (isset($userCrudPermissions['add_permission'] ) &&  $userCrudPermissions['add_permission'] != 1) ? ' disabled' : '' }} >
+                                <i sclass="fa fa-plus"></i> Add Centers
+                            </a>
+                        @else
+                            <a class="btn btn-exp btn-sm" data-toggle="modal" data-target="#additem" {{ (isset($userCrudPermissions['add_permission'] ) &&  $userCrudPermissions['add_permission'] != 1) ? ' disabled' : '' }} >
+                                <i sclass="fa fa-plus"></i> Add Centers
+                            </a> 
+                        @endif
                     </div>
                     <div class="table-responsive">
                         <table id="dataTableExample1" class="table table-bordered table-striped table-hover">
@@ -87,12 +95,18 @@
 
 
                                         <td>
-                                            <a onclick="return editCenter({{ $center->id }})" class="btn-xs btn-info"> <i class="fa fa-edit"></i></a>
+                                            <a onclick="return editCenter({{ $center->id }})" role="button" class="btn btn-xs btn-success btn-flat show_confirm" {{ (isset($userCrudPermissions['edit_permission'] ) &&  $userCrudPermissions['edit_permission'] != 1) ? ' disabled' : '' }}>
+                                                <i class="fa fa-edit" title='Edit'></i>
+                                            </a>
+                                            {{-- <a onclick="return editCenter({{ $center->id }})" class="btn-xs btn-info"> <i class="fa fa-edit"></i></a> --}}
                                         </td>
                                         <td>
-                                            <a href="#" id="deleteCenter" onclick="deleteCenter( {{ $center->id }})" class="btn-xs btn-danger">
+                                            <a href="#" id="deleteCenter" onclick="deleteCenter( {{ $center->id }})" class="btn btn-xs btn-danger btn-flat show_confirm" {{ (isset($userCrudPermissions['delete_permission'] ) &&  $userCrudPermissions['delete_permission'] != 1) ? ' disabled' : '' }}>
                                                 <i class="fa fa-trash-o"></i>
                                             </a>
+                                            {{-- <a href="#" id="deleteCenter" onclick="deleteCenter( {{ $center->id }})" class="btn-xs btn-danger">
+                                                <i class="fa fa-trash-o"></i>
+                                            </a> --}}
                                         </td>
                                         {{-- <td>
                                             <label class="switch">
@@ -352,14 +366,13 @@
                         location.reload();
                     }, 3000);
                 }
-               
             },
             failure: function (data) {
                 toastr.error("Error occurred while processing!!");
             },
             error:function(xhr, status, error) {
-                console.log("error",xhr, xhr.responseText,status,error);
-                toastr.error( xhr.responseText);
+                const resText = JSON.parse(xhr.responseText);
+                toastr.error( resText.message);
             },
         });
     }
@@ -408,17 +421,25 @@
                 toastr.error("Error occurred while processing!!");
             },
             error:function(xhr, status, error) {
-                console.log("error",xhr, xhr.responseText,status,error);
-                toastr.error( xhr.responseText);
+                const resText = JSON.parse(xhr.responseText);
+                toastr.error( resText.message);
             },
         });
 
     }
     function editCenter(id) {
-        $('#editItem').modal({
-            show: 'true'
-        }); 
-        getDataForEdit(id);
+        const editPermission  = "{{$userCrudPermissions['edit_permission']}}";
+        if(!editPermission) {
+            toastr.error(NOT_AUTHORIZED_TO_PERFORM_ACTION);
+            return false;
+        }
+        else {
+            $('#editItem').modal({
+                show: 'true'
+            }); 
+            getDataForEdit(id);
+        }
+
     }
 
     function processDeleteCenter(id) {
@@ -449,8 +470,8 @@
                 toastr.error("Error occurred while processin!!");
             },
             error:function(xhr, status, error) {
-                console.log("error",xhr, xhr.responseText,status,error);
-                toastr.error( xhr.responseText);
+                const resText = JSON.parse(xhr.responseText);
+                toastr.error( resText.message);
             },
         });
     }
@@ -493,24 +514,32 @@
                 toastr.error("Error occurred while processin!!");
             },
             error:function(xhr, status, error) {
-                console.log("error",xhr, xhr.responseText,status,error);
-                toastr.error( xhr.responseText);
-            }
+                const resText = JSON.parse(xhr.responseText);
+                toastr.error( resText.message);
+            },
         });
     }
 
     function deleteCenter(id) {
-        bootbox.confirm({
-            message: "Are you sure you want to delete this center?",
-            callback: function (confirm) {
-                if(confirm) {
-                    processDeleteCenter(id);
+
+        const deletePermission  = "{{$userCrudPermissions['delete_permission']}}";
+        if(!deletePermission) {
+            toastr.error(NOT_AUTHORIZED_TO_PERFORM_ACTION);
+            return false;
+        }
+        else {
+            bootbox.confirm({
+                message: "Are you sure you want to delete this center?",
+                callback: function (confirm) {
+                    if(confirm) {
+                        processDeleteCenter(id);
+                    }
+                    else {
+                        return;
+                    }
                 }
-                else {
-                    return;
-                }
-            }
-        });
+            });
+        }
     }
 
     function checkDoctorOccupency(isEdit=false){
@@ -567,12 +596,13 @@
                     }
                 }
             },
-            error:function(xhr, status, error) {
-                console.log("error",xhr, xhr.responseText,status,error);
-                toastr.error( xhr.responseText);
-            },
+            
             failure: function (data) {
                 toastr.error("Error occurred while processing!!");
+            },
+            error:function(xhr, status, error) {
+                const resText = JSON.parse(xhr.responseText);
+                toastr.error( resText.message);
             }
         });
 
@@ -634,5 +664,22 @@
 
     }
 
+    function showMessage(isEdit=false) {
+        if(isEdit) {
+            const editPermission  = "{{$userCrudPermissions['edit_permission']}}";
+            if(!editPermission) {
+                toastr.error(NOT_AUTHORIZED_TO_PERFORM_ACTION);
+                return false;
+            }
+        
+        }
+        else {
+            const addPermission  = "{{$userCrudPermissions['add_permission']}}";
+            if(!addPermission) {
+                toastr.error(NOT_AUTHORIZED_TO_PERFORM_ACTION);
+                return false;
+            }
+        }
+    }
 </script>
 @endpush

@@ -55,7 +55,9 @@
 
                                         <!-- <div class="container-md">100% wide until medium breakpoint</div> -->
                                         <div class="col-md-12 form-group border AUTHORITY">
-                                                <button type="submit" class=" btn btn-success" disabled="{{$userCrudPermissions['add_permission']}}">Create</button>
+                                                <button type="submit" class=" btn btn-success"
+                                                {{ (isset($userCrudPermissions['add_permission'] ) &&  $userCrudPermissions['add_permission'] != 1) ? ' disabled' : '' }}
+                                                >Create permision</button>
                                             </div>
                                         </div>
 
@@ -72,7 +74,7 @@
 
                         </div>
                         <div class="table-responsive">
-                            <table id="dataTableExample1" class="table table-bordered table-striped table-hover">
+                            <table id="dataTable" class="defaultDataTable   table table-bordered table-striped table-hover">
                                 <thead>
                                     <tr class="info">
                                         <th>Menu Id.</th>
@@ -106,18 +108,20 @@
                                             <td>{{ \Carbon\Carbon::parse($menu->created_at)->format('d/m/Y') }}</td>
                                             <td>
                                                 <a href="/menus/{{$menu->id}}" class="btn-xs">
-                                                <button class="btn btn-xs btn-success btn-flat show_confirm" data-toggle="tooltip" title='Edit'>
+                                                <button class="btn btn-xs btn-success btn-flat show_confirm" data-toggle="tooltip" title='Edit' {{ (isset($userCrudPermissions['edit_permission'] ) &&  $userCrudPermissions['edit_permission'] != 1) ? ' disabled' : '' }}>
                                                     <i class="fa fa-edit" title='Edit'></i>
                                                 </button>
                                                 </a>
                                             </td>
                                             <td>
-                                            <form method="POST" action="{{ route('menus.delete', $menu->id) }}">
-                                                @csrf
-                                                <input name="_method" type="hidden" value="DELETE">
-                                                <button type="submit" onclick="return confirm('Are you sure want to delete this?')" class="btn btn-xs btn-danger btn-flat show_confirm" data-toggle="tooltip" title='Delete'><i
+                                                
+                                            {{-- <form method="POST" onSubmit="return deleteMenu()"    action="{{ route('menus.delete', $menu->id) }}"> --}}
+                                                {{-- @csrf --}}
+                                                {{-- {{ (isset($userCrudPermissions['delete_permission'] ) &&  $userCrudPermissions['delete_permission'] != 1) ? ' disabled' : '' }} --}}
+                                                <input name="_method" type="hidden" id="menu_{{ $menu->preference }}" value="DELETE">
+                                                <button type="submit"  onclick="deleteMenu( {{ $menu->id }})" class="btn btn-xs btn-danger btn-flat show_confirm" data-toggle="tooltip" title='Delete'><i
                                                         class="fa fa-trash"></i> </button>
-                                            </form>
+                                            {{-- </form> --}}
                                             </td>
                                         </tr>
                                     @endforeach
@@ -189,4 +193,75 @@
             </div>
         </div>
     </div>
+    {{-- bootbox.confirm('Are you sure want to delete this?')s --}}
 @endsection
+@push('custom-scripts')
+<script>
+
+function deleteMenu(id) {
+    bootbox.confirm({
+        message: "Are you sure you want to delete this center?",
+        callback: function (confirm) {
+            if(confirm) {
+                processDeleteMenu(id);
+            }
+            else {
+                return;
+            }
+        }
+    });
+}
+function deleteMenussss() {
+    // alert("Oooooooooooooo");
+    bootbox.confirm('Are you sure want to delete this?',confirm=>{
+        // alert("confirm=="+confirm)
+        if(confirm === true) {
+            return  true;
+        }
+        // return  false;
+    } );
+    return  false;
+}
+
+function processDeleteMenu(id) {
+    let CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+    $.ajax({
+        /* the route pointing to the post function */
+        url: `/menus/delete/${id}`,
+        type: 'POST',
+        /* send the csrf-token and the input to the controller */
+        data: {
+            _token: CSRF_TOKEN,
+            'id': id
+        },
+        dataType: 'JSON',
+        /* remind that 'data' is the response of the AjaxController */
+        success: function (data) {
+            alert(data)
+            if(data.status) {
+                toastr.success(data.message);
+                setTimeout(function(){ 
+                    location.reload();
+                }, 3000);
+            }
+            else {
+                toastr.error(data.message);
+            }
+        },
+        failure: function (data) {
+            toastr.error("Error occurred while processing!!");
+        },
+        error:function(xhr, status, error) {
+            const resText = JSON.parse(xhr.responseText);
+            toastr.error( resText.message);
+        },
+    });
+}
+
+</script>
+@endpush

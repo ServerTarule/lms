@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Menu;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -74,10 +75,16 @@ class MenusController extends Controller
      *
      * @return response()
      */
-    public function delete($id)
-    {
-        Menu::find($id)->delete();
-        return back();
+    public function delete($id): JsonResponse {
+        try{
+            Menu::find($id)->delete();
+            return response()->json(['status'=>true, 'message'=>'Request completed.']);
+        }
+        catch(error) {
+            return response()->json(['status'=>false, 'message'=>'Request not completed.']);
+
+        }
+        
     }
   
 }

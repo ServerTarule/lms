@@ -57,9 +57,6 @@ class MainMasterController extends Controller
         return view('mainmaster.index',compact('employee','master_id','mains'));*/
     }
 
-
-
-
     public function store(Request $request, $id) : RedirectResponse{
         $employee=Employee::where('id',$request->master)->update(['master_id'=>$id]);
         if($employee){
@@ -79,14 +76,15 @@ class MainMasterController extends Controller
 //         return redirect()->back()->with('error', 'Something Went Wrong');
 //    }
 
-    public function destroy(Request $request) : JsonResponse {
+//earlier deleteMainMasterValue was named as destroy 
+    public function deleteMainMasterValue(Request $request,$masterid,$id) : JsonResponse {
         $id = $request->get('id');
         DynamicValue::where('id', $id)->delete();
 
         return response()->json(['success' => 'Received rule data']);
     }
 
-    public function edit($masterId, $id){
+    public function editMainMasterValue($masterId, $id){
         $master =DynamicMain::where('id', $masterId)->first(); 
         $leadStatuses = null;
         $states = null;
@@ -117,7 +115,7 @@ class MainMasterController extends Controller
         ]);
     }
 
-    public function update(Request $request,$masterId, $id){
+    public function saveMainMasterUpdatedValue(Request $request,$masterId, $id){
         if(isset($request->dependentId)) {
             $unique = DynamicValue::where('name', '=', $request->name)->where('dependent_id', '=',$request->dependentId)->where('id', '!=',$id)->first();   
         }

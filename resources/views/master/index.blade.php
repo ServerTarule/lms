@@ -24,7 +24,7 @@
                                                 <input type="text" name="name" placeholder="Master Name"
                                                     class="form-control" required>
                                                 <div>
-                                                    <button type="submit" class="btn btn-add  {{ (!$userCrudPermissions['add_permission']) ? ' disabled' : '' }}">Create</button>
+                                                    <button type="submit" class="btn btn-add  {{ (!$userCrudPermissions['add_permission']) ? ' disabled' : '' }}" {{ (isset($userCrudPermissions['add_permission'] ) &&  $userCrudPermissions['add_permission'] != 1) ? ' disabled' : '' }}>Create</button>
                                                 </div>
                                             </div>
                                            
@@ -53,7 +53,7 @@
                             </div>
                         </div>
                         <div class="table-responsive">
-                            <table id="dataTableExample1" class="table table-bordered table-striped table-hover">
+                            <table id="dataTableExample1" class="table table-bordered table-striped table-hover defaultDataTable">
                                 <thead>
                                     <tr class="info">
                                         <th>S. No.</th>
@@ -77,7 +77,7 @@
                                             <td>{{ \Carbon\Carbon::parse($master->created_at)->format('d/m/Y') }}</td>
                                             <td>
                                                 @if($master->master == 0)
-                                                    <a href="/master/edit/{{$master->id}}" class="btn-xs btn-info {{ (!$userCrudPermissions['edit_permission']) ? ' disabled' : '' }}">
+                                                    <a role="button" onclick="return navigateToEditPage({{$master->id}})" class="btn btn-xs btn-success btn-flat show_confirm" {{ (isset($userCrudPermissions['edit_permission'] ) &&  $userCrudPermissions['edit_permission'] != 1) ? ' disabled' : '' }}>
                                                         <i class="fa fa-edit"></i> 
                                                     </a>
                                                 @else
@@ -100,7 +100,7 @@
                                                         <i class="fa fa-trash-o"></i>
                                                     </a>
                                                     @else
-                                                    <a onclick="deleteMaster({{$master->id}})" class="btn-xs btn-danger {{ (!$userCrudPermissions['delete_permission']) ? ' disabled' : 'pointer' }}">
+                                                    <a onclick="deleteMaster({{$master->id}})" class="btn-xs btn-danger {{ (!$userCrudPermissions['delete_permission']) ? ' disabled' : 'pointer' }}" {{ (isset($userCrudPermissions['delete_permission'] ) &&  $userCrudPermissions['delete_permission'] != 1) ? ' disabled' : '' }}>
                                                         <i class="fa fa-trash-o"></i>
                                                     </a>
                                                     @endif
@@ -174,10 +174,22 @@
 @endsection
 @push('custom-scripts')
 <script>
+function navigateToEditPage(id) {
+    const href = `/master/edit/${id}`;
+    const editPermission  = "{{$userCrudPermissions['edit_permission']}}";
+    if(!editPermission) {
+        toastr.error(NOT_AUTHORIZED_TO_PERFORM_ACTION);
+        return false;
+    }
+    else {
+        window.location.href = href;
+    }
+}
+
 function createMaster() {
     const addPermission  = "{{$userCrudPermissions['add_permission']}}";
     if(!addPermission) {
-        toastr.error("You are not allowed to add/create master!");
+        toastr.error(NOT_AUTHORIZED_TO_PERFORM_ACTION);
         return false;
     }
     else {
@@ -217,7 +229,10 @@ function deleteMaster(id) {
                     /* remind that 'data' is the response of the AjaxController */
                     success: function (data) {
                         console.log(data);
-                        window.location.href = "/master";
+                        toastr.success(data.message);
+                        setTimeout(function(){ 
+                            location.reload();
+                        }, 3000);
                     },
                     error:function(xhr, status, error) {
                         console.log("error",xhr, xhr.responseText,status,error);

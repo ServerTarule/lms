@@ -62,6 +62,40 @@ class EmployeeController extends Controller
         return view('employee.addemployee');
     }
 
+    public function validateEmployeeData(Request $request) {
+        // 'contact'=>$request->contact,
+        // 'user_id'=>$user->id,
+        // 'dob'=>$request->dob,
+        // 'doj'=>$request->doj,
+        // 'alternate_contact'=>$request->alternate_contact,
+        // 'designation_id'=>$request->designation_id,
+        // 'profile_img'=>$profilImg,
+        $response = ['status'=>false, 'message'=>"Failed to add user"];
+        if(!$request->name || !isset($request->name) || $request->name ==="") {
+            $response['message'] =  $response['message']." due to wrong data in request as name is blank.";
+        }
+        else if(!$request->email || !isset($request->email) || $request->email ==="") {
+            $response['message'] =  $response['message']." due to wrong data in request as email is blank.";
+        }
+        else if(!$request->role_id || !isset($request->role_id) || $request->role_id ==="") {
+            $response['message'] =  $response['message']." due to wrong data in request as User Type (Role) is not given.";
+        }
+        else if(!$request->password || !isset($request->password) || $request->password ==="") {
+            $response['message'] =  $response['message']." due to wrong data in request as password is not provided.";
+        }
+        else if(!$request->contact || !isset($request->contact) || $request->contact ==="") {
+            $response['message'] =  $response['message']." due to wrong data in request as mobile no is not provided.";
+        }
+        else if(!$request->dob || !isset($request->dob) || $request->dob ==="") {
+            $response['message'] =  $response['message']." due to wrong data in request as dob is not provided.";
+        }
+        else if(!$request->doj || !isset($request->doj) || $request->contact ==="") {
+            $response['message'] =  $response['message']." due to wrong data in request as doj is not provided.";
+        }
+
+        return response()->json($response);
+    }
+
     /**
      * Store a newly created resource in storage.
      *
@@ -69,8 +103,7 @@ class EmployeeController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request): JsonResponse {
-
-        // echo "Role Id = ".$request->role_id;
+        $this->validateEmployeeData($request);
         $allowedExtension = ['png','jpg','jpeg','gif'];
         $profilImg="";
         if($request->file) {
@@ -89,8 +122,10 @@ class EmployeeController extends Controller
         $user=User::create([
             'name'=>$request->name,
             'email'=>$request->email,
+            'role_id'=>$request->role_id,
             'password'=> Hash::make($request->password),
         ]);
+        
         if(!$user){
             return response()->json(['status'=>false, 'message'=>'Something Went Wrong!']);
         }

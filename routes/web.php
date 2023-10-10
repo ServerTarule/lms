@@ -57,6 +57,65 @@ Route::get('/permission', function () {
 // });
 
 Route::middleware(['auth'])->group(function () {
+
+    //NO AUTHORIZATION CHECK ROUTES
+    Route::post('/centers/checkdoctors/{isEdit}', [CenterController::class, 'checkdoctors'])->name('centers.checkdoctors');
+    Route::post('/getcitiesBystate', [MainMasterController::class, 'getcitiesBystate'])->name('/getcitiesBystate');
+    Route::post('/centers/getCenterByLocation', [CenterController::class, 'getCenterWithRespetToStateAndCity'])->name('getCenterWithRespetToStateAndCity');//->middleware('can:read master');
+    //Done With Checking Permissions
+    Route::get('/menus', [MenusController::class, 'index'])->name('menus')->middleware('check_page_permission: /menus,view_permission');
+    Route::post('/menus', [MenusController::class, 'store'])->name('menus')->middleware('check_page_permission: /menus,add_permission');
+    Route::get('/menus/{id}', [MenusController::class, 'edit'])->name('menus/{id}')->middleware('check_page_permission: /menus,edit_permission');
+    Route::post('/menus/{id}', [MenusController::class, 'update'])->name('menus/{id}')->middleware('check_page_permission: /menus,edit_permission');
+    Route::post('menus/delete/{id}', [MenusController::class, 'delete'])->name('menus.delete')->middleware('check_page_permission: /menus,delete_permission');
+    //Master Main Menus & Dynamic Masters Routes
+    Route::get('/master', [MasterController::class, 'index'])->name('master-list')->middleware('check_page_permission:/master,view_permission,0');
+    Route::post('/master', [MasterController::class, 'store'])->name('master-add')->middleware('check_page_permission:/master,add_permission,0');
+    Route::post('/master/destroy', [MasterController::class, 'destroy'])->name('master-delete')->middleware('check_page_permission:/master,delete_permission,1');
+    Route::get('/master/edit/{id}', [MasterController::class, 'edit'])->name('master-edit')->middleware('check_page_permission:/master,edit_permission,0');
+    Route::post('/master/{id}', [MasterController::class, 'update'])->name('master-update')->middleware('check_page_permission:/master,edit_permission,0');
+    Route::get('/master/main/{id}', [MainMasterController::class, 'index'])->name('/master/main/{id}')->middleware('check_page_permission:/master,view_permission,0, 1');
+    Route::get('/dynamic/{id}', [DynamicMasterController::class, 'index'])->name('/dynamic/{id}')->middleware('check_page_permission:/master,view_permission,0, 1');//->middleware('can:read master');
+    // Route::post('/dynamic/{id}', [DynamicMasterController::class, 'store'])->name('/dynamic/{id}')->middleware('check_page_permission:/master/main/{id},add_permission,0, 1');
+    Route::post('/dynamic/{id}', [DynamicMasterController::class, 'addDynamicMaster'])->name('addDynamicMaster')->middleware('check_page_permission:/master/main/{id},add_permission,0, 2');
+    // Route::get('/master/main/edit-value/{masterid}/{id}', [MainMasterController::class, 'edit'])->name('/master/main/edit-value/{masterid}/{id}')->middleware('check_page_permission:/master,edit_permission,0, 1');//->middleware('can:read master');
+    Route::get('/master/main/edit-value/{masterid}/{id}', [MainMasterController::class, 'editMainMasterValue'])->name('/master/main/edit-value/{masterid}/{id}')->middleware('check_page_permission:/master,edit_permission,0, 2');
+    // Route::post('/master/main/update-value/{masterid}/{id}', [MainMasterController::class, 'update'])->name('/master/main/update-value/{masterid}/{id}')->middleware('check_page_permission:/master,edit_permission,0, 1');//->middleware('can:update master');
+    Route::post('/master/main/update-value/{masterid}/{id}', [MainMasterController::class, 'saveMainMasterUpdatedValue'])->name('/master/main/update-value/{masterid}/{id}')->middleware('check_page_permission:/master,edit_permission,0, 2');
+    // Route::post('/master/main/destroy', [MainMasterController::class, 'destroy'])->name('mainmaster.destroy')->middleware('can:read master');
+    Route::post('/master/main/destroy/{masterid}/{id}', [MainMasterController::class, 'deleteMainMasterValue'])->name('mainmaster.destroy')->middleware('check_page_permission:/master,delete_permission,0, 2');;
+    //Doctors Routes
+    Route::get('/doctors', [DoctorController::class, 'index'])->name('doctors')->middleware('check_page_permission:/doctors,view_permission,0, 1');//->middleware('can:read master');
+    Route::post('/doctors', [DoctorController::class, 'addDoctors'])->name('doctors.addDoctors')->middleware('check_page_permission:/doctors,add_permission,0, 1');//->middleware('can:read master');
+    Route::post('/doctors/edit', [DoctorController::class, 'edit'])->name('edit')->middleware('check_page_permission:/doctors,edit_permission,0, 0');//->middleware('can:read master');
+    Route::post('/doctors/update/{id}', [DoctorController::class, 'updateDoctor'])->name('updateDoctor')->middleware('check_page_permission:/doctors,edit_permission,0, 0');//->middleware('can:read master');
+    Route::post('/doctors/destroy', [DoctorController::class, 'destroy'])->name('doctors.destroy')->middleware('check_page_permission:/doctors,delete_permission,0, 0');//->middleware('can:read master');
+    //Centers Routes
+    Route::get('/centers', [CenterController::class, 'index'])->name('centers')->middleware('check_page_permission:/centers,view_permission,0, 0');//->middleware('can:read master');
+    Route::post('/centers/addCenter', [CenterController::class, 'addCenter'])->name('addCenter')->middleware('check_page_permission:/centers,add_permission,0');
+    Route::post('/centers/edit', [CenterController::class, 'edit'])->name('centers.edit')->middleware('check_page_permission:/centers,edit_permission,0');//->middleware('can:read master');
+    Route::post('/centers/updateCenter/{id}', [CenterController::class, 'updateCenter'])->name('updateCenter')->middleware('check_page_permission:/centers,edit_permission,0');//->middleware('can:read master');
+    Route::post('/centers/destroy', [CenterController::class, 'destroy'])->name('centers.destroy')->middleware('check_page_permission:/centers,delete_permission,0');//->middleware('can:read master');
+    //Templates
+    Route::get('/templates', [TemplateController::class, 'index'])->name('templates.index')->middleware('check_page_permission:/templates,view_permission,0');//->middleware('can:read master');
+    Route::post('/templates/store', [TemplateController::class, 'store'])->name('templates.store')->middleware('check_page_permission:/templates,add_permission,0');//->middleware('can:read master');
+    Route::post('/templates/edit', [TemplateController::class, 'edit'])->name('edit')->middleware('check_page_permission:/templates,edit_permission,0');//->middleware('can:read master');
+    Route::post('/templates/update/{id}', [TemplateController::class, 'updateTemplate'])->name('templates.updateTemplate')->middleware('check_page_permission:/templates,edit_permission,0');//;
+    Route::post('/templates/destroy', [TemplateController::class, 'destroy'])->name('templates.destroy')->middleware('check_page_permission:/templates,delete_permission,0');//->middleware('can:read master');
+    //Holidays
+    Route::get('/holidays', [HolidayController::class, 'index'])->name('holidays.index')->middleware('check_page_permission:/holidays,view_permission,0');//->middleware('can:read master');
+    Route::post('/holidays/store', [HolidayController::class, 'store'])->name('holidays.store')->middleware('check_page_permission:/holidays,add_permission,0');//->middleware('can:read master');
+    Route::post('/holidays/edit', [HolidayController::class, 'edit'])->name('edit')->middleware('check_page_permission:/holidays,edit_permission,0');//->middleware('can:read master');
+    Route::post('/holidays/update/{id}', [HolidayController::class, 'updateHoliday'])->name('holidays.updateHoliday')->middleware('check_page_permission:/holidays,edit_permission,0');
+    Route::post('/holidays/destroy', [HolidayController::class, 'destroy'])->name('holidays.destroy')->middleware('check_page_permission:/holidays,delete_permission,0');//->middleware('can:read master');
+
+    //In Progress
+    
+    // Route::post('/addDoctors', [DoctorController::class, 'addDoctors'])->name('addDoctors')->middleware('can:read master');
+    Route::post('/master/main/{id}', [MainMasterController::class, 'store'])->name('/master/main/{id}')->middleware('check_page_permission:/master,add_permission,0, 1');//->middleware('can:create master');
+    Route::get('/master/main/edit/{id}', [MainMasterController::class, 'remove'])->name('/master/main/edit/{id}')->middleware('check_page_permission:/master,edit_permission,0, 1');//->middleware('can:delete master');
+    Route::delete('/master/main/remove/{id}', [MainMasterController::class, 'delete'])->name('mainmaster.delete')->middleware('check_page_permission:/master,delete_permission,0, 1');
+    
     // Roles  
     /*-----Old-----*/
     // Route::get('/role', [RoleController::class, 'index'])->name('role')->middleware('can:read role');
@@ -68,11 +127,11 @@ Route::middleware(['auth'])->group(function () {
     // Route::get('/assign-role', function () { return view('assignrole'); });
     /**----Old End--- */
     /**-------------New 1 Start----- */
-    Route::get('/role', [RoleController::class, 'index'])->name('role')->middleware('check_permission_by_user_id:/role,view_permission,0');
-    Route::post('/role/destroy', [RoleController::class, 'destroy'])->name('destroy')->middleware('check_permission_by_user_id:/role,delete_permission,1');
-    Route::get('/role/{id}', [RoleController::class, 'edit'])->name('role/{id}')->middleware('check_permission_by_user_id:/role,edit_permission,0');
-    Route::post('/createrole', [RoleController::class, 'store'])->name('createrole')->middleware('check_permission_by_user_id:/role,add_permission,0');
-    Route::post('/updaterole', [RoleController::class, 'update'])->name('updaterole')->middleware('check_permission_by_user_id:/role,edit_permission,0');
+    Route::get('/role', [RoleController::class, 'index'])->name('role')->middleware('check_page_permission:/role,view_permission,0');
+    Route::post('/role/destroy', [RoleController::class, 'destroy'])->name('destroy')->middleware('check_page_permission:/role,delete_permission,1');
+    Route::get('/role/{id}', [RoleController::class, 'edit'])->name('role/{id}')->middleware('check_page_permission:/role,edit_permission,0');
+    Route::post('/createrole', [RoleController::class, 'store'])->name('createrole')->middleware('check_page_permission:/role,add_permission,0');
+    Route::post('/updaterole', [RoleController::class, 'update'])->name('updaterole')->middleware('check_page_permission:/role,edit_permission,0');
     /**-------------New 1 End-------*/
     /*-----Old 2 Start-------------*/
     // Route::get('/createmaste', [RoleController::class, 'assign'])->name('assign')->middleware('can:assign role');
@@ -104,9 +163,9 @@ Route::middleware(['auth'])->group(function () {
     // Route::get('/employees/permissions/{id}/masters', [PermissionsController::class, 'masterindex'])->name('permissions.masterindex')->middleware('can:read employee');
     /**-------------Old 2 End------ */
     /**--------New 2 Start--------- */
-    Route::get('/employee', [EmployeeController::class, 'index'])->name('employee')->middleware('check_permission_by_user_id:/employee,view_permission,0');//->middleware('can:read employee');
-    Route::get('/addemployee', [EmployeeController::class, 'create'])->name('addemployee')->middleware('check_permission_by_user_id:/employee,add_permission,0');//->middleware('can:create employee');
-    Route::post('/createemployee', [EmployeeController::class, 'store'])->name('createemployee')->middleware('check_permission_by_user_id:/employee,add_permission,0');//->middleware('can:create employee');
+    Route::get('/employee', [EmployeeController::class, 'index'])->name('employee')->middleware('check_page_permission:/employee,view_permission,0');//->middleware('can:read employee');
+    Route::get('/addemployee', [EmployeeController::class, 'create'])->name('addemployee')->middleware('check_page_permission:/employee,add_permission,0');//->middleware('can:create employee');
+    Route::post('/employee/createemployee', [EmployeeController::class, 'store'])->name('createemployee')->middleware('check_page_permission:/employee,add_permission,0');//->middleware('can:create employee');
     /**------New 2 End------*/
 
     /**-------Old 3 Start----- */
@@ -119,11 +178,11 @@ Route::middleware(['auth'])->group(function () {
     /**--------Old 3 Ends------- */
 
     /**--------New 3 Starts----- */
-    Route::get('/leaves', [LeaveController::class, 'index'])->name('leaves')->middleware('check_permission_by_user_id:/leaves,view_permission,0');
-    Route::post('/leaves/store', [LeaveController::class, 'store'])->name('leaves')->middleware('check_permission_by_user_id:/leaves,add_permission,0');
-    Route::post('/leaves/destroy', [LeaveController::class, 'destroy'])->name('leaves')->middleware('check_permission_by_user_id:/leaves,delete_permission,1');
-    Route::get('/leaves/{id}', [LeaveController::class, 'view'])->name('leaves')->middleware('check_permission_by_user_id:/leaves,view_permission,0');
-    Route::get('/leaves/calendar/{id}', [LeaveController::class, 'calendar'])->name('leaves')->middleware('check_permission_by_user_id:/leaves,view_permission,0');
+    Route::get('/leaves', [LeaveController::class, 'index'])->name('leaves')->middleware('check_page_permission:/leaves,view_permission,0');
+    Route::post('/leaves/store', [LeaveController::class, 'store'])->name('leaves')->middleware('check_page_permission:/leaves,add_permission,0');
+    Route::post('/leaves/destroy', [LeaveController::class, 'destroy'])->name('leaves')->middleware('check_page_permission:/leaves,delete_permission,1');
+    Route::get('/leaves/{id}', [LeaveController::class, 'view'])->name('leaves')->middleware('check_page_permission:/leaves,view_permission,0');
+    Route::get('/leaves/calendar/{id}', [LeaveController::class, 'calendar'])->name('leaves')->middleware('check_page_permission:/leaves,view_permission,0');
 
    
     /**--------New 3 Ends------ */
@@ -142,10 +201,10 @@ Route::middleware(['auth'])->group(function () {
     // Route::post('/designation/{id}', [DesignationController::class, 'update'])->name('designation/{id}')->middleware('can:update designation');
     /**--------Old 4 Ends------- */
     /**--------New 4 Starts------- */
-    Route::get('/designation', [DesignationController::class, 'index'])->name('designation')->middleware('check_permission_by_user_id:/designation,view_permission,0');
-    Route::post('/designation', [DesignationController::class, 'store'])->name('designation')->middleware('check_permission_by_user_id:/designation,add_permission,0');
-    Route::get('/designation/{id}', [DesignationController::class, 'edit'])->name('designation/{id}')->middleware('check_permission_by_user_id:/designation,edit_permission,0');/
-    Route::post('/designation/{id}', [DesignationController::class, 'update'])->name('designation/{id}')->middleware('check_permission_by_user_id:/designation,edit_permission,0');
+    Route::get('/designation', [DesignationController::class, 'index'])->name('designation')->middleware('check_page_permission:/designation,view_permission,0');
+    Route::post('/designation', [DesignationController::class, 'store'])->name('designation')->middleware('check_page_permission:/designation,add_permission,0');
+    Route::get('/designation/{id}', [DesignationController::class, 'edit'])->name('designation/{id}')->middleware('check_page_permission:/designation,edit_permission,0');
+    Route::post('/designation/{id}', [DesignationController::class, 'update'])->name('designation/{id}')->middleware('check_page_permission:/designation,edit_permission,0');
     /**--------New 4 Ends------- */
     
     /**--------Old 5 starts------- */
@@ -157,35 +216,23 @@ Route::middleware(['auth'])->group(function () {
     // Route::post('/master/{id}', [MasterController::class, 'update'])->name('master/{id}')->middleware('can:update master');
     /**--------Old 5 ends------- */
     /**--------New 5 Ends------- */
-    Route::get('/master', [MasterController::class, 'index'])->name('master')->middleware('check_permission_by_user_id:/master,view_permission,0');//->middleware('can:read master');
-    Route::post('/master', [MasterController::class, 'store'])->name('master')->middleware('check_permission_by_user_id:/master,add_permission,0');//->middleware('can:create master');
-    Route::post('/master/destroy', [MasterController::class, 'destroy'])->name('master')->middleware('check_permission_by_user_id:/master,delete_permission,1');//->middleware('can:read master');
-    Route::get('/master/edit/{id}', [MasterController::class, 'edit'])->name('master')->middleware('check_permission_by_user_id:/master,edit_permission,0');//->middleware('can:update master');
-    Route::post('/master/{id}', [MasterController::class, 'update'])->name('master/{id}')->middleware('check_permission_by_user_id:/master,edit_permission,0');//->middleware('can:update master');
+   
     /**--------New 5 Ends------- */
 
     // Main Master
-    Route::post('/master/main/destroy', [MainMasterController::class, 'destroy'])->name('mainmaster.destroy')->middleware('can:read master');
     /**--------Old 6 starts------- */
     // Route::get('/master/main/{id}', [MainMasterController::class, 'index'])->name('/master/main/{id}')->middleware('can:read master');
     // Route::post('/master/main/{id}', [MainMasterController::class, 'store'])->name('/master/main/{id}')->middleware('can:create master');
    /**--------Old 6 ends------- */
     /**--------New 6 Starts------- */
 
-    Route::get('/master/main/{id}', [MainMasterController::class, 'index'])->name('/master/main/{id}')->middleware('check_permission_by_user_id:/master,view_permission,0, 1');
-    Route::post('/master/main/{id}', [MainMasterController::class, 'store'])->name('/master/main/{id}')->middleware('can:create master');
-    Route::get('/master/main/edit/{id}', [MainMasterController::class, 'remove'])->name('/master/main/edit/{id}')->middleware('can:delete master');
-    Route::get('/master/main/edit-value/{masterid}/{id}', [MainMasterController::class, 'edit'])->name('/master/main/edit-value/{masterid}/{id}')->middleware('can:read master');
-    Route::post('/master/main/update-value/{masterid}/{id}', [MainMasterController::class, 'update'])->name('/master/main/update-value/{masterid}/{id}')->middleware('can:update master');
-    Route::delete('/master/main/remove/{id}', [MainMasterController::class, 'delete'])->name('mainmaster.delete');
+   
+
     /**--------New 6 ends------- */
-    Route::post('/getcitiesBystate', [MainMasterController::class, 'getcitiesBystate'])->name('/getcitiesBystate')->middleware('can:create master');
     Route::post('/getDependentMaster', [MainMasterController::class, 'getDependentMaster'])->name('/getDependentMaster')->middleware('can:create master');
 
     // Dynamic Master
     Route::post('/dynamic/destroy', [DynamicMasterController::class, 'destroy'])->name('dynamicmaster.destroy')->middleware('can:read master');
-    Route::get('/dynamic/{id}', [DynamicMasterController::class, 'index'])->name('/dynamic/{id}')->middleware('can:read master');
-    Route::post('/dynamic/{id}', [DynamicMasterController::class, 'store'])->name('/dynamic/{id}')->middleware('can:create master');
     Route::get('/dynamic/edit/{id}', [DynamicMasterController::class, 'edit'])->name('/dynamic/edit/{id}')->middleware('can:update master');
     Route::post('/dynamic/edit/{id}', [DynamicMasterController::class, 'update'])->name('/dynamic/edit/{id}')->middleware('can:update master');
 
@@ -198,11 +245,7 @@ Route::middleware(['auth'])->group(function () {
     // Route::delete('menus/{id}', [MenusController::class, 'delete'])->name('menus.delete');
     /**--------Old 7 ends------- */
     /**--------New 7 starts------- */
-    Route::get('/menus', [MenusController::class, 'index'])->name('menus')->middleware('check_permission_by_user_id: /menus,view_permission');
-    Route::post('/menus', [MenusController::class, 'store'])->name('menus')->middleware('check_permission_by_user_id: /menus,add_permission');
-    Route::get('/menus/{id}', [MenusController::class, 'edit'])->name('menus/{id}')->middleware('check_permission_by_user_id: /menus,edit_permission');
-    Route::post('/menus/{id}', [MenusController::class, 'update'])->name('menus/{id}')->middleware('check_permission_by_user_id: /menus,edit_permission');
-    Route::delete('menus/{id}', [MenusController::class, 'delete'])->name('menus.delete')->middleware('check_permission_by_user_id: /menus,delete_permission');
+  
     /**--------New 7 ends------- */
     // Menu Permission
     Route::get('/permissions/employee-list', [MenusPermissionController::class, 'index'])->name('menuspermission')->middleware('can:read master');
@@ -212,38 +255,25 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/menuspermission/{id}', [MenusPermissionController::class, 'update'])->name('menuspermission/{id}')->middleware('can:update master');
     Route::delete('menuspermission/{id}', [MenusPermissionController::class, 'delete'])->name('menuspermission.delete');
 
+    Route::get('/permissions/role-list', [MenusPermissionController::class, 'rolelist'])->name('rolelist')->middleware('can:read master');
+    Route::get('/role-permission/menu-list/{roleId}', [MenusPermissionController::class, 'managerolepermission'])->name('managerolepermission')->middleware('can:read master');
+    Route::post('/menus/role/set-single-permissions/{roleId}', [MenusPermissionController::class, 'setSinglePermissionByRole'])->name('menuspermission/{id}')->middleware('can:update master');
 
-    // Main Master
-    Route::get('/master/main/{id}', [MainMasterController::class, 'index'])->name('/master/main/{id}')->middleware('can:read master');
-    Route::post('/master/main/{id}', [MainMasterController::class, 'store'])->name('/master/main/{id}')->middleware('can:create master');
-    Route::get('/master/main/edit/{id}', [MainMasterController::class, 'remove'])->name('/master/main/edit/{id}')->middleware('can:delete master');
-    Route::get('/master/main/edit-value/{masterid}/{id}', [MainMasterController::class, 'edit'])->name('/master/main/edit-value/{masterid}/{id}')->middleware('can:read master');
-    Route::post('/master/main/update-value/{masterid}/{id}', [MainMasterController::class, 'update'])->name('/master/main/update-value/{masterid}/{id}')->middleware('can:update master');
-    Route::delete('/master/main/remove/{id}', [MainMasterController::class, 'delete'])->name('mainmaster.delete');
-
+    
     // Dynamic Master
-    Route::get('/dynamic/{id}', [DynamicMasterController::class, 'index'])->name('/dynamic/{id}')->middleware('can:read master');
-    Route::post('/dynamic/{id}', [DynamicMasterController::class, 'store'])->name('/dynamic/{id}')->middleware('can:create master');
+    // Route::post('/dynamic/{id}', [DynamicMasterController::class, 'store'])->name('/dynamic/{id}')->middleware('can:create master');
     Route::get('/dynamic/edit/{id}', [DynamicMasterController::class, 'edit'])->name('/dynamic/edit/{id}')->middleware('can:update master');
     Route::post('/dynamic/edit/{id}', [DynamicMasterController::class, 'update'])->name('/dynamic/edit/{id}')->middleware('can:update master');
 
     //Locations
     Route::get('/locations', [LocationController::class, 'index'])->name('cities')->middleware('can:read lead');
 
-    //Doctors
-    Route::get('/doctors', [DoctorController::class, 'index'])->name('doctors')->middleware('can:read master');
-    Route::post('/doctors/destroy', [DoctorController::class, 'destroy'])->name('doctors.destroy')->middleware('can:read master');
-    Route::post('/doctors/addDoctors', [DoctorController::class, 'addDoctors'])->name('doctors.addDoctors')->middleware('can:read master');
-    Route::post('/doctors/edit', [DoctorController::class, 'edit'])->name('edit')->middleware('can:read master');
-    Route::post('/doctors/update/{id}', [DoctorController::class, 'updateDoctor'])->name('updateDoctor')->middleware('can:read master');
-
+    
     //Centers
-    Route::get('/centers', [CenterController::class, 'index'])->name('centers')->middleware('can:read master');
     /**--------Old 8 starts------- */
     // Route::post('/centers/addCenter', [CenterController::class, 'addCenter'])->name('addCenter')->middleware('can:read master');
     /**--------Old 8 ends------- */
     /**--------New 8 starts------- */
-    Route::post('/centers/addCenter', [CenterController::class, 'addCenter'])->name('addCenter')->middleware('check_permission_by_user_id:/centers,add_permission,1');
     /**--------New 8 ends------- */
 
 
@@ -260,8 +290,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/city', [RoleController::class, 'assign'])->name('assign')->middleware('can:assign role'); //NOT DONE YET Because  Page Not Working
 
     //NYC Block#1 Content
-    Route::post('/updateemployee', [EmployeeController::class, 'update'])->name('updateemployee')->middleware('check_permission_by_user_id:/employee,edit_permission,0');//->middleware('can:update employee'); //NOT YET CHECKED AS IT IS NOT WORKING
-    Route::get('/employee/{id}', [EmployeeController::class, 'edit'])->name('employee/{id}')->middleware('check_permission_by_user_id:/employee,edit_permission,0');//->middleware('can:update employee'); //NOT YET CHECKED AS IT IS NOT WORKING
+    Route::post('/updateemployee', [EmployeeController::class, 'update'])->name('updateemployee')->middleware('check_page_permission:/employee,edit_permission,0');//->middleware('can:update employee'); //NOT YET CHECKED AS IT IS NOT WORKING
+    Route::get('/employee/{id}', [EmployeeController::class, 'edit'])->name('employee/{id}')->middleware('check_page_permission:/employee,edit_permission,0');//->middleware('can:update employee'); //NOT YET CHECKED AS IT IS NOT WORKING
 
     //NYD Block#2 Content
     //Permissions 
@@ -271,34 +301,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/employees/permissions/{id}/masters', [PermissionsController::class, 'masterindex'])->name('permissions.masterindex')->middleware('can:read employee'); //NOT DONE YET Because  I don't think it is relavent now
     
     /**New Filtered From Above blocks specially 1,2,3 Ends---- */
-
-    Route::post('/centers/destroy', [CenterController::class, 'destroy'])->name('centers.destroy')->middleware('can:read master');
-    Route::post('/centers/edit', [CenterController::class, 'edit'])->name('centers.edit')->middleware('can:read master');
-    Route::post('/centers/checkdoctors/{isEdit}', [CenterController::class, 'checkdoctors'])->name('centers.checkdoctors')->middleware('can:read master');
-    Route::post('/centers/updateCenter/{id}', [CenterController::class, 'updateCenter'])->name('updateCenter')->middleware('can:read master');
-
-    Route::post('/centers/getCenterByLocation', [CenterController::class, 'getCenterWithRespetToStateAndCity'])->name('getCenterWithRespetToStateAndCity')->middleware('can:read master');
-
-    //Templates
-    Route::get('/templates', [TemplateController::class, 'index'])->name('templates.index')->middleware('can:read master');
-    Route::post('/templates/store', [TemplateController::class, 'store'])->name('templates.store')->middleware('can:read master');
+   
+   
     
-    Route::post('/templates/edit', [TemplateController::class, 'edit'])->name('edit')->middleware('can:read master');
-    Route::post('/templates/update/{id}', [TemplateController::class, 'updateTemplate'])->name('templates.updateTemplate');
-    
-    Route::post('/templates/destroy', [TemplateController::class, 'destroy'])->name('templates.destroy')->middleware('can:read master');
-
-    //Holidays
-    Route::get('/holidays', [HolidayController::class, 'index'])->name('holidays.index')->middleware('can:read master');
-    Route::post('/holidays/store', [HolidayController::class, 'store'])->name('holidays.store')->middleware('can:read master');
-    
-    
-    // Route::post('/addDoctors', [DoctorController::class, 'addDoctors'])->name('addDoctors')->middleware('can:read master');
-    Route::post('/holidays/edit', [HolidayController::class, 'edit'])->name('edit')->middleware('can:read master');
-    Route::post('/holidays/update/{id}', [HolidayController::class, 'updateHoliday'])->name('holidays.updateHoliday');
-
-    Route::post('/holidays/destroy', [HolidayController::class, 'destroy'])->name('holidays.destroy')->middleware('can:read master');
-
     //Rules
     Route::get('/rules', [RulesController::class, 'index'])->name('rules.index')->middleware('can:read master');
     Route::get('/rules/create', [RulesController::class, 'create'])->name('rules.create')->middleware('can:read master');

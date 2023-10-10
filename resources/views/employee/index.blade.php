@@ -172,7 +172,7 @@
             <div class="modal-content">
                 <div class="modal-header modal-header-primary">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                    <h3><i class="fa fa-plus m-r-5"></i> Add EMPLOYEE </h3>
+                    <h3><i class="fa fa-plus m-r-5"></i> Add EMPLOYEE asdas</h3>
                 </div>
                 <div class="modal-body">
                     <div class="row">

@@ -286,6 +286,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.1/js/toastr.js"></script>
 <script src="//cdn.ckeditor.com/4.14.1/standard/ckeditor.js"></script>
 <script type="text/javascript">
+    const NOT_AUTHORIZED_TO_PERFORM_ACTION = `You are not allowed to perform this action!`;
     $(document).ready(function() {
         $('.defaultDataTable').dataTable( {
             paginate: true,
@@ -389,7 +390,13 @@
         // });
 */
         let conditionMasterValues = <?php echo json_encode($masterValues) ?>;
-        let rule = JSON.parse('<?php echo $rule;  ?>');
+       const ruleInJs = '<?php echo $rule;  ?>';
+//   alert("oooooruleInJsooooo",ruleInJs)
+       let rule = {};
+        if(ruleInJs) {
+            rule = JSON.parse('<?php echo $rule;  ?>');
+        }
+        
         $.each(conditionMasterValues, function(key, value) {
             let multipleValues = [];
             $.each(value, function(k,v) {
@@ -418,6 +425,23 @@
     });
     
    
+    function showMessage(isEdit=false) {
+        if(isEdit) {
+            const editPermission  = "{{$userCrudPermissions['edit_permission']}}";
+            if(!editPermission) {
+                toastr.error(NOT_AUTHORIZED_TO_PERFORM_ACTION);
+                return false;
+            }
+        
+        }
+        else {
+            const addPermission  = "{{$userCrudPermissions['add_permission']}}";
+            if(!addPermission) {
+                toastr.error(NOT_AUTHORIZED_TO_PERFORM_ACTION);
+                return false;
+            }
+        }
+    }
 
     function isValidEmail(emailId) {
         //let validRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
@@ -475,76 +499,7 @@
             return false;
         }
     }
-
-    function deleteMaster(id) {
-        if(confirm("Are you sure you want to delete this master?")){
-            let CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                }
-            });
-            $.ajax({
-                /* the route pointing to the post function */
-                url: '/master/destroy',
-                type: 'POST',
-                /* send the csrf-token and the input to the controller */
-                // data: {_token: CSRF_TOKEN, 'ruleData':JSON.stringify(jsonObject)},
-                data: {
-                    _token: CSRF_TOKEN,
-                    'id': id
-                },
-                // data: $(this).serialize(),
-                dataType: 'JSON',
-                /* remind that 'data' is the response of the AjaxController */
-                success: function (data) {
-                    console.log(data);
-                    window.location.href = "/master";
-                },
-                failure: function (data) {
-                    console.log(data);
-                }
-            });
-        }
-        else{
-            return false;
-        }
-    }
-
-    function deleteMainMaster(id, masterid) {
-        if(confirm("Are you sure you want to delete this?")){
-            let CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                }
-            });
-            $.ajax({
-                /* the route pointing to the post function */
-                url: '/master/main/destroy',
-                type: 'POST',
-                /* send the csrf-token and the input to the controller */
-                // data: {_token: CSRF_TOKEN, 'ruleData':JSON.stringify(jsonObject)},
-                data: {
-                    _token: CSRF_TOKEN,
-                    'id': id
-                },
-                // data: $(this).serialize(),
-                dataType: 'JSON',
-                /* remind that 'data' is the response of the AjaxController */
-                success: function (data) {
-                    console.log(data);
-                    window.location.href = "/master/main/"+masterid;
-                },
-                failure: function (data) {
-                    console.log(data);
-                }
-            });
-        }
-        else{
-            return false;
-        }
-    }
+    
 
     function deleteDynamicMaster(id, masterid) {
         if(confirm("Are you sure you want to delete this master?")){
