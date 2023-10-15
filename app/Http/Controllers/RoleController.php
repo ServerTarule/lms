@@ -8,6 +8,8 @@ use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
+use Illuminate\Support\Facades\Auth;
+
 
 class RoleController extends Controller
 {
@@ -93,10 +95,20 @@ class RoleController extends Controller
 
 
     public function destroy(Request $request) : JsonResponse {
-        $id = $request->get('id');
-        Role::where('id', $id)->delete();
-
-        return response()->json(['success' => true, 'message'=>'Data successfully deleted!']);
+        $user = Auth::user();
+        $userId = $user?$user->id:0;
+        $roleId = $user?$user->role_id:0;
+        
+       $id = $request->get('id');
+    //    echo "Passed ==".$id."----current --".$roleId; die;
+        if($id == $roleId) {
+            return response()->json(['status' => false, 'message'=>'You can;t delete your own role, with which you are logged in!']);
+        }
+        else {
+            Role::where('id', $id)->delete();
+            return response()->json(['success' => true, 'message'=>'Data successfully deleted!']);
+        }
+        
     }
 
     public function assign()

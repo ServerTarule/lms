@@ -91,8 +91,12 @@
                                                     </td>
                                                     
                                                     <td>
-                                                        <input  id="parent_menu_{{ $menu->id }}" type="hidden" value="{{$menu->parent_id}}" />                                                   
-                                                        <button data-menuid="{{$menu->id}}" data-empid="{{$roleId}}" class="btn btn-sm btn-warning update-menu-permission-for-role" type="submit">Update Permission</button>
+                                                        <input  id="parent_menu_{{ $menu->id }}" type="hidden" value="{{$menu->parent_id}}" />   
+                                                        @if ((isset($userCrudPermissions['edit_permission'] ) &&  $userCrudPermissions['edit_permission'] != 1))                                                
+                                                            <button onclick="return showMessage(1)"  class="btn btn-sm btn-warning disabled" type="button">Update Permission</button>
+                                                        @else
+                                                            <button data-menuid="{{$menu->id}}" data-empid="{{$roleId}}" class="btn btn-sm btn-warning update-menu-permission-for-role" type="submit">Update Permission</button>
+                                                        @endif
                                                     </td>
                                                 </tr>
                                             @endforeach
@@ -222,6 +226,7 @@
                 error: function (data) {
                     if(data?.responseText) {
                         const jsonResp = JSON.parse(data.responseText);
+                        toastr.error(jsonResp.message);
                         bootbox.confirm(jsonResp.message, function(resp){
                             location.reload();
                         });

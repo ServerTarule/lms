@@ -29,7 +29,7 @@ class Menus extends Component
             $result = DB::select($query);
             $menuPermittendForRole = json_decode(json_encode($result), true);     
             $menu = new Menu;
-            if( $roleId ) {//== 6
+            if( $roleId == 6) {//
                 $menuHtml = (!empty($menus->toArray()))?$menu->getHTML($menus):'';  
             }
             else {

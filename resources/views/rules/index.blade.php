@@ -14,8 +14,16 @@
                 </div>
                 <div class="panel-body">
                     <div class="text-right">
-                        <a class="btn btn-exp btn-sm" href="/rules/create"><i class="fa fa-plus"></i> Add
-                            Condition</a>
+                        @if ((isset($userCrudPermissions['add_permission'] ) &&  $userCrudPermissions['add_permission'] != 1))
+                            <span class="text-danger"><i  style="" class="fa fa-xs fa fa-exclamation-triangle" aria-hidden="true" title="You are not authorized to perform this action."> Unauthorized to add role(s).  </i></span>
+                            <a class="btn btn-exp btn-sm" onclick="return showMessage()" {{ (isset($userCrudPermissions['add_permission'] ) &&  $userCrudPermissions['add_permission'] != 1) ? ' disabled' : '' }}><i class="fa fa-plus"></i> Add
+                                Condition</a>
+                        @else
+                            
+                            <a class="btn btn-exp btn-sm" href="/rules/create" {{ (isset($userCrudPermissions['add_permission'] ) &&  $userCrudPermissions['add_permission'] != 1) ? ' disabled' : '' }}><i class="fa fa-plus"></i> Add
+                                Condition</a>
+                        @endif
+                        
                     </div>
                     <div class="table-responsive">
                         <table id="dataTableExample1" class="table table-bordered table-striped table-hover">
@@ -53,11 +61,14 @@
                                     <td></td>
                                     <td></td>
                                     <td>
-                                        <a href="/rules/{{$rule->id}}" class="btn-xs btn-info">
-                                            <i class="fa fa-edit"></i> </a>
+                                        {{-- <a href="/rules/{{$rule->id}}" class="btn-xs btn-info">
+                                            <i class="fa fa-edit"></i> </a> --}}
+                                        <a onclick="return editRule({{ $rule->id }})" role="button" class="btn btn-xs btn-success btn-flat show_confirm" {{ (isset($userCrudPermissions['edit_permission'] ) &&  $userCrudPermissions['edit_permission'] != 1) ? ' disabled' : '' }}>
+                                            <i class="fa fa-edit" title='Edit'></i>
+                                        </a>
                                     </td>
                                     <td>
-                                        <a href="#" id="deleteRule" onclick="deleteRule({{$rule->id}})" class="btn-xs btn-info" style="background: red;">
+                                        <a href="#" id="deleteRule" onclick="deleteRule({{$rule->id}})" class="btn btn-xs btn-danger btn-flat show_confirm" {{ (isset($userCrudPermissions['edit_permission'] ) &&  $userCrudPermissions['edit_permission'] != 1) ? ' disabled' : '' }}>
                                             <i class="fa fa-trash-o"></i>
                                         </a>
                                     </td>
@@ -70,3 +81,64 @@
         </div>
     </div>
 @endsection
+@push('custom-scripts')
+
+<script type="text/javascript">
+    function editRule(ruleId) {
+        const editPermission  = "{{$userCrudPermissions['edit_permission']}}";
+        if(!editPermission) {
+            toastr.error(NOT_AUTHORIZED_TO_PERFORM_ACTION);
+            return false;
+        }
+        else {
+           window.location.href =`/rules/${ruleId}`;
+        }
+    }
+    function deleteRule(id) {
+        const allowed  = "{{$userCrudPermissions['delete_permission']}}";
+        if(!allowed) {
+            toastr.error(NOT_AUTHORIZED_TO_PERFORM_ACTION);
+            return false;
+        }
+        else {
+            processDelete(id);
+        }
+    }
+    function processDelete(id) {
+        bootbox.confirm("Are you sure you want to delete this rule?",confirm=>{
+            if(confirm){
+                let CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
+                $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }
+                });
+                $.ajax({
+                    /* the route pointing to the post function */
+                    url: '/conditions/destroy',
+                    type: 'POST',
+                    /* send the csrf-token and the input to the controller */
+                    // data: {_token: CSRF_TOKEN, 'ruleData':JSON.stringify(jsonObject)},
+                    data: {
+                        _token: CSRF_TOKEN,
+                        'id': id
+                    },
+                    // data: $(this).serialize(),
+                    dataType: 'JSON',
+                    /* remind that 'data' is the response of the AjaxController */
+                    success: function (data) {
+                        console.log(data);
+                        window.location.href = "/rules";
+                    },
+                    failure: function (data) {
+                        console.log(data);
+                    }
+                });
+            }
+            else{
+                return false;
+            }
+        })
+    }
+</script>
+@endpush

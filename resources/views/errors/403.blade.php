@@ -19,7 +19,7 @@
         <div class="centered d-flex align-items-center justify-content-center vh-100">
             <div class="text-center">
                 <h1 class="display-1 fw-bold">403</h1>
-                <p class="fs-3"> <span class="text-danger">Opps!</span> Not Authorized .</p>
+                <p class="fs-3"> <span class="text-danger">Oops!</span> Not Authorized .</p>
                 <p class="lead">
                     Authorization failed!! You are not authorized to perform this action.
                 </p>

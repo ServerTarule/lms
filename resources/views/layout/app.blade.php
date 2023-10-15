@@ -425,10 +425,26 @@
     });
     
    
-    function showMessage(isEdit=false) {
-        if(isEdit) {
+    function showMessage(permissionType=0) {
+        if(permissionType == 1) {
             const editPermission  = "{{$userCrudPermissions['edit_permission']}}";
             if(!editPermission) {
+                toastr.error(NOT_AUTHORIZED_TO_PERFORM_ACTION);
+                return false;
+            }
+        
+        }
+        if(permissionType == 2) {
+            const deletePermission  = "{{$userCrudPermissions['delete_permission']}}";
+            if(!deletePermission) {
+                toastr.error(NOT_AUTHORIZED_TO_PERFORM_ACTION);
+                return false;
+            }
+        
+        }
+        if(permissionType == 3) {
+            const viewPermission  = "{{$userCrudPermissions['view_permission']}}";
+            if(!viewPermission) {
                 toastr.error(NOT_AUTHORIZED_TO_PERFORM_ACTION);
                 return false;
             }
@@ -465,40 +481,6 @@
         }
     }
 
-    function deleteRule(id) {
-        if(confirm("Are you sure you want to delete this rule?")){
-            let CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                }
-            });
-            $.ajax({
-                /* the route pointing to the post function */
-                url: '/conditions/destroy',
-                type: 'POST',
-                /* send the csrf-token and the input to the controller */
-                // data: {_token: CSRF_TOKEN, 'ruleData':JSON.stringify(jsonObject)},
-                data: {
-                    _token: CSRF_TOKEN,
-                    'id': id
-                },
-                // data: $(this).serialize(),
-                dataType: 'JSON',
-                /* remind that 'data' is the response of the AjaxController */
-                success: function (data) {
-                    console.log(data);
-                    window.location.href = "/rules";
-                },
-                failure: function (data) {
-                    console.log(data);
-                }
-            });
-        }
-        else{
-            return false;
-        }
-    }
     
 
     function deleteDynamicMaster(id, masterid) {
@@ -536,41 +518,7 @@
         }
     }
 
-    function deleteCommunication(id) {
-        if(confirm("Are you sure you want to delete this schedule?")){
-            let CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                }
-            });
-            $.ajax({
-                /* the route pointing to the post function */
-                url: '/communications/destroy',
-                type: 'POST',
-                /* send the csrf-token and the input to the controller */
-                // data: {_token: CSRF_TOKEN, 'ruleData':JSON.stringify(jsonObject)},
-                data: {
-                    _token: CSRF_TOKEN,
-                    'id': id
-                },
-                // data: $(this).serialize(),
-                dataType: 'JSON',
-                /* remind that 'data' is the response of the AjaxController */
-                success: function (data) {
-                    console.log(data);
-                    window.location.href = "/communications";
-                },
-                failure: function (data) {
-                    console.log(data);
-                }
-            });
-        }
-        else{
-            return false;
-        }
-    }
-
+    
 
     
 
@@ -1292,131 +1240,18 @@
                     alert(jsonResp.message);
                     //location.reload();
                 },
+                error:function(xhr, status, error) {
+                    const resText = JSON.parse(xhr.responseText);
+                    toastr.error( resText.message);
+                },
                 failure: function (data) {
                     console.log("failure response",data);
                 }
             });
         });
 
-        // Lead Call Send Email
-        $('#leadSendEmail').click(function() {
-            let leadId = $('#leadId').val();
-            let employeeId = $("#leadEmployeeId").val();
-            let templateId = $("#leadEmailTemplateId").val();
-            let emailId = $("#leadEmailId").val();
-            let remark = $("#leadCallRemark").val();
-            let reminderDate = $("#leadNextReminderDate").val();
-
-
-            let CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                }
-            });
-            if(templateId !== 'NA') {
-                $.ajax({
-                    url: '/leads/calls/'+leadId+'/email',
-                    type: 'POST',
-                    data: {
-                        _token: CSRF_TOKEN,
-                        'leadId': leadId,
-                        'employeeId': employeeId,
-                        'templateId': templateId,
-                        'emailId': emailId,
-                        'type': 'Email',
-                        'remark': remark,
-                        'reminderDate': reminderDate
-                    },
-                    dataType: 'JSON',
-                    success: function (data) {
-                        // $("#spinner-div").hide();
-                        window.location.href = '/leads/calls/'+leadId;
-                    },
-                    failure: function (data) {
-                        // $("#spinner-div").hide();
-                        console.log(data);
-                    }
-                });
-            }
-        });
-
-        // Lead Call Send WhatsApp
-        $('#leadSendWhatsApp').click(function() {
-
-            let leadId = $('#leadId').val();
-            let employeeId = $("#leadEmployeeId").val();
-            let templateId = $("#leadWhatsAppTemplateId").val();
-            let mobileno = $("#leadWhatsAppMobileNo").val();
-            let callStatusId = $("#callStatusId").val();
-            let remark = $("#leadCallRemark").val();
-            let reminderDate = $("#leadNextReminderDate").val();
-
-            let CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                }
-            });
-
-            if(templateId !== 'NA') {
-                $.ajax({
-                    url: '/leads/calls/'+leadId+'/whatsapp',
-                    type: 'POST',
-                    data: {
-                        _token: CSRF_TOKEN,
-                        'leadId': leadId,
-                        'employeeId': employeeId,
-                        'templateId': templateId,
-                        'mobileno' : mobileno,
-                        'type': 'WhatsApp',
-                        'callStatusId': callStatusId,
-                        'remark': remark,
-                        'reminderDate': reminderDate
-                    },
-                    dataType: 'JSON',
-                    success: function (data) {
-                        window.location.href = '/leads/calls/'+leadId;
-                    },
-                    failure: function (data) {
-                        console.log(data);
-                    }
-                });
-            }
-        });
-
-        $('#submitLeadCall').click(function() {
-            let leadId = $('#leadId').val();
-            let employeeId = $("#leadEmployeeId").val();
-            let reminderDate = $("#leadNextReminderDate").val();
-            let remark = $("#leadCallRemark").val();
-
-
-            let CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                }
-            });
-            $.ajax({
-                url: '/leads/calls/'+leadId+'/call',
-                type: 'POST',
-                data: {
-                    _token: CSRF_TOKEN,
-                    'leadId': leadId,
-                    'employeeId': employeeId,
-                    'remark': remark,
-                    'reminderDate': reminderDate
-                },
-                dataType: 'JSON',
-                success: function (data) {
-                    window.location.href = '/leads/calls/'+leadId+'';
-                },
-                failure: function (data) {
-                    console.log(data);
-                }
-            });
-        });
+        
+       
 
     </script>
     {{--<script>

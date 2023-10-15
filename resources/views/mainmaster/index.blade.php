@@ -260,7 +260,7 @@
     }
 
     function saveMasterValues(isEdit=false) {
-        alert("o asms"+"asdasd  == {{$userCrudPermissions['edit_permission']}}");
+        // alert("o asms"+"asdasd  == {{$userCrudPermissions['edit_permission']}}");
         if(isEdit) {
             const editPermission  = "{{$userCrudPermissions['edit_permission']}}";
             if(!editPermission) {

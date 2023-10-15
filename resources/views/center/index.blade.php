@@ -439,7 +439,6 @@
             }); 
             getDataForEdit(id);
         }
-
     }
 
     function processDeleteCenter(id) {

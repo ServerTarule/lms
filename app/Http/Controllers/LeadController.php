@@ -152,9 +152,7 @@ class LeadController extends Controller
             $altmobileno = $request->get('altmobileno');
             $receiveddate = $request->get('receiveddate');
             $remark = $request->get('remark');
-    
             $leadMasterData = $request->get('leadMasterData');
-            
             $lead = Lead::create([
                 'name' => $name,
                 'email' => $email,
@@ -163,43 +161,41 @@ class LeadController extends Controller
                 'receiveddate' => $receiveddate,
                 'remark' => $remark]
             );
-    
-           $leadId = $lead->id;
+            $leadId = $lead->id;
             $leadMasters = json_decode( $leadMasterData, true );
-    
             // print_r($leadMasters);die("hellooo");
-            
             foreach($leadMasters as $leadMaster) {
-    
                 // echo "master".$leadMaster['master'];
                 // echo "\n";
                 // echo  "Value".$leadMaster['masterValue'];
                 // echo "\n";
-    
                 $dataItem = [];
                 $dataItem['lead_id'] = $leadId;
                 $dataItem['master_id'] = $leadMaster['master'];
                 $dataItem['mastervalue_id'] = isset($leadMaster['masterValue'])?$leadMaster['masterValue']:0;
-    // print_r($dataItem);
-    // echo "\n";
-    // continue;
-
+                // print_r($dataItem);
+                // echo "\n";
+                // continue;
                 LeadMaster::unguard();
                 LeadMaster::create($dataItem);
                 LeadMaster::reguard();
-    
             }
-
             // die('====================');
             // LeadReceived::dispatch($lead);
-            return response()->json(['success' => 'Received rule data']);
+            // return response()->json(['success' => 'Received rule data']);
+            if($lead) {
+                return response()->json(['status'=>true, 'message'=>'Lead successfully added/created.!']);
+            }
+            else {
+                return response()->json(['status'=>false, 'message'=>'Lead could not be added/created.!']);
+            }
         }
         catch (Request $e) {
             throw new \Exception($e->getMessage());
         }
     }
 
-    public function updateleaddate($id,$d, $m,$y, $f='create')  {
+    public function updateleaddate($id,$d, $m,$y, $f='  ')  {
 
         echo "<pre>";
         if(!$id) {

@@ -24,7 +24,7 @@ class EmployeeController extends Controller
         // $employee=Employee::all();
 
         $employees= DB::table('employees as e')
-        ->select('e.*', 'd.name as designation_type', 'u.name as user_name','r.name as role_name')
+        ->select('e.*', 'd.name as designation_type', 'u.name as user_name','u.status as user_status','r.name as role_name')
         ->leftJoin('designations as d', function($join){
             $join->on('e.designation_id', '=', 'd.id');
         })
@@ -36,10 +36,10 @@ class EmployeeController extends Controller
         })->get();
         
         $employee=Employee::all();
-
+// print_r($employees->toArray());
         // foreach($employee as $employe) {
         //     echo "---------------+++++++++++++++++++--------------";
-        //     print_r($employe->role);
+        //     print_r($employe->user->toArray());
             
         //     echo "---------------*******************--------------";
         // }
@@ -177,10 +177,16 @@ class EmployeeController extends Controller
     }
 
     public function updateEmployee(Request $request,$employeeId): JsonResponse {
+        $emp = Employee::find($employeeId);
+        if(empty($emp)) {
+            return response()->json(['status'=>false, 'message'=>'Employee with given id does not exists.!']);
+        }
         $request->password;
         $userId = $request->userId;
-      
-        $request->name;
+        $usercheck = $this->checkIfUserEmailIsUnique($request->email, true, $userId);
+        if(isset( $usercheck) && !empty( $usercheck)) {
+            return response()->json(['status'=>false, 'message'=>'There is existing employee with given email, please chage the email id.!']);
+        }
         $dataToUpdate = [
             'name'=>$request->name,
             'email'=>$request->email,
@@ -206,7 +212,7 @@ class EmployeeController extends Controller
             return response()->json(['status'=>false, 'message'=>'Something Went Wrong!']);
         }
 
-        $emp = Employee::find($employeeId);
+        
         $employee=Employee::find($employeeId)->update([
             'name'=>$request->name,
             'role_id'=>$request->role_id,
@@ -223,6 +229,44 @@ class EmployeeController extends Controller
             return response()->json(['status'=>true, 'message'=>'Employee updated successfully']);
         }
         return response()->json(['status'=>false, 'message'=>'Some Error Occured']);
+    }
+
+    public function toggleemployeestatus(Request $request,$employeeId): JsonResponse {
+        $emp = Employee::find($employeeId);
+        // print_r($emp );
+        if(!isset($mp) && empty($emp)) {
+            return response()->json(['status'=>false, 'message'=>'Employee with given id does not exists.!']);
+        }
+        else {
+            $userId = $emp->user_id;
+            $user = User::find($userId);
+            if(!isset($user) && empty($user)) {
+                return response()->json(['status'=>false, 'message'=>'There is not user asscociated for the epmloyee with given id.!']);
+            }
+            else {
+                $statusStr = "activated";
+                $status = 1;
+                if($request->status == false || $request->status == "false") {
+                    $statusStr = "de-activated";
+                    $status= 0;
+                }
+                $userUpdateStatus =DB::table('users')->where('id', $userId)->update(['status' => $status]);
+                if($userUpdateStatus){
+                    return response()->json(['status'=>true, 'message'=>"Employee $statusStr successfully"]);
+                }
+            }
+        }
+        return response()->json(['status'=>false, 'message'=>'Some Error Occured']);
+    }
+
+    public function checkIfUserEmailIsUnique($email, $isEdit = false, $id =0 ) {
+        if($isEdit == true) {
+            $user = User::where('id','!=',$id)->where('email',$email)->first();
+        }
+        else {
+            $user = User::where('email',$email)->first();
+        }
+        return $user;
     }
     /**
      * Update the specified resource in storage.

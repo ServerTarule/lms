@@ -48,25 +48,27 @@
                                         <td></td>
                                         <td>{{ \Carbon\Carbon::parse($leave->created_at)->format('d/m/Y') }}</td>
                                         <td>
-                                            {{-- <a data-toggle="modal" data-target="#edititem" class="btn-xs btn-info"> <i class="fa fa-pencil"></i>  </a> --}}
-                                            @if($userCrudPermissions['edit_permission']) 
-                                                <a data-toggle="modal" data-target="#edititem" class="btn-xs btn-info"> <i class="fa fa-pencil"></i>  </a>
+                                                {{-- <a data-toggle="modal" data-target="#edititem" class="btn-xs btn-info"> <i class="fa fa-pencil"></i>  </a> --}}
+                                            @if ((isset($userCrudPermissions['edit_permission'] ) &&  $userCrudPermissions['edit_permission'] != 1))
+                                                {{-- @if($userCrudPermissions['edit_permission'])  --}}
+                                                <button  onclick="return showMessage(1)" class="btn btn-xs btn-success btn-flat show_confirm disabled"> <i class="fa fa-pencil"></i>  </button>
                                             @else
-                                                <a data-toggle="modal" onClick="return showMessage()" class="btn-xs btn-info {{ (!$userCrudPermissions['edit_permission']) ? ' disabled' : '' }}"> <i class="fa fa-pencil"></i>  </a>
+                                                <button onclick="return editLeave({{$leave->id}})" class="btn btn-xs btn-success btn-flat show_confirm"> <i class="fa fa-pencil"></i>  </button>
                                             @endif
                                         </td>
                                         <td>
                                             {{-- <a href="#" id="deleteLeave" onclick="deleteLeave({{ $leave->id }}, {{ $leave->employee_id }})" class="btn-xs btn-danger">
                                                 <i class="fa fa-trash-o"></i>
                                             </a> --}}
-                                            @if($userCrudPermissions['delete_permission']) 
-                                                <a href="#" id="deleteLeave" onclick="deleteLeave({{ $leave->id }}, {{ $leave->employee_id }})" class="btn-xs btn-danger {{ (!$userCrudPermissions['delete_permission']) ? ' disabled' : '' }}">
+                                            @if ((isset($userCrudPermissions['edit_permission'] ) &&  $userCrudPermissions['edit_permission'] != 1))
+                                            {{-- @if($userCrudPermissions['delete_permission'])  --}}
+                                                <button href="#" onclick="showMessage()" class="btn btn-xs btn-danger btn-flat show_confirm disabled">
                                                     <i class="fa fa-trash-o"></i>
-                                                </a>
+                                                </button>                         
                                             @else
-                                                <a href="#"  onclick="showMessage()" class="btn-xs btn-danger">
+                                                <button id="deleteLeave" onclick="deleteLeave({{ $leave->id }}, {{ $leave->employee_id }})" class="btn btn-xs btn-danger btn-flat show_confirm">
                                                     <i class="fa fa-trash-o"></i>
-                                                </a>                                            
+                                                </button>                                         
                                             @endif
                                         </td>
                                         {{-- <td>
@@ -86,7 +88,7 @@
             </div>
         </div>
     </div>
-    <div class="modal fade" id="edititem" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal fade" id="editLeaveModel" tabindex="-1" role="dialog" aria-hidden="true">
                   <div class="modal-dialog modal-dialog-centered">
                      <div class="modal-content">
                         <div class="modal-header modal-header-primary">
@@ -94,55 +96,51 @@
                            <h3><i class="fa fa-plus m-r-5"></i> Add Leave</h3>
                         </div>
                         <div class="modal-body">
-                           <div class="row">
-                              <div class="col-md-12">
-                                 <form class="form-horizontal" action="/addleave" method="GET" >
-                                    <fieldset>
-                                       <!-- Text input-->
-                                       <div class="col-md-12 form-group">
-                                          <label class="control-label">Employee Name</label>
-                                          <input type="text" placeholder="Enter Name" name="leaveEmpyoeeName" class="form-control">
-                                       </div>
-                                       <div class="col-md-6 form-group">
-                                          <label class="control-label">From Date</label>
-                                          <input type="date" placeholder="From Date" name="fromDate" class="form-control">
-                                       </div>
-                                         <div class="col-md-6 form-group">
-                                          <label class="control-label">To Date</label>
-                                          <input type="date" placeholder="End Date" name="endDate" class="form-control">
-                                       </div>
-
-                                       <div class="col-md-6 form-group">
-                                          <label class="control-label">From Hour</label>
-                                          <input type="time" name="startTime" placeholder="To Hour" class="form-control">
-                                       </div>
-                                         <div class="col-md-6 form-group">
-                                          <label class="control-label">To Hour</label>
-                                          <input type="time" name="endTime" placeholder="To Hour" class="form-control">
-                                       </div>
-                                       <div class="col-md-12 form-group">
-                                          <label class="control-label">Type</label>
-                                          <select class="form-control" name="leaveType">
-                                             <option selected disabled> --Select Type--</option>
-                                             <option>Sick Leave</option>
-                                             <option>Casual Leave</option>
-                                          </select>
-                                       </div>
+                            <div class="row">
+                               <div class="col-md-12">
+                                  <form class="form-horizontal" id="leaveupdateform"  >
+                                      @csrf
+                                     <fieldset>
+                                            <div class="col-md-12 form-group">
+                                                <label>Employee Name</label>
+                                                <input type="text" id="employee-mame" placeholder="Employee Name" class="form-control" readonly>
+                                                <span class="text-danger"><i class="fa fa-xs fa fa-exclamation-triangle" aria-hidden="true" title="Employee name can't be changed for alredy applied leave, so it is made read only."> Name can't be changed.  </i></span>
+                                            </div>
+                                            <div class="col-md-6 form-group">
+                                            <label class="control-label">From</label>
+                                            <input type="datetime-local" placeholder="From" id="leave-from" name="from" class="form-control">
+                                            </div>
+                                          <div class="col-md-6 form-group">
+                                           <label class="control-label">To</label>
+                                           <input type="datetime-local" placeholder="To" id="leave-to" name="to" class="form-control">
+                                        </div>
                                         <div class="col-md-12 form-group">
-                                          <label class="control-label">Description</label>
-                                          <textarea placeholder="Description" name="leaveDescription" class="form-control"></textarea>
-                                       </div>
-                                       <div class="col-md-12 form-group">
-                                          <div>
-                                             <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal">Cancel</button>
-                                             <button type="submit" class="btn btn-add btn-sm">Save</button>
-                                          </div>
-                                       </div>
-                                    </fieldset>
-                                 </form>
-                              </div>
-                           </div>
-                        </div>
+                                           <label class="control-label">Type</label>
+                                           <select class="form-control" id="leave-type" name="type">
+                                              <option selected disabled> --Select Type--</option>
+                                              <option>Personal Leave</option>
+                                              <option>Sick Leave</option>
+                                           </select>
+                                        </div>
+                                         <div class="col-md-12 form-group">
+                                           <label class="control-label">Comment</label>
+                                           <textarea placeholder="Comment" id="leave-comment" name="comment" class="form-control"></textarea>
+                                        </div>
+                                        <input type="hidden" id="employeeid" value="" name="employeeid">
+                                        <input type="hidden" id="leaveid" value="" name="leaveid">
+                                     </fieldset>
+                                  </form>
+                                  <div class="col-md-12 form-group">
+                                     <div>
+                                        
+                                        
+                                        <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal" >Cancel</button>
+                                        <button type="submit" id="updateLeaveButton" class="btn btn-add btn-sm">Save</button>
+                                     </div>
+                                  </div>
+                               </div>
+                            </div>
+                         </div>
                      </div>
                   </div>
                </div>
@@ -190,9 +188,116 @@ function deleteLeave(id, employeeid) {
             });
         }
         else{
-            return false;
+            return;
         }
     })    
 }
+
+function editLeave(leaveId) {
+    const editPermission  = "{{$userCrudPermissions['edit_permission']}}";
+    if(!editPermission) {
+        toastr.error(NOT_AUTHORIZED_TO_PERFORM_ACTION);
+        return false;
+    }
+    else {
+        $('#editLeaveModel').modal({
+            show: 'true'
+        }); 
+        getDataForEdit(leaveId);
+    }
+}
+
+
+function getDataForEdit(leaveId) {
+    let CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+    $("#leaveid").val(leaveId);
+    $.ajax({
+        /* the route pointing to the post function */
+        url: `/leaves/getById/${leaveId}`,
+        type: 'GET',
+        /* send the csrf-token and the input to the controller */
+        // data: {_token: CSRF_TOKEN, 'ruleData':JSON.stringify(jsonObject)},
+        dataType: 'JSON',
+        /* remind that 'data' is the response of the AjaxController */
+        success: function (data) {
+            const leaveDetails = data.leave;
+            const employeeDetails = data.employee;
+            $("#employeeid").val(employeeDetails.id);
+            $("#employee-mame").val(employeeDetails.name);
+            $("#leave-from").val(leaveDetails.start_time);
+            $("#leave-to").val(leaveDetails.end_time);
+            $("#leave-type").val(leaveDetails.type);
+            $("#leave-comment").val(leaveDetails.comment);
+        },
+        failure: function (data) {
+            toastr.error("Error occurred while processin!!");
+        },
+        error:function(xhr, status, error) {
+            const resText = JSON.parse(xhr.responseText);
+            toastr.error( resText.message);
+        }
+    });
+}
+
+$("#updateLeaveButton").click(function(){
+    const isValid = true;//validateForm(true);
+    // return false;
+    if(isValid) {
+        processUpdate();
+    }
+});
+
+function processUpdate () {
+    // validateForm(true);
+    let CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+    const employeeId = $("#employeeid").val();
+    const leadId = $("#leaveid").val();
+    var form_data = new FormData($('#leaveupdateform')[0]);
+    // alert("I am here"+employeeId+"----"+userId);
+    // form_data.append("employeeid",employeeId);
+    $.ajax({
+        /* the route pointing to the post function */
+        url: `/leaves/updateleave/${leadId} `,
+        type: 'POST',
+        /* send the csrf-token and the input to the controller */
+        contentType: false,
+        processData: false,
+        data:  form_data,
+        dataType: 'JSON',
+        /* remind that 'data' is the response of the AjaxController */
+        success: function (data) {
+            if(data.error) {
+                toastr.error(data.message);
+            }
+            else {
+                toastr.success(data.message);
+                setTimeout(function(){ 
+                    // location.reload();
+                }, 3000);
+            }
+        },
+        failure: function (data) {
+            toastr.error("Error occurred while processing!!");
+        },
+        error:function(xhr, status, error) {
+            const resText = JSON.parse(xhr.responseText);
+            toastr.error( resText.message);
+        },
+    });
+
+}
+
+
+
 </script>
 @endpush

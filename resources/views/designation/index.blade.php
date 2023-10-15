@@ -14,19 +14,26 @@
                 @if ($designations)
                     <div class="panel-body">
                         <div class="row">
-                            <div class="col-md-4"></div>
+                            <div class="col-md-2"></div>
 
-                            <div class="col-md-4">
+                            <div class="col-md-10">
                                 <div class="text-right">
                                     <form action="/designation" onSubmit="return addDesignation()" method="post">
                                         @csrf
                                         <div class="row">
-                                            <div class="col-md-12 form-group AUTHORITY">
+                                            <div class="col-md-6 form-group">
                                                 <input type="text" name="name" placeholder="Designation Name"
                                                     class="form-control" required>
-                                                <div>
-                                                    <button type="submit" class="btn btn-add {{ (!$userCrudPermissions['add_permission']) ? ' disabled' : '' }}">Create</button>
-                                                </div>
+                                            </div>    
+                                            <div class="col-md-6 form-group text-left">
+                                                    @if ((isset($userCrudPermissions['add_permission'] ) &&  $userCrudPermissions['add_permission'] != 1))
+                                                        <button class="btn btn-success disabled" onclick="return showMessage()">Create</button>
+                                                        <span class="text-danger"><i class="fa fa-xs fa fa-exclamation-triangle" aria-hidden="true" title="You are not authorized to perform this action."> Unauthorized to add designation(s).  </i></span>
+
+                                                    @else
+                                                        &nbsp;<button type="submit" class="btn btn-success ">Create</button>
+                                                      {{-- <a class="btn btn-exp btn-sm" data-toggle="modal" data-target="#additem"><i class="fa fa-plus"></i>Add Employee</a> --}}
+                                                    @endif
                                             </div>
                                         </div>
                                     </form>
@@ -39,9 +46,7 @@
                                 @endif
 
                             </div>
-                            <div class="col-md-4">
 
-                            </div>
                         </div>
                         <div class="table-responsive">
                             <table id="dataTableExample1" class="table table-bordered table-striped table-hover">
@@ -142,8 +147,8 @@ function addDesignation() {
     
 }
 
-function showMessage (action="edit/update") {
-    toastr.error( `You are not allowed to ${action} designation!`);
-}
+// function showMessage (action="edit/update") {
+//     toastr.error( `You are not allowed to ${action} designation!`);
+// }
 </script>
 @endpush

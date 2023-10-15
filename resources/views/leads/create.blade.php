@@ -324,14 +324,18 @@
                 /* remind that 'data' is the response of the AjaxController */
                 success: function (data) {
                     console.log(data);
-                    window.location.href = "/leads";
+                    toastr.success( data.message);
+                    setTimeout(() => {
+                        window.location.href = "/leads";
+                    }, 3000);
                 },
-                error: function (data) {
-                    console.log(data);
-                    window.location.href = "/leads";
+                error:function(xhr, status, error) {
+                    const resText = JSON.parse(xhr.responseText);
+                    toastr.error( resText.message);
                 },
                 failure: function (data) {
                     console.log(data);
+                    toastr.error( data.message);
                 }
             });
         

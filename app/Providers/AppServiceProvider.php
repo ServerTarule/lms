@@ -36,10 +36,15 @@ class AppServiceProvider extends ServiceProvider
         //compose all the views....
         view()->composer('*', function ($view) 
         {
-
+            
             $routeObj = new PreMappedAuthorizationRoutes();
+
             $authRoutesArray = $routeObj->dynamicMasterAuthorizationRoutes;
             $dynaicRouteActions = $routeObj->dynaicRouteActions;
+            $dynaicLeaveActions = $routeObj->dynaicLeaveActions;
+            $dynaicRolePermissionActions = $routeObj->dynaicRolePermissionActions;
+            $dynaicLeadsPermissionActions= $routeObj->dynaicLeadsPermissionActions;
+            $dynaicLeadsCommunicationLeadsActions= $routeObj->dynaicLeadsCommunicationLeadsActions;
             $actionFullPath = Route::currentRouteAction();
             $actionArray = explode('@',$actionFullPath);
             $actionName = (!empty($actionArray) && isset($actionArray[1]))? $actionArray[1]:"not-a-recognised-action";
@@ -98,6 +103,21 @@ class AppServiceProvider extends ServiceProvider
                         $menuUrl = '/master/main/'.$dynamicMasterId;
                         // echo " </br>currentPath ----".$currentPath;
                     }
+                    else if(isset($authRoutesArray[$actionName]) && in_array($actionName,$dynaicLeaveActions)) {
+                        $menuUrl = '/leaves';
+                    }
+                    else if(isset($authRoutesArray[$actionName]) && in_array($actionName,$dynaicRolePermissionActions)) {
+                        $menuUrl = '/permissions/role-list';
+                    }
+                    else if(isset($authRoutesArray[$actionName]) && in_array($actionName,$dynaicLeadsPermissionActions)) {
+                        $menuUrl = '/leads';
+                    }
+                    else if(isset($authRoutesArray[$actionName]) && in_array($actionName,$dynaicLeadsCommunicationLeadsActions)) {
+                        $menuUrl = '/communications';
+                    }
+                    //leads
+                    // echo "<br> Menu Url =".$menuUrl;
+
                     // echo "<pre>";print_r($menuUrlArr);
                     $menuUrlToCompare = (count($menuUrlArr) > 2) ? "/".$menuUrlArr[1]:$menuUrl;
                     // $query = "SELECT m.title, m.url,mp.id as mId,mp.menu_id, mp.employee_id,mp.add_permission,mp.edit_permission,mp.view_permission,mp.delete_permission from menus m INNER JOIN menu_permissions mp  on m.id = mp.menu_id 

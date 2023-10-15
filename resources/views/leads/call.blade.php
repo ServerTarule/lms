@@ -76,13 +76,17 @@
                                         <th scope="col">
                                             <a>File</a>
                                         </th>
+                                        <th scope="col">
+                                            <a>Lead Details</a>
+                                        </th>
+                                        {{-- href="/leads/show/{{$lead->id}}" --}}
                                     </tr>
                                 </thead>
                                 <tbody>
                                 @foreach ($leads as $lead)
                                     <tr>
                                         <td>{{ $loop->iteration }}</td>
-                                        <td><a href="/leads/show/{{$lead->id}}">PID_{{ $lead->id }}</a></td>
+                                        <td><a href="/leads/calls/{{$lead->id}}">PID_{{ $lead->id }}</a></td>
                                         <td>@if( !is_null($lead->employee)) {{ $lead->employee->name }} @endif</td>
                                         <td></td>
                                         <td></td>
@@ -98,6 +102,9 @@
                                         <td></td>
                                         <td></td>
                                         <td></td>
+                                        <th >
+                                            <a class="btn btn-xs btn-warning btn-flat" href="/leads/show/{{$lead->id}}"><i class="fa fa-eye"></i></a>
+                                        </th>
                                     </tr>
                                 @endforeach
                                 </tbody>

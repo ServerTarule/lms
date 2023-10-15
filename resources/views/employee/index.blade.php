@@ -19,11 +19,24 @@
             @endif
                 <div class="panel-body">
                     <div class="text-right">
-                        @if($userCrudPermissions['add_permission']) 
-                            <a class="btn btn-exp btn-sm" data-toggle="modal" data-target="#additem"><i class="fa fa-plus"></i>Add Employee</a>
-                        @else
-                        <a class="btn btn-exp btn-sm disabled" data-toggle="modal" data-target="#additem"><i class="fa fa-plus"></i>Add Employee</a>
-                        @endif
+                        {{-- @if ((isset($userCrudPermissions['add_permission'] ) &&  $userCrudPermissions['add_permission'] != 1))
+                        <span class="text-danger"><i class="fa fa-xs fa fa-exclamation-triangle" aria-hidden="true" title="You are not authorized to perform this action."> Unauthorized to add employee(s).  </i></span>
+                        <a class="btn btn-exp btn-sm" onclick="return showMessage()" {{ (isset($userCrudPermissions['add_permission'] ) &&  $userCrudPermissions['add_permission'] != 1) ? ' disabled' : '' }}>
+                            <i class="fa fa-plus"></i>Add Employee
+                        </a>
+                    @else
+                        <a class="btn btn-exp btn-sm" href="/rules/create"  {{ (isset($userCrudPermissions['add_permission'] ) &&  $userCrudPermissions['add_permission'] != 1) ? ' disabled' : '' }}>
+                            <i class="fa fa-plus"></i>Add Employee
+                        </a>
+                    @endif --}}
+
+
+                    @if ((isset($userCrudPermissions['add_permission'] ) &&  $userCrudPermissions['add_permission'] != 1))
+                        <span class="text-danger"><i class="fa fa-xs fa fa-exclamation-triangle" aria-hidden="true" title="You are not authorized to perform this action."> Unauthorized to add employee(s).  </i></span>
+                        <a class="btn btn-exp btn-sm" onclick="return showMessage()"><i class="fa fa-plus"></i>Add Employee</a>
+                    @else
+                        <a class="btn btn-exp btn-sm" data-toggle="modal" data-target="#additem"><i class="fa fa-plus"></i>Add Employee</a>
+                    @endif
                     </div>
                     <div class="table-responsive">
                         <table id="dataTableExample1" class="table table-bordered table-striped table-hover">
@@ -84,7 +97,7 @@
                                         <a>Edit</a>
                                     </th>
                                     <th scope="col">
-                                        <a>Active</a>
+                                        <a>Activate/Deactivate</a>
                                     </th>
                                     {{-- <th scope="col">
                                         <a>Block/Unblock</a>
@@ -131,14 +144,31 @@
 								            <a data-toggle="modal" data-target="#editEmployee" class="btn-xs btn-info"> <i class="fa fa-edit">Edit</i></a>
 								        </td> -->
                                         <td>
-                                            @if($userCrudPermissions['edit_permission']) 
-                                                <a data-toggle="modal" data-target="return editEmployee({{ $employe->id }})" class="btn-xs btn-info"> <i class="fa fa-edit">Edit</i></a>
+                                            @if ((isset($userCrudPermissions['edit_permission'] ) &&  $userCrudPermissions['edit_permission'] != 1))
+                                                <button  onclick="return showMessage(1)"  class="btn btn-xs btn-success btn-flat show_confirm disabled"> 
+                                                    <i class="fa fa-edit" title='Edit'></i>
+                                                </button>
                                             @else
-                                                <a data-toggle="modal" onClick="return cancelEmployee()" class="btn-xs btn-info disabled"> <i class="fa fa-edit">Edit</i></a> 
+                                                <a data-toggle="modal" onclick="return editEmployee({{ $employe->id }})" class="btn btn-xs btn-success btn-flat show_confirm">
+                                                    <i class="fa fa-edit"></i>
+                                                </a> 
                                             @endif                                        
                                         </td>
                                         <td>
-                                            @if($userCrudPermissions['delete_permission']) 
+                                            @if ((isset($userCrudPermissions['delete_permission'] ) &&  $userCrudPermissions['delete_permission'] != 1))
+                                                <label class="switch disabled">
+                                                    <input  value="{{ $employe->id }}" type="hidden">
+                                                    <input class=" disabled"{{$employe->user->status === 1 ? 'checked':''}} type="checkbox" value="{{ $employe->user->status }}" onchange="showMessage();" @checked( $employe->user->status === 'true') />
+                                                    <span class="slider round"></span>
+                                                </label>
+                                            @else
+                                                <label class="switch">
+                                                    <input id="action_input_{{ $employe->id }}" value="{{ $employe->user->status }}" type="hidden">
+                                                    <input id="action_toggle_{{ $employe->id }}" {{$employe->user->status == 1 ? 'checked':''}} type="checkbox" value="{{ $employe->user->status }}" onchange="toggleUserStatus(this, {{ $employe->id }});" @checked( $employe->user->status === 'true') />
+                                                    <span class="slider round"></span>
+                                                </label>
+                                            @endif  
+                                            {{-- @if($userCrudPermissions['delete_permission']) 
                                                 <a href="" onclick="if (confirm('are you sure you want to cancel?')) window.location.href='/cancel';                                            "
                                                     class="btn-xs btn-info" style="background: #337ab7;">
                                                     <span>Active</span>
@@ -148,7 +178,7 @@
                                                     class="btn-xs btn-info disabled" style="background: #337ab7;">
                                                     <span>Active</span>
                                                 </a>                                      
-                                            @endif
+                                            @endif --}}
                                         </td>
                                         {{-- <td>
                                             <label class="switch">
@@ -172,7 +202,7 @@
             <div class="modal-content">
                 <div class="modal-header modal-header-primary">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                    <h3><i class="fa fa-plus m-r-5"></i> Add EMPLOYEE asdas</h3>
+                    <h3><i class="fa fa-plus m-r-5"></i> Add Employee</h3>
                 </div>
                 <div class="modal-body">
                     <div class="row">
@@ -254,9 +284,16 @@
                             </form>
                             <div class="col-md-12 form-group">
                                 <div>
-                                    <button type="button" class="btn btn-danger btn-sm"
-                                        data-dismiss="modal">Cancel</button>
-                                    <button type="submit" class="btn btn-add btn-sm" onclick="return processAdd()">Save</button>
+                                    @if ((isset($userCrudPermissions['add_permission'] ) &&  $userCrudPermissions['add_permission'] != 1))
+                                        <button type="button" class="btn btn-danger btn-sm"
+                                            data-dismiss="modal">Cancel</button>
+                                        <button type="button" class="btn btn-add btn-sm" onclick="return showMessage()">Save</button>
+                                        <span class="text-danger"><i class="fa fa-xs fa fa-exclamation-triangle" aria-hidden="true" title="You are not authorized to perform this action."> Unauthorized to add employee(s).  </i></span>
+                                    @else
+                                        <button type="button" class="btn btn-danger btn-sm"
+                                            data-dismiss="modal">Cancel</button>
+                                        <button type="submit" class="btn btn-add btn-sm" onclick="return processAdd()">Save</button>
+                                    @endif
                                 </div>
                             </div>
                         </div>
@@ -378,16 +415,98 @@
 @endsection
 @push('custom-scripts')
 <script>
+function toggleUserStatus(cb, employeeId) {
+    console.log("New Value for ser Status = " + cb.checked, "--employeeId--",employeeId);
+    $(cb).attr('value', cb.checked);
+    const status = cb.checked;
+    const editPermission  = "{{$userCrudPermissions['edit_permission']}}";
+    if(!editPermission) {
+        // $(cb).toggle()
+        // console.log(cb);
+        // const switchId = $(cb).attr("id");
+        // console.log("swwww id ==",switchId);
+        // $(`${switchId}`).switch('setState', !status);
+        // $(cb).switch('setState', !status);
+        toastr.error(NOT_AUTHORIZED_TO_PERFORM_ACTION);
+        bootbox.confirm(NOT_AUTHORIZED_TO_PERFORM_ACTION,confirm=>location.reload())
+        return false;
+    }
+    else {
+       
+        processEmployyeStatusToggle(status, employeeId);
+    }
+    
+}
 
+function processEmployyeStatusToggle(status, employeeId) {
+    let statusTxt = ' activate ';
+    let deActivateTxt = '';
+    if(!status) {
+        statusTxt = ' de-activate ';
+        deActivateTxt = " Doing so the employee will no tbe able to login into system."
+    }
+    let confirmTxt = `Are you sure you want to ${statusTxt} employee?${deActivateTxt}`;
+    bootbox.confirm(confirmTxt, function(confirm){
+        if(confirm) {
+            let CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+        
+            $.ajax({
+                /* the route pointing to the post function */
+                url: `/employee/toggleemployeestatus/${employeeId}`,
+                type: 'POST',
+                /* send the csrf-token and the input to the controller */
+                // data: {_token: CSRF_TOKEN, 'ruleData':JSON.stringify(jsonObject)},
+                data: {
+                    _token: CSRF_TOKEN,
+                    'status': status
+                },
+                dataType: 'JSON',
+                /* remind that 'data' is the response of the AjaxController */
+                success: function (data) {
+                    console.log("************Data**********", data);
+                    if(data.status) {
+                        toastr.success(data.message);
+                    }
+                    else {
+                        toastr.error(data.message);
+                    }
+                },
+                failure: function (data) {
+                    toastr.error("Error occurred while processin!!");
+                },
+                error:function(xhr, status, error) {
+                    const resText = JSON.parse(xhr.responseText);
+                    toastr.error( resText.message);
+                }
+            });
+        }
+        else {
+            console.log("--cancelled---")
+        }
+    })
+}
 function submitAddForm(isEdit = false) {
    processAdd () 
 }
 
 function editEmployee(id) {
-    $('#editEmployee').modal({
-        show: 'true'
-    }); 
-    getDataForEdit(id);
+    alert(" Edit Employee Id "+id);
+    const editPermission  = "{{$userCrudPermissions['edit_permission']}}";
+    if(!editPermission) {
+        toastr.error(NOT_AUTHORIZED_TO_PERFORM_ACTION);
+        return false;
+    }
+    else {
+        $('#editEmployee').modal({
+            show: 'true'
+        }); 
+        getDataForEdit(id);
+    }
 }
 
 function cancelEmployee() {
@@ -517,6 +636,10 @@ function getDataForEdit(id) {
         },
         failure: function (data) {
             toastr.error("Error occurred while processin!!");
+        },
+        error:function(xhr, status, error) {
+            const resText = JSON.parse(xhr.responseText);
+            toastr.error( resText.message);
         }
     });
 }
@@ -555,7 +678,7 @@ function processUpdate () {
     // alert("I am here"+employeeId+"----"+userId);
     $.ajax({
         /* the route pointing to the post function */
-        url: `/employee/updateEmployee/${employeeId} `,
+        url: `/employee/updateemployee/${employeeId} `,
         type: 'POST',
         /* send the csrf-token and the input to the controller */
         contentType: false,
@@ -576,7 +699,11 @@ function processUpdate () {
         },
         failure: function (data) {
             toastr.error("Error occurred while processing!!");
-        }
+        },
+        error:function(xhr, status, error) {
+            const resText = JSON.parse(xhr.responseText);
+            toastr.error( resText.message);
+        },
     });
 
 }
@@ -616,17 +743,15 @@ function processAdd () {
             },
             failure: function (data) {
                 toastr.error("Error occurred while processing!!");
-            }
+            },
+            error:function(xhr, status, error) {
+                const resText = JSON.parse(xhr.responseText);
+                toastr.error( resText.message);
+            },
         }); 
     }
     
 
-}
-
-
-
-function showMessage (action="edit/update") {
-    toastr.error( `You are not allowed to ${action} designation!`);
 }
 </script>
 @endpush

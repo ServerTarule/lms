@@ -58,14 +58,14 @@
                 <div class="panel-body">
                     <div class="text-right">
                         <div class="row">
-                            <div class="col-md-3"></div>
-                            <div class="col-md-6">
-                                <form method="POST" action="/createrole" onSubmit="return submitCreateRoleForm()">
+                            <div class="col-md-1"></div>
+                            <div class="col-md-10">
+                                <form method="POST" action="/createrole" onsubmit="return submitCreateRoleForm()">
                                     @csrf
                                     <div class="row">
-                                        <div class="col-md-5">
+                                        <div class="col-md-6 text-left">
                                             <div class="form-group">
-                                                <input type="text" class="form-control" name="name"
+                                                <input type="text" class="form-control" id="role-name" name="name"
                                                     placeholder="Role Name" />
                                             </div>
                                             @if (session('status'))
@@ -75,26 +75,43 @@
                                                 <span style="color:#b10000;">{{ session('error') }}</span>
                                             @endif
                                         </div>
-                                        <div class="col-md-2">
-                                            <div class="form-group">
-                                                <button class="btn btn-sm btn-primary btn-submit bg-primary {{ (!$userCrudPermissions['add_permission']) ? ' disabled' : '' }}">Create
-                                                </button>                                           
-                                             </div>
+                                        <div class="col-md-6">
+                                            @if ((isset($userCrudPermissions['add_permission'] ) &&  $userCrudPermissions['add_permission'] != 1))
+                                                <div class="row">
+                                                    <div class="col-md-3 form-group">
+                                                        <button class="btn btn-sm btn-primary btn-submit bg-primary disable" onclick="return showMessage()"><i class="fa fa-plus"></i> Create
+                                                        </button>
+                                                    </div>
+                                                    <div class="col-md-9 form-group text-left">
+                                                        <span class="text-danger"><i class="fa fa-xs fa fa-exclamation-triangle" aria-hidden="true" title="You are not authorized to perform this action."> Unauthorized to add employee(s).  </i></span>
+                                                    </div>
+                                                </div>
+                                            @else
+                                                <div class="row">
+                                                    <div class="col-md-3 form-group">
+                                                        <button class="btn btn-sm btn-primary btn-submit bg-primary " type="submit">
+                                                            <i class="fa fa-plus"></i> Create
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            @endif
                                         </div>
-
                                     </div>
                                 </form>
                             </div>
-                            <div class="col-md-3"></div>
+                            <div class="col-md-1"></div>
 
                         </div>
                     </div>
                     <div class="table-responsive">
-                        <table id="dataTableExample1" class="table table-bordered table-striped table-hover">
+                        <table id="dataTableExample1" class="table table-bordered table-striped table-hover defaultDataTable">
                             <thead>
                                 <tr class="tblheadclr1">
                                     <th scope="col">
                                         <a>S. No.</a>
+                                    </th>
+                                    <th scope="col">
+                                        <a>Role ID</a>
                                     </th>
                                     <th scope="col">
                                         <a>Roles</a>
@@ -112,25 +129,28 @@
                                 @foreach ($roles as $role)
                                     <tr>
                                         <td>{{ $loop->iteration }}</td>
+                                        <th scope="col">
+                                            {{ $role->id }}
+                                        </th>
                                         <td>{{ $role->name }}</td>
                                         <td>
                                             {{-- <a href="/role/{{ $role->id }}" class="btn-xs btn-info"> <i
                                                     class="fa fa-edit"></i> </a> --}}
-                                            @if($userCrudPermissions['edit_permission'])
-                                                <a href="/role/{{ $role->id }}" class="btn-xs btn-info"> <i
-                                                    class="fa fa-edit"></i> </a>
+                                            @if ((isset($userCrudPermissions['edit_permission'] ) &&  $userCrudPermissions['edit_permission'] != 1))
+                                                <button  onclick="return showMessage(1)" class="btn btn-xs btn-success btn-flat show_confirm disabled"> <i
+                                                    class="fa fa-edit"></i> </button>
                                             @else
-                                                <a class="btn-xs btn-info {{(!$userCrudPermissions['edit_permission']) ? ' disabled' : '' }}"> <i
+                                                <a class="btn btn-xs btn-success btn-flat show_confirm" onclick="return editRole({{ $role->id }})" > <i
                                                     class="fa fa-edit {{(!$userCrudPermissions['edit_permission']) ? ' disabled' : '' }}"></i> </a>
                                             @endif
                                         </td>
                                         <td>
-                                            @if($userCrudPermissions['delete_permission'])
-                                                <a href="#" id="deleteRole" onclick="deleteRole( {{ $role->id }})" class="btn-xs btn-danger">
+                                            @if ((isset($userCrudPermissions['delete_permission'] ) &&  $userCrudPermissions['delete_permission'] != 1))
+                                                <button onclick="return showMessage(2)" class="btn btn-xs btn-danger btn-flat show_confirm disabled" >
                                                     <i class="fa fa-trash-o"></i>
-                                                </a>
+                                                </button>
                                             @else
-                                                <a  onclick="deleteRole( {{ $role->id }})" class="btn-xs btn-danger {{(!$userCrudPermissions['edit_permission']) ? ' disabled' : '' }}">
+                                                <a  id="deleteRole" class="btn btn-xs btn-danger btn-flat show_confirm" onclick="deleteRole( {{ $role->id }})" >
                                                     <i class="fa fa-trash-o"></i>
                                                 </a>
                                             @endif
@@ -148,6 +168,17 @@
 @endsection
 @push('custom-scripts')
 <script>
+    function editRole(id) {
+        const editPermission  = "{{$userCrudPermissions['edit_permission']}}";
+        if(!editPermission) {
+            toastr.error("You are not allowed to add/create role!");
+            return false;
+        }
+        else {
+            ///role/{{ $role->id }}
+            window.location.href =  `/role/${id}`;
+        }
+    }
     function submitCreateRoleForm() {
         const addPermission  = "{{$userCrudPermissions['add_permission']}}";
         if(!addPermission) {
@@ -155,6 +186,17 @@
             return false;
         }
         else {
+            return validateForm()
+            // return true;
+        }
+    }
+    function validateForm() {
+        const name = $("#role-name").val();
+        if(!name || trim(name) === "") {
+            toastr.error("Please fill the role name field!");
+            return false;
+        }
+        else{
             return true;
         }
     }
