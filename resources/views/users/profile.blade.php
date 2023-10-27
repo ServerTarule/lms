@@ -124,7 +124,7 @@
                     else {
                         toastr.success(data.message);
                         setTimeout(function(){ 
-                            // location.reload();
+                            location.reload();
                         }, 3000);
                     }
                 },
