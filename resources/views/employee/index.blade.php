@@ -495,7 +495,6 @@ function submitAddForm(isEdit = false) {
 }
 
 function editEmployee(id) {
-    alert(" Edit Employee Id "+id);
     const editPermission  = "{{$userCrudPermissions['edit_permission']}}";
     if(!editPermission) {
         toastr.error(NOT_AUTHORIZED_TO_PERFORM_ACTION);

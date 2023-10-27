@@ -53,7 +53,7 @@ class AppServiceProvider extends ServiceProvider
             $userId = $user?$user->id:0;
             $roleId = $user?$user->role_id:0;
             // echo "User Id is ".$userId."===roleId===".$roleId;
-
+            
             if($roleId === 6) {
                 $userCrudPermissions = [
                     'add_permission'=> true,
@@ -136,9 +136,10 @@ class AppServiceProvider extends ServiceProvider
                     $userCrudPermissions['delete_permission'] = ($userCrudPermissionsDb["delete_permission"] == 1) ? true:false;
                 }
             }
+            // print_r($user);die;
             // echo "<pre>";
             // print_r($userCrudPermissions);
-            $view->with('userCrudPermissions', $userCrudPermissions );    
+            $view->with(['userCrudPermissions'=> $userCrudPermissions,'currentuser'=>$user] );    
         });  
     }
 }

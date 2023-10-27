@@ -27,6 +27,7 @@ use App\Http\Controllers\RulesController;
 use App\Http\Controllers\StateController;
 use App\Http\Controllers\CenterController;
 use App\Http\Controllers\TemplateController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\MenusController;
@@ -56,12 +57,19 @@ Route::get('/role', function () {
 //     return view('login');
 // });
 
+
+//Login Related (Routes Working Without Authentication)
+Route::get('/', [CustomAuthController::class, 'index'])->name('login');
+Route::get('/login', [CustomAuthController::class, 'index']);
+Route::post('/postlogin', [CustomAuthController::class, 'login']);
+
 Route::middleware(['auth'])->group(function () {
 
     // NOt Functional Even ON QA
     Route::get('/leadstatus', [RoleController::class, 'assign'])->name('assign');//->middleware('can:assign role');//NOT DONE YET Because  Page Not Working
     Route::get('/logs/leads/{$id}', [LogController::class, 'leadlogs'])->name('logs.leadslogs');//->middleware('can:read master');
-
+   
+    
     //leadupload  (Menu Exists but ROute does not exists)
     //NO AUTHORIZATION CHECK ROUTES
     Route::post('/centers/checkdoctors/{isEdit}', [CenterController::class, 'checkdoctors'])->name('centers.checkdoctors');
@@ -191,24 +199,21 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/designation', [DesignationController::class, 'store'])->name('designation')->middleware('check_page_permission:/designation,add_permission,0');
     Route::get('/designation/{id}', [DesignationController::class, 'edit'])->name('designation/{id}')->middleware('check_page_permission:/designation,edit_permission,0');
     Route::post('/designation/{id}', [DesignationController::class, 'update'])->name('designation/{id}')->middleware('check_page_permission:/designation,edit_permission,0');
-
-
+    Route::get('/users', [UserController::class, 'index'])->name('listusers')->middleware('check_page_permission:/users,view_permission,0');
+    Route::get('/users/profile', [UserController::class, 'profile'])->name('viewprofile');//->middleware('check_page_permission:/users,view_permission,0');
+    Route::post('/users/updateprofile', [UserController::class, 'updateprofile'])->name('updateprofile');//->middleware('check_page_permission:/users,view_permission,0');
+    Route::get('/users/change-password', [UserController::class, 'userpassword'])->name('userpassword');//->middleware('check_page_permission:/users,view_permission,0');
+    Route::post('/users/updatepassword', [UserController::class, 'updatepassword'])->name('updatepassword');//->middleware('check_page_permission:/users,view_permission,0');
     //In Progress
+    
    
     Route::post('/leads/update', [LeadController::class, 'updateone'])->name('leads.updateone')->middleware('check_page_permission:/leads,edit_permission,0');//->middleware('can:read master');
-    
     //Communications
     //->middleware('can:read master');
-    
-    
-   
-//    Route::get('/leadassignment', [LeadController::class, 'assignment'])->name('leads')->middleware('can:read lead');
-    Route::get('/leads/{id}', [LeadController::class, 'showtoedit'])->name('leads.showtoedit')->middleware('can:read master');
+    // Route::get('/leadassignment', [LeadController::class, 'assignment'])->name('leads');//->middleware('can:read lead');
+    // Route::get('/leads/{id}', [LeadController::class, 'showtoedit'])->name('leads.showtoedit');//->middleware('can:read master');
 
-     //Logs
-
-     
-
+    //Logs
     //NYD Block#2 Content
     //Permissions 
 
@@ -217,7 +222,6 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/employees/permissions/{id}', [PermissionsController::class, 'edit'])->name('permissions.edit');//->middleware('can:read employee'); //NOT DONE YET Because  I don't think it is relavent now
     Route::post('/employees/permissions/{id}', [PermissionsController::class, 'update'])->name('permissions.update');//->middleware('can:read employee'); //NOT DONE YET Because  I don't think it is relavent now
     Route::get('/employees/permissions/{id}/masters', [PermissionsController::class, 'masterindex'])->name('permissions.masterindex');//-->middleware('can:read employee'); //NOT DONE YET Because  I don't think it is relavent now
-    
     Route::get('/permissions/employee-list', [MenusPermissionController::class, 'index'])->name('menuspermission')->middleware('can:read master');
     Route::get('/permissions/menu-list/{employeeId}', [MenusPermissionController::class, 'managePermission'])->name('menuspermission')->middleware('can:read master');
     Route::post('/menus/set-all-permissions/{employeeId}', [MenusPermissionController::class, 'setPermission'])->name('menuspermission/{id}')->middleware('can:update master');
@@ -236,15 +240,6 @@ Route::middleware(['auth'])->group(function () {
     // Route::get('/permission/{id}', [PermissionController::class, 'edit'])->name('permission/{id}');//->middleware('can:update role');
     // Dynamic Master
     Route::post('/dynamic/destroy', [DynamicMasterController::class, 'destroy'])->name('dynamicmaster.destroy')->middleware('can:read master');
-    Route::get('/dynamic/edit/{id}', [DynamicMasterController::class, 'edit'])->name('/dynamic/edit/{id}')->middleware('can:update master');
-    Route::post('/dynamic/edit/{id}', [DynamicMasterController::class, 'update'])->name('/dynamic/edit/{id}')->middleware('can:update master');
-
-    // Menu Permission
-  
-    
-    
-    // Dynamic Master
-    // Route::post('/dynamic/{id}', [DynamicMasterController::class, 'store'])->name('/dynamic/{id}')->middleware('can:create master');
     Route::get('/dynamic/edit/{id}', [DynamicMasterController::class, 'edit'])->name('/dynamic/edit/{id}')->middleware('can:update master');
     Route::post('/dynamic/edit/{id}', [DynamicMasterController::class, 'update'])->name('/dynamic/edit/{id}')->middleware('can:update master');
 
@@ -274,6 +269,3 @@ Route::middleware(['auth'])->group(function () {
 });
 
 
-Route::get('/', [CustomAuthController::class, 'index'])->name('login');
-Route::get('/login', [CustomAuthController::class, 'index']);
-Route::post('/postlogin', [CustomAuthController::class, 'login']);

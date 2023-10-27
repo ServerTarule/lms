@@ -51,7 +51,7 @@
                                                     <td>{{ $menu->id }}</td>
                                                     <td>
                                                         {{ $menu->title }}
-                                                        @if($menu->view_permission === 0) 
+                                                        @if(!$menu->view_permission || $menu->view_permission == 0|| $menu->view_permission === 0) 
                                                         <i class='fa fa-info-circle' title="Since view permission for this menu is inactive, so other permissions are disabled." aria-hidden='true'></i>
                                                         @endif
                                                         
@@ -69,15 +69,16 @@
 
                                                     <td>
                                                         <label class="switch">
+                                                            
                                                             <input id="add_{{ $menu->id }}" value="{{ $menu->add_permission }}" type="hidden">
-                                                            <input {{$menu->view_permission === 0 ? 'disabled':''}}  id="add_menu_{{ $menu->id }}" {{$menu->add_permission === 1 ? 'checked':''}} type="checkbox" value="{{ $menu->add_permission }}" onchange="handleChange(this);" @checked( $menu->add_permission == '1') />
+                                                            <input {{(!$menu->view_permission || $menu->view_permission == 0|| $menu->view_permission === 0) ? 'disabled':''}}  id="add_menu_{{ $menu->id }}" {{$menu->add_permission === 1 ? 'checked':''}} type="checkbox" value="{{ $menu->add_permission }}" onchange="handleChange(this);" @checked( $menu->add_permission == '1') />
                                                             <span class="slider round"></span>
                                                         </label>
                                                     </td>
                                                     <td>
                                                         <label class="switch">
                                                             <input id="edit_{{ $menu->id }}" value="{{ $menu->edit_permission }}" type="hidden">
-                                                            <input {{$menu->view_permission === 0 ? 'disabled':''}}  id="edit_menu_{{ $menu->id }}" {{$menu->edit_permission === 1 ? 'checked':''}} type="checkbox" value="{{ $menu->edit_permission }}" onchange="handleChange(this);" @checked( $menu->edit_permission === 'true') />
+                                                            <input {{(!$menu->view_permission || $menu->view_permission == 0|| $menu->view_permission === 0) ? 'disabled':''}}  id="edit_menu_{{ $menu->id }}" {{$menu->edit_permission === 1 ? 'checked':''}} type="checkbox" value="{{ $menu->edit_permission }}" onchange="handleChange(this);" @checked( $menu->edit_permission === 'true') />
                                                             <span class="slider round"></span>
                                                             
                                                         </label>
@@ -85,7 +86,7 @@
                                                     <td>
                                                         <label class="switch">
                                                             <input id="delete_{{ $menu->id }}" value="{{ $menu->delete_permission }}" type="hidden">
-                                                            <input {{$menu->view_permission === 0 ? 'disabled':''}}  id="delete_menu_{{ $menu->id }}" {{$menu->delete_permission === 1 ? 'checked':''}} type="checkbox" value="{{ $menu->delete_permission }}" onchange="handleChange(this);" @checked( $menu->delete_permission === 'true') />
+                                                            <input {{(!$menu->view_permission || $menu->view_permission == 0|| $menu->view_permission === 0) ? 'disabled':''}}  id="delete_menu_{{ $menu->id }}" {{$menu->delete_permission === 1 ? 'checked':''}} type="checkbox" value="{{ $menu->delete_permission }}" onchange="handleChange(this);" @checked( $menu->delete_permission === 'true') />
                                                             <span class="slider round"></span>
                                                         </label>
                                                     </td>

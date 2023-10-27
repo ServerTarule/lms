@@ -124,6 +124,7 @@ class EmployeeController extends Controller
             'email'=>$request->email,
             'role_id'=>$request->role_id,
             'password'=> Hash::make($request->password),
+            "profile_img" => $profilImg
         ]);
         
         if(!$user){
@@ -204,10 +205,14 @@ class EmployeeController extends Controller
             $name = time().'_'.$request->file->getClientOriginalName();
             $profilImg = "uploads/".$name;
             $filePath = $request->file->move(public_path('uploads'), $name);
+            $dataToUpdate["profile_img"] = $profilImg;
         }
+        // print_r($dataToUpdate); die;
         $user=User::find($userId)->update(
             $dataToUpdate
         );
+
+        // print_r($user);
         if(!$user){
             return response()->json(['status'=>false, 'message'=>'Something Went Wrong!']);
         }

@@ -27,7 +27,15 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:ital,wght@0,200;0,300;0,400;0,600;0,700;0,900;1,200;1,300;1,400;1,600;1,700;1,900&display=swap" rel="stylesheet" />
 
-    
+    <style>
+        .username {
+            margin-top: 15px;
+            font-weight: 1000;
+            color: #fff;
+            font-size: 20px;
+
+        }
+    </style>
     @livewireStyles
 
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.5/index.global.min.js'></script>
@@ -69,31 +77,39 @@
                     <span class="pe-7s-angle-left-circle"></span>
                 </a>
                 <a href="#search"><span class="pe-7s-search"></span></a>
+                
                 <div id="search">
                     <button type="button" class="close">×</button>
                     <form>
                         <input type="search" value="" placeholder="Search.." />
                         <button type="submit" class="btn btn-add">Search...</button>
                     </form>
+                    
                 </div>
                 <div class="navbar-custom-menu">
+                    <div class="nav navbar-nav username ">Hello {{$currentuser->name}}</div>
                     <ul class="nav navbar-nav">
-                        <li class="dropdown dropdown-help">
+                        {{-- <li class="dropdown dropdown-help">
                             <a href="help.php" class="dropdown-toggle">
                                 <i class="fa fa-question-circle-o"></i></a>
-                        </li>
+                        </li> --}}
                         <!-- user -->
                         <li class="dropdown dropdown-user">
                             <a class="dropdown-toggle" data-toggle="dropdown">
+                                @if($currentuser->profile_img)
+                                    <img src="/{{ $currentuser->profile_img}}" class="img-circle" width="45" height="45" alt="{{$currentuser->name}}">
+                                @else
                                 <img src="{{ asset('assets/dist/img/avatar5.png') }}" class="img-circle" width="45" height="45"
-                                    alt="user"></a>
+                                alt="{{$currentuser->name}}">
+                                @endif
+                            </a>
                             <ul class="dropdown-menu">
                                 <li>
-                                    <a href="profile.php">
+                                    <a href="/users/profile">
                                         <i class="fa fa-user"></i> profile</a>
                                 </li>
                                 <li>
-                                    <a href="changepassword.php">
+                                    <a href="/users/change-password">
                                         <i class="fa fa-lock"></i> Change Password</a>
                                 </li>
                                 <li><a href="/logout">
