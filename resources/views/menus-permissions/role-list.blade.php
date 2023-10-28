@@ -9,6 +9,7 @@
                 <div class="btn-group" id="buttonexport">
                     <a href="#">
                         <h4>Role List to Manage Permissions</h4>
+                        <h6><i class='fa fa-info-circle' title="You need to have edit permission with respect to this menu url, then only you can change the permissions with repect to any role." aria-hidden='true'> You need to have edit permission with respect to this menu url, then only you can change the permissions with repect to any role</i></h6>
                     </a>
                 </div>
             </div>

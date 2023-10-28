@@ -442,7 +442,9 @@
     
    
     function showMessage(permissionType=0) {
+        console.log("Showing Message & permissionType =="+permissionType);
         if(permissionType == 1) {
+            console.log("Edit");
             const editPermission  = "{{$userCrudPermissions['edit_permission']}}";
             if(!editPermission) {
                 toastr.error(NOT_AUTHORIZED_TO_PERFORM_ACTION);
@@ -451,6 +453,7 @@
         
         }
         if(permissionType == 2) {
+            console.log("Delete");
             const deletePermission  = "{{$userCrudPermissions['delete_permission']}}";
             if(!deletePermission) {
                 toastr.error(NOT_AUTHORIZED_TO_PERFORM_ACTION);
@@ -459,6 +462,7 @@
         
         }
         if(permissionType == 3) {
+            console.log("View");
             const viewPermission  = "{{$userCrudPermissions['view_permission']}}";
             if(!viewPermission) {
                 toastr.error(NOT_AUTHORIZED_TO_PERFORM_ACTION);
@@ -467,6 +471,7 @@
         
         }
         else {
+            console.log("Add");
             const addPermission  = "{{$userCrudPermissions['add_permission']}}";
             if(!addPermission) {
                 toastr.error(NOT_AUTHORIZED_TO_PERFORM_ACTION);

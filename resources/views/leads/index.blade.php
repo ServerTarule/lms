@@ -362,11 +362,7 @@ function editLeadCheckPermission(id) {
         return false;
     }
     else {
-        // /leads/edit/{{$lead->id}}
-        //http://localhost:3000/leads/edit/10
-        // window.location.href =  `/leads/edit/${id}`;
         window.location.href =  `/leads/calls/${id}`;
-
     }
 }
 function addLead() {

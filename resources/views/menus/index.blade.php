@@ -107,11 +107,18 @@
                                             <td>{{ $menu->preference }}</td>
                                             <td>{{ \Carbon\Carbon::parse($menu->created_at)->format('d/m/Y') }}</td>
                                             <td>
+                                                {{-- edit permission {{$userCrudPermissions['edit_permission']}} --}}
+                                                @if((isset($userCrudPermissions['edit_permission'] ) &&  $userCrudPermissions['edit_permission'] != 1))
+                                                    <a onclick="showMessage(1)" class="btn btn-xs btn-success btn-flat show_confirm" data-toggle="tooltip" title='Edit' disabled>
+                                                            <i class="fa fa-edit" title='Edit'></i>
+                                                    </a>
+                                                @else
                                                 <a href="/menus/{{$menu->id}}" class="btn-xs">
-                                                <button class="btn btn-xs btn-success btn-flat show_confirm" data-toggle="tooltip" title='Edit' {{ (isset($userCrudPermissions['edit_permission'] ) &&  $userCrudPermissions['edit_permission'] != 1) ? ' disabled' : '' }}>
+                                                <button class="btn btn-xs btn-success btn-flat show_confirm" data-toggle="tooltip" title='Edit' >
                                                     <i class="fa fa-edit" title='Edit'></i>
                                                 </button>
                                                 </a>
+                                                @endif
                                             </td>
                                             <td>
                                                 
@@ -119,8 +126,14 @@
                                                 {{-- @csrf --}}
                                                 {{-- {{ (isset($userCrudPermissions['delete_permission'] ) &&  $userCrudPermissions['delete_permission'] != 1) ? ' disabled' : '' }} --}}
                                                 <input name="_method" type="hidden" id="menu_{{ $menu->preference }}" value="DELETE">
-                                                <button type="submit"  onclick="deleteMenu( {{ $menu->id }})" class="btn btn-xs btn-danger btn-flat show_confirm" data-toggle="tooltip" title='Delete'><i
+                                                {{-- {{ (isset($userCrudPermissions['delete_permission'] ) &&  $userCrudPermissions['delete_permission'] != 1) ? ' disabled' : '' }} --}}
+                                                @if((isset($userCrudPermissions['delete_permission'] ) &&  $userCrudPermissions['delete_permission'] != 1))
+                                                <a  onclick="showMessage(2)" class="btn btn-xs btn-danger btn-flat show_confirm " data-toggle="tooltip" title='Delete' disabled><i
+                                                    class="fa fa-trash"></i> </a>
+                                                @else
+                                                <button type="submit"  onclick="deleteMenu( {{ $menu->id }})" class="btn btn-xs btn-danger btn-flat show_confirm " data-toggle="tooltip" title='Delete'  {{ (isset($userCrudPermissions['delete_permission'] ) &&  $userCrudPermissions['delete_permission'] != 1) ? ' disabled' : '' }}><i
                                                         class="fa fa-trash"></i> </button>
+                                                @endif
                                             {{-- </form> --}}
                                             </td>
                                         </tr>
