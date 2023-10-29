@@ -490,6 +490,13 @@
         }
     }
 
+    function specialCharacterExists(name) {
+        var format = /[`!@#$%^&*()_+\-=\[\]{};:"\\|,.<>\/?~]/;
+        if (format.test(name)) {
+            return true;
+        }
+        else return false;
+    }
     function isValidCotact(mobileNumber) {
         var mobileNumberPattern = /^[1-9]{1}[0-9]{9}$/;
         if (!mobileNumberPattern.test(mobileNumber)) {

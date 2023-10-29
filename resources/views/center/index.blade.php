@@ -151,12 +151,13 @@
                                     </div>
                                     <div class="col-md-6 form-group">
                                         <label class="control-label">Mobile Number  <span class="required text-danger"> * </span></label>
-                                        <input type="text" id="mobile" placeholder="Enter Mobile Number" name="mobile" class="form-control">
+                                        <input type="text" id="mobile" maxlength="10" placeholder="Enter Mobile Number" name="mobile" class="form-control">
                                     </div>
                                     <div class="col-md-6 form-group">
                                         <label class="control-label">Alternate Mobile Number </label>
-                                        <input type="text"  id="alternateMobile"  placeholder="Enter Alternate Number" name="alternateMobile" class="form-control" rquired >
+                                        <input type="text"  id="alternateMobile" maxlength="10" placeholder="Enter Alternate Number" name="alternateMobile" class="form-control" rquired >
                                     </div>
+                                    <i style="padding:0px 0px 0px 20px" class='fa fa-info-circle' title="Mobile number and alternate mobile number can contain only 10 digit number." aria-hidden='true'> Mobile number and alternate mobile number can contain only 10 digit number</i>
                                     <div class="col-md-6 form-group">
                                         <label class="control-label">State  <span class="required text-danger"> * </span></label>
                                        <select class="form-control state-dropdown" name="state" id="state-dropdown" rquired >
@@ -220,12 +221,13 @@
 
                                     <div class="col-md-6 form-group">
                                         <label class="control-label">Mobile Number <span class="required text-danger"> * </span> </label>
-                                        <input type="text" placeholder="Enter Mobile Number" id="mobile_edit" name="mobile" class="form-control">
+                                        <input type="text" placeholder="Enter Mobile Number" maxlength="10" id="mobile_edit" name="mobile" class="form-control">
                                     </div>
                                     <div class="col-md-6 form-group">
                                         <label class="control-label">Alternate Mobile Number </label>
-                                        <input type="text" placeholder="Enter Alternate Number" id="alternate_mobile_edit" name="alternateMobile" class="form-control" rquired >
+                                        <input type="text" placeholder="Enter Alternate Number" maxlength="10" id="alternate_mobile_edit" name="alternateMobile" class="form-control" rquired >
                                     </div>
+                                    <i style="padding:0px 0px 0px 20px" class='fa fa-info-circle' title="Mobile number and alternate mobile number can contain only 10 digit number." aria-hidden='true'> Mobile number and alternate mobile number can contain only 10 digit number</i>
                                     <div class="col-md-6 form-group">
                                         <label class="control-label">State <span class="required text-danger"> * </span></label>
                                        <select class="form-control state-dropdown" name="state" id="state_dropdown_edit" rquired>
@@ -633,6 +635,23 @@
         if(mobile == null || mobile =="") {
             validationMessage += `<li>Please fill mobile number. </li>`; 
             isValid=false;
+        }
+        else if(!(mobile == null || mobile =="")) {
+            const isContactValid = isValidCotact(mobile);
+            console.log("##########isContactValid############",isContactValid);
+            if(!isContactValid) {
+                validationMessage+=`<li>Please fill valid mobile number. </li>`;
+                isValid=false;
+            }
+        }
+
+        if(!(alternateMobile == null || alternateMobile =="")) {
+            const isContactValid = isValidCotact(alternateMobile);
+            console.log("##########isContactValid############",isContactValid);
+            if(!isContactValid) {
+                validationMessage+=`<li>Please fill valid alternate  number. </li>`;
+                isValid=false;
+            }
         }
 
         // if(alternateMobile == null || alternateMobile =="") {

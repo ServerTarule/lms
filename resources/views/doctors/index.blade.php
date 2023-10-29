@@ -267,6 +267,10 @@ function validateForm(isEdit=false) {
         toastr.error("Doctor name field is required!");
         return false;
     }
+    else if (specialCharacterExists(name)) {
+        toastr.error("Doctor name should not contain special ccharacters!");
+        return false;
+    }
     else {
         return true;
     }

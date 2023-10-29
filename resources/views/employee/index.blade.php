@@ -224,11 +224,6 @@
                                         <label class="control-label">Employee Name <span class="required text-danger"> * </span></label>
                                         <input type="text" placeholder="Enter Employee Name" name="name" id="emp_name" class="form-control">
                                     </div>
-
-                                    <div class="col-md-6 form-group">
-                                        <label class="control-label">Mobile Number <span class="required text-danger"> * </span></label>
-                                        <input type="text" placeholder="Enter Mobile Number" id="contact" maxlength="10" name="contact" class="form-control">
-                                    </div>
                                     <div class="col-md-6 form-group">
                                         <label class="control-label">User Type (Role) <span class="required text-danger"> * </span></label>
                                         <select class="form-control" name="role_id"  id="role_id">
@@ -238,6 +233,15 @@
                                             @endforeach
                                           </select>
                                     </div>
+                                    <div class="col-md-6 form-group">
+                                        <label class="control-label">Mobile Number <span class="required text-danger"> * </span></label>
+                                        <input type="text" placeholder="Enter Mobile Number" id="contact" maxlength="10" name="contact" class="form-control">
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <label class="control-label">Alternate Mobile Number </label>
+                                        <input type="text" placeholder="Alternate Mobile Number" id="alternate_contact" maxlength="10"  name="alternate_contact" class="form-control">
+                                    </div>
+                                    <i style="padding:0px 0px 0px 20px" class='fa fa-info-circle' title="Mobile number and alternate mobile number can contain only 10 digit number." aria-hidden='true'> Mobile number and alternate mobile number can contain only 10 digit number</i>                                    
                                     <div class="col-md-6 form-group">
                                         <label class="control-label">Email Id <span class="required text-danger"> * </span> </label>
                                         <input type="email" placeholder="Enter Email Id" id="email"  name="email" class="form-control">
@@ -254,10 +258,7 @@
                                         <label class="control-label">DOJ <span class="required text-danger"> * </span></label>
                                         <input type="date" placeholder="DOJ" id="doj" name="doj" class="form-control">
                                     </div>
-                                    <div class="col-md-6 form-group">
-                                        <label class="control-label">Alternate Mobile Number </label>
-                                        <input type="text" placeholder="Alternate Mobile Number" id="alternate_contact" maxlength="10"  name="alternate_contact" class="form-control">
-                                    </div>
+                                   
                                     <div class="col-md-6 form-group">
                                         <label class="control-label">Designation Type</label>
                                        <select class="form-control" name="designation_id" id="designation_id">
@@ -334,16 +335,7 @@
                                           <label class="control-label">Employee Name <span class="required text-danger"> * </span> </label>
                                           <input type="text" placeholder="Enter Employee Name" name="name" id="emp_name_edit" class="form-control">
                                        </div>
-
-                                        <div class="col-md-6 form-group">
-                                          <label class="control-label">Mobile Number <span class="required text-danger"> * </span> </label>
-                                          <input type="text" placeholder="Enter Mobile Number" maxlength="10" name="contact" id="contact_edit" class="form-control">
-                                       </div>
-                                        <!-- <div class="col-md-6 form-group">
-                                          <label class="control-label">User Type</label>
-                                          <input type="text" placeholder="" name="" id="user_type_edit" class="form-control">
-                                       </div> -->
-                                        <div class="col-md-6 form-group">
+                                       <div class="col-md-6 form-group">
                                             <label class="control-label">User Type (Role) <span class="required text-danger"> * </span></label>
                                             <select class="form-control" name="role_id"  id="role_id_edit">
                                                 <option value="0">Select User Type</option>
@@ -352,6 +344,20 @@
                                                 @endforeach
                                             </select>
                                         </div>
+                                        <div class="col-md-6 form-group">
+                                          <label class="control-label">Mobile Number <span class="required text-danger"> * </span> </label>
+                                          <input type="text" placeholder="Enter Mobile Number" maxlength="10" name="contact" id="contact_edit" class="form-control">
+                                       </div>
+                                       <div class="col-md-6 form-group">
+                                            <label class="control-label">Alternate Mobile Number </label>
+                                            <input type="text" placeholder="Alternate Mobile Number" maxlength="10"  name="alternate_contact" id="alternate_contact_edit" class="form-control">
+                                        </div>
+                                        <i style="padding:0px 0px 0px 20px" class='fa fa-info-circle' title="Mobile number and alternate mobile number can contain only 10 digit number." aria-hidden='true'> Mobile number and alternate mobile number can contain only 10 digit number</i>
+                                        <!-- <div class="col-md-6 form-group">
+                                          <label class="control-label">User Type</label>
+                                          <input type="text" placeholder="" name="" id="user_type_edit" class="form-control">
+                                       </div> -->
+                                        
                                         <div class="col-md-6 form-group">
                                           <label class="control-label">Email Id  <span class="required text-danger"> * </span></label>
                                           <input type="text" placeholder="Enter Email Id" name="email" id="email_edit" class="form-control">
@@ -365,10 +371,7 @@
                                           <label class="control-label">DOJ <span class="required text-danger"> * </span></label>
                                           <input type="date" placeholder="DOJ" name="doj" id="doj_edit"  class="form-control">
                                        </div>        
-                                       <div class="col-md-6 form-group">
-                                            <label class="control-label">Alternate Mobile Number </label>
-                                            <input type="text" placeholder="Alternate Mobile Number" maxlength="10"  name="alternate_contact" id="alternate_contact_edit" class="form-control">
-                                        </div>
+                                       
                                         <div class="col-md-6 form-group">
                                             <label class="control-label">Designation Type <span class="required text-danger"> * </span></label>
                                             <select class="form-control" name="designation_id"  id="designation_id_edit">
