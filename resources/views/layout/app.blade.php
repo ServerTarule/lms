@@ -310,6 +310,60 @@
             "aLengthMenu": [10, 25, 50, 100]
             // scrollY: 300
         });
+        // new DataTable('#example', {
+        //     order: [[2, 'asc']],
+        //     rowGroup: {
+        //         dataSrc: 2
+        //     }
+        // });
+        var groupColumn = 0;
+        var table = $('#example-group').DataTable({
+            "columnDefs": [
+                { "visible": false, "targets": groupColumn }
+            ],
+            "order": [[ groupColumn, 'asc' ]],
+            "displayLength": 10,
+            "drawCallback": function ( settings ) {
+                var api = this.api();
+                var rows = api.rows( {page:'current'} ).nodes();
+                var last=null;
+    
+                api.column(groupColumn, {page:'current'} ).data().each( function ( group, i ) {
+                    if ( last !== group ) {
+                        $(rows).eq( i ).before(
+                            '<tr class="group"><td colspan="12">'+group+'</td></tr>'
+                        );
+    
+                        last = group;
+                    }
+                } );
+            }
+        } );
+        // var table = $('#example-group').DataTable( {
+        //     order: [
+        //         [2, 'asc'],
+        //         [1, 'asc']
+        //     ],
+        //     rowGroup: {
+        //         dataSrc: [2, 1]
+        //     },
+        //     columnDefs: [
+        //         {
+        //             targets: [1, 2],
+        //             visible: false
+        //         }
+        //     ]
+        // });
+        // Order by the grouping
+        $('#example-group tbody').on( 'click', 'tr.group', function () {
+            var currentOrder = table.order()[0];
+            if ( currentOrder[0] === groupColumn && currentOrder[1] === 'asc' ) {
+                table.order( [ groupColumn, 'desc' ] ).draw();
+            }
+            else {
+                table.order( [ groupColumn, 'asc' ] ).draw();
+            }
+        } );
         toastr.options.timeOut = 7000; // 1.5s
         toastr.options.debug=false;
         toastr.options.positionClass="toast-top-right";

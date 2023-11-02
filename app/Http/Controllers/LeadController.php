@@ -342,12 +342,83 @@ class LeadController extends Controller
 
     public function call() : View
     {
-        $leads = Lead::all();
+        // print_r($_GET);
+        $currentLeadStatus = $_GET['leadStatusId'] ?? 0;
+        $showold = $_GET['showold'] ?? 0;
+
+        $colourCode = [
+            "1"=>"#ff0000",
+            "2"=>"#0000ff",
+            "3"=>"#3cb371",
+            "4"=>"#ee82ee",
+            "5"=>"#ffa500",
+            "6"=>"#6a5acd",
+            "7"=>"#404040",
+            "8"=>"#33FF4A",
+            "9"=>"#33FFFB",
+            "10"=>"#DFFF33",
+        ];
+        
+        // if(isset($_GET['leadStatusId']) && $_GET['leadStatusId'] > 0) {
+        //     $currentLeadStatus = $_GET['leadStatusId'];
+        // }
+        
+        if($currentLeadStatus > 0) {
+            $leads = Lead::all();
+            // $currentLeadStatus = $_GET['leadStatusId']??0;
+            // $leads = Lead::table('leads as l')
+            // ->select('l.*', 'lm.id as lid', 'lm.lead_id', 'lm.mastervalue_id')
+            // ->leftJoin('leadmasters as lm', function($join){
+            //     $join->on('l.id', '=', 'lm.lead_id')
+            //          ->where('lm.master_id', "3");
+            // })->where('lm.mastervalue_id', $currentLeadStatus)
+            // ->get();
+            // if(!empty($leads)) {
+            //     $leads = $leads->toArray();
+            // }
+            // $leads = Lead::with('LeadMaster')->whereHas('LeadMaster', function($q){
+            //     $q->where('lead_id','=','3');
+            // })->get();
+        }
+        else {
+            $leads = Lead::all();
+        }
+        // print_r($leads);
+
+        // $query = 'SELECT l.id as leadid, l.name, l.email, l.mobileno, l.altmobileno,
+        //  l.receiveddate,l.created_at as lead_created_at, l.updated_at as lead_last_updated_at,
+        //   lm.lead_id, lm.master_id, lm.mastervalue_id, dm.name as master_name, dm.master, 
+        //   dv.name as master_value_name FROM `leads` as l  
+        //   left join leadmasters lm on lm.lead_id = l.id 
+        //   left join dynamic_mains as dm on dm.id = lm.master_id 
+        //   left join dynamic_values as  dv on dv.parent_id = dm.id where lm.mastervalue_id !=0';
+
+        $query = "select res.*, dv.name as master_value_name from (SELECT l.id as leadid, l.name, l.email, l.mobileno, l.altmobileno,
+        l.receiveddate,l.created_at as lead_created_at, l.updated_at as lead_last_updated_at,
+         lm.lead_id, lm.master_id, lm.mastervalue_id, dm.id as dmid, dm.name as master_name, dm.master  
+          FROM `leads` as l left join leadmasters lm on l.id = lm.lead_id  
+         left join dynamic_mains as dm on dm.id = lm.master_id where lm.mastervalue_id !=0) as res INNER JOIN dynamic_values as dv on res.mastervalue_id = dv.id";
+        
+        if($currentLeadStatus > 0) {
+            $query = $query ." where mastervalue_id = $currentLeadStatus";
+        }
+        // echo $query;
+         $leadsWithallNestedData = DB::select($query);
+        // print_r($leadsWithallNestedData);
         $leadMasterNames = array();
         foreach ($leads as $key=>$value) {
             $leadMasters = LeadMaster::where('lead_id', $value->id)->get();
+            // print_r($leadMasters); die;
             $leads[$key]['leadmasters'] = $leadMasters;
             foreach ($leadMasters as $k=>$v) {
+                // print_r($v);
+                // echo "\n Master_id = ".$v->master_id;
+                // echo "\n mastervalue_id = ".$v->mastervalue_id;
+                // echo "\n currentLeadStatus = ".$currentLeadStatus;
+               if($currentLeadStatus != 0 && $v->master_id=3 && $v->mastervalue_id != $currentLeadStatus) {
+                // continue;
+                // echo "Lead master_id 3 lead id== ".$value->id ."--Lead status --".$v->mastervalue_id;
+               }
                 $masters = DynamicMain::where('id', $v->master_id)->get();
                 foreach ($masters as $master) {
                     $leadMasters[$k]['master'] = $master;
@@ -362,13 +433,15 @@ class LeadController extends Controller
             }
         }
 //        Log::info($leads);
-        foreach ($leads as $lead) {
+        // foreach ($leads as $lead) {
 //            Log::info($lead['leadMasters']);
-            foreach ($lead['leadmasters'] as $leadMaster) {
+            // foreach ($lead['leadmasters'] as $leadMaster) {
 //                Log::info($leadMaster->master->name);
 //                Log::info($leadMaster->mastervalue);
-            }
-        }
+            // }
+        // }
+
+        // print_r($leads->toArray());
 
         $uniqueLeadMasterNames = array_unique($leadMasterNames);
 //        Log::info($uniqueLeadMasterNames);
@@ -402,12 +475,13 @@ class LeadController extends Controller
         //TODO Hard coded name to get master values
         $leadStatus =DynamicMain::where('name', 'Lead Status')->first();
         $leadStatuses = DynamicValue::where('parent_id', $leadStatus->id)->get();
-        return view('leads.call', compact('leads', 'uniqueLeadMasterNames', 'leadStatuses'));
+        return view('leads.call', compact('leads', 'uniqueLeadMasterNames', 'leadStatuses', 'currentLeadStatus', 'leadsWithallNestedData','showold','colourCode'));
     }
 
     public function showcall($id) : View
     {
         // die("asasas");
+        $isFirstCalling = $_GET['firstcalling']??false;
         $leads = Lead::where('id', $id)->get();
         $leadmaster = LeadMaster::where('lead_id', $id)->get();
         $leadKV = array();
@@ -481,10 +555,10 @@ class LeadController extends Controller
         foreach($leadmastersArr as $leadmastersElement) {
             $leadMasterKeyValueArray[$leadmastersElement["master_id"]] = $leadmastersElement["mastervalue_id"];
         }
-        $isFirstCalling = true;
+        // $isFirstCalling = true;
         $state=DB::table('dynamic_values as dm')->select('dm.*')->where('dm.parent_id','7')->join('dynamic_mains as dym', 'dm.parent_id', '=', 'dym.id')->get();
         /**Copied data from Edit function Edits*/
-
+// print_r($leadKV);
         // return view('leads.edit', compact('masters','lead','state','leadmasters','leadMasterKeyValueArray','masterIdsToMakeDynamic','isFirstCalling'));
         return view('leads.showcall', compact(
             'leads',

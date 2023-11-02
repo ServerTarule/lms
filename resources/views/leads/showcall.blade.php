@@ -45,9 +45,20 @@
                             </thead>
                             <tbody>
                                 <tr>
-                                    @foreach ($leadKV as $key => $value)
+                                    <td>{{$leadKV['name']}}</td>
+                                    <td>{{$leadKV['email']}}</td>
+                                    <td>{{$leadKV['mobileno']}}</td>
+                                    <td>{{$leadKV['Treatment Types']}}</td>
+                                    <td>{{$leadKV['Lead Types']}}</td>
+                                    <td>{{$leadKV['Lead Status']}}</td>
+                                    <td>{{$leadKV['Lead Stages']}}</td>
+                                    <td>{{$leadKV['Lead Sources']}}</td>
+                                    <td>{{$leadKV['Action Types']}}</td>
+                                    <td>{{$leadKV['States']}}</td>
+                                    <td>{{$leadKV['Cities']}}</td>
+                                    {{-- @foreach ($leadKV as $key => $value)
                                         <td>{{$value}}</td>
-                                    @endforeach
+                                    @endforeach --}}
                                     <input type="hidden" class="ModuleName" value="FirstCallingDetails" />
                                     @php
                                         $leadKVForEditId = 0;
