@@ -76,7 +76,7 @@
                                             </td>
                                             <td>
                                                 @if ($userCrudPermissions['delete_permission'])
-                                                    <a onclick="return confirm('Are you sure want to delete this?')"
+                                                    <a onclick="return deleteDesignation({{ $designation->id }})"
                                                         class="btn-xs btn-info" style="background: red;"> <i
                                                             class="fa fa-trash-o"></i>
                                                     </a>
@@ -147,6 +147,58 @@ function addDesignation() {
     
 }
 
+function deleteDesignation(id) {
+    bootbox.confirm({
+        message: "Are you sure you want to delete this menu?",
+        callback: function (confirm) {
+            if(confirm) {
+                processDeleteDesignation(id);
+            }
+            else {
+                return;
+            }
+        }
+    });
+}
+function processDeleteDesignation(id) {
+    let CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+    $.ajax({
+        /* the route pointing to the post function */
+        url: `/designation/delete/${id}`,
+        type: 'POST',
+        /* send the csrf-token and the input to the controller */
+        data: {
+            _token: CSRF_TOKEN,
+            'id': id
+        },
+        dataType: 'JSON',
+        /* remind that 'data' is the response of the AjaxController */
+        success: function (data) {
+            console.log(data);
+            if(data.status) {
+                toastr.success(data.message);
+                setTimeout(function(){ 
+                    location.reload();
+                }, 3000);
+            }
+            else {
+                toastr.error(data.message);
+            }
+        },
+        failure: function (data) {
+            toastr.error("Error occurred while processing!!");
+        },
+        error:function(xhr, status, error) {
+            const resText = JSON.parse(xhr.responseText);
+            toastr.error( resText.message);
+        },
+    });
+}
 // function showMessage (action="edit/update") {
 //     toastr.error( `You are not allowed to ${action} designation!`);
 // }

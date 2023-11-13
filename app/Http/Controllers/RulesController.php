@@ -18,6 +18,10 @@ class RulesController extends Controller
     public function index() : View {
         //Should fetch list of Rules created
         $rules = Rule::all();
+        foreach($rules as $rule) {
+            // print_r($rule->ruleconditions->toArray());
+            // echo "\n Rule Condition Count For Rule With Id $rule->id is ".count($rule->ruleconditions);
+        }
         return view('rules.index',compact('rules'));
     }
 

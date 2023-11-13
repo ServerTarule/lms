@@ -73,9 +73,12 @@ class DynamicMasterController extends Controller
     }
 
     public function destroy(Request $request) : JsonResponse {
+        die("Died here");
         $id = $request->get('id');
         DynamicValue::where('id', $id)->delete();
 
-        return response()->json(['success' => 'Received rule data']);
+        return response()->json(['success' => 'Value successfully deleted.']);
+
+        
     }
 }

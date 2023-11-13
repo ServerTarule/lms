@@ -26,7 +26,7 @@
                         
                     </div>
                     <div class="table-responsive">
-                        <table id="dataTableExample1" class="table table-bordered table-striped table-hover">
+                        <table id="dataTableExample1" class="table table-bordered table-striped table-hover defaultDataTable">
                             <thead>
                             <tr class="tblheadclr1">
                                 <th scope="col">
@@ -41,9 +41,9 @@
                                 <th scope="col">
                                     <a>No. of Master</a>
                                 </th>
-                                <th scope="col">
+                                {{-- <th scope="col">
                                     <a>Apply On Destination</a>
-                                </th>
+                                </th> --}}
                                 <th scope="col">
                                     <a>Edit</a>
                                 </th>
@@ -58,8 +58,8 @@
                                     <td>{{ $loop->iteration }}</td>
                                     <td>{{ \Carbon\Carbon::parse($rule->created_at)->format('d/m/Y') }}</td>
                                     <td>{{ $rule->name }}</td>
-                                    <td></td>
-                                    <td></td>
+                                    <td>{{count($rule->ruleconditions)}}</td>
+                                    {{-- <td></td> --}}
                                     <td>
                                         {{-- <a href="/rules/{{$rule->id}}" class="btn-xs btn-info">
                                             <i class="fa fa-edit"></i> </a> --}}

@@ -39,6 +39,7 @@ class MasterController extends Controller
     }
 
     public function edit($id){
+        // die("ss");
         $master=DynamicMain::where('id',$id)->first();
         return view('master.index',['masters'=> false,'master'=>$master,'edit'=>true]);
     }
@@ -57,7 +58,7 @@ class MasterController extends Controller
         $masterUpdated= DynamicMain::find($id)->update(['name'=>$request->name]);
         if($masterUpdated){
             // return redirect()->back()->with('status','Master updated successfully');//
-            return redirect()->route('master')->with('status','Master updated successfully.');
+            return redirect()->route('master-list')->with('status','Master updated successfully.');
         }
     }
 

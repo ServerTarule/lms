@@ -33,7 +33,7 @@
                         </form>
                     </div>
                     <div class="table-responsive">
-                        <table id="dataTableExample1" class="table table-bordered table-striped table-hover">
+                        <table id="dataTableExample1" class="table table-bordered table-striped table-hover defaultDataTable">
                             <thead>
                                 <tr class="info">
                                     <th>S. No.</th>
@@ -113,5 +113,6 @@
             </div>
         </div>
     </div>
+    {{-- /master/main/destroy/1/83 --}}
     @endif
 @endsection

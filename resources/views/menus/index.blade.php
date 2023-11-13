@@ -38,8 +38,17 @@
                                         </div>
                                         <div class="row">
                                             <div class="col-md-4 form-group AUTHORITY">
-                                                <input type="text" name="url" placeholder="Menu Url"
+                                                @if (!empty($menuurls))
+                                                    <select name="url" placeholder="Menu Url" class="form-control" required>
+                                                        @foreach ($menuurls as $menuurl)
+                                                            <option value="{{$menuurl->url}}">{{$menuurl->name}} ({{$menuurl->url}})</option>
+                                                        @endforeach
+                                                    </select>
+                                                @else
+                                                    <input type="text" name="url" placeholder="Menu Url"
                                                     class="form-control" required>
+                                                @endif
+                                                
                                             </div>
                                             <div class="col-md-4 form-group AUTHORITY">
                                             <input type="text" name="class" placeholder=" Css Class"
@@ -57,7 +66,7 @@
                                         <div class="col-md-12 form-group border AUTHORITY">
                                                 <button type="submit" class=" btn btn-success"
                                                 {{ (isset($userCrudPermissions['add_permission'] ) &&  $userCrudPermissions['add_permission'] != 1) ? ' disabled' : '' }}
-                                                >Create permision</button>
+                                                >Create Menu</button>
                                             </div>
                                         </div>
 
@@ -170,8 +179,20 @@
                                         </div>
                                         <div class="row">
                                             <div class="col-md-4 form-group AUTHORITY">
-                                                <input type="text" name="url" placeholder="Menu Url"
-                                                    class="form-control" value="{{ $menu->url }}" required>
+                                                @if (!empty($menuurls))
+                                                    <select name="url" placeholder="Menu Url" class="form-control" required>
+                                                        @foreach ($menuurls as $menuurl)
+                                                            <option value="{{$menuurl->url}}" {{$menu->url == $menuurl->url?'selected': ''}}>
+                                                                {{$menuurl->name}} ({{$menuurl->url}})
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
+                                                @else
+                                                    <input type="text" value="{{ $menu->url }}" name="url" placeholder="Menu Url"
+                                                    class="form-control" required>
+                                                @endif
+                                                {{-- <input type="text" name="url" placeholder="Menu Url"
+                                                    class="form-control" value="{{ $menu->url }}" required> --}}
                                             </div>
 
                                             <div class="col-md-4 form-group AUTHORITY">
@@ -213,7 +234,7 @@
 
 function deleteMenu(id) {
     bootbox.confirm({
-        message: "Are you sure you want to delete this center?",
+        message: "Are you sure you want to delete this menu?",
         callback: function (confirm) {
             if(confirm) {
                 processDeleteMenu(id);

@@ -88,6 +88,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/menus/{id}', [MenusController::class, 'edit'])->name('menus/{id}')->middleware('check_page_permission: /menus,edit_permission');
     Route::post('/menus/{id}', [MenusController::class, 'update'])->name('menus/{id}')->middleware('check_page_permission: /menus,edit_permission');
     Route::post('menus/delete/{id}', [MenusController::class, 'delete'])->name('menus.delete')->middleware('check_page_permission: /menus,delete_permission');
+    Route::get('/addmenuurls', [MenusController::class, 'addmenuurls'])->name('menus.addmenuurls');
     //Master Main Menus & Dynamic Masters Routes
     Route::get('/master', [MasterController::class, 'index'])->name('master-list')->middleware('check_page_permission:/master,view_permission,0');
     Route::post('/master', [MasterController::class, 'store'])->name('master-add')->middleware('check_page_permission:/master,add_permission,0');
@@ -199,6 +200,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/designation', [DesignationController::class, 'store'])->name('designation')->middleware('check_page_permission:/designation,add_permission,0');
     Route::get('/designation/{id}', [DesignationController::class, 'edit'])->name('designation/{id}')->middleware('check_page_permission:/designation,edit_permission,0');
     Route::post('/designation/{id}', [DesignationController::class, 'update'])->name('designation/{id}')->middleware('check_page_permission:/designation,edit_permission,0');
+    Route::post('/designation/delete/{id}', [DesignationController::class, 'destroy'])->name('/designation/delete/{id}')->middleware('check_page_permission:/designation,delete_permission,0');
     Route::get('/users', [UserController::class, 'index'])->name('listusers')->middleware('check_page_permission:/users,view_permission,0');
     Route::get('/users/profile', [UserController::class, 'profile'])->name('viewprofile');//->middleware('check_page_permission:/users,view_permission,0');
     Route::post('/users/updateprofile', [UserController::class, 'updateprofile'])->name('updateprofile');//->middleware('check_page_permission:/users,view_permission,0');
@@ -239,7 +241,7 @@ Route::middleware(['auth'])->group(function () {
     // Route::get('/permission', [PermissionController::class, 'index'])->name('permission');//->middleware('can:read role');
     // Route::get('/permission/{id}', [PermissionController::class, 'edit'])->name('permission/{id}');//->middleware('can:update role');
     // Dynamic Master
-    Route::post('/dynamic/destroy', [DynamicMasterController::class, 'destroy'])->name('dynamicmaster.destroy')->middleware('can:read master');
+    Route::post('/dynamic/destroy-dynamic-value', [DynamicMasterController::class, 'destroyDynamicValue'])->name('destroyDynamicValue')->middleware('can:read master');
     Route::get('/dynamic/edit/{id}', [DynamicMasterController::class, 'edit'])->name('/dynamic/edit/{id}')->middleware('can:update master');
     Route::post('/dynamic/edit/{id}', [DynamicMasterController::class, 'update'])->name('/dynamic/edit/{id}')->middleware('can:update master');
 

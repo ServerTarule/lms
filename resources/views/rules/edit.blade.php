@@ -40,7 +40,7 @@
                                         <tr id="editRuleMasterHeaders">
                                             <th>S.No.</th>
                                             <th>Title</th>
-                                            <th>Action</th>
+                                            {{-- <th>Action</th> --}}
                                         </tr>
                                     </table>
                                 </div>

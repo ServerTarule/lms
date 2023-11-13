@@ -394,6 +394,10 @@
         // $("#initial_"+count+"").after(`<tr id="initial_`+nextCount+`"><td>`+nextCount+`</td><td><select class="form-control" name="ruleMaster_`+nextCount+`" id="ruleMaster_`+nextCount+`"><option selected disabled>-- Select Condition --</option></select></td><td><button id="removeRow" class="fa fa-minus btn btn-sm btn-danger removeRow" onclick="$(this).parent().parent().remove();"></button></td></tr>`);
         // $("#initial_"+count+"").after(`<tr id="initial_`+nextCount+`"><td>`+nextCount+`</td><td><select class="form-control" name="ruleMaster_`+nextCount+`" id="ruleMaster_`+nextCount+`"><option selected disabled>-- Select Condition --</option></select></td><td><button id="removeRow" class="fa fa-minus btn btn-sm btn-danger removeRow" onclick="$('#addRow').prop('disabled', false); let count = $('#ruleMasterRowCount').val(); let previousCount = parseInt(count) - 1; $('#ruleMasterRowCount').val(previousCount); $(this).parent().parent().remove();"></button></td></tr>`);
         // $("#initial_"+count+"").after(`<tr id="initial_`+nextCount+`"><td>`+nextCount+`</td><td><select class="form-control" name="ruleMaster_`+nextCount+`" id="ruleMaster_`+nextCount+`"><option selected disabled>-- Select Condition --</option></select></td><td><button id="removeRow" class="fa fa-minus btn btn-sm btn-danger removeRow""></button></td></tr>`);
+        // <td>
+        //             <button id="editRuleAddRow" class="fa fa-plus btn btn-sm btn-primary"></button>
+        //             <button id="editRuleRemoveRow" class="fa fa-minus btn btn-sm btn-danger"></button>
+        //         </td>
         $("#editRuleMasterHeaders").after(
         `@if($masters)
             @foreach($masters as $master)
@@ -402,10 +406,7 @@
                 <td>
                     <select class="form-control" name="editRuleMaster_`+ {{ $loop->iteration }} +`" id="editRuleMaster_`+ {{ $loop->iteration }} +`"><option value="{{ $master -> id }}">{{ $master -> name }}</option> </select>
                 </td>
-                <td>
-                    <button id="editRuleAddRow" class="fa fa-plus btn btn-sm btn-primary"></button>
-                    <button id="editRuleRemoveRow" class="fa fa-minus btn btn-sm btn-danger"></button>
-                </td>
+                
             </tr>
             @endforeach 
             @endif`
@@ -575,7 +576,7 @@
             });
             $.ajax({
                 /* the route pointing to the post function */
-                url: '/dynamic/destroy',
+                url: '/dynamic/destroy-dynamic-value',
                 type: 'POST',
                 /* send the csrf-token and the input to the controller */
                 // data: {_token: CSRF_TOKEN, 'ruleData':JSON.stringify(jsonObject)},
