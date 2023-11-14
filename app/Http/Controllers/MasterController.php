@@ -39,7 +39,6 @@ class MasterController extends Controller
     }
 
     public function edit($id){
-        // die("ss");
         $master=DynamicMain::where('id',$id)->first();
         return view('master.index',['masters'=> false,'master'=>$master,'edit'=>true]);
     }

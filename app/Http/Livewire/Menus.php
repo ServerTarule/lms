@@ -23,7 +23,7 @@ class Menus extends Component
             $matchThese = [
                 ['parent_id', '=', 0],
             ];
-            $menus = Menu::orderby('preference', 'asc')->get();
+            $menus = Menu::where('deleted','!=',1)->orderby('preference', 'asc')->get();
             $query = "SELECT m.*, mp.menu_id, mp.role_id,mp.add_permission,mp.edit_permission,mp.view_permission,mp.delete_permission from menus m INNER JOIN menu_role_permissions mp  on m.id = mp.menu_id 
             where mp.role_id = $roleId and mp.view_permission = '1' order by preference asc";
             $result = DB::select($query);

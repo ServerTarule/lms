@@ -266,6 +266,7 @@ class MenusPermissionController extends Controller
         $roleId = $request->get('roleId');
         $permissionData = $request->get('permissionData');
         $permissionData = json_decode( $permissionData, true );
+        // print_r($permissionData);die;
         try {
             $this->processSinglePermissionByRole($permissionData, $roleId );
         }

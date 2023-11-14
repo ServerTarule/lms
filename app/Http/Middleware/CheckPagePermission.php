@@ -71,9 +71,6 @@ class CheckPagePermission
                 else if($useCurrentUrl == 3 && isset($authRoutesArray[$currentPath])) {
                     $currentPath = $authRoutesArray[$currentPath];
                 }
-                
-                
-                // echo "</br>  currentPath issssssssssss: </br>  ".$currentPath;die;
                 $query = "SELECT m.title, m.url,mp.id as mId,mp.menu_id, mp.role_id,mp.add_permission,mp.edit_permission,mp.view_permission,mp.delete_permission from menus m INNER JOIN menu_role_permissions mp  on m.id = mp.menu_id 
                 where mp.role_id = $roleId and m.url = '$currentPath'";
                 $menuPermissions = DB::select($query);

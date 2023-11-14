@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Menu;
+use App\Models\MenuRolePermission;
 use App\Models\MenuUrl;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -95,17 +96,61 @@ class MenusController extends Controller
      * @return response()
      */
     public function delete($id): JsonResponse {
+        $menuHierarchy = $this->getMenuHierarchy($id);
         try{
-            Menu::find($id)->delete();
-            return response()->json(['status'=>true, 'message'=>'Request completed.']);
+            Menu::whereIn('id', $menuHierarchy)->delete();
+            $this->updateMenuPermissionsByMenuId($menuHierarchy);
+            return response()->json(['status'=>true, 'message'=>'Menu(s) deleted successfuly..']);
         }
-        catch(error) {
-            return response()->json(['status'=>false, 'message'=>'Request not completed.']);
+        catch(Throwable $e){
+            return response()->json(['status'=>false, 'message'=>'Error occurred while deleting menu(s) !! Error: '.$e->getMessage()]);
         }
     }
-
-    public function deactivate(Request $request, $id){
+    public function togglemenutatus(Request $request,$menuId): JsonResponse {
+        try {
+            $menu = Menu::find($menuId);
+            if(!isset($menu) && empty($menu)) {
+                return response()->json(['status'=>false, 'message'=>'Menu with given id does not exists.!']);
+            }
+            else {
+                $menuHierarchy = $this->getMenuHierarchy($menuId);
+                $statusStr = "de-activated";
+                $deleted = 1;
+                if($request->deleted == false || $request->deleted == "false") {
+                    $statusStr = "activated";
+                    $deleted= 0;
+                }
+                //Toggle Menu
+                $menuUpdateStatus =DB::table('menus')->whereIn('id', $menuHierarchy)->update(['deleted' => $deleted]);
+                //Deactivate Menu Permission For All Users In Case Menu Is Deactivated
+                $this->updateMenuPermissionsByMenuId($menuHierarchy);
+                if($menuUpdateStatus){
+                    return response()->json(['status'=>true, 'message'=>"Menu $statusStr successfully"]);
+                }
+            }
+        }
+        catch(Throwable $e){
+            return response()->json(['status'=>false, 'message'=>'Some Error Occured, Error: '.$e->getMessage()]);
+        }
        
+        return response()->json(['status'=>false, 'message'=>'Some Error Occured']);
+    }
+
+    private function updateMenuPermissionsByMenuId($menuHierarchy) {
+        $menuPemissionRowIds =MenuRolePermission::all()->whereIn('menu_id',$menuHierarchy)->pluck('id');;
+        if(!empty($menuPemissionRowIds)) {
+            $menuPemissionRowIds = $menuPemissionRowIds->toArray();
+        }
+        $permissionData = [
+            "add_permission"=>0,
+            "edit_permission"=>0,
+            "delete_permission"=>0,
+            "view_permission"=>0,
+        ];
+        MenuRolePermission::whereIn('id', $menuPemissionRowIds)->update($permissionData);        
+    }
+    public function deactivate(Request $request, $id){
+        // die("I am deactivating");
         $menu= Menu::find($id)->update(
             [
                 'deleted'=>$request->deleted

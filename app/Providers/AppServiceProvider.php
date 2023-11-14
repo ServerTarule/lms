@@ -123,10 +123,11 @@ class AppServiceProvider extends ServiceProvider
                     // $query = "SELECT m.title, m.url,mp.id as mId,mp.menu_id, mp.employee_id,mp.add_permission,mp.edit_permission,mp.view_permission,mp.delete_permission from menus m INNER JOIN menu_permissions mp  on m.id = mp.menu_id 
                     // where mp.employee_id = $userId and  m.url = '$menuUrl'";
                     $query = "SELECT m.title, m.url,mp.id as mId,mp.menu_id, mp.role_id,mp.add_permission,mp.edit_permission,mp.view_permission,mp.delete_permission from menus m INNER JOIN menu_role_permissions mp  on m.id = mp.menu_id 
-                    where mp.role_id = $roleId and  m.url = '$menuUrl'";
+                    where mp.role_id = $roleId and  m.url = '$menuUrl' and m.deleted != 1";
 
                     // echo "Query = ".$query;
                     $menuPermissions = DB::select($query);
+                    // print_r($menuPermissions );
                     $userCrudPermissionsDb = (isset($menuPermissions) && isset($menuPermissions[0])) ?  json_decode(json_encode($menuPermissions[0]), true):[];//['add_permission'=>0,'edit_permission'=0,'delete_permission'=>0,'view_permission'=>0];
                 }
                 if(isset($userCrudPermissionsDb) && !empty($userCrudPermissionsDb)) {

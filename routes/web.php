@@ -88,6 +88,10 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/menus/{id}', [MenusController::class, 'edit'])->name('menus/{id}')->middleware('check_page_permission: /menus,edit_permission');
     Route::post('/menus/{id}', [MenusController::class, 'update'])->name('menus/{id}')->middleware('check_page_permission: /menus,edit_permission');
     Route::post('menus/delete/{id}', [MenusController::class, 'delete'])->name('menus.delete')->middleware('check_page_permission: /menus,delete_permission');
+    // Route::post('menus/deactivate/{id}', [MenusController::class, 'deactivate'])->name('menus.deactivate')->middleware('check_page_permission: /menus,delete_permission');
+    Route::post('/menus/togglemenutatus/{id}', [MenusController::class, 'togglemenutatus'])->name('togglemenutatus')->middleware('check_page_permission:/menus,delete_permission,0');//->middleware('can:update employee'); //NOT YET CHECKED AS IT IS NOT WORKING
+
+
     Route::get('/addmenuurls', [MenusController::class, 'addmenuurls'])->name('menus.addmenuurls');
     //Master Main Menus & Dynamic Masters Routes
     Route::get('/master', [MasterController::class, 'index'])->name('master-list')->middleware('check_page_permission:/master,view_permission,0');

@@ -95,7 +95,8 @@
                                         <th>Menu Preference</th>
                                         <th>Create Date</th>
                                         <th>Modify</th>
-                                        <th>Delete</th>
+                                        <th>Active/Deactive Menu</th>
+                                        <th>Permanent Delete</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -129,13 +130,25 @@
                                                 </a>
                                                 @endif
                                             </td>
+                                            
+
                                             <td>
-                                                
-                                            {{-- <form method="POST" onSubmit="return deleteMenu()"    action="{{ route('menus.delete', $menu->id) }}"> --}}
-                                                {{-- @csrf --}}
-                                                {{-- {{ (isset($userCrudPermissions['delete_permission'] ) &&  $userCrudPermissions['delete_permission'] != 1) ? ' disabled' : '' }} --}}
+                                                @if ((isset($userCrudPermissions['delete_permission'] ) &&  $userCrudPermissions['delete_permission'] != 1))
+                                                    <label class="switch disabled">
+                                                        <input  value="{{ $menu->id }}" type="hidden">
+                                                        <input class=" disabled"{{$menu->deleted !== 1 ? 'checked':''}} type="checkbox" value="{{ $menu->deleted }}" onchange="showMessage();" @checked( $menu->deleted != '1') />
+                                                        <span class="slider round"></span>
+                                                    </label>
+                                                @else
+                                                    <label class="switch">
+                                                        <input id="action_input_{{ $menu->id }}" value="{{ $menu->deleted }}" type="hidden">
+                                                        <input id="action_toggle_{{ $menu->id }}" {{$menu->deleted !== 1 ? 'checked':''}} type="checkbox" value="{{ $menu->deleted }}" onchange="toggleMenuStatus(this, {{ $menu->id }});" @checked( $menu->deleted != '1') />
+                                                        <span class="slider round"></span>
+                                                    </label>
+                                                @endif  
+                                            </td>
+                                            <td>
                                                 <input name="_method" type="hidden" id="menu_{{ $menu->preference }}" value="DELETE">
-                                                {{-- {{ (isset($userCrudPermissions['delete_permission'] ) &&  $userCrudPermissions['delete_permission'] != 1) ? ' disabled' : '' }} --}}
                                                 @if((isset($userCrudPermissions['delete_permission'] ) &&  $userCrudPermissions['delete_permission'] != 1))
                                                 <a  onclick="showMessage(2)" class="btn btn-xs btn-danger btn-flat show_confirm " data-toggle="tooltip" title='Delete' disabled><i
                                                     class="fa fa-trash"></i> </a>
@@ -143,7 +156,6 @@
                                                 <button type="submit"  onclick="deleteMenu( {{ $menu->id }})" class="btn btn-xs btn-danger btn-flat show_confirm " data-toggle="tooltip" title='Delete'  {{ (isset($userCrudPermissions['delete_permission'] ) &&  $userCrudPermissions['delete_permission'] != 1) ? ' disabled' : '' }}><i
                                                         class="fa fa-trash"></i> </button>
                                                 @endif
-                                            {{-- </form> --}}
                                             </td>
                                         </tr>
                                     @endforeach
@@ -234,7 +246,7 @@
 
 function deleteMenu(id) {
     bootbox.confirm({
-        message: "Are you sure you want to delete this menu?",
+        message: "Are you sure you want to permanently delete this menu?on deleting this menu all it's sub menus (if any exists in system) will also be deleted. ",
         callback: function (confirm) {
             if(confirm) {
                 processDeleteMenu(id);
@@ -297,5 +309,81 @@ function processDeleteMenu(id) {
     });
 }
 
+function toggleMenuStatus(cb, menuId) {
+    console.log("New Value for ser Status = " + cb.checked, "--menuId--",menuId);
+    $(cb).attr('value', cb.checked);
+    const status = !cb.checked;
+    const deletePermission  = "{{$userCrudPermissions['delete_permission']}}";
+    if(!deletePermission) {
+        // $(cb).toggle()
+        // console.log(cb);
+        // const switchId = $(cb).attr("id");
+        // console.log("swwww id ==",switchId);
+        // $(`${switchId}`).switch('setState', !status);
+        // $(cb).switch('setState', !status);
+        toastr.error(NOT_AUTHORIZED_TO_PERFORM_ACTION);
+        bootbox.confirm(NOT_AUTHORIZED_TO_PERFORM_ACTION,confirm=>location.reload())
+        return false;
+    }
+    else {
+       
+        processMenuStatusToggle(status, menuId);
+    }
+    
+}
+
+function processMenuStatusToggle(status, menuId) {
+    let statusTxt = ' activate ';
+    let deActivateTxt = '';
+    console.log("*********status******",status);
+    if(!status) {
+        statusTxt = ' de-activate ';
+        deActivateTxt = " Doing so the menu  to which you de-activating and all it's sub menu(s) will be hidded will be de-activated."
+    }
+    let confirmTxt = `Are you sure you want to ${statusTxt} menu?${deActivateTxt}`;
+    bootbox.confirm(confirmTxt, function(confirm){
+        if(confirm) {
+            let CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+        
+            $.ajax({
+                /* the route pointing to the post function */
+                url: `/menus/togglemenutatus/${menuId}`,
+                type: 'POST',
+                /* send the csrf-token and the input to the controller */
+                // data: {_token: CSRF_TOKEN, 'ruleData':JSON.stringify(jsonObject)},
+                data: {
+                    _token: CSRF_TOKEN,
+                    'deleted': status
+                },
+                dataType: 'JSON',
+                /* remind that 'data' is the response of the AjaxController */
+                success: function (data) {
+                    console.log("************Data**********", data);
+                    if(data.status) {
+                        toastr.success(data.message);
+                    }
+                    else {
+                        toastr.error(data.message);
+                    }
+                },
+                failure: function (data) {
+                    toastr.error("Error occurred while processin!!");
+                },
+                error:function(xhr, status, error) {
+                    const resText = JSON.parse(xhr.responseText);
+                    toastr.error( resText.message);
+                }
+            });
+        }
+        else {
+            console.log("--cancelled---")
+        }
+    })
+}
 </script>
 @endpush
