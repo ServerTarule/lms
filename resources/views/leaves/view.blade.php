@@ -26,15 +26,15 @@
                         <table id="dataTableExample1" class="table table-bordered table-striped table-hover">
                         <thead>
                                     <tr class="info">
-                                       <th>S. No.</th>
+                                        <th>S. No.</th>
                                         <th>From</th>
-                                       <th>To</th>
-                                       <th>Type</th>
-                                       <th>Description</th>
-                                       <th>No. Of Leaves</th>
-                                      <th>Created Date</th>
-                                       <th>Edit</th>
-                                       <th>Delete</th>
+                                        <th>To</th>
+                                        <th>Type</th>
+                                        <th>Description</th>
+                                        <th>No. Of Leaves</th>
+                                        <th>Created Date</th>
+                                        <th>Edit</th>
+                                        <th>Delete</th>
                                     </tr>
                                  </thead>
                             <tbody>
@@ -45,7 +45,32 @@
                                         <td>{{ $leave->end_time }}</td>
                                         <td>{{ $leave->type }}</td>
                                         <td>{{ $leave->comment }}</td>
-                                        <td></td>
+                                        {{-- {{\Carbon\Carbon::parse($action->created_at)->format('d/m/Y')}} --}}
+                                        <td>
+                                            @php
+                                                $years = gmdate(\Carbon\Carbon::parse($leave->end_time)->diff(\Carbon\Carbon::parse($leave->start_time))->format("%y"));
+                                                $months = gmdate(\Carbon\Carbon::parse($leave->end_time)->diff(\Carbon\Carbon::parse($leave->start_time))->format("%m"));
+                                                $days = gmdate(\Carbon\Carbon::parse($leave->end_time)->diff(\Carbon\Carbon::parse($leave->start_time))->format("%d"));
+                                                $hours = gmdate(\Carbon\Carbon::parse($leave->end_time)->diff(\Carbon\Carbon::parse($leave->start_time))->format("%h"));
+                                                $leaveCount = $days;
+                                                if($hours >= 4 && $hours < 8) {
+                                                    // echo "$days.5 Days";
+                                                    $leaveCount =  $days + .5 ;
+                                                }
+                                                else if($hours > 8)  {
+                                                    $leaveCount = $days +1;
+                                                    // echo $days ." Days";
+                                                }
+                                                $leaveStr = $leaveCount." Days";
+                                                if($months > 0) {
+                                                    $leaveStr = $months." Month(s) ".$leaveStr;
+                                                }
+                                                if($years > 0) {
+                                                    $leaveStr = $years." Years(s) ".$leaveStr;
+                                                }
+                                                echo $leaveStr;
+                                            @endphp
+                                        </td>
                                         <td>{{ \Carbon\Carbon::parse($leave->created_at)->format('d/m/Y') }}</td>
                                         <td>
                                                 {{-- <a data-toggle="modal" data-target="#edititem" class="btn-xs btn-info"> <i class="fa fa-pencil"></i>  </a> --}}
@@ -282,7 +307,7 @@ function processUpdate () {
             else {
                 toastr.success(data.message);
                 setTimeout(function(){ 
-                    // location.reload();
+                    location.reload();
                 }, 3000);
             }
         },

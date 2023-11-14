@@ -1,6 +1,6 @@
 @extends('layout.app')
-@section('title', 'Employee Leaves')
-@section('subtitle', 'List of Leaves')
+@section('title', 'View Employee Leaves')
+@section('subtitle', 'View Employee Leaves')
 @section('content')
     <div class="row">
         <div class="col-sm-12">
@@ -8,7 +8,7 @@
                 <div class="panel-heading">
                     <div class="btn-group" id="buttonexport">
                         <a>
-                            <h4>Employee Leaves</h4>
+                            <h4>View Employee Leaves</h4>
                         </a>
                     </div>
                 </div>
@@ -37,18 +37,29 @@
                     </div>
 
                     <div class="table-responsive">
-                        <table id="dataTableExample1" class="table table-bordered table-striped table-hover ">
+                        <table id="dataTableExample1" class="table table-bordered table-striped table-hover defaultDataTable">
                             <thead>
                                 <tr class="tblheadclr1">
                                     <th scope="col">
                                         <a> S.No.</a>
                                     </th>
+
+                                    <th scope="col">
+                                        <a> Employee Id.</a>
+                                    </th>
+
                                     <th scope="col">
                                         <a>Employee Name</a>
                                     </th>
                                     <th scope="col">
-                                        <a>Upcoming Leaves</a>
+                                        <a>Employee user name (Email ID)</a>
                                     </th>
+                                    <th scope="col">
+                                        <a>Employee role</a>
+                                    </th>
+                                    {{-- <th scope="col">
+                                        <a>Upcoming Leaves</a>
+                                    </th> --}}
 
                                     <th scope="col">
                                         <a>List View</a>
@@ -63,8 +74,11 @@
                                 @foreach ($employees as $employee)
                                     <tr>
                                         <td>{{ $loop->iteration }}</td>
+                                        <td>{{ $employee->id  }}</td>
                                         <td>{{ $employee->name  }}</td>
-                                        <td></td>
+                                        <td>{{ $employee->user->email  }}</td>
+                                        <td>{{ $employee->user->role->name  }}</td>
+                                        {{-- <td></td> --}}
                                         <td>
                                             <a href="/leaves/{{ $employee->id }}" class="btn-xs btn-success"> <i class="fa fa-eye"></i>  </a>
                                         </td>
