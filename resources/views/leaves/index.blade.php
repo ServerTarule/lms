@@ -115,33 +115,33 @@
                                      @csrf
                                     <fieldset>
                                             <div class="col-md-12 form-group">
-                                                <label>Employee Name</label>
-                                                <select class="form-control" name="employeeid" id="employeeid">
-                                                    <option>-- Select Employee --</option>
+                                                <label>Employee Name <span class="required text-danger"> * </span></label>
+                                                <select class="form-control" name="employeeid" id="employeeid" required>
+                                                    <option value="">-- Select Employee --</option>
                                                     @foreach($employees as $employee)
                                                         <option value="{{ $employee->id }}">{{ $employee->name }}</option>
                                                     @endforeach
                                                 </select>
                                             </div>
                                        <div class="col-md-6 form-group">
-                                          <label class="control-label">From</label>
-                                          <input type="datetime-local" placeholder="From" name="from" class="form-control">
+                                          <label class="control-label">From <span class="required text-danger"> * </span></label>
+                                          <input type="datetime-local" placeholder="From" name="from" id="from_date" class="form-control" required>
                                        </div>
                                          <div class="col-md-6 form-group">
-                                          <label class="control-label">To</label>
-                                          <input type="datetime-local" placeholder="To" name="to" class="form-control">
+                                          <label class="control-label">To <span class="required text-danger"> * </span></label>
+                                          <input type="datetime-local" placeholder="To" name="to" id="to_date" class="form-control" required>
                                        </div>
                                        <div class="col-md-12 form-group">
-                                          <label class="control-label">Type</label>
-                                          <select class="form-control" name="type">
-                                             <option selected disabled> --Select Type--</option>
+                                          <label class="control-label">Type <span class="required text-danger"> * </span></label>
+                                          <select class="form-control" name="type" id="leave_type"  required>
+                                             <option value=""> --Select Type--</option>
                                              <option>Personal Leave</option>
                                              <option>Sick Leave</option>
                                           </select>
                                        </div>
                                         <div class="col-md-12 form-group">
-                                          <label class="control-label">Comment</label>
-                                          <textarea placeholder="Comment" name="comment" class="form-control"></textarea>
+                                          <label class="control-label">Comment <span class="required text-danger"> * </span></label>
+                                          <textarea placeholder="Comment" name="comment" id="leave_comment"  class="form-control" required></textarea>
                                        </div>
                                        
                                     </fieldset>
@@ -165,9 +165,10 @@
 //addleave
 //action="/leaves/store"
     function addleave() {
-        const isValid = true;//validateForm();
+        const isValid = validateForm();
+        // alert("isValid=="+isValid); 
         if(isValid) {
-            console.log("----I am going to add----");
+            console.log("----I am goinwwwwwwwwwwwwwwwsg to add----");
             let CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
             $.ajaxSetup({
                 headers: {
@@ -206,86 +207,47 @@
                 },
             }); 
         }
+        else {
+
+        }
     }
 
+
     function validateForm(isEdit=false) {
+        // alert('eeeee');
         let isValid = true;
         let validationMessage = "<b>Please follow below instruction before submitting form.</b><ul>";
-        const admin_name = (isEdit)?$("#admin_name_edit").val():$("#admin_name").val();
-        const role_id = (isEdit)?$("#role_id_edit").val():$("#role_id").val();
-        const emp_name = (isEdit)?$("#emp_name_edit").val():$("#emp_name").val();
-        const contact = (isEdit)?$("#contact_edit").val():$("#contact").val();
-        const contactAlternate = (isEdit)?$("#alternate_contact_edit").val():$("#alternate_contact").val();
-        const userType = (isEdit)?$("#user_type_edit").val():$("#user_type").val();
-        const email = (isEdit)?$("#email_edit").val():$("#email").val();
-        const password = (isEdit)?$("#password_edit").val():$("#password").val();
-        const dob = (isEdit)?$("#dob_edit").val():$("#dob").val();
-        const doj = (isEdit)?$("#doj_edit").val():$("#doj").val();
-
-        // if(admin_name == null || admin_name?.length < 1) {
-        //     validationMessage += `<li>Please select an admin. </li>`; 
-        //     isValid=false;
-        // }
-
-        if(role_id == null ||role_id == 0 || role_id?.length < 1) {
-            validationMessage += `<li>Please select an user type. </li>`; 
+        const employee_name = (isEdit)?$("#employeeid_edit").val():$("#employeeid").val();
+        const from_date = (isEdit)?$("#from_date_edit").val():$("#from_date").val();
+        const to_date = (isEdit)?$("#to_date_edit").val():$("#to_date").val();
+        const leave_type = (isEdit)?$("#leave_type_edit").val():$("#leave_type").val();
+        const leave_comment = (isEdit)?$("#leave_comment_edit").val():$("#leave_comment").val();
+        console.log("---employee_name--",employee_name);
+        if(!employee_name || employee_name == null || employee_name == "") {
+            validationMessage += `<li>Please select an employee. </li>`; 
             isValid=false;
         }
-        if(emp_name == null || emp_name =="") {
+
+        if(from_date == null || !from_date) {
+            validationMessage += `<li>Please select from date. </li>`; 
             isValid=false;
-            validationMessage += `<li>Please fill employee name. </li>`; 
-            
         }
-        console.log("--contact--",contact);
-        if(contact == null || contact =="") {
+        if(to_date == null || !to_date) {
+            validationMessage += `<li>Please select to date. </li>`; 
+            isValid=false;
+        }
+        if(leave_type == null || leave_type =="") {
             console.log("No Mobile*************")
-            validationMessage += `<li>Please fill mobile number. </li>`; 
-            isValid=false;
-        }
-        else if(!(contact == null || contact =="")) {
-            const isContactValid = isValidCotact(contact);
-            console.log("##########isContactValid############",isContactValid);
-            if(!isContactValid) {
-                validationMessage+=`<li>Please fill valid mobile number. </li>`;
-                isValid=false;
-            }
-        }
-    
-        if(email == null || email ==  "") {
-            validationMessage += `<li>Please fill email field. </li>`; 
-            isValid=false;
-        }
-        else if(!(email == null || email ==  "") ) {
-            const isEmailValid = !isValidEmail(email);
-            if(isEmailValid) {
-                console.log();
-                validationMessage += `<li>Please fill valid email Id. </li>`; 
-                isValid=false;
-            }
-        }
-        if(!(contactAlternate == null || contactAlternate =="")) {
-            const isAlterNateContactValid = isValidCotact(contactAlternate);
-            console.log("##########isAlterNateContactValid############",isAlterNateContactValid);
-            if(!isAlterNateContactValid) {
-                validationMessage+=`<li>Please fill valid alternate mobile number. </li>`;
-                isValid=false;
-            }
-        }
-
-        if((password ==0 || password == null) && !isEdit) {
-            validationMessage += `<li>Please fill password field. </li>`; 
+            validationMessage += `<li>Please select leave type. </li>`; 
             isValid=false;
         } 
 
-        if(dob ==0 || dob == null) {
-            validationMessage += `<li>Please fill DOB field. </li>`; 
+        if(!leave_comment || leave_comment == null || leave_comment == "") {
+            validationMessage += `<li>Please fill comment. </li>`; 
             isValid=false;
-        } 
-        if(doj ==0 || doj == null) {
-            validationMessage += `<li>Please fill DOJ field. </li>`; 
-            isValid=false;
-        } 
+        }
 
+        
         if(!isValid) {
             bootbox.alert(validationMessage);
             toastr.error( `${validationMessage}`);

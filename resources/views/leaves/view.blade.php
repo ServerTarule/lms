@@ -54,8 +54,7 @@
                                                 $hours = gmdate(\Carbon\Carbon::parse($leave->end_time)->diff(\Carbon\Carbon::parse($leave->start_time))->format("%h"));
                                                 $leaveCount = $days;
                                                 if($hours >= 4 && $hours < 8) {
-                                                    // echo "$days.5 Days";
-                                                    $leaveCount =  $days + .5 ;
+                                                    $leaveCount =  $days + .5;
                                                 }
                                                 else if($hours > 8)  {
                                                     $leaveCount = $days +1;
@@ -118,7 +117,7 @@
                      <div class="modal-content">
                         <div class="modal-header modal-header-primary">
                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                           <h3><i class="fa fa-plus m-r-5"></i> Add Leave</h3>
+                           <h3><i class="fa fa-plus m-r-5"></i> Edit Leave</h3>
                         </div>
                         <div class="modal-body">
                             <div class="row">
@@ -132,26 +131,26 @@
                                                 <span class="text-danger"><i class="fa fa-xs fa fa-exclamation-triangle" aria-hidden="true" title="Employee name can't be changed for alredy applied leave, so it is made read only."> Name can't be changed.  </i></span>
                                             </div>
                                             <div class="col-md-6 form-group">
-                                            <label class="control-label">From</label>
+                                            <label class="control-label">From <span class="required text-danger"> * </span></label>
                                             <input type="datetime-local" placeholder="From" id="leave-from" name="from" class="form-control">
                                             </div>
                                           <div class="col-md-6 form-group">
-                                           <label class="control-label">To</label>
+                                           <label class="control-label">To <span class="required text-danger"> * </span></label>
                                            <input type="datetime-local" placeholder="To" id="leave-to" name="to" class="form-control">
                                         </div>
                                         <div class="col-md-12 form-group">
-                                           <label class="control-label">Type</label>
+                                           <label class="control-label">Type <span class="required text-danger"> * </span></label>
                                            <select class="form-control" id="leave-type" name="type">
-                                              <option selected disabled> --Select Type--</option>
+                                              <option value="" selected disabled> --Select Type--</option>
                                               <option>Personal Leave</option>
                                               <option>Sick Leave</option>
                                            </select>
                                         </div>
                                          <div class="col-md-12 form-group">
-                                           <label class="control-label">Comment</label>
+                                           <label class="control-label">Comment <span class="required text-danger"> * </span></label>
                                            <textarea placeholder="Comment" id="leave-comment" name="comment" class="form-control"></textarea>
                                         </div>
-                                        <input type="hidden" id="employeeid" value="" name="employeeid">
+                                        <input type="hidden" id="employeeid_edit" value="" name="employeeid">
                                         <input type="hidden" id="leaveid" value="" name="leaveid">
                                      </fieldset>
                                   </form>
@@ -277,48 +276,92 @@ $("#updateLeaveButton").click(function(){
     }
 });
 
+function validateForm(isEdit=false) {
+    // alert('eeeee'+isEdit);
+    let isValid = true;
+    let validationMessage = "<b>Please follow below instruction before submitting form.</b><ul>";
+    // const employee_name = (isEdit)?$("#employeeid_edit").val():$("#employeeid").val();
+    const from_date = (isEdit)?$("#leave-from").val():$("#from_date").val();
+    const to_date = (isEdit)?$("#leave-to").val():$("#to_date").val();
+    const leave_type = (isEdit)?$("#leave-type").val():$("#leave_type").val();
+    const leave_comment = (isEdit)?$("#leave-comment").val():$("#leave_comment").val();
+    // console.log("---employee_name--",employee_name);
+    // if(!employee_name || employee_name == null || employee_name == "") {
+    //     validationMessage += `<li>Please select an employee. </li>`; 
+    //     isValid=false;
+    // }
+
+    if(from_date == null || !from_date) {
+        validationMessage += `<li>Please select from date. </li>`; 
+        isValid=false;
+    }
+    if(to_date == null || !to_date) {
+        validationMessage += `<li>Please select to date. </li>`; 
+        isValid=false;
+    }
+    if(leave_type == null || leave_type =="") {
+        console.log("No Mobile*************")
+        validationMessage += `<li>Please select leave type. </li>`; 
+        isValid=false;
+    } 
+
+    if(!leave_comment || leave_comment == null || leave_comment == "") {
+        validationMessage += `<li>Please fill comment. </li>`; 
+        isValid=false;
+    }
+
+    
+    if(!isValid) {
+        bootbox.alert(validationMessage);
+        toastr.error( `${validationMessage}`);
+    }
+    return isValid;
+}
 function processUpdate () {
-    // validateForm(true);
-    let CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
-    $.ajaxSetup({
-        headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        }
-    });
-    const employeeId = $("#employeeid").val();
-    const leadId = $("#leaveid").val();
-    var form_data = new FormData($('#leaveupdateform')[0]);
-    // alert("I am here"+employeeId+"----"+userId);
-    // form_data.append("employeeid",employeeId);
-    $.ajax({
-        /* the route pointing to the post function */
-        url: `/leaves/updateleave/${leadId} `,
-        type: 'POST',
-        /* send the csrf-token and the input to the controller */
-        contentType: false,
-        processData: false,
-        data:  form_data,
-        dataType: 'JSON',
-        /* remind that 'data' is the response of the AjaxController */
-        success: function (data) {
-            if(data.error) {
-                toastr.error(data.message);
+    const isValid = validateForm(true);
+    if(isValid) {
+        let CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             }
-            else {
-                toastr.success(data.message);
-                setTimeout(function(){ 
-                    location.reload();
-                }, 3000);
-            }
-        },
-        failure: function (data) {
-            toastr.error("Error occurred while processing!!");
-        },
-        error:function(xhr, status, error) {
-            const resText = JSON.parse(xhr.responseText);
-            toastr.error( resText.message);
-        },
-    });
+        });
+        const employeeId = $("#employeeid").val();
+        const leadId = $("#leaveid").val();
+        var form_data = new FormData($('#leaveupdateform')[0]);
+        // alert("I am here"+employeeId+"----"+userId);
+        // form_data.append("employeeid",employeeId);
+        $.ajax({
+            /* the route pointing to the post function */
+            url: `/leaves/updateleave/${leadId} `,
+            type: 'POST',
+            /* send the csrf-token and the input to the controller */
+            contentType: false,
+            processData: false,
+            data:  form_data,
+            dataType: 'JSON',
+            /* remind that 'data' is the response of the AjaxController */
+            success: function (data) {
+                if(data.error) {
+                    toastr.error(data.message);
+                }
+                else {
+                    toastr.success(data.message);
+                    setTimeout(function(){ 
+                        location.reload();
+                    }, 3000);
+                }
+            },
+            failure: function (data) {
+                toastr.error("Error occurred while processing!!");
+            },
+            error:function(xhr, status, error) {
+                const resText = JSON.parse(xhr.responseText);
+                toastr.error( resText.message);
+            },
+        });
+    }
+    
 
 }
 
