@@ -246,7 +246,8 @@
 
 function deleteMenu(id) {
     bootbox.confirm({
-        message: "Are you sure you want to permanently delete this menu?on deleting this menu all it's sub menus (if any exists in system) will also be deleted. ",
+        message: `<strong style="color:red; font-size: 20px"> Are you sure you want to permanently delete this menu? </strong>
+        <br> <br><strong style="color:red;">Note: </strong> On deleting this menu all it's sub menus (if any exists in system) will also be deleted peranently.`,
         callback: function (confirm) {
             if(confirm) {
                 processDeleteMenu(id);
@@ -288,7 +289,6 @@ function processDeleteMenu(id) {
         dataType: 'JSON',
         /* remind that 'data' is the response of the AjaxController */
         success: function (data) {
-            alert(data)
             if(data.status) {
                 toastr.success(data.message);
                 setTimeout(function(){ 
@@ -336,13 +336,14 @@ function processMenuStatusToggle(status, menuId) {
     let statusTxt = ' activate ';
     let deActivateTxt = '';
     console.log("*********status******",status);
-    if(!status) {
+    if(status) {
         statusTxt = ' de-activate ';
-        deActivateTxt = " Doing so the menu  to which you de-activating and all it's sub menu(s) will be hidded will be de-activated."
+        deActivateTxt = " <br> <br><strong> Note:  </strong> Doing so the menu  to which you de-activating & all it's sub menu(s) will be de-activated."
     }
-    let confirmTxt = `Are you sure you want to ${statusTxt} menu?${deActivateTxt}`;
-    bootbox.confirm(confirmTxt, function(confirm){
-        if(confirm) {
+    let confirmTxt = `<strong style="color:red; font-size: 20px"> Are you sure you want to ${statusTxt} menu? </strong>${deActivateTxt}`;
+    bootbox.confirm(confirmTxt, function(confirmVal){
+        // alert("ssssssssssssss"+confirmVal);
+        if(confirmVal== true  || confirmVal == 'true') {
             let CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
             $.ajaxSetup({
                 headers: {
@@ -382,6 +383,8 @@ function processMenuStatusToggle(status, menuId) {
         }
         else {
             console.log("--cancelled---")
+            location.reload(); 
+            // return;
         }
     })
 }
