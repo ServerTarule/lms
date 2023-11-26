@@ -58,6 +58,7 @@ class RulesController extends Controller
     }
 
     public function edit($id) : View {
+        // die("asasasas-------------");
         $rule = Rule::find($id);
         $ruleConditions = RuleCondition::where('rule_id', $rule->id)->get();
         $ruleConditionMasters = array();
@@ -70,6 +71,7 @@ class RulesController extends Controller
 
     public function update(Request $request) : RedirectResponse {
         $id = $request->input('editRuleId');
-        return redirect()->route('conditions.edit', compact('id'));
+        $name = $request->input('editRuleName');
+        return redirect()->route('conditions.edit', compact('id','name'));
     }
 }

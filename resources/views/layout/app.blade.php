@@ -742,46 +742,106 @@
 
 
         $("#ruleConditionSubmit").click(function(){
-        //WORKING
-        //     let jsonObject = [];
-        //     let ruleName = $('#ruleName').val();
-        //     let ruleMasterData = $('#ruleMasters').val();
-        //     $.each(JSON.parse(ruleMasterData), function (key, value) {
-        //         let item = {}
-        //         item ["master"] = value.id;
-        //
-        //         let masterValues = [];
-        //
-        //         $('#ruleMaster_' + value.id + ' :selected').each(function (i, sel) {
-        //             if ($(sel).val() != "--Select Condition--") {
-        //                 masterValues.push($(sel).val());
-        //             }
-        //         });
-        //         item ["masterValues"] = masterValues;
-        //         $('#ruleCondition_' + value.id + ' :selected').each(function (i, sel) {
-        //             if ($(sel).val() != "--Select Condition--") {
-        //                 item ["ruleOperation"] = $(sel).val();
-        //             }
-        //         });
-        //
-        //         jsonObject.push(item);
-        //
-        //     });
-        //     console.log(JSON.stringify(jsonObject));
-            // WORKING
+            let outboundRuleChecked = $("input[id='outboundRule']:checked").val();
+            let ruleName = $('#ruleName').val();
+            let ruleMasterData = $('#ruleMasters').val();
+            let ruleType = $("input[name='ruleType']:checked").val();
+            let ruleFrequency = $('#ruleFrequency').val();
+            let ruleSchedule = $('#ruleSchedule :selected').val();
+            let items = [];
+            let message = "";
+            let isValid = true;
+            if(outboundRuleChecked !=undefined && (!ruleFrequency || ruleFrequency == "" || ruleFrequency == 0)) {
+                message += "For outbond rules frequency is mandatory.";
+                isValid = false;
+            }
+            if(outboundRuleChecked !=undefined  && (ruleSchedule == "" || ruleSchedule == "NA"  || ruleSchedule == "-- Select Schedule --")) {
+                message += "<br>For outbond rules schedule is mandatory.";
+                isValid = false;
+            }
+            if(isValid) {
+                $.each(JSON.parse(ruleMasterData), function (key, value) {
+                    let itemValue = {};
+                    let master = [];
+                    let masterValues = [];
+                    let masterOperations = [];
+                    master.push(value.id);
+                    itemValue ["master"] = master;
+                    $('#ruleMaster_' + value.id + ' :selected').each(function (i, sel) {
+                        masterValues.push($(sel).val());
+                    });
+                    itemValue ["masterValues"] = masterValues;
+                    $('#ruleCondition_' + value.id + ' :selected').each(function (i, sel) {
+                        masterOperations.push($(sel).val());
+                    });
+                    itemValue ["masterOperations"] = masterOperations;
+                    items.push(itemValue);
+                });
+            
 
-                //let jsonObject = new Object();
-                //let jsonObject = [];
-                // jsonObject.name = $('#ruleName').val();
-                let ruleName = $('#ruleName').val();
-                let ruleMasterData = $('#ruleMasters').val();
-                let ruleType = $("input[name='ruleType']:checked").val();
-                let ruleFrequency = $('#ruleFrequency').val();
-                let ruleSchedule = $('#ruleSchedule :selected').val();
+                let CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
+                $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }
+                });
+                $.ajax({
+                    /* the route pointing to the post function */
+                    url: '/conditions/store',
+                    type: 'POST',
+                    /* send the csrf-token and the input to the controller */
+                    // data: {_token: CSRF_TOKEN, 'ruleData':JSON.stringify(jsonObject)},
+                        data: {
+                            _token: CSRF_TOKEN,
+                            'ruleName': ruleName,
+                            'ruleData':JSON.stringify(items),
+                            'ruleType': ruleType,
+                            'ruleFrequency': ruleFrequency,
+                            'ruleSchedule':ruleSchedule
+                        },
+                    // data: $(this).serialize(),
+                    dataType: 'JSON',
+                    /* remind that 'data' is the response of the AjaxController */
+                    success: function (data) {
+                        console.log(data);
+                        window.location.href = "/rules";
+                    },
+                    failure: function (data) {
+                        console.log(data);
+                    }
+                });
+            }
+            else {
+                bootbox.alert(message);
+            }
+            // alert("--message--"+message);
+            // alert("--isValid--"+isValid)
+            // return false;
+            
+        });
+
+        $("#editRuleConditionSubmit").click(function(){
+            let outboundRuleChecked = $("input[id='outboundRule']:checked").val();
+            let ruleId = $('#ruleId').val();
+            let ruleName = $('#ruleName').val();
+            let ruleMasterData = $('#ruleMasters').val();
+            let ruleType = $("input[name='ruleType']:checked").val();
+            let ruleFrequency = $('#ruleFrequency').val();
+            let ruleSchedule = $('#ruleSchedule :selected').val();
+
+            let message = "";
+            let isValid = true;
+            if(outboundRuleChecked !=undefined && (!ruleFrequency || ruleFrequency == "" || ruleFrequency == 0)) {
+                message += "For outbond rules frequency is mandatory.";
+                isValid = false;
+            }
+            if(outboundRuleChecked !=undefined  && (ruleSchedule == "" || ruleSchedule == "NA"  || ruleSchedule == "-- Select Schedule --")) {
+                message += "<br>For outbond rules schedule is mandatory.";
+                isValid = false;
+            }
+            if(isValid) {
                 let items = [];
                 $.each(JSON.parse(ruleMasterData), function (key, value) {
-                    // item ["master"] = value.id;
-
                     let itemValue = {};
                     let master = [];
                     let masterValues = [];
@@ -801,114 +861,49 @@
                     items.push(itemValue);
 
                 });
-                //jsonObject.masters = item;
-                //jsonObject.push(items)
-                // console.log(JSON.stringify(items));
 
-            let CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                }
-            });
-            $.ajax({
-                /* the route pointing to the post function */
-                url: '/conditions/store',
-                type: 'POST',
-                /* send the csrf-token and the input to the controller */
-                // data: {_token: CSRF_TOKEN, 'ruleData':JSON.stringify(jsonObject)},
+                let CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
+                $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }
+                });
+                $.ajax({
+                    url: '/conditions/update',
+                    type: 'POST',
                     data: {
                         _token: CSRF_TOKEN,
+                        'ruleId':ruleId,
                         'ruleName': ruleName,
                         'ruleData':JSON.stringify(items),
                         'ruleType': ruleType,
                         'ruleFrequency': ruleFrequency,
                         'ruleSchedule':ruleSchedule
                     },
-                // data: $(this).serialize(),
-                dataType: 'JSON',
-                /* remind that 'data' is the response of the AjaxController */
-                success: function (data) {
-                    console.log(data);
-                    window.location.href = "/rules";
-                },
-                failure: function (data) {
-                    console.log(data);
-                }
-            });
-        });
-
-        $("#editRuleConditionSubmit").click(function(){
-            let ruleId = $('#ruleId').val();
-            let ruleName = $('#ruleName').val();
-            let ruleMasterData = $('#ruleMasters').val();
-            let ruleType = $("input[name='ruleType']:checked").val();
-            let ruleFrequency = $('#ruleFrequency').val();
-            let ruleSchedule = $('#ruleSchedule :selected').val();
-            let items = [];
-            $.each(JSON.parse(ruleMasterData), function (key, value) {
-                let itemValue = {};
-                let master = [];
-                let masterValues = [];
-                let masterOperations = [];
-
-                master.push(value.id);
-                itemValue ["master"] = master;
-                $('#ruleMaster_' + value.id + ' :selected').each(function (i, sel) {
-                    masterValues.push($(sel).val());
+                    // data: $(this).serialize(),
+                    dataType: 'JSON',
+                    success: function (data) {
+                        console.log(data);
+                        window.location.href = "/rules";
+                    },
+                    failure: function (data) {
+                        console.log(data);
+                    }
                 });
-                itemValue ["masterValues"] = masterValues;
-                $('#ruleCondition_' + value.id + ' :selected').each(function (i, sel) {
-                    masterOperations.push($(sel).val());
-                });
-                itemValue ["masterOperations"] = masterOperations;
-
-                items.push(itemValue);
-
-            });
-
-            let CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                }
-            });
-            $.ajax({
-                url: '/conditions/update',
-                type: 'POST',
-                data: {
-                    _token: CSRF_TOKEN,
-                    'ruleId':ruleId,
-                    'ruleName': ruleName,
-                    'ruleData':JSON.stringify(items),
-                    'ruleType': ruleType,
-                    'ruleFrequency': ruleFrequency,
-                    'ruleSchedule':ruleSchedule
-                },
-                // data: $(this).serialize(),
-                dataType: 'JSON',
-                success: function (data) {
-                    console.log(data);
-                    window.location.href = "/rules";
-                },
-                failure: function (data) {
-                    console.log(data);
-                }
-            });
+            }
+            else {
+                bootbox.alert(message);
+            }
         });
-
 
         $("#mastersTab").click(function(){
-
             let employeeId = $('#employeeId').val();
             let CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
-
             $.ajaxSetup({
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 }
             });
-
             $.ajax({
                 /* the route pointing to the post function */
                 url: '/employees/permissions/'+ employeeId + '/masters',
@@ -1342,15 +1337,18 @@
             // $("ruleConditionForm").on("submit", function (e) {
              $("#ruleConditionSubmit").click(function(e) {
                 e.preventDefault();
+                // alert('aasasI am called');
+                processRuleConditionSubmit();
+            });
+
+            function processRuleConditionSubmit() {
                 let jsonObject = [];
                 jsonObject['rule'] = $("#ruleName").val();
                 let ruleMasterData = $('#ruleMasters').val();
                 $.each(JSON.parse(ruleMasterData), function (key, value) {
                     let item = {}
                     item ["master"] = value.id;
-
                     let masterValues = [];
-
                     $('#ruleMaster_' + value.id + ' :selected').each(function (i, sel) {
                         if ($(sel).val() != "--Select Condition--") {
                             masterValues.push($(sel).val());
@@ -1393,7 +1391,7 @@
                         console.log(data);
                     }
                 });
-            });
+            }
          });
 
 

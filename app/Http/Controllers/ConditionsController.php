@@ -18,7 +18,11 @@ class ConditionsController extends Controller
     public function create(Request $request) : View {
         $data = $request->query('data');
         $ruleName = $request->query('ruleName');
-        $masters = DynamicMain::wherein('id', $data)->get();
+        // print_r($data );die;
+        $masters =[];
+        if($data) {
+            $masters = DynamicMain::wherein('id', $data)->get();
+        }    
         return view('conditions.create', compact('ruleName','masters'));
 
         /*        $ruleName = $request->query('ruleName');
@@ -48,15 +52,12 @@ class ConditionsController extends Controller
     {
         $ruleName = $request->get('ruleName');
         $ruleData = $request->get('ruleData');
-
         $ruleType = $request->get('ruleType');
         $ruleFrequency = $request->get('ruleFrequency');
         $ruleSchedule = $request->get('ruleSchedule');
-
         if ($ruleSchedule == 'NA') {
             $ruleSchedule = null;
-        }
-
+        } 
         $rule = Rule::create([
             'name' => $ruleName,
             'ruletype' => $ruleType,
@@ -65,21 +66,17 @@ class ConditionsController extends Controller
         ]);
         $ruleId = $rule->id;
         $ruleConditions = json_decode( $ruleData, true );
-
         foreach($ruleConditions as $rule) {
-
             $masterDataItem = null;
             $masters = $rule['master'];
             foreach ($masters as $master) {
                 $masterDataItem = $master;
             }
-
             $masterOperationItem = null;
             $masterOperations = $rule['masterOperations'];
             foreach($masterOperations as $masterOperation) {
                 $masterOperationItem = $masterOperation;
             }
-
             $masterValues = $rule['masterValues'];
             foreach ($masterValues as $masterValue) {
                 $dataItem = [];
@@ -93,7 +90,6 @@ class ConditionsController extends Controller
                 RuleCondition::reguard();
             }
         }
-
         return response()->json(['success' => 'Received rule data']);
     }
 
@@ -108,10 +104,13 @@ class ConditionsController extends Controller
 
     public function edit(Request $request) : View {
 
+        //3 Weeks Rule Myy rulw
         $id = $request->query('id');
+        $name = $request->query('name');
         $rule = Rule::find($id);
         $ruleConditions = RuleCondition::where('rule_id', $rule->id)->get();
         $ruleConditionMasters = array();
+        // print_r($ruleConditions);
         $masterValues = array();
         foreach ($ruleConditions as $ruleCondition) {
             $ruleConditionMasters[] = $ruleCondition->master_id;
@@ -120,6 +119,8 @@ class ConditionsController extends Controller
         }
 
         $masters = DynamicMain::whereIn('id', collect(array_values($ruleConditionMasters))->unique())->get();
+        // print_r($masters); 
+        //die;
         if ($rule['ruletype'] == 'inbound') {
             $rule['ruleschedule'] = 'NA';
         }
@@ -141,6 +142,7 @@ class ConditionsController extends Controller
 //        Log::info($masters);
 //        $mastersJSON = json_encode($masters);
 //        return view('rules.edit', compact('rule','masters','masterValues'));
+        $rule['name'] = $name;
         return view('conditions.edit', compact('rule','masters','masterValues'));
     }
 
@@ -163,24 +165,25 @@ class ConditionsController extends Controller
         $rule->ruletype = $ruleType;
         $rule->ruleFrequency = $ruleFrequency;
         $rule->ruleSchedule = $ruleSchedule;
-        $rule->save();
-
+        $saveStatus = $rule->save();
+        if(!$saveStatus) {
+            return response()->json(['success' => 'Received rule data']);
+        }
         $ruleId = $rule->id;
         $ruleConditions = json_decode( $ruleData, true );
+        
+        RuleCondition::where('rule_id', $rule->id)->delete();
         foreach($ruleConditions as $rule) {
-
             $masterDataItem = null;
             $masters = $rule['master'];
             foreach ($masters as $master) {
                 $masterDataItem = $master;
             }
-
             $masterOperationItem = null;
             $masterOperations = $rule['masterOperations'];
             foreach($masterOperations as $masterOperation) {
                 $masterOperationItem = $masterOperation;
             }
-
             $masterValues = $rule['masterValues'];
             foreach ($masterValues as $masterValue) {
                 $dataItem = [];
@@ -189,12 +192,11 @@ class ConditionsController extends Controller
                 $dataItem['mastervalue_id'] = $masterValue;
                 $dataItem['condition'] = $masterOperationItem;
 
-//                RuleCondition::unguard();
-//                $ruleCondition = RuleCondition::create($dataItem);
-//                RuleCondition::reguard();
+                RuleCondition::unguard();
+                RuleCondition::updateOrCreate($dataItem);
+                RuleCondition::reguard();
             }
         }
-
         return response()->json(['success' => 'Received rule data']);
     }
 }
