@@ -110,17 +110,13 @@ class ConditionsController extends Controller
         $rule = Rule::find($id);
         $ruleConditions = RuleCondition::where('rule_id', $rule->id)->get();
         $ruleConditionMasters = array();
-        // print_r($ruleConditions);
         $masterValues = array();
         foreach ($ruleConditions as $ruleCondition) {
             $ruleConditionMasters[] = $ruleCondition->master_id;
             $masterValues[$ruleCondition->master_id]['clause']=$ruleCondition->condition;
             $masterValues[$ruleCondition->master_id][]=$ruleCondition->mastervalue_id;
         }
-
         $masters = DynamicMain::whereIn('id', collect(array_values($ruleConditionMasters))->unique())->get();
-        // print_r($masters); 
-        //die;
         if ($rule['ruletype'] == 'inbound') {
             $rule['ruleschedule'] = 'NA';
         }

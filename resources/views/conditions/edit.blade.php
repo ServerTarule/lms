@@ -113,3 +113,25 @@
         <input name="ruleId" type="hidden" id="ruleId" value="{{ $rule->id }}">
     </div>
 @endsection
+@push('custom-scripts')
+<script type="text/javascript">
+    $( document ).ready(function() {
+        function disableOutbound(){
+            $("#outboundDiv *").prop('disabled',true);
+            $("#ruleFrequency").val('');
+            $("#ruleSchedule").val('NA');
+        }
+        $("#inboundRule").click(function() {
+            disableOutbound();
+        });
+
+        $("#outboundRule").click(function() {
+            $("#outboundDiv *").prop('disabled',false);
+        });
+
+        //disableOutbound();     
+    });
+   
+
+</script>
+@endpush
