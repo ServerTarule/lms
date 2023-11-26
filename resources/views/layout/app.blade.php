@@ -606,6 +606,7 @@
     
 
     function handleChange(cb) {
+        // alert("---cb---"+cb,'=cb.checked=='+cb.checked);
         console.log("Changed, new value = " + cb.checked);
         $(cb).attr('value', cb.checked);
     }
@@ -1080,25 +1081,33 @@
         
 
         $("#employeePermissionSubmit").click(function(){
-
             //Rules
-
             let employeeId = $("#employeeId").val();
             let rules = $("#employeePermissionRules").val();
-
+            console.log("******rules******",rules)
+            /* $(cb).attr('value', cb.checked);
+            const status = cb.checked;*/
             let items = [];
+            // const isChecked =  $('#rule_25').attr("checked");
+            //     alert("--isChecked----",isChecked);
             $.each(JSON.parse(rules), function (key, value) {
-
+                
+                
+                console.log("****key****",key);
+                console.log("****value****",value);
+                
                 let itemValue = {};
                 itemValue ["rule"] = value.id;
-                // console.log(value.id);
+                // console.log(value.id);rule_25
+               
                 let $ruleStatus = $('#rule_' + value.id).val();
-                itemValue ["ruleStatus"] = $ruleStatus;
+                itemValue ["ruleStatus"] = $ruleStatus??false;
                 // console.log($ruleStatus);
                 items.push(itemValue);
 
             });
 
+            // return false;
             //jsonObject.masters = item;
             //jsonObject.push(items)
             // console.log(JSON.stringify(items));
@@ -1125,7 +1134,7 @@
                 /* remind that 'data' is the response of the AjaxController */
                 success: function (data) {
                     console.log(data);
-                    window.location.href = "/employees/permissions";
+                   window.location.href = "/employees/permissions";
                 },
                 failure: function (data) {
                     console.log(data);

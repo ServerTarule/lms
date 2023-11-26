@@ -22,7 +22,10 @@
                             <div class="tab-pane fade in active" id="rulesTab">
                                 <div class="panel-body">
                                     <div class="table-responsive">
-                                        <table class="table table-bordered table-striped table-hover">
+                                        @if($rules)
+                                        <input id="employeePermissionRules" type="hidden" value="{{ $rules }}" />
+                                        @endif
+                                        <table class="table table-bordered table-striped table-hover defaultDataTable">
                                             <thead>
                                             <tr class="info">
                                                 <th>S. No.</th>
@@ -47,7 +50,7 @@
                                                                     }
                                                                 @endphp
                                                                 <input id="test_{{ $rule->id }}" value="{{ $ruleStatus }}" type="hidden">
-                                                                <input id="rule_{{ $rule->id }}" type="checkbox" value="true" onchange="handleChange(this);" @checked( $ruleStatus === 'true') />
+                                                                <input id="rule_{{ $rule->id }}" type="checkbox" value="{{ $ruleStatus }}" onchange="handleChange(this);" @checked( $ruleStatus === 'true') />
                                                                 <span class="slider round"></span>
                                                             </label>
                                                         </td>

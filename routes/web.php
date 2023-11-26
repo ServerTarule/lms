@@ -155,7 +155,12 @@ Route::middleware(['auth'])->group(function () {
     Route::POST('/employee/edit', [EmployeeController::class, 'edit'])->name('employee')->middleware('check_page_permission:/employee,edit_permission,0');//->middleware('can:read employee');
     Route::post('/employee/updateemployee/{id}', [EmployeeController::class, 'updateEmployee'])->name('updateemployee')->middleware('check_page_permission:/employee,edit_permission,0');//->middleware('can:update employee'); //NOT YET CHECKED AS IT IS NOT WORKING
     Route::post('/employee/toggleemployeestatus/{id}', [EmployeeController::class, 'toggleemployeestatus'])->name('toggleemployeestatus')->middleware('check_page_permission:/employee,edit_permission,0');//->middleware('can:update employee'); //NOT YET CHECKED AS IT IS NOT WORKING
-   //Leaves
+    //Employee Rules Assignment
+    Route::get('/employees/permissions', [PermissionsController::class, 'index'])->name('permissions.index')->middleware('check_page_permission:/employees/permissions,view_permission,0');//->middleware('can:read employee'); //NOT DONE YET Because  I don't think it is relavent now
+    Route::get('/employees/permissions/{id}', [PermissionsController::class, 'edit'])->name('permissions.edit')->middleware('check_page_permission:/employees/permissions,view_permission,0');//->middleware('can:read employee'); //NOT DONE YET Because  I don't think it is relavent now
+    Route::post('/employees/permissions/{id}', [PermissionsController::class, 'update'])->name('permissions.update')->middleware('check_page_permission:/employees/permissions,edit_permission,0');//->middleware('can:read employee'); //NOT DONE YET Because  I don't think it is relavent now
+    
+    //Leaves
     Route::get('/leaves', [LeaveController::class, 'index'])->name('leaves')->middleware('check_page_permission:/leaves,view_permission,0');
     Route::post('/leaves/storeleaves', [LeaveController::class, 'storeleaves'])->name('storeleaves')->middleware('check_page_permission:/leaves,add_permission,0');
     Route::get('/leaves/{id}', [LeaveController::class, 'leavelist'])->name('leaves')->middleware('check_page_permission:/leaves,view_permission,0');
@@ -210,9 +215,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/users/updateprofile', [UserController::class, 'updateprofile'])->name('updateprofile');//->middleware('check_page_permission:/users,view_permission,0');
     Route::get('/users/change-password', [UserController::class, 'userpassword'])->name('userpassword');//->middleware('check_page_permission:/users,view_permission,0');
     Route::post('/users/updatepassword', [UserController::class, 'updatepassword'])->name('updatepassword');//->middleware('check_page_permission:/users,view_permission,0');
-    //In Progress
-    
-   
+    //In Progress   
     Route::post('/leads/update', [LeadController::class, 'updateone'])->name('leads.updateone')->middleware('check_page_permission:/leads,edit_permission,0');//->middleware('can:read master');
     //Communications
     //->middleware('can:read master');
@@ -224,9 +227,6 @@ Route::middleware(['auth'])->group(function () {
     //Permissions 
 
     //Useless ROutes Start
-    Route::get('/employees/permissions', [PermissionsController::class, 'index'])->name('permissions.index');//->middleware('can:read employee'); //NOT DONE YET Because  I don't think it is relavent now
-    Route::get('/employees/permissions/{id}', [PermissionsController::class, 'edit'])->name('permissions.edit');//->middleware('can:read employee'); //NOT DONE YET Because  I don't think it is relavent now
-    Route::post('/employees/permissions/{id}', [PermissionsController::class, 'update'])->name('permissions.update');//->middleware('can:read employee'); //NOT DONE YET Because  I don't think it is relavent now
     Route::get('/employees/permissions/{id}/masters', [PermissionsController::class, 'masterindex'])->name('permissions.masterindex');//-->middleware('can:read employee'); //NOT DONE YET Because  I don't think it is relavent now
     Route::get('/permissions/employee-list', [MenusPermissionController::class, 'index'])->name('menuspermission')->middleware('can:read master');
     Route::get('/permissions/menu-list/{employeeId}', [MenusPermissionController::class, 'managePermission'])->name('menuspermission')->middleware('can:read master');
