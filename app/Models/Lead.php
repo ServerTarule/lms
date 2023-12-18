@@ -22,6 +22,7 @@ use OwenIt\Auditing\Contracts\Auditable;
  * @property string $receiveddate
  * @property string|null $remark
  * @property int|null $employee_id
+ * @property int $employee_id
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\Employee|null $employee

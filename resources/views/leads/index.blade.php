@@ -58,6 +58,12 @@
                                     <a>Created Date</a>
                                 </th>
                                 <th scope="col">
+                                    <a>Updated Date</a>
+                                </th>
+                                <th scope="col">
+                                    <a>Assigned To</a>
+                                </th>
+                                <th scope="col">
                                     <a>Edit</a>
                                 </th>
                             </tr>
@@ -72,6 +78,17 @@
                                     <td>{{$lead->mobileno}}</td>
                                     <td>{{ \Carbon\Carbon::parse($lead->receiveddate)->format('d/m/Y')}}</td>
                                     <td>{{ \Carbon\Carbon::parse($lead->created_at)->format('d/m/Y')}}</td>
+                                    <td>{{ \Carbon\Carbon::parse($lead->updated_at)->format('d/m/Y')}}</td>
+                                    <td>
+                                        @if (!empty($lead->employee) || isset($lead->employee))
+                                            {{-- <a data-toggle="modal" href="/" class="btn btn-xs btn-success btn-flat show_confirm"> --}}
+                                                {{$lead->employee->name}}
+                                            {{-- </as>  --}}
+                                        @else
+                                            Not Yet Assigned
+                                        @endif
+                                        
+                                    </td>
 {{--                                    <td>--}}
 {{--                                        <a href="/leads/{{$lead->id}}" class="btn-xs btn-info"> <i--}}
 {{--                                                class="fa fa-edit"></i> </a>--}}

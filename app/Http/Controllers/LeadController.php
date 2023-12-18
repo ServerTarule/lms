@@ -38,6 +38,9 @@ class LeadController extends Controller
         $leads = Lead::all();
         //Get all Masters
         $masters=DynamicMain::where('master', '1')->get();
+        // foreach($leads as $lead) {
+        //     print_r($lead->employee);
+        // }
         return view('leads.index', compact('leads', 'masters'));
     }
 
@@ -481,16 +484,22 @@ class LeadController extends Controller
     public function showcall($id) : View
     {
         // die("asasas");
+        // $id=909090;
         $isFirstCalling = $_GET['firstcalling']??false;
         $leads = Lead::where('id', $id)->get();
+        // print_r($leads->first());
         $leadmaster = LeadMaster::where('lead_id', $id)->get();
         $leadKV = array();
         $leadKVForEdit = array();
-        foreach ($leads as $l) {
-            $leadKV['name'] = $l->name;
-            $leadKV['mobileno'] = $l->mobileno;
-            $leadKV['email'] = $l->email;
+        // foreach ($leads as $l) {
+        //     $leadKV['name'] = $l->name;
+        //     $leadKV['mobileno'] = $l->mobileno;
+        //     $leadKV['email'] = $l->email;
+        // }
+        if(isset( $leads[0])) {
+            $leadKV = $leads->first();
         }
+       
         $leadMasters = array();
         // echo "Count = ".count($leadmaster);
         $count = 0;
