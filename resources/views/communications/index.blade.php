@@ -14,8 +14,19 @@
                 </div>
                 <div class="panel-body">
                     <div class="text-right">
-                        <a class="btn btn-exp btn-sm" data-toggle="modal" data-target="#addSchedule"><i
-                                class="fa fa-plus"></i> Schedule Action</a>
+                        @if ((isset($userCrudPermissions['add_permission'] ) &&  $userCrudPermissions['add_permission'] != 1))
+                            <span class="text-danger"><i class="fa fa-xs fa fa-exclamation-triangle" aria-hidden="true" title="You are not authorized to perform this action."> Unauthorized to add employee(s).  </i></span>
+                            <button class="btn btn-exp btn-sm disabled" onclick="return showMessage()">
+                                <i class="fa fa-plus"></i> Schedule Action
+                            </button>
+                        @else
+                            {{-- <a class="btn btn-exp btn-sm" data-toggle="modal" data-target="#addSchedule"><i
+                            class="fa fa-plus"></i> Schedule Action</a> --}}
+                            <button class="btn btn-exp btn-sm" data-toggle="modal" data-target="#addSchedule">
+                                <i class="fa fa-plus"></i> Schedule Action
+                            </button>
+                        @endif
+                        
                     </div>
                     <div class="table-responsive">
                         <table id="dataTableExample1" class="table table-bordered table-striped table-hover">
@@ -36,8 +47,8 @@
                                 <th scope="col">
                                     <a>Scheduled/Send Now</a>
                                 </th>
-                                <th scope="col">
-                                    <a>Count</a>
+                                <th scope="col text-center">
+                                    <a>Count (View Related Leads) </a>
                                 </th>
 {{--                                <th scope="col">--}}
 {{--                                    <a>Date</a>--}}
@@ -64,7 +75,17 @@
                                     <td>{{ $communication->type }}</td>
                                     <td>{{ $communication->template?->name }}</td>
                                     <td>{{ $communication->words }}</td>
-                                    <td><a href="/communications/{{$communication->id}}/leads">{{ $communication->leads()->count() }}</a></td>
+                                    <td>
+                                        @if ((isset($userCrudPermissions['view_permission'] ) &&  $userCrudPermissions['view_permission'] != 1))
+                                            <button  onclick="return showMessage(3)"  class="btn btn-xs btn-warning btn-flat show_confirm disabled"> 
+                                                <i class="fa fa-eye" title='Edit'></i>
+                                            </button>
+                                        @else
+                                        <a  class="btn btn-xs btn-warning btn-flat show_confirm" href="/communications/{{$communication->id}}/leads">
+                                            <i class="fa fa-eye"></i> {{ $communication->leads()->count() }}
+                                        </a>
+                                        @endif
+                                    </td>
 {{--                                    <td></td>--}}
 {{--                                    <td>{{ \Carbon\Carbon::parse($holiday->day)->format('d/m/Y') }}</td>--}}
                                     <td>{{ \Carbon\Carbon::parse($communication->created_at)->format('d/m/Y') }}</td>
@@ -72,12 +93,28 @@
 {{--                                        <a href="#" data-toggle="modal" data-target="#editSchedule" id="editCommunicationSchedule" class="btn-xs btn-info"><i class="fa fa-edit"></i></a>--}}
 {{--                                    </td>--}}
                                     <td>
-                                        <a href="#" id="editCommunicationSchedule" onclick="editCommunication( {{ $communication->id }})" class="btn-xs btn-info"><i class="fa fa-edit"></i></a>
+                                        {{-- <a href="#" id="editCommunicationSchedule" onclick="editCommunication( {{ $communication->id }})" class="btn-xs btn-info"><i class="fa fa-edit"></i></a> --}}
+                                        @if ((isset($userCrudPermissions['edit_permission'] ) &&  $userCrudPermissions['edit_permission'] != 1))
+                                            <button  onclick="return showMessage(1)"  class="btn btn-xs btn-success btn-flat show_confirm disabled"> 
+                                                <i class="fa fa-edit" title='Edit'></i>
+                                            </button>
+                                        @else
+                                            <button href="#" id="editCommunicationSchedule" onclick="editCommunication( {{ $communication->id }})" class="btn btn-xs btn-success btn-flat show_confirm">
+                                                <i class="fa fa-edit"></i>
+                                            </button>
+                                            
+                                        @endif  
                                     </td>
                                     <td>
-                                        <a href="#" id="deleteCommunication" onclick="deleteCommunication( {{ $communication->id }})" class="btn-xs btn-danger">
-                                            <i class="fa fa-trash-o"></i>
-                                        </a>
+                                        @if ((isset($userCrudPermissions['delete_permission'] ) &&  $userCrudPermissions['delete_permission'] != 1))
+                                            <button  onclick="return showMessage(2)"  class="btn btn-xs btn-danger btn-flat show_confirm disabled"> 
+                                                <i class="fa fa-trash-o" title='Delete'></i>
+                                            </button>
+                                        @else
+                                            <button href="#" id="deleteCommunication" onclick="deleteCommunication( {{ $communication->id }})" class="btn btn-xs btn-flat show_confirm btn-xs btn-danger">
+                                                <i class="fa fa-trash-o"  title='Delete'></i>
+                                            </button>
+                                        @endif
                                     </td>
                                 </tr>
                             @endforeach
@@ -493,6 +530,10 @@ function processUpdate () {
             }
             
         },
+        error:function(xhr, status, error) {
+            const resText = JSON.parse(xhr.responseText);
+            toastr.error( resText.message);
+        },
         failure: function (data) {
             toastr.error("Error occurred while processing!!");
         }
@@ -538,6 +579,10 @@ function processAdd () {
                 }, 3000);
             }
             
+        },
+        error:function(xhr, status, error) {
+            const resText = JSON.parse(xhr.responseText);
+            toastr.error( resText.message);
         },
         failure: function (data) {
             toastr.error("Error occurred while processing!!");
@@ -709,6 +754,10 @@ function editCommunication(id) {
 
             $('#editSchedule').modal('show');
         },
+        error:function(xhr, status, error) {
+            const resText = JSON.parse(xhr.responseText);
+            toastr.error( resText.message);
+        },
         failure: function (data) {
             console.log(data);
         }
@@ -759,8 +808,9 @@ function getDateCountForRule(isEdit) {
                 toastr.warning(message);
                 // toastr.error(validationMessage);
             },
-            error: function (data) {
-                console.log(data);
+            error:function(xhr, status, error) {
+                const resText = JSON.parse(xhr.responseText);
+                toastr.error( resText.message);
             },
             failure: function (data) {
                 console.log(data);
@@ -769,5 +819,52 @@ function getDateCountForRule(isEdit) {
     
     }
 }
+
+function deleteCommunication(id) {
+
+    bootbox.confirm("Are you sure you want to delete this schedule?", confirm =>{
+        if(confirm) {
+            processDeleteCommunication(id);
+        }
+        else {
+            return;
+        }
+    });
+}
+
+function processDeleteCommunication(id) {
+    let CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+    $.ajax({
+        /* the route pointing to the post function */
+        url: '/communications/destroy',
+        type: 'POST',
+        /* send the csrf-token and the input to the controller */
+        // data: {_token: CSRF_TOKEN, 'ruleData':JSON.stringify(jsonObject)},
+        data: {
+            _token: CSRF_TOKEN,
+            'id': id
+        },
+        // data: $(this).serialize(),
+        dataType: 'JSON',
+        /* remind that 'data' is the response of the AjaxController */
+        success: function (data) {
+            console.log(data);
+            window.location.href = "/communications";
+        },
+        error:function(xhr, status, error) {
+            const resText = JSON.parse(xhr.responseText);
+            toastr.error( resText.message);
+        },
+        failure: function (data) {
+            console.log(data);
+        }
+    });
+}
+
 </script>
 @endpush

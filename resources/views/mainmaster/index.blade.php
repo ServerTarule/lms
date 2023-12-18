@@ -56,11 +56,17 @@
                                     @if (session('status'))
                                         <span class="text-success">{{ session('status') }}</span>
                                     @endif
+                                    @if ((isset($userCrudPermissions['add_permission'] ) &&  $userCrudPermissions['add_permission'] != 1))
+                                    <span class="text-danger"><i  style="" class="fa fa-xs fa fa-exclamation-triangle" aria-hidden="true" title="You are not authorized to perform this action."> Unauthorized to add "{{ $master->name }}".</i></span>
+                                    @endif
                                 </div>
                                 
                                 <div class="col-sm-3">
                                     <div class="form-group">
-                                        <button type="submit" class="btn btn-primary btn-sm">Submit</button>
+                                        <button type="submit" {{ (isset($userCrudPermissions['add_permission'] ) &&  $userCrudPermissions['add_permission'] != 1) ? ' disabled' : '' }} class="btn btn-primary btn-sm" >Submit </button> 
+                                        @if ((isset($userCrudPermissions['add_permission'] ) &&  $userCrudPermissions['add_permission'] != 1))
+                                            <i role="button" style="" class=" btn  btn-warning btn-flat show_confirm fa fa-lg fa fa-exclamation-triangle" aria-hidden="true" title="You are not authorized to perform this action."> </i>
+                                        @endif
                                     </div>
                                 </div>
                                 @endif
@@ -69,7 +75,7 @@
                     </div>
                     @if ( $mainmasters)
                     <div class="table-responsive">
-                        <table id="dataTableExample1" class="table table-bordered table-striped table-hover">
+                        <table id="dataTableExample1" class="table table-bordered table-striped table-hover defaultDataTable">
                             <thead>
                                 <tr class="info">
                                     <th>S. No.</th>
@@ -95,16 +101,13 @@
                                     <td>{{ \Carbon\Carbon::parse($mainmaster->created_at)->format('d/m/Y') }}
                                     </td>
                                     <td>
-                                   
-                                    <a href="/master/main/edit-value/{{$master->id}}/{{$mainmaster->id}}" class="btn-xs">
-                                        <button class="btn btn-xs btn-success btn-flat show_confirm" data-toggle="tooltip" title='Edit'>
+                                        <a onclick="return navigateToEditPage({{$master->id}}, {{$mainmaster->id}})" role="button" class="btn btn-xs btn-success btn-flat show_confirm"  {{ (isset($userCrudPermissions['edit_permission'] ) &&  $userCrudPermissions['edit_permission'] != 1) ? ' disabled' : '' }}>
                                             <i class="fa fa-edit" title='Edit'></i>
-                                        </button>
                                         </a>
                                     </td>
                                     <td>
                                     @if($mainmaster->id != 8)
-                                        <a href="#" id="deleteMainMaster" onclick="deleteMainMaster( {{ $mainmaster->id }} , {{ $master->id }})" class="btn-xs btn-danger">
+                                        <a href="#" id="deleteMainMaster" onclick="deleteMainMaster( {{ $mainmaster->id }} , {{ $master->id }})" class="btn btn-xs btn-danger btn-flat " {{ (isset($userCrudPermissions['edit_permission'] ) &&  $userCrudPermissions['edit_permission'] != 1) ? ' disabled' : '' }}>
                                             <i class="fa fa-trash-o"></i>
                                         </a>
                                     @endif
@@ -243,69 +246,163 @@
 @endsection
 @push('custom-scripts')
 <script>
-function saveMasterValues(isEdit=false) {
-    let isValid =  true;
-    const mainMasterId =  $("#mainMasterId").val();
-    switch(mainMasterId) {
-        case "1":
-        case "2":
-        case "3":
-        case "5":
-        case "6":
-        case "7":
-            isValid = validatForm("masterValueFieldId");
-            return isValid;
-        break;
-        
-        case "4":
-            let  leadStatusMasterId = isEdit?"parentMasterIdEdit":"leadStatusMasterIdAdd";
-            isValid = validatForm("masterValueFieldId",leadStatusMasterId);
-            return isValid;
-        break;
-        case "8":
-            let  stateMasterId = isEdit?"parentMasterIdEdit":"stateMasterIdAdd";
-
-            // alert("--stateMasterId--"+stateMasterId);
-            
-            
-            isValid = validatForm("masterValueFieldId",stateMasterId);
-            // return false;
-            return isValid;
-        break;
-       
-        default:
-            // isValid = validatForm("masterValueFieldId");
-            return isValid;
-        break;
-    }
-    return isValid;
-}
-
-function validatForm(masterInputId = "masterValueFieldId", masterParentInputId=null ){
-    if(!masterParentInputId && !masterInputId){
-        return false;
-    }
-    else {
-        // alert("--masterParentInputId--"+masterParentInputId)
-        masterParentInputValue = $("#"+masterParentInputId).val();
-        // alert("-----masterParentInputValue---"+masterParentInputValue+"----"+typeof masterParentInputValue);
-        masterInputValue = $("#"+masterInputId).val();
-        // alert("-----masterInputValue---"+masterInputValue);
-        // console.log("===masterInputValue===",masterInputValue);
-        if(masterParentInputId && (!masterParentInputValue || masterParentInputValue =="" || masterParentInputValue =="0"))  {
-            // alert("parent value is not there")
-            toastr.error("Please select required value from dropdown!");
-            return false;
-        }
-        else if(!masterInputValue || masterInputValue =="") {
-            toastr.error("Please fill name!");
+    
+    function navigateToEditPage(id,mainMasterId) {
+        const href = `/master/main/edit-value/${id}/${mainMasterId}`;
+        const editPermission  = "{{$userCrudPermissions['edit_permission']}}";
+        if(!editPermission) {
+            toastr.error(NOT_AUTHORIZED_TO_PERFORM_ACTION);
             return false;
         }
         else {
-            // alert("----------------else--------------- !");
-            return true;
+            window.location.href = href;
         }
     }
-}
+
+    function saveMasterValues(isEdit=false) {
+        // alert("o asms"+"asdasd  == {{$userCrudPermissions['edit_permission']}}");
+        if(isEdit) {
+            const editPermission  = "{{$userCrudPermissions['edit_permission']}}";
+            if(!editPermission) {
+                toastr.error(NOT_AUTHORIZED_TO_PERFORM_ACTION);
+                return false;
+            }
+            else {
+                return processSaveMasterValues(isEdit);
+            }
+        }
+        else {
+            const addPermission  = "{{$userCrudPermissions['add_permission']}}";
+            if(!addPermission) {
+                toastr.error(NOT_AUTHORIZED_TO_PERFORM_ACTION);
+                return false;
+            }
+            else {
+                return processSaveMasterValues();
+            }
+        }
+    }
+
+    function processSaveMasterValues(isEdit=false) {
+        let isValid =  true;
+        const mainMasterId =  $("#mainMasterId").val();
+        switch(mainMasterId) {
+            case "1":
+            case "2":
+            case "3":
+            case "5":
+            case "6":
+            case "7":
+                isValid = validatForm("masterValueFieldId");
+                // alert("--isValid--"+isValid)
+                return isValid;
+            break;
+            
+            case "4":
+                let  leadStatusMasterId = isEdit?"parentMasterIdEdit":"leadStatusMasterIdAdd";
+                isValid = validatForm("masterValueFieldId",leadStatusMasterId);
+                return isValid;
+            break;
+            case "8":
+                let  stateMasterId = isEdit?"parentMasterIdEdit":"stateMasterIdAdd";
+
+                // alert("--stateMasterId--"+stateMasterId);
+                
+                
+                isValid = validatForm("masterValueFieldId",stateMasterId);
+                // return false;
+                return isValid;
+            break;
+        
+            default:
+                // isValid = validatForm("masterValueFieldId");
+                return isValid;
+            break;
+        }
+        return isValid;
+    }
+    
+
+    function validatForm(masterInputId = "masterValueFieldId", masterParentInputId=null ){
+        // alert("o asdasdasasms");
+        if(!masterParentInputId && !masterInputId){
+            return false;
+        }
+        else {
+            // alert("--masterParentInputId--"+masterParentInputId)
+            masterParentInputValue = $("#"+masterParentInputId).val();
+            // alert("-----masterParentInputValue---"+masterParentInputValue+"----"+typeof masterParentInputValue);
+            masterInputValue = $("#"+masterInputId).val();
+            // alert("-----masterInputValue---"+masterInputValue);
+            // console.log("===masterInputValue===",masterInputValue);
+            if(masterParentInputId && (!masterParentInputValue || masterParentInputValue =="" || masterParentInputValue =="0"))  {
+                // alert("parent value is not there")
+                toastr.error("Please select required value from dropdown!");
+                return false;
+            }
+            else if(!masterInputValue || masterInputValue =="") {
+                toastr.error("Please fill name!");
+                return false;
+            }
+            else {
+                // alert("----------------else--------------- !");
+                return true;
+            }
+        }
+    }
+    
+    function deleteMainMaster(id,masterid) {
+        const deletePermission  = "{{$userCrudPermissions['delete_permission']}}";
+        if(!deletePermission) {
+            toastr.error(NOT_AUTHORIZED_TO_PERFORM_ACTION);
+            return false;
+        }
+        else {
+            processDeleteMainMaster(id,masterid);
+        }
+    }
+    function processDeleteMainMaster(id, masterid) {
+        bootbox.confirm("Are you sure you want to delete this?", confirm=>{
+            if(confirm){
+                let CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
+                $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }
+                });
+                $.ajax({
+                    /* the route pointing to the post function */
+                    url: `/master/main/destroy/${masterid}/${id}`,
+                    type: 'POST',
+                    /* send the csrf-token and the input to the controller */
+                    // data: {_token: CSRF_TOKEN, 'ruleData':JSON.stringify(jsonObject)},
+                    data: {
+                        _token: CSRF_TOKEN,
+                        'id': id
+                    },
+                    // data: $(this).serialize(),
+                    dataType: 'JSON',
+                    /* remind that 'data' is the response of the AjaxController */
+                    success: function (data) {
+                        console.log(data);
+                        window.location.href = "/master/main/"+masterid;
+                    },
+                    failure: function (data) {
+                        console.log(data);
+                    },
+                    error:function(xhr, status, error) {
+                        const resText = JSON.parse(xhr.responseText);
+                        toastr.error( resText.message);
+                    },
+                });
+            }
+        else{
+            return false;
+        }
+    
+
+    })
+        
+    }
 </script>
 @endpush                

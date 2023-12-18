@@ -18,6 +18,10 @@ class RulesController extends Controller
     public function index() : View {
         //Should fetch list of Rules created
         $rules = Rule::all();
+        foreach($rules as $rule) {
+            // print_r($rule->ruleconditions->toArray());
+            // echo "\n Rule Condition Count For Rule With Id $rule->id is ".count($rule->ruleconditions);
+        }
         return view('rules.index',compact('rules'));
     }
 
@@ -54,6 +58,7 @@ class RulesController extends Controller
     }
 
     public function edit($id) : View {
+        // die("asasasas-------------");
         $rule = Rule::find($id);
         $ruleConditions = RuleCondition::where('rule_id', $rule->id)->get();
         $ruleConditionMasters = array();
@@ -66,6 +71,7 @@ class RulesController extends Controller
 
     public function update(Request $request) : RedirectResponse {
         $id = $request->input('editRuleId');
-        return redirect()->route('conditions.edit', compact('id'));
+        $name = $request->input('editRuleName');
+        return redirect()->route('conditions.edit', compact('id','name'));
     }
 }

@@ -44,7 +44,7 @@ class CommunicationController extends Controller
     ];
     public function index()
     {
-        $rules = Rule::all();
+        $rules = Rule::all()->where("ruletype",'=',"outbound");
         $templates = Template::all();
         $communications = Communication::all();
         $scheduleUnitArray = $this->scheduleUnitArray;

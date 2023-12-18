@@ -11,8 +11,21 @@
                         <h4>Lead Information</h4>
                     </div>
                 </div>
+                <div class="panel-body text-right">
+                    <a href="/leads" class="btn btn-warning btn-flat">
+                        <i class="fa fa-arrow-left">
+                            Lead Lists
+                        </i>
+                    </a>
+                    <a href="/leads/calls/" class="btn  btn-warning btn-flat">
+                        <i class="fa fa-arrow-left">
+                            Lead Call
+                        </i>
+                    </a>
+                </div>
                 <div class="panel-body">
                     <div class="table-responsive">
+                        
                         <table id="dataTableExample1" class="defaultDataTable table table-bordered table-striped table-hover">
                             <thead>
                                 <tr class="tblheadclr1" style="text-align: center;">
@@ -32,9 +45,20 @@
                             </thead>
                             <tbody>
                                 <tr>
-                                    @foreach ($leadKV as $key => $value)
+                                    <td>{{$leadKV['name']}}</td>
+                                    <td>{{$leadKV['email']}}</td>
+                                    <td>{{$leadKV['mobileno']}}</td>
+                                    <td>{{$leadKV['Treatment Types']}}</td>
+                                    <td>{{$leadKV['Lead Types']}}</td>
+                                    <td>{{$leadKV['Lead Status']}}</td>
+                                    <td>{{$leadKV['Lead Stages']}}</td>
+                                    <td>{{$leadKV['Lead Sources']}}</td>
+                                    <td>{{$leadKV['Action Types']}}</td>
+                                    <td>{{$leadKV['States']}}</td>
+                                    <td>{{$leadKV['Cities']}}</td>
+                                    {{-- @foreach ($leadKV as $key => $value)
                                         <td>{{$value}}</td>
-                                    @endforeach
+                                    @endforeach --}}
                                     <input type="hidden" class="ModuleName" value="FirstCallingDetails" />
                                     @php
                                         $leadKVForEditId = 0;
@@ -44,7 +68,15 @@
                                     @endphp
                                     <input type="hidden" id="leadId" name="leadId" value="{{$leadKVForEditId}}" />
                                     <td>
-                                        <a href="#" id="lead-edit-button" class="btn btn-primary"><i class="fa fa-edit"></i></a>
+                                        @if ((isset($userCrudPermissions['edit_permission'] ) &&  $userCrudPermissions['edit_permission'] != 1))
+                                            <button onclick="return showMessage(1)" class="btn btn-xs btn-success btn-flat show_confirm disabled"><i class="fa fa-edit"></i></button>
+                                        @else
+                                            <button  id="lead-edit-button"  class="btn btn-xs btn-success btn-flat show_confirm">
+                                                <i class="fa fa-edit"></i>
+                                            </button> 
+                                            {{-- onclick="return editLeadCheckPermission({{ $lead->id }})" --}}
+                                        {{-- <a href="#" id="lead-edit-button" class="btn btn-primary"><i class="fa fa-edit"></i></a> --}}
+                                        @endif
                                     </td>
                                 </tr>
                             </tbody>
@@ -287,8 +319,22 @@
                         <div class="panel-body">
                             <div class="col-sm-12">
                                 <div class="form-group text-right">
-                                    <button type="button" id="leadMasterSubmitUpdate"  class="btn btn-primary btn-sm">Submit</button>
-                                    <button type="reset" id="leadMasterReset" class="btn btn-danger btn-sm">Clear</button>
+                                    @if ((isset($userCrudPermissions['edit_permission'] ) &&  $userCrudPermissions['edit_permission'] != 1))
+                                        <button onclick="return showMessage(1)" class="btn btn-success btn-flat show_confirm disabled">
+                                            <i class="fa fa-save"> Save Lead Information</i>
+                                        </button>
+                                    @else
+                                        <button type="button" id="leadMasterSubmitUpdate"  class="btn btn-success btn-flat show_confirm">
+                                            <i class="fa fa-save "> Save Lead Information</i>
+                                        </button>
+
+                                        {{-- <button  id="lead-edit-button"  class="btn btn-xs btn-success btn-flat show_confirm">
+                                            <i class="fa fa-edit"></i>
+                                        </button>  --}}
+                                        {{-- onclick="return editLeadCheckPermission({{ $lead->id }})" --}}
+                                    {{-- <a href="#" id="lead-edit-button" class="btn btn-primary"><i class="fa fa-edit"></i></a> --}}
+                                    @endif
+                                    {{-- <button type="reset" id="leadMasterReset" class="btn btn-danger btn-sm">Clear</button> --}}
                                 </div>
                             </div>
                         </div>
@@ -303,7 +349,7 @@
                                     </div>
                                     <div class="panel-body">
                                         <div class="form-group col-sm-2">
-                                            <label>Owner Name</label>
+                                            <label>Owner Name  <span class="text-danger required"> * </span></label>
                                             
                                         </div>
                                         <div class="form-group col-sm-4">
@@ -321,7 +367,7 @@
                                             <textarea class="form-control" id="leadCallRemark" name="leadCallRemark"></textarea>
                                         </div>
                                         <div class="form-group col-sm-2">
-                                            <label>Next Reminder Date</label>                        
+                                            <label>Next Reminder Date <span class="text-danger required"> * </span></label>                        
                                         </div>
                                         <div class="col-sm-4">
                                             <div class="form-group">
@@ -396,6 +442,7 @@
 {{--                                @csrf--}}
                                 <fieldset>
                                     <div class="col-md-12 form-group">
+                                        <label>Template<span class="text-danger required"> * </span> <span class="spnmobile" style="color: red;"></span></label>
                                         <select name="leadEmailTemplateId" id="leadEmailTemplateId" class="form-control" >
                                             <option value="NA">-- Select Template --</option>
                                             @foreach($emailTemplates as $emailTemplate)
@@ -404,16 +451,20 @@
                                         </select>
                                     </div>
                                     <div class="col-md-12 form-group">
+
                                         @if(isset($leadKV) && isset($leadKV['email']))
+                                        <label>Email Id<span class="text-danger required"> * </span> <span class="spnmobile" style="color: red;"></span></label>
                                         <input type="email" placeholder="Enter Email Id" id="leadEmailId" name="leadEmailId" value="{{$leadKV['email']}}" class="form-control" />
                                         @else
                                         No Email Id Found For Sending Email
                                         @endif
                                     </div>
                                     <div class="col-md-12 form-group">
+                                        <label>Email Subject<span class="text-danger required"> * </span> <span class="spnmobile" style="color: red;"></span></label>
                                         <input type="text" placeholder="Email Subject" id="leadEmailSubject" name="leadEmailSubject" class="form-control" />
                                     </div>
                                     <div class="col-md-12 form-group">
+                                        <label>Email Body<span class="text-danger required"> * </span> <span class="spnmobile" style="color: red;"></span></label>
                                         <textarea placeholder="Email Body" id="leadEmailBody" name="leadEmailBody" class="form-control"></textarea>
                                     </div>
                                     <div class="col-md-12 form-group">
@@ -447,6 +498,7 @@
 {{--                                @csrf--}}
                                 <fieldset>
                                     <div class="col-md-12 form-group">
+                                        <label>Template <span class="text-danger required"> * </span></label>
                                         <select name="leadWhatsAppTemplateId" id="leadWhatsAppTemplateId" class="form-control" >
                                             <option value="NA">-- Select Template --</option>
                                             @foreach($whatsappTemplates as $whatsappTemplate)
@@ -456,12 +508,14 @@
                                     </div>
                                     <div class="col-md-12 form-group">
                                         @if(isset($leadKV) && isset($leadKV['mobileno']))
+                                        <label>Mobile Number <span class="text-danger required"> * </span></label>
                                         <input placeholder="Enter Mobile Number Ex: +91-0000000000" name="leadWhatsAppMobileNo" id="leadWhatsAppMobileNo" value="{{$leadKV['mobileno']}}" class="form-control" />
                                         @else
                                             No mobile no Found For Sending WhatsApp Message
                                         @endif
                                     </div>
                                     <div class="col-md-12 form-group">
+                                        <label>Message Body <span class="text-danger required"> * </span></label>
                                         <textarea placeholder="Description" class="form-control" name="leadWhatsAppMessage" id="leadWhatsAppMessage"></textarea>
                                     </div>
                                     <div class="col-md-12 form-group">
@@ -498,8 +552,230 @@ No Information Found
 </script>
 <script type="text/javascript" src="{{ URL::asset('/customjs/lead-edit.js') }}"></script>
 <script>
-if(state && state > 0) {
+    if(state && state > 0) {
         getCityForState(state, city)
     }
+    
+    function validateLeadOwnerInformation (basic=1) {
+        const message = '';
+        isValid = true;
+        //Generic Info Fields
+        const validation =  {"isValid":isValid,"message":message};
+        const employeeId = $("#leadEmployeeId").val();
+        const reminderDate = $("#leadNextReminderDate").val();
+        
+        //Send WhatsApp Fields
+        const templateId = $("#leadWhatsAppTemplateId").val();
+        const mobileno = $("#leadWhatsAppMobileNo").val();
+        const leadWhatsAppMessage = $("#leadWhatsAppMessage").val();
+        // let callStatusId = $("#callStatusId").val();
+        // let remark = $("#leadCallRemark").val();
+
+        //Send Email Fields
+        
+        const templateIdEmail = $("#leadEmailTemplateId").val();
+        const emailId = $("#leadEmailId").val();
+        const leadEmailSubject = $('#leadEmailSubject').val();
+        const leadEmailBody = $("#leadEmailBody").val();
+        // let reminderDate = $("#leadNextReminderDate").val();
+
+        console.log("--templateIdEmail--",templateIdEmail);
+        console.log("--emailId--",emailId);
+        console.log("--leadEmailSubject--",leadEmailSubject);
+        console.log("--leadEmailBody--",leadEmailBody);
+        if((!employeeId || employeeId === "") && basic > 0) {
+            validation.message += 'Please  select owner name.';
+            validation.isValid = false;
+        }
+        else if((!reminderDate || reminderDate === "") && (basic == 1 || basic == 3) ) {
+            validation.message += 'Please  choose next reminder date.';
+            validation.isValid = false;
+        }
+        else if((!templateId || templateId === ""  || templateId === "NA") && basic == 2) {
+            validation.message += 'Please select a template.';
+            validation.isValid = false;
+        }
+        else if((!mobileno || mobileno === "") && basic == 2) {
+            validation.message += 'Please fill a mobile number to send whatsapp message.';
+            validation.isValid = false;
+        }
+        else if((!leadWhatsAppMessage || leadWhatsAppMessage === "") && basic == 2) {
+            validation.message += 'Please fill a message body to send whatsapp message.';
+            validation.isValid = false;
+        }
+        //
+        else if((!emailId || emailId === "") && basic == 3) {
+            validation.message += 'Please email to send email.';
+            validation.isValid = false;
+        }
+        else if((!templateIdEmail || templateIdEmail === "" || templateIdEmail === "NA" ) && basic == 3) {
+            validation.message += 'Please select a template to send email.';
+            validation.isValid = false;
+        }
+        else if((!leadEmailSubject || leadEmailSubject == "") && basic == 3) {
+            validation.message += 'Please fill email subject.';
+            validation.isValid = false;
+        }
+        else if((!leadEmailBody || leadEmailBody === "") && basic == 3) {
+            validation.message += 'Please fill email body.';
+            validation.isValid = false;
+        }
+        //
+        // const validation =  {"isValid":isValid,"message":message};
+        console.log("----validation---",validation);
+        return validation;
+    }
+    // Lead Call Send Email
+     $('#leadSendEmail').click(function() {
+        let leadId = $('#leadId').val();
+        let employeeId = $("#leadEmployeeId").val();
+        let templateId = $("#leadEmailTemplateId").val();
+        let emailId = $("#leadEmailId").val();
+        let remark = $("#leadCallRemark").val();
+        let reminderDate = $("#leadNextReminderDate").val();
+
+        const validation = validateLeadOwnerInformation(3);
+        console.log("--validation--".validation);
+        if(!validation.isValid) {
+            bootbox.alert(validation.message);
+            return false;
+        }
+        else {
+            let CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+            if(templateId !== 'NA') {
+                $.ajax({
+                    url: '/leads/calls/'+leadId+'/email',
+                    type: 'POST',
+                    data: {
+                        _token: CSRF_TOKEN,
+                        'leadId': leadId,
+                        'employeeId': employeeId,
+                        'templateId': templateId,
+                        'emailId': emailId,
+                        'type': 'Email',
+                        'remark': remark,
+                        'reminderDate': reminderDate
+                    },
+                    dataType: 'JSON',
+                    success: function (data) {
+                        // $("#spinner-div").hide();
+                        window.location.href = '/leads/calls/'+leadId;
+                    },
+                    error:function(xhr, status, error) {
+                        const resText = JSON.parse(xhr.responseText);
+                        toastr.error( resText.message);
+                    },
+                    failure: function (data) {
+                        // $("#spinner-div").hide();
+                        console.log(data);
+                    }
+                });
+            }
+        }
+    });
+    
+    // Lead Call Send WhatsApp
+    $('#leadSendWhatsApp').click(function() {
+        let leadId = $('#leadId').val();
+        let employeeId = $("#leadEmployeeId").val();
+        let templateId = $("#leadWhatsAppTemplateId").val();
+        let mobileno = $("#leadWhatsAppMobileNo").val();
+        let callStatusId = $("#callStatusId").val();
+        let remark = $("#leadCallRemark").val();
+        let reminderDate = $("#leadNextReminderDate").val();
+
+        const validation = validateLeadOwnerInformation(2);
+        console.log("--validation--".validation);
+        if(!validation.isValid) {
+            bootbox.alert(validation.message);
+            return false;
+        }
+        else {
+            let CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+
+            if(templateId !== 'NA') {
+                $.ajax({
+                    url: '/leads/calls/'+leadId+'/whatsapp',
+                    type: 'POST',
+                    data: {
+                        _token: CSRF_TOKEN,
+                        'leadId': leadId,
+                        'employeeId': employeeId,
+                        'templateId': templateId,
+                        'mobileno' : mobileno,
+                        'type': 'WhatsApp',
+                        'callStatusId': callStatusId,
+                        'remark': remark,
+                        'reminderDate': reminderDate
+                    },
+                    dataType: 'JSON',
+                    success: function (data) {
+                        window.location.href = '/leads/calls/'+leadId;
+                    },
+                    error:function(xhr, status, error) {
+                        const resText = JSON.parse(xhr.responseText);
+                        toastr.error( resText.message);
+                    },
+                    failure: function (data) {
+                        console.log(data);
+                    }
+                });
+            }
+        }
+    });
+
+    $('#submitLeadCall').click(function() {
+        let leadId = $('#leadId').val();
+        let employeeId = $("#leadEmployeeId").val();
+        let reminderDate = $("#leadNextReminderDate").val();
+        const validation = validateLeadOwnerInformation();
+        console.log("--validation--".validation);
+        if(!validation.isValid) {
+            bootbox.alert(validation.message);
+            return false;
+        }
+        else {
+            let remark = $("#leadCallRemark").val();
+            let CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+            $.ajax({
+                url: '/leads/calls/'+leadId+'/call',
+                type: 'POST',
+                data: {
+                    _token: CSRF_TOKEN,
+                    'leadId': leadId,
+                    'employeeId': employeeId,
+                    'remark': remark,
+                    'reminderDate': reminderDate
+                },
+                dataType: 'JSON',
+                success: function (data) {
+                    window.location.href = '/leads/calls/'+leadId+'';
+                },
+                error:function(xhr, status, error) {
+                    const resText = JSON.parse(xhr.responseText);
+                    toastr.error( resText.message);
+                },
+                failure: function (data) {
+                    console.log(data);
+                }
+            });
+        }
+        
+    });
 </script>
 @endpush

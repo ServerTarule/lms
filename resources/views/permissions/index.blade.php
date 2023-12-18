@@ -8,12 +8,12 @@
                 <div class="panel-heading">
                     <div class="btn-group" id="buttonexport">
                         <a href="#">
-                            <h4>Permissions Status</h4>
+                            <h4>Employees</h4>
                         </a>
                     </div>
                 </div>
                 <div class="panel-body">
-                    <div class="text-right">
+                    {{-- <div class="text-right">
                         <div class="row">
                             <div class="col-md-3"></div>
                             <div class="col-md-6">
@@ -43,9 +43,9 @@
                             </div>
                             <div class="col-md-3"></div>
                         </div>
-                    </div>
+                    </div> --}}
                     <div class="table-responsive">
-                        <table id="dataTableExample1" class="table table-bordered table-striped table-hover">
+                        <table id="dataTableExample1" class="table table-bordered table-striped table-hover defaultDataTable">
                             <thead>
                             <tr class="tblheadclr1">
                                 <th scope="col">
@@ -61,11 +61,11 @@
                                     <a>Created Date</a>
                                 </th>
                                 <th scope="col">
-                                    <a>Edit</a>
+                                    <a>Assign Rules</a>
                                 </th>
-                                <th scope="col">
+                                {{-- <th scope="col">
                                     <a>Delete</a>
-                                </th>
+                                </th> --}}
                             </tr>
                             </thead>
                             <tbody>
@@ -77,15 +77,15 @@
                                         <td>{{ $employee->name }}</td>
                                         <td>{{ \Carbon\Carbon::parse($employee->created_at)->format('d/m/Y') }}</td>
                                         <td>
-                                            <a href="/employees/permissions/{{$employee->id}}" class="btn-xs btn-info"> <i
-                                                    class="fa fa-edit"></i> </a>
+                                            <a href="/employees/permissions/{{$employee->id}}" class="btn-xs btn-success"> <i
+                                                    class="fa fa-tasks"></i> </a>
                                         </td>
-                                        <td>
+                                        {{-- <td>
                                             <a onclick="return confirm('Are you sure want to delete this?')"
                                                class="btn-xs btn-info" style="background: red;"> <i
                                                     class="fa fa-trash-o"></i>
                                             </a>
-                                        </td>
+                                        </td> --}}
                                 @endforeach
                             @endif
                             </tbody>

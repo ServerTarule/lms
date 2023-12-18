@@ -14,19 +14,26 @@
                 @if ($designations)
                     <div class="panel-body">
                         <div class="row">
-                            <div class="col-md-4"></div>
+                            <div class="col-md-2"></div>
 
-                            <div class="col-md-4">
+                            <div class="col-md-10">
                                 <div class="text-right">
                                     <form action="/designation" onSubmit="return addDesignation()" method="post">
                                         @csrf
                                         <div class="row">
-                                            <div class="col-md-12 form-group AUTHORITY">
+                                            <div class="col-md-6 form-group">
                                                 <input type="text" name="name" placeholder="Designation Name"
                                                     class="form-control" required>
-                                                <div>
-                                                    <button type="submit" class="btn btn-add {{ (!$userCrudPermissions['add_permission']) ? ' disabled' : '' }}">Create</button>
-                                                </div>
+                                            </div>    
+                                            <div class="col-md-6 form-group text-left">
+                                                    @if ((isset($userCrudPermissions['add_permission'] ) &&  $userCrudPermissions['add_permission'] != 1))
+                                                        <button class="btn btn-success disabled" onclick="return showMessage()">Create</button>
+                                                        <span class="text-danger"><i class="fa fa-xs fa fa-exclamation-triangle" aria-hidden="true" title="You are not authorized to perform this action."> Unauthorized to add designation(s).  </i></span>
+
+                                                    @else
+                                                        &nbsp;<button type="submit" class="btn btn-success ">Create</button>
+                                                      {{-- <a class="btn btn-exp btn-sm" data-toggle="modal" data-target="#additem"><i class="fa fa-plus"></i>Add Employee</a> --}}
+                                                    @endif
                                             </div>
                                         </div>
                                     </form>
@@ -39,9 +46,7 @@
                                 @endif
 
                             </div>
-                            <div class="col-md-4">
 
-                            </div>
                         </div>
                         <div class="table-responsive">
                             <table id="dataTableExample1" class="table table-bordered table-striped table-hover">
@@ -70,8 +75,8 @@
                                             @endif
                                             </td>
                                             <td>
-                                                @if ($userCrudPermissions['edit_permission'])
-                                                    <a onclick="return confirm('Are you sure want to delete this?')"
+                                                @if ($userCrudPermissions['delete_permission'])
+                                                    <a onclick="return deleteDesignation({{ $designation->id }})"
                                                         class="btn-xs btn-info" style="background: red;"> <i
                                                             class="fa fa-trash-o"></i>
                                                     </a>
@@ -142,8 +147,60 @@ function addDesignation() {
     
 }
 
-function showMessage (action="edit/update") {
-    toastr.error( `You are not allowed to ${action} designation!`);
+function deleteDesignation(id) {
+    bootbox.confirm({
+        message: "Are you sure you want to delete this menu?",
+        callback: function (confirm) {
+            if(confirm) {
+                processDeleteDesignation(id);
+            }
+            else {
+                return;
+            }
+        }
+    });
 }
+function processDeleteDesignation(id) {
+    let CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+    $.ajax({
+        /* the route pointing to the post function */
+        url: `/designation/delete/${id}`,
+        type: 'POST',
+        /* send the csrf-token and the input to the controller */
+        data: {
+            _token: CSRF_TOKEN,
+            'id': id
+        },
+        dataType: 'JSON',
+        /* remind that 'data' is the response of the AjaxController */
+        success: function (data) {
+            console.log(data);
+            if(data.status) {
+                toastr.success(data.message);
+                setTimeout(function(){ 
+                    location.reload();
+                }, 3000);
+            }
+            else {
+                toastr.error(data.message);
+            }
+        },
+        failure: function (data) {
+            toastr.error("Error occurred while processing!!");
+        },
+        error:function(xhr, status, error) {
+            const resText = JSON.parse(xhr.responseText);
+            toastr.error( resText.message);
+        },
+    });
+}
+// function showMessage (action="edit/update") {
+//     toastr.error( `You are not allowed to ${action} designation!`);
+// }
 </script>
 @endpush

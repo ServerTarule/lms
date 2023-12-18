@@ -24,15 +24,12 @@ return new class extends Migration
             `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
             `updated_at` timestamp NULL DEFAULT NULL,
             `deleted` tinyint(1) NOT NULL DEFAULT 0
-          ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci');
-        DB::statement('ALTER TABLE `leadfiles`
-        ADD PRIMARY KEY (`id`)');
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci');
 
         DB::statement('ALTER TABLE `leadfiles`
         ADD PRIMARY KEY (`id`)');
-        DB::statement('ALTER TABLE `leadfiles`
-        MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
-        COMMIT');
+
+        DB::statement('ALTER TABLE `leadfiles` MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT');
     }
 
     /**

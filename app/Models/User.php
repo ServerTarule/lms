@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -29,6 +30,7 @@ use Spatie\Permission\Traits\HasRoles;
  * @property-read int|null $permissions_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Permission\Models\Role> $roles
  * @property-read int|null $roles_count
+ ** @property-read \App\Models\Role $role
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Laravel\Sanctum\PersonalAccessToken> $tokens
  * @property-read int|null $tokens_count
  * @method static \Database\Factories\UserFactory factory($count = null, $state = [])
@@ -64,6 +66,7 @@ class User extends Authenticatable
         'role_id',
         'email',
         'password',
+        'profile_img'
     ];
 
     /**
@@ -81,6 +84,11 @@ class User extends Authenticatable
      *
      * @var array<string, string>
      */
+    public function role() : BelongsTo
+    {
+        return $this->belongsTo(Role::class);
+    }
+
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
