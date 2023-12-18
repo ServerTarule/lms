@@ -15,29 +15,36 @@ class LogController extends Controller
     public function index() : View
     {
         $lead = Lead::find(1);
-        $masters = LeadMaster::where('lead_id', $lead->id)->where('mastervalue_id', '<>', null)->get();
-        $masterAudits = [];
-        foreach ($masters as $master) {
-            $ma = LeadMaster::find($master->id)->audits->where('tags', '1');
-            if (count($ma) != 0) {
-                $masterAudits[] = $ma;
+        $all = [];
+        if(!empty($lead)) {
+            $masters = LeadMaster::where('lead_id', $lead->id)->where('mastervalue_id', '<>', null)->get();
+            $masterAudits = [];
+            foreach ($masters as $master) {
+                $ma = LeadMaster::find($master->id)->audits->where('tags', '1');
+                if (count($ma) != 0) {
+                    $masterAudits[] = $ma;
+                }
             }
-        }
 
-        foreach ($masterAudits as $audit) {
-            foreach ($audit as $a) {
-                Log::info($a);
-                Log::info($a->getMetadata(true));
-                Log::info($a->getModified(true));
+            foreach ($masterAudits as $audit) {
+                foreach ($audit as $a) {
+                    Log::info($a);
+                    Log::info($a->getMetadata(true));
+                    Log::info($a->getModified(true));
+                }
             }
-        }
 
-        $all = $lead->audits()->get();
+            $all = $lead->audits()->get();
+        }
         return view('logs.index', compact('all'));
     }
 
-    public function leadlogs($id) : View
+    public function leadslogs(){
+        echo "I am done";
+    }
+    public function leadlogs($id): View
     {
+        echo "In side leadlogs function";
         $lead = Lead::find($id);
         $masters = LeadMaster::where('lead_id', $lead->id)->where('mastervalue_id', '<>', null)->get();
         $masterAudits = [];

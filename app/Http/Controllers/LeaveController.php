@@ -65,33 +65,46 @@ class LeaveController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function storeleaves(Request $request): JsonResponse 
     {
 
         $employeeId = $request->employeeid;
+        $employeeDetails = Employee::find($employeeId);
+        if(!empty($employeeDetails)) {
+            $createLeave=Leaves::create([
+                'start_time'=>$request->from,
+                'end_time'=>$request->to,
+                'type'=>$request->type,
+                'comment'=>$request->comment,
+                'employee_id'=>$request->employeeid
 
-        $createLeave=Leaves::create([
-            'start_time'=>$request->from,
-            'end_time'=>$request->to,
-            'type'=>$request->type,
-            'comment'=>$request->comment,
-            'employee_id'=>$request->employeeid
-
-        ]);
-        if($createLeave){
-            return redirect('/leaves/'.$employeeId)->with('status','Leave added successfully');
-
-        }
-        return redirect('/leaves')->with('error','Please try again later');
-
+            ]);
+            if($createLeave){
+                return response()->json(['status'=>true,'message' => 'Leave added successfully!']);
+            }
+        }  
+        return response()->json(['status'=>false,'message' => `Error occurred, while adding leave!`]);
     }
 
-    public function view($id){
+    public function getLeaveData($leaveId)
+    {
+        // $employeeId =  $request->get('employeeId');
+        $leave = Leaves::where('id',$leaveId)->first();
+        $employee=[];
+        if(isset($leave) && isset($leave->employee_id)) {
+            $employeeId = $leave->employee_id;
+            $employee = Employee::where('id',$employeeId)->first();
+        }
+        
+        return response()->json(['employee'=>$employee,'leave'=>$leave]);
+    }
+
+    public function leavelist($id){
         $leaves = Leaves::where('employee_id', $id)->get();
         return view('leaves.view',compact( 'leaves'));
     }
 
-    public function calendar($id){
+    public function leavecalendar($id){
 
         $events = [];
 
@@ -118,17 +131,46 @@ class LeaveController extends Controller
         return view('leaves.calendar', compact('events', 'holidays'));
     }
 
+    public function updateleave(Request $request,$id): JsonResponse {
+        $leave = Leaves::find($id);
+        if(empty($leave)) {
+            return response()->json(['status'=>false, 'message'=>'Leave with given id does not exists.!']);
+        }
+        else {
+            $employeeId = $request->employeeid;
+            $emp = Employee::find($employeeId);
+            if(empty($emp)) {
+                return response()->json(['status'=>false, 'message'=>'Employee with given id/name does not exists.!']);
+            }
+            else{
+                $leaveUpdateStatus=Leaves::find($id)->update([
+                    'start_time'=>$request->from,
+                    'end_time'=>$request->to,
+                    'type'=>$request->type,
+                    'comment'=>$request->comment,
+                    'employee_id'=>$request->employeeid
+                    
+                ]);
+                if($leaveUpdateStatus){
+                    return response()->json(['status'=>true, 'message'=>'Leave updated successfully']);
+                }
+            }
+        }
+        return response()->json(['status'=>false, 'message'=>'Some Error Occured']);
+    }
+    public function destroy(Request $request) : JsonResponse {
+        $id = $request->get('id');
+        Leaves::where('id', $id)->delete();
 
+        return response()->json(['success' => 'Received rule data']);
+    }
     /**
      * Display the specified resource.
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
-    {
-        //
-    }
+    
 
     /**
      * Show the form for editing the specified resource.
@@ -153,10 +195,4 @@ class LeaveController extends Controller
         //
     }
 
-    public function destroy(Request $request) : JsonResponse {
-        $id = $request->get('id');
-        Leaves::where('id', $id)->delete();
-
-        return response()->json(['success' => 'Received rule data']);
-    }
 }

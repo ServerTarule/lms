@@ -24,7 +24,7 @@ class EmployeeController extends Controller
         // $employee=Employee::all();
 
         $employees= DB::table('employees as e')
-        ->select('e.*', 'd.name as designation_type', 'u.name as user_name','r.name as role_name')
+        ->select('e.*', 'd.name as designation_type', 'u.name as user_name','u.status as user_status','r.name as role_name')
         ->leftJoin('designations as d', function($join){
             $join->on('e.designation_id', '=', 'd.id');
         })
@@ -36,10 +36,10 @@ class EmployeeController extends Controller
         })->get();
         
         $employee=Employee::all();
-
+// print_r($employees->toArray());
         // foreach($employee as $employe) {
         //     echo "---------------+++++++++++++++++++--------------";
-        //     print_r($employe->role);
+        //     print_r($employe->user->toArray());
             
         //     echo "---------------*******************--------------";
         // }
@@ -62,6 +62,40 @@ class EmployeeController extends Controller
         return view('employee.addemployee');
     }
 
+    public function validateEmployeeData(Request $request) {
+        // 'contact'=>$request->contact,
+        // 'user_id'=>$user->id,
+        // 'dob'=>$request->dob,
+        // 'doj'=>$request->doj,
+        // 'alternate_contact'=>$request->alternate_contact,
+        // 'designation_id'=>$request->designation_id,
+        // 'profile_img'=>$profilImg,
+        $response = ['status'=>false, 'message'=>"Failed to add user"];
+        if(!$request->name || !isset($request->name) || $request->name ==="") {
+            $response['message'] =  $response['message']." due to wrong data in request as name is blank.";
+        }
+        else if(!$request->email || !isset($request->email) || $request->email ==="") {
+            $response['message'] =  $response['message']." due to wrong data in request as email is blank.";
+        }
+        else if(!$request->role_id || !isset($request->role_id) || $request->role_id ==="") {
+            $response['message'] =  $response['message']." due to wrong data in request as User Type (Role) is not given.";
+        }
+        else if(!$request->password || !isset($request->password) || $request->password ==="") {
+            $response['message'] =  $response['message']." due to wrong data in request as password is not provided.";
+        }
+        else if(!$request->contact || !isset($request->contact) || $request->contact ==="") {
+            $response['message'] =  $response['message']." due to wrong data in request as mobile no is not provided.";
+        }
+        else if(!$request->dob || !isset($request->dob) || $request->dob ==="") {
+            $response['message'] =  $response['message']." due to wrong data in request as dob is not provided.";
+        }
+        else if(!$request->doj || !isset($request->doj) || $request->contact ==="") {
+            $response['message'] =  $response['message']." due to wrong data in request as doj is not provided.";
+        }
+
+        return response()->json($response);
+    }
+
     /**
      * Store a newly created resource in storage.
      *
@@ -69,8 +103,7 @@ class EmployeeController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request): JsonResponse {
-
-        // echo "Role Id = ".$request->role_id;
+        $this->validateEmployeeData($request);
         $allowedExtension = ['png','jpg','jpeg','gif'];
         $profilImg="";
         if($request->file) {
@@ -89,8 +122,11 @@ class EmployeeController extends Controller
         $user=User::create([
             'name'=>$request->name,
             'email'=>$request->email,
+            'role_id'=>$request->role_id,
             'password'=> Hash::make($request->password),
+            "profile_img" => $profilImg
         ]);
+        
         if(!$user){
             return response()->json(['status'=>false, 'message'=>'Something Went Wrong!']);
         }
@@ -142,10 +178,16 @@ class EmployeeController extends Controller
     }
 
     public function updateEmployee(Request $request,$employeeId): JsonResponse {
+        $emp = Employee::find($employeeId);
+        if(empty($emp)) {
+            return response()->json(['status'=>false, 'message'=>'Employee with given id does not exists.!']);
+        }
         $request->password;
         $userId = $request->userId;
-      
-        $request->name;
+        $usercheck = $this->checkIfUserEmailIsUnique($request->email, true, $userId);
+        if(isset( $usercheck) && !empty( $usercheck)) {
+            return response()->json(['status'=>false, 'message'=>'There is existing employee with given email, please chage the email id.!']);
+        }
         $dataToUpdate = [
             'name'=>$request->name,
             'email'=>$request->email,
@@ -163,15 +205,19 @@ class EmployeeController extends Controller
             $name = time().'_'.$request->file->getClientOriginalName();
             $profilImg = "uploads/".$name;
             $filePath = $request->file->move(public_path('uploads'), $name);
+            $dataToUpdate["profile_img"] = $profilImg;
         }
+        // print_r($dataToUpdate); die;
         $user=User::find($userId)->update(
             $dataToUpdate
         );
+
+        // print_r($user);
         if(!$user){
             return response()->json(['status'=>false, 'message'=>'Something Went Wrong!']);
         }
 
-        $emp = Employee::find($employeeId);
+        
         $employee=Employee::find($employeeId)->update([
             'name'=>$request->name,
             'role_id'=>$request->role_id,
@@ -188,6 +234,44 @@ class EmployeeController extends Controller
             return response()->json(['status'=>true, 'message'=>'Employee updated successfully']);
         }
         return response()->json(['status'=>false, 'message'=>'Some Error Occured']);
+    }
+
+    public function toggleemployeestatus(Request $request,$employeeId): JsonResponse {
+        $emp = Employee::find($employeeId);
+        // print_r($emp );
+        if(!isset($mp) && empty($emp)) {
+            return response()->json(['status'=>false, 'message'=>'Employee with given id does not exists.!']);
+        }
+        else {
+            $userId = $emp->user_id;
+            $user = User::find($userId);
+            if(!isset($user) && empty($user)) {
+                return response()->json(['status'=>false, 'message'=>'There is not user asscociated for the epmloyee with given id.!']);
+            }
+            else {
+                $statusStr = "activated";
+                $status = 1;
+                if($request->status == false || $request->status == "false") {
+                    $statusStr = "de-activated";
+                    $status= 0;
+                }
+                $userUpdateStatus =DB::table('users')->where('id', $userId)->update(['status' => $status]);
+                if($userUpdateStatus){
+                    return response()->json(['status'=>true, 'message'=>"Employee $statusStr successfully"]);
+                }
+            }
+        }
+        return response()->json(['status'=>false, 'message'=>'Some Error Occured']);
+    }
+
+    public function checkIfUserEmailIsUnique($email, $isEdit = false, $id =0 ) {
+        if($isEdit == true) {
+            $user = User::where('id','!=',$id)->where('email',$email)->first();
+        }
+        else {
+            $user = User::where('email',$email)->first();
+        }
+        return $user;
     }
     /**
      * Update the specified resource in storage.

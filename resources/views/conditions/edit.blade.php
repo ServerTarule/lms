@@ -74,19 +74,25 @@
                 </div>
             </div>
             <div class="col-md-12">
-                <div class="col-md-2 form-group">
+                <div class="col-md-6 form-group">
                     <label class="control-label"><input type="radio" value="inbound" id="inboundRule" name="ruleType"/> Inbound</label>
                 </div>
-                <div class="col-md-2 form-group">
+                <div class="col-md-6 form-group">
                     <label class="control-label"><input type="radio" value="outbound" id="outboundRule" name="ruleType" checked/>   Outbound</label>
                 </div>
             </div>
             <div class="col-md-12" id="outboundDiv">
-                <div class="col-md-2 form-group">
+                <div class="col-md-6 form-group">
                     <label class="control-label">Frequency</label>
-                    <input type="number" id="ruleFrequency" name="ruleFrequency" placeholder="Enter Frequency" value="{{$rule->rulefrequency or $rule->ruleFrequency}}" class="form-control">
+                    @if(isset($rule->rulefrequency)) {
+                        <input type="number" id="ruleFrequency" name="ruleFrequency" placeholder="Enter Frequency" value="{{$rule->rulefrequency}}" class="form-control">
+                    }
+                    @else
+                    <input type="number" id="ruleFrequency" name="ruleFrequency" placeholder="Enter Frequency" value="{{$rule->ruleFrequency}}" class="form-control">
+                    @endif
+                    
                 </div>
-                <div class="col-md-2 form-group">
+                <div class="col-md-6 form-group">
                     <label class="control-label">Schedule</label>
                     <select class="form-control" name="ruleSchedule" id="ruleSchedule" >
                         <option value="NA">-- Select Schedule --</option>
@@ -99,12 +105,33 @@
             </div>
         </div>
         <div class="col-sm-12">
-            <div class="form-group">
-                <button type="submit" id="editRuleConditionSubmit" class="btn btn-primary btn-sm">Submit</button>
-                <button id="editRuleConditionClear" class="btn btn-danger btn-sm">Clear</button>
+            <div class="form-group text-right col-sm-12">
+                <button type="submit" id="editRuleConditionSubmit" class="btn btn-primary">Submit</button>
             </div>
         </div>
         <input name="ruleMasters" type="hidden" id="ruleMasters" value="{{ $masters }}">
         <input name="ruleId" type="hidden" id="ruleId" value="{{ $rule->id }}">
     </div>
 @endsection
+@push('custom-scripts')
+<script type="text/javascript">
+    $( document ).ready(function() {
+        function disableOutbound(){
+            $("#outboundDiv *").prop('disabled',true);
+            $("#ruleFrequency").val('');
+            $("#ruleSchedule").val('NA');
+        }
+        $("#inboundRule").click(function() {
+            disableOutbound();
+        });
+
+        $("#outboundRule").click(function() {
+            $("#outboundDiv *").prop('disabled',false);
+        });
+
+        //disableOutbound();     
+    });
+   
+
+</script>
+@endpush

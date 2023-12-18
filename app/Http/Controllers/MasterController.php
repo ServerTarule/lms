@@ -46,18 +46,18 @@ class MasterController extends Controller
     public function update(Request $request, $id){
         
         $master = DynamicMain::where('name',$request->name)->first();
-
-        // print_r($master);die;
+        $existing = DynamicMain::where('name', '=', $request->name)->where('id', '!=',$id)->first();   
         if($master && $master->master) {
             return redirect()->back()->with('error','You can not edit a "Main Master"');
         }
-        if($master){
-            return redirect()->back()->with('error','Master Alredy Exist');
+        if($existing){
+            return redirect()->back()->with('error','Master with this name already exists, please hange the name.');
         }
 
         $masterUpdated= DynamicMain::find($id)->update(['name'=>$request->name]);
         if($masterUpdated){
-            return redirect()->route('master')->with('status','Master Updated Successfully');
+            // return redirect()->back()->with('status','Master updated successfully');//
+            return redirect()->route('master-list')->with('status','Master updated successfully.');
         }
     }
 
@@ -70,8 +70,7 @@ class MasterController extends Controller
         $id = $request->get('id');
         DynamicValue::where('parent_id', $id)->delete();
         DynamicMain::where('id', $id)->delete();
-
-        return response()->json(['success' => 'Received rule data']);
+        return response()->json(['message' => 'Master deleted successfully']);
     }
     
     public function delete($id){

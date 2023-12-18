@@ -17,7 +17,7 @@ class DynamicMasterController extends Controller
         return view('dynamicmaster.index', compact('dynamicmasters', 'master'));
     }
 
-    public function store(Request $request, $id)
+    public function addDynamicMaster(Request $request, $id)
     {
         $dependentId = null;
         if ($request->leadStatusMasterId != null) {
@@ -76,6 +76,8 @@ class DynamicMasterController extends Controller
         $id = $request->get('id');
         DynamicValue::where('id', $id)->delete();
 
-        return response()->json(['success' => 'Received rule data']);
+        return response()->json(['success' => 'Value successfully deleted.']);
+
+        
     }
 }

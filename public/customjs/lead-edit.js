@@ -57,7 +57,11 @@
             },
             failure: function (result) {
                 toastr.error('Error occurred while fetching related data!');
-            }
+            },
+            error:function(xhr, status, error) {
+                const resText = JSON.parse(xhr.responseText);
+                toastr.error( resText.message);
+            },
         });
     }
 
@@ -96,7 +100,11 @@
                 },
                 failure: function (result) {
                     toastr.error('Error occurred while fetching city data!');
-                }
+                },
+                error:function(xhr, status, error) {
+                    const resText = JSON.parse(xhr.responseText);
+                    toastr.error( resText.message);
+                },
             });
         }
     }
@@ -139,7 +147,11 @@
                 },
                 failure: function (result) {
                     toastr.error('Error occurred while fetching centers data!');
-                }
+                },
+                error:function(xhr, status, error) {
+                    const resText = JSON.parse(xhr.responseText);
+                    toastr.error( resText.message);
+                },
             });
         }
     }
@@ -234,10 +246,9 @@
                     
                     // window.location.href = "/leads";
                 },
-                error: function (data) {
-                    console.log(data);
-                    toastr.error(data.message);
-                    // window.location.href = "/leads";
+                error:function(xhr, status, error) {
+                    const resText = JSON.parse(xhr.responseText);
+                    toastr.error( resText.message);
                 },
                 failure: function (data) {
                     console.log(data);
@@ -348,8 +359,10 @@
                         // window.location.href = redirectUrl;
                     }, 3000);
                 },
+                
                 error: function (data) {
-                    toastr.error(data.message);
+                    const resText = JSON.parse(xhr.responseText);
+                    toastr.error( resText.message);
                     setTimeout(function(){ 
                         // window.location.href = redirectUrl;
                     }, 3000);
@@ -364,5 +377,6 @@
 
     $("#lead-edit-button").click(function(){
         // alert("---edit-lead-div--===")
+        toastr.warning("Please click 'Save Lead Information' buton to update the lead information!");
         $("#edit-lead-div").toggle(1000);
     });

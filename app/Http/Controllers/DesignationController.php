@@ -108,6 +108,13 @@ class DesignationController extends Controller
      */
     public function destroy($id)
     {
-        //
+        // die($id);
+        try{
+            Designation::find($id)->delete();
+            return response()->json(['status'=>true, 'message'=>'Designation deleted successfully.']);
+        }
+        catch(error) {
+            return response()->json(['status'=>false, 'message'=>`Designation couldn't be deleted`]);
+        }
     }
 }

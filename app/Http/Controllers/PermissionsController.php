@@ -31,18 +31,9 @@ class PermissionsController extends Controller
     public function update(Request $request) : JsonResponse {
         $employeeId = $request->get('employeeId');
         $rulesData = $request->get('rulesDate');
-//        Log::info($employeeId);
-//        Log::info($rulesData);
-
         $rules = json_decode( $rulesData, true );
-
+        // print_r($rules);die;
         foreach($rules as $rule) {
-
-//            $dataItem = [];
-//            $dataItem['employee_id'] = $employeeId;
-//            $dataItem['rule_id'] = $rule['rule'];
-//            $dataItem['status'] = $rule['ruleStatus'];
-
             EmployeeRule::unguard();
             EmployeeRule::updateOrCreate(
                 ['employee_id' => $employeeId, 'rule_id' => $rule['rule']],

@@ -1,5 +1,5 @@
 @extends('layout.app')
-@section('title', 'View Lead Form')
+@section('title', 'View List Of All Leads')
 @section('subtitle', 'List of leads')
 @section('content')
     <div class="row">
@@ -8,20 +8,32 @@
                 <div class="panel-heading">
                     <div class="btn-group" id="buttonexport">
                         <a href="#">
-                        <h4>Lead Status</h4>
+                        <h4>Lead Listing</h4>
                         </a>
                     </div>
                 </div>
                 <div class="panel-body">
                     <div class="text-center">
-                        <a onclick="document.getElementById('modal-18').classList.toggle('transformX-0');" class="btn btn-primary btn-sm"><i class="fa fa-eye"></i> Filter</a>
-                        <a class="btn btn-success btn-sm" data-toggle="modal" data-target="#upload"><i class="fa fa-upload"></i> Bulk Upload</a>
-                        <a href="/leads/create" class="btn btn-info btn-sm"><i class="fa fa-plus"></i> Add lead</a>
+
+                        @if ((isset($userCrudPermissions['add_permission'] ) &&  $userCrudPermissions['add_permission'] != 1))
+                            <a onclick="document.getElementById('modal-18').classList.toggle('transformX-0');" class="btn btn-primary btn-sm"><i class="fa fa-eye"></i> Filter</a>
+                            <a class="btn btn-success btn-sm" onclick="return showMessage()"><i class="fa fa-upload"></i> Bulk Upload</a>
+                            <a onclick="return showMessage()" class="btn btn-info btn-sm"><i class="fa fa-plus"></i> Add lead</a>
+                            <div>
+                                <span class="text-danger"><i class="fa fa-xs fa fa-exclamation-triangle" aria-hidden="true" title="You are not authorized to perform this action."> Unauthorized to add & upload lead(s)! Need add permission for this.  </i></span>
+                            </div>
+
+                        @else
+                            <a onclick="document.getElementById('modal-18').classList.toggle('transformX-0');" class="btn btn-primary btn-sm"><i class="fa fa-eye"></i> Filter</a>
+                            <a class="btn btn-success btn-sm" data-toggle="modal" data-target="#upload"><i class="fa fa-upload"></i> Bulk Upload</a>
+                            <a onclick="return addLead()" class="btn btn-info btn-sm"><i class="fa fa-plus"></i> Add lead</a>
+                        @endif
+                        
                     </div>
                 </div>
                 <div class="panel-body">
                     <div class="table-responsive">
-                        <table id="dataTableExample1" class="table table-bordered table-striped table-hover">
+                        <table id="dataTableExample1" class="table table-bordered table-striped table-hover defaultDataTable">
                             <thead>
                             <tr class="tblheadclr1">
                                 <th scope="col">
@@ -65,7 +77,16 @@
 {{--                                                class="fa fa-edit"></i> </a>--}}
 {{--                                    </td>--}}
                                     <td>
-                                    <a href="/leads/edit/{{$lead->id}}" id="editLead" class="btn-xs btn-info"><i class="fa fa-edit"></i></a>
+                                    @if ((isset($userCrudPermissions['edit_permission'] ) &&  $userCrudPermissions['edit_permission'] != 1))
+                                        <button  onclick="return showMessage(1)"  class="btn btn-xs btn-success btn-flat show_confirm disabled"> 
+                                            <i class="fa fa-edit" title='Edit'></i>
+                                        </button>
+                                    @else
+                                        <a data-toggle="modal" onclick="return editLeadCheckPermission({{ $lead->id }})" class="btn btn-xs btn-success btn-flat show_confirm">
+                                            <i class="fa fa-edit"></i>
+                                        </a> 
+                                    @endif     
+                                    {{-- <a href="/leads/edit/{{$lead->id}}" id="editLead" class="btn-xs btn-info"><i class="fa fa-edit"></i></a> --}}
                                     <!-- <a href="#" id="editLead" onclick="editLead( {{ $lead->id }})" class="btn-xs btn-info">Pop<i class="fa fa-edit"></i></a> -->
                                     </td>
                             @endforeach
@@ -334,6 +355,27 @@
 
 @push('custom-scripts')
 <script type="text/javascript">
+function editLeadCheckPermission(id) {
+    const editPermission  = "{{$userCrudPermissions['edit_permission']}}";
+    if(!editPermission) {
+        toastr.error("You are not allowed to edit lead!");
+        return false;
+    }
+    else {
+        window.location.href =  `/leads/calls/${id}`;
+    }
+}
+function addLead() {
+    const addPermission  = "{{$userCrudPermissions['add_permission']}}";
+    if(!addPermission) {
+        toastr.error("You are not allowed to add/create lead(s)!");
+        return false;
+    }
+    else {
+        window.location.href =  `/leads/create`;
+
+    }
+}
     function editLead(id) {
         let CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
         $.ajaxSetup({
