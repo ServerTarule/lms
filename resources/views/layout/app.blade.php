@@ -546,7 +546,7 @@
     }
 
     function specialCharacterExists(name) {
-        var format = /[`!@#$%^&*()_+\-=\[\]{};:"\\|,.<>\/?~]/;
+        var format = /[`!@#$%^&*()_+\-=\[\]{};:"\\|,<>\/?~]/;
         if (format.test(name)) {
             return true;
         }

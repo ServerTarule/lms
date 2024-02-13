@@ -63,11 +63,8 @@ class WaclubWhatsApp
             curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
             $response = curl_exec($ch);
             curl_close($ch);
-            // echo "Done here";
-            // print_r($response);
-            return $response; // output {success:true} or {success:false}
+            return $response;
         } catch (Request $e) {
-            echo "Error Occurring here";
             throw new \Exception($e->getMessage());
         }
     }}

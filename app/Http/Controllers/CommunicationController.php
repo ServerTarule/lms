@@ -109,29 +109,37 @@ class CommunicationController extends Controller
 
             // print_r($communicationSchedule);die;
         } else if ($communicationType == 'now') {
-            $ruleId = $request->ruleId;
-            //Get Lead Matching With Rule
-            
-            $communicationSchedule = Communication::create([
-                'type'=>$request->communicationTemplateType,
-                'message'=>$request->communicationTemplateMessage,
-                'subject'=>$request->communicationTemplateSubject,
-                'content'=>$request->communicationTemplateBody,
-                'schedule'=>'now',
-                'schedule_unit' => '',
-                'words'=>'now',
-                'template_id'=>$request->communicationTemplateId,
-                'rule_id'=>$request->ruleId
-            ]);
-            $this->sendNotification($ruleId,$request,$communicationSchedule);
-             
+            try{
+                $ruleId = $request->ruleId;
+                //Get Lead Matching With Rule
+                
+                $communicationSchedule = Communication::create([
+                    'type'=>$request->communicationTemplateType,
+                    'message'=>$request->communicationTemplateMessage,
+                    'subject'=>$request->communicationTemplateSubject,
+                    'content'=>$request->communicationTemplateBody,
+                    'schedule'=>'now',
+                    'schedule_unit' => '',
+                    'words'=>'now',
+                    'template_id'=>$request->communicationTemplateId,
+                    'rule_id'=>$request->ruleId
+                ]);
+                $response = $this->sendNotification($ruleId,$request,$communicationSchedule);
+                $ressultArray = json_decode($response,true);
+                if(!$ressultArray['success']) {
+                    throw new \Exception("Schedule saved into DB. But error occurred while sending WhatsApp message! ".$ressultArray['message']);
+                }
+               
+            }
+            catch (Request $e) {
+                throw new \Exception($e->getMessage());
+            }
         }
         return response()->json(['status'=>true, 'message'=>'Communication schedule has been processed successfully.']);
     }
 
     public function sendNotification($ruleId, $request, $communicationSchedule) {
         $leadMatchingRule = $this->getLeadMatchingRule($ruleId);
-        // print_r($leadMatchingRule); //die;
         if (!empty($leadMatchingRule)) {
             if($request->communicationTemplateType == 'SMS') {
                 //SEND SMS HERE
@@ -157,7 +165,7 @@ class CommunicationController extends Controller
                                 return response()->json(['status'=>false, 'message'=>`Communication schedule  has been saved successfully, and email has also been sent `]);
                             }
                             catch (Request $e) {
-                                throw new \Exception($e->getMessage());
+                                throw new \Exception('Communication schedule  has been saved successfully, But error occurred while sending email.');
                             }
                         }
                     }
@@ -170,25 +178,14 @@ class CommunicationController extends Controller
 
             } else if ($request->communicationTemplateType == 'WhatsApp') {
                 foreach ($leadMatchingRule as $key => $value) {
-                    // echo "\n --Lead Id To send Message  --".$value."\n";
-                    $employee=CommunicationLead::create([
+                    CommunicationLead::create([
                         'communication_id'=>$communicationSchedule->id,
                         'rule_id'=>$ruleId,
                         'lead_id'=>$value
                     ]);
                     $lead = Lead::where('id', $value)->first();
-                    // print_r($lead->toArray());
-                    //TODO Validate mobile
-                    if($lead && $lead->mobileno) {
-                        // echo "\n --mobileno-".$lead->mobileno."\n";
-                        try{
-                            WaclubWhatsApp::sendMessage('+91'.$lead->mobileno,$request->communicationTemplateMessage);
-                            // return response()->json(['status'=>false, 'message'=>`Communication schedule has been saved successfully, and whatsapp message has also been sent `]);
-                        }
-                        catch (Request $e) {
-                            // echo "Error ".$e->getMessage();
-                            throw new \Exception($e->getMessage());
-                        }
+                    if($lead && $lead->mobileno) {                        
+                        return WaclubWhatsApp::sendMessage('+91'.$lead->mobileno,$request->communicationTemplateMessage);
                     }
                 }
             }
@@ -363,8 +360,6 @@ class CommunicationController extends Controller
     }
 
     public function update(Request $request) : JsonResponse {
-        // "WhatsApp"
-// die($request->input('communicationTemplateType'));
         try{
             $ruleId = $request->input('ruleId');
             $id = $request->input('communicationId');
@@ -392,7 +387,6 @@ class CommunicationController extends Controller
 
                 // die("----hello----");
             } else if ($communicationType == 'now') {
-                // $communication->frequency_expression = "";
                 $communication->schedule = 'now';
                 $words = 'now';
             }
@@ -401,7 +395,16 @@ class CommunicationController extends Controller
 
             $communication->save();
             if ($communicationType == 'now') {
-                $this->sendNotification($ruleId,$request,$communication);
+                try{
+                    $response = $this->sendNotification($ruleId,$request,$communication);
+                    $ressultArray = json_decode($response,true);
+                    if(!$ressultArray['success']) {
+                        throw new \Exception("Schedule saved into DB. But error occurred while sending WhatsApp message! ".$ressultArray['message']);
+                    }
+                }
+                catch (Request $e) {
+                    throw new \Exception($e->getMessage());
+                }
             }
             return response()->json(['status'=>true, 'message'=>'Communication schedule  has been saved successfully.']);
         }
