@@ -338,7 +338,7 @@ function processMenuStatusToggle(status, menuId) {
     console.log("*********status******",status);
     if(status) {
         statusTxt = ' de-activate ';
-        deActivateTxt = " <br> <br><strong> Note:  </strong> Doing so the menu  to which you de-activating & all it's sub menu(s) will be de-activated."
+        deActivateTxt = " <br> <br><strong> Note:  </strong> On Doing so, the menu which you de-activating & all it's sub menu(s) will be de-activated."
     }
     let confirmTxt = `<strong style="color:red; font-size: 20px"> Are you sure you want to ${statusTxt} menu? </strong>${deActivateTxt}`;
     bootbox.confirm(confirmTxt, function(confirmVal){

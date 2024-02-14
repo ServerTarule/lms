@@ -35,7 +35,7 @@
                         </a> --}}
                     </div>
                     <div class="table-responsive">
-                        <table id="dataTableExample1" class="table table-bordered table-striped table-hover">
+                        <table id="dataTableExample1" class="table defaultDataTable table-bordered table-striped table-hover">
                             <thead>
                                 <tr class="tblheadclr1">
                                     <th scope="col">
