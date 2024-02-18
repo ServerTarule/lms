@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Exceptions\UnauthorizedException;
 use Illuminate\Support\Facades\Route;
+use App\Models\Employee;
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -51,9 +52,14 @@ class AppServiceProvider extends ServiceProvider
             // echo " </br>actionName ----".$actionName;
             $user = Auth::user();
             $userId = $user?$user->id:0;
+            $currentEmployeeDetails = [];
+            if($userId){
+                $employee=Employee::where('user_id',$userId)->get();
+                if(count($employee) > 0) {
+                    $currentEmployeeDetails=$employee[0];
+                }
+            }
             $roleId = $user?$user->role_id:0;
-            // echo "User Id is ".$userId."===roleId===".$roleId;
-            
             if($roleId === 6) {
                 $userCrudPermissions = [
                     'add_permission'=> true,
@@ -138,9 +144,9 @@ class AppServiceProvider extends ServiceProvider
                 }
             }
             // print_r($user);die;
-            // echo "<pre>";
+            // echo "==currentEmployeeDetails===".$currentEmployeeDetails;
             // print_r($userCrudPermissions);
-            $view->with(['userCrudPermissions'=> $userCrudPermissions,'currentuser'=>$user] );    
+            $view->with(['userCrudPermissions'=> $userCrudPermissions,'currentuser'=>$user,'currentEmployeeDetails'=>$currentEmployeeDetails] );    
         });  
     }
 }

@@ -11,7 +11,7 @@ use Spatie\Permission\Models\Role;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Support\Facades\DB;
-
+use Illuminate\Support\Facades\Auth;
 class EmployeeController extends Controller
 {
     /**
@@ -36,7 +36,7 @@ class EmployeeController extends Controller
         })->get();
         
         $employee=Employee::all();
-// print_r($employees->toArray());
+        // print_r($employees->toArray());
         // foreach($employee as $employe) {
         //     echo "---------------+++++++++++++++++++--------------";
         //     print_r($employe->user->toArray());
@@ -48,7 +48,6 @@ class EmployeeController extends Controller
         $user=User::all();
         $role=Role::all();
         $designation=Designation::all();
-        // print_r($employee);
         return view('employee.index',compact('employee','user','role','designation'));
     }
 

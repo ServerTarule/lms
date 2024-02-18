@@ -702,4 +702,37 @@ class LeadController extends Controller
     }
 
 
+    public function assigned() {
+        $leads = Lead::where('employee_id','<>', null)->get();
+        return view('leads.assigned', compact('leads'));
+    }
+
+
+    public function toggleadacceptancestatus(Request $request,$leadId, $employeeId): JsonResponse {
+        $lead = Lead::find($leadId);
+        if(!$request->status || $request->status == 'false' || $request->status === false) {
+            return response()->json(['status'=>false, 'message'=>'Accepted lead can not be reverted!']);
+        }
+        if(!isset($lead) && empty($lead)) {
+            return response()->json(['status'=>false, 'message'=>'Lead with given id does not exists.!']);
+        }
+        else {
+            $assignedLead = Lead::where("id",$leadId)->where("employee_id",$employeeId)->get();
+            if(!isset($assignedLead) || empty($assignedLead) || count($assignedLead) == 0) {
+                return response()->json(['status'=>false, 'message'=>'Lead is not assigned.!']);
+            }
+            else {
+                if($assignedLead[0]->is_accepted == 1 || $assignedLead[0]->is_accepted == 2) {
+                    return response()->json(['status'=>false, 'message'=>'Lead is already accepted or rejected.!']); 
+                }
+                else {
+                    $leadUpdateStatus =DB::table('leads')->where('id', $leadId)->where('employee_id', $employeeId)->update(['is_accepted' => 1]);
+                    if($leadUpdateStatus){
+                        return response()->json(['status'=>true, 'message'=>"Lead accepted successfully."]);
+                    }
+                }
+            }
+        }
+        return response()->json(['status'=>false, 'message'=>'Some Error Occured']);
+    }
 }

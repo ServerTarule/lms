@@ -29,7 +29,7 @@
                         
                     </div>
                     <div class="table-responsive">
-                        <table id="dataTableExample1" class="table table-bordered table-striped table-hover">
+                        <table id="dataTableExample1" class="defaultDataTable table table-bordered table-striped table-hover">
                             <thead>
                             <tr class="tblheadclr1">
                                 <th scope="col">
@@ -85,7 +85,7 @@
                                             <i class="fa fa-eye"></i> {{ $communication->leads()->count() }}
                                         </a>
                                         @endif
-                                    </td>
+                                    </td> 
 {{--                                    <td></td>--}}
 {{--                                    <td>{{ \Carbon\Carbon::parse($holiday->day)->format('d/m/Y') }}</td>--}}
                                     <td>{{ \Carbon\Carbon::parse($communication->created_at)->format('d/m/Y') }}</td>

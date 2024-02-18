@@ -19,27 +19,15 @@
             @endif
                 <div class="panel-body">
                     <div class="text-right">
-                        {{-- @if ((isset($userCrudPermissions['add_permission'] ) &&  $userCrudPermissions['add_permission'] != 1))
-                        <span class="text-danger"><i class="fa fa-xs fa fa-exclamation-triangle" aria-hidden="true" title="You are not authorized to perform this action."> Unauthorized to add employee(s).  </i></span>
-                        <a class="btn btn-exp btn-sm" onclick="return showMessage()" {{ (isset($userCrudPermissions['add_permission'] ) &&  $userCrudPermissions['add_permission'] != 1) ? ' disabled' : '' }}>
-                            <i class="fa fa-plus"></i>Add Employee
-                        </a>
-                    @else
-                        <a class="btn btn-exp btn-sm" href="/rules/create"  {{ (isset($userCrudPermissions['add_permission'] ) &&  $userCrudPermissions['add_permission'] != 1) ? ' disabled' : '' }}>
-                            <i class="fa fa-plus"></i>Add Employee
-                        </a>
-                    @endif --}}
-
-
-                    @if ((isset($userCrudPermissions['add_permission'] ) &&  $userCrudPermissions['add_permission'] != 1))
-                        <span class="text-danger"><i class="fa fa-xs fa fa-exclamation-triangle" aria-hidden="true" title="You are not authorized to perform this action."> Unauthorized to add employee(s).  </i></span>
-                        <a class="btn btn-exp btn-sm" onclick="return showMessage()"><i class="fa fa-plus"></i>Add Employee</a>
-                    @else
-                        <a class="btn btn-exp btn-sm" data-toggle="modal" data-target="#additem"><i class="fa fa-plus"></i>Add Employee</a>
-                    @endif
+                        @if ((isset($userCrudPermissions['add_permission'] ) &&  $userCrudPermissions['add_permission'] != 1))
+                            <span class="text-danger"><i class="fa fa-xs fa fa-exclamation-triangle" aria-hidden="true" title="You are not authorized to perform this action."> Unauthorized to add employee(s).  </i></span>
+                            <a class="btn btn-exp btn-sm" onclick="return showMessage()"><i class="fa fa-plus"></i>Add Employee</a>
+                        @else
+                            <a class="btn btn-exp btn-sm" data-toggle="modal" data-target="#additem"><i class="fa fa-plus"></i>Add Employee</a>
+                        @endif
                     </div>
                     <div class="table-responsive">
-                        <table id="dataTableExample1" class="table table-bordered table-striped table-hover">
+                        <table id="dataTableExample1" class="defaultDataTable table table-bordered table-striped table-hover">
                             <thead>
                                 <tr class="tblheadclr1">
                                     <th scope="col">
@@ -66,9 +54,6 @@
                                     <th scope="col">
                                         <a>Email id</a>
                                     </th>
-                                    <!-- <th scope="col">
-                                        <a>Password</a>
-                                    </th> -->
                                     <th scope="col">
                                         <a>DOB</a>
                                     </th>
@@ -78,30 +63,16 @@
                                     <th scope="col">
                                         <a>Alternate Mobile No</a>
                                     </th>
-                                    <!-- <th scope="col">
-                                        <a>Designation Type</a>
-                                    </th> -->
-
-                                    
-
+                                  
                                     <th scope="col">
                                         <a>Profile Image</a>
                                     </th>
-                                    <!--  <th scope="col">
-                              <a>Max/Per Day</a>
-                          </th>
-                          <th scope="col">
-                              <a>Max/Per Weekly</a>
-                          </th> -->
                                     <th scope="col">
                                         <a>Edit</a>
                                     </th>
                                     <th scope="col">
                                         <a>Activate/Deactivate</a>
                                     </th>
-                                    {{-- <th scope="col">
-                                        <a>Block/Unblock</a>
-                                    </th> --}}
                                 </tr>
                             </thead>
                             <tbody>
@@ -124,14 +95,9 @@
                                         <td>
                                             {{$employe->user->email}}
                                         </td>
-                                        <!-- <td>*******</td> -->
                                         <td>{{$employe->dob}}</td>
                                         <td>{{$employe->doj}}</td>
                                         <td>{{$employe->alternate_contact}}</td>
-
-                                        <!-- <td>
-                                            {{$employe->designation->name}}
-                                        </td> -->
                                         <td>
                                             @if ($employe->profile_img)
                                                 <img src="{{$employe->profile_img}}" height="40px" width="40px" />

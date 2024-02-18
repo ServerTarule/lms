@@ -137,7 +137,8 @@ class LeaveController extends Controller
             return response()->json(['status'=>false, 'message'=>'Leave with given id does not exists.!']);
         }
         else {
-            $employeeId = $request->employeeid;
+           //echo "Employee Id".
+           $employeeId = $request->employeeid;
             $emp = Employee::find($employeeId);
             if(empty($emp)) {
                 return response()->json(['status'=>false, 'message'=>'Employee with given id/name does not exists.!']);

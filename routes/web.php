@@ -195,6 +195,8 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/leads/calls/{id}/call', [LeadController::class, 'leadcall'])->name('leads.leadcall')->middleware('check_page_permission:/leads,edit_permission,0');//->middleware('can:read master');
     Route::post('/leads/upload', [LeadController::class, 'upload'])->name('leads.upload')->middleware('check_page_permission:/leads,add_permission,0');//->middleware('can:read master');
     Route::get('/leads/export', [LeadController::class, 'export'])->name('leads.export')->middleware('check_page_permission:/leads,view_permission,0');//->middleware('can:read master');
+    Route::get('/leads/assigned', [LeadController::class, 'assigned'])->name('leads.assigned');//->middleware('check_page_permission:/leads,view_permission,0');//->middleware('can:read master');
+    Route::post('/leads/toggleadacceptancestatus/{id}/{employeeId}', [LeadController::class, 'toggleadacceptancestatus'])->name('toggleadacceptancestatus');//->middleware('check_page_permission:/employee,edit_permission,0');//->middleware('can:update employee'); //NOT YET CHECKED AS IT IS NOT WORKING
 
     //Logs
     Route::get('/logs', [LogController::class, 'index'])->name('logs.index')->middleware('check_page_permission:/logs,view_permission,0');;//->middleware('can:read master');
