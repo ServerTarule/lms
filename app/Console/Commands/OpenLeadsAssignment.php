@@ -9,7 +9,7 @@ use App\Models\LeadMaster;
 use App\Models\RuleCondition;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
-
+use App\Models\Leaves;
 class OpenLeadsAssignment extends Command
 {
     /**
@@ -36,7 +36,8 @@ class OpenLeadsAssignment extends Command
 
         Log::info('*** Running new code ***');
         //New Code
-        $openLeads = Lead::whereNull('employee_id')->get();
+        // $openLeads = Lead::whereNull('employee_id')->get();
+        $openLeads = Lead::where('is_accepted', 0)->get();
         Log::info('*** open leads start ***');
         Log::info($openLeads);
         Log::info('*** open leads end ***');
@@ -97,12 +98,24 @@ class OpenLeadsAssignment extends Command
                     $ruleMatchingLeadMaster[] = $ruleId;
                 }
             }
+            Log::info('***  ruleMatchingLeadMaster ***');
+            Log::info($ruleMatchingLeadMaster);
             $employeeRules = EmployeeRule::wherein('rule_id', array_values($ruleMatchingLeadMaster))->where('status', 'true')->get();
+            Log::info('***  employeeRules ***');
+            Log::info($employeeRules);
             foreach ($employeeRules as $employeeRule) {
+                $currentDateTime = date('Y-m-d H:i:s');
                 //Write logic here for leaves....if employee is on leave when assignment is going on then loop will continue and pick other employee
+                $employeeLeaves = Leaves::where('start_time','<=', $currentDateTime)->where('end_time','>=', $currentDateTime)->where('employee_id','=', $employeeRule->employee_id)->get();
+                Log::info('*** employeeLeaves start ***');
+                Log::info($employeeLeaves);
+                Log::info('*** employeeLeaves end ***');
+                if(count($employeeLeaves) > 0) {
+                    continue;
+                }
                 Lead::where('id', $lead->id)->update(['employee_id' => $employeeRule->employee_id]);
-                $date = date('Y-m-d\TH:i:s.uP', time());
-                Employee::where('id', $employeeRule->employee_id)->update(['lead_assigned_at' => $date]);
+                // $date = date('Y-m-d\TH:i:s.uP', time());
+                Employee::where('id', $employeeRule->employee_id)->update(['lead_assigned_at' => $currentDateTime]);
             }
         }
 

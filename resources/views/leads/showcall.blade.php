@@ -56,9 +56,6 @@
                                     <td>{{$leadKV['Action Types']}}</td>
                                     <td>{{$leadKV['States']}}</td>
                                     <td>{{$leadKV['Cities']}}</td>
-                                    {{-- @foreach ($leadKV as $key => $value)
-                                        <td>{{$value}}</td>
-                                    @endforeach --}}
                                     <input type="hidden" class="ModuleName" value="FirstCallingDetails" />
                                     @php
                                         $leadKVForEditId = 0;
@@ -74,8 +71,6 @@
                                             <button  id="lead-edit-button"  class="btn btn-xs btn-success btn-flat show_confirm">
                                                 <i class="fa fa-edit"></i>
                                             </button> 
-                                            {{-- onclick="return editLeadCheckPermission({{ $lead->id }})" --}}
-                                        {{-- <a href="#" id="lead-edit-button" class="btn btn-primary"><i class="fa fa-edit"></i></a> --}}
                                         @endif
                                     </td>
                                 </tr>
@@ -356,7 +351,13 @@
                                             <select class="form-control" name="leadEmployeeId" id="leadEmployeeId">
                                                 <option value="">-- Select Owner --</option>
                                                 @foreach ($employees as $employee )
-                                                    <option value="{{$employee->id}}">{{$employee->name}}</option>
+                                                    @php
+                                                        $selectedStateStr = "";
+                                                        if($employee->id == $lead->employee->id ) {
+                                                            $selectedStateStr = "selected";
+                                                        }
+                                                    @endphp
+                                                    <option value="{{$employee->id}}" {{$selectedStateStr}}>{{$employee->name}}</option>
                                                 @endforeach
                                             </select>
                                         </div>
