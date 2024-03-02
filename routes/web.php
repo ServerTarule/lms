@@ -32,7 +32,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\MenusController;
 use App\Http\Controllers\MenusPermissionController;
-
+use App\Http\Controllers\GlobalSettingsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -274,6 +274,11 @@ Route::middleware(['auth'])->group(function () {
     // Template Master
 
 
+     // NOt Functional Even ON QA
+    Route::get('/global-settings', [GlobalSettingsController::class, 'index'])->name('index');//->middleware('check_page_permission:/global-settings,view_permission,0, 1');//NOT DONE YET Because  Page Not Working
+    Route::post('/global-settings/edit', [GlobalSettingsController::class, 'edit'])->name('edit');//->middleware('check_page_permission:/global-settings,view_permission,0, 1');//NOT DONE YET Because  Page Not Working
+    Route::post('/global-settings/update-settings/{id}', [GlobalSettingsController::class, 'update'])->name('update');//->middleware('check_page_permission:/global-settings,view_permission,0, 1');//NOT DONE YET Because  Page Not Working
+    //'/employee/updateemployee/{id}'
 });
 
 

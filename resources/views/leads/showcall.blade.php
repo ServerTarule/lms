@@ -84,7 +84,14 @@
                             <div class="form-group col-sm-6">
                                 <label>Lead Assigned To : </label> 
                                 @if($lead->employee) 
-                                    {{$lead->employee->name}}
+                                    {{$lead->employee->name}}   
+                                    @if($lead->is_accepted) 
+                                        &nbsp;(<b style="color:green">Accepted</b>)
+                                    @else
+                                        &nbsp;(<b style="color:red">Not Accepted</b>)
+                                    @endif
+
+
                                 @else
                                     Not Assigned Yet
                                 @endif
@@ -96,6 +103,7 @@
                                 @else
                                     Not Assigned Yet
                                 @endif
+                               
                             </div>  
                         </div>
                         <hr>
@@ -353,7 +361,7 @@
                                                 @foreach ($employees as $employee )
                                                     @php
                                                         $selectedStateStr = "";
-                                                        if($employee->id == $lead->employee->id ) {
+                                                        if(isset($lead->employee) > 0 && ($employee->id == $lead->employee->id) ) {
                                                             $selectedStateStr = "selected";
                                                         }
                                                     @endphp
@@ -551,7 +559,7 @@ No Information Found
     const leadMasterKeyValueArray =  {{ Js::from($leadMasterKeyValueArray) }};
     @endif
 </script>
-<script type="text/javascript" src="{{ URL::asset('/customjs/lead-edit.js') }}"></script>
+<script type="text/javascript" src="/customjs/lead-edit.js"></script>
 <script>
     if(state && state > 0) {
         getCityForState(state, city)

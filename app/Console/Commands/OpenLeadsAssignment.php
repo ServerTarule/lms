@@ -10,6 +10,8 @@ use App\Models\RuleCondition;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 use App\Models\Leaves;
+use App\Models\GlobalSetting;
+use Illuminate\Support\Facades\DB;
 class OpenLeadsAssignment extends Command
 {
     /**
@@ -34,14 +36,38 @@ class OpenLeadsAssignment extends Command
     public function handle()
     {
 
+        
         Log::info('*** Running new code ***');
         //New Code
-        // $openLeads = Lead::whereNull('employee_id')->get();
-        $openLeads = Lead::where('is_accepted', 0)->get();
+        $set = GlobalSetting::all()->where('setting_key', '=','LEAD_ACCEPTANCE_INTERVAL');
+        
+        Log::info('*** $set ***');
+        Log::info($set);
+        $intervalSetting = $set;
+        Log::info($intervalSetting);
+        if(isset($intervalSetting) && count($intervalSetting) > 0) {
+            $timeint = $intervalSetting[0]["setting_value"];
+        }
+        Log::info('*** $timeint ***');
+        Log::info($timeint);
+        $query = "SELECT l.*, NOW() as now, TIMESTAMPDIFF(MINUTE, updated_at, NOW()) as difdinminute FROM leads as l where is_accepted = 0 && TIMESTAMPDIFF(MINUTE, updated_at, NOW()) >= $timeint";
+        // $query = "SELECT *  FROM  leads where TIMEDIFF(CURDATE(), updated_at) <= $timeint";
+        // echo "\n Query =".$query;
+        Log::info('*** $query ***');
+        Log::info($query);
+
+        $openLeads = DB::select($query);
+        
+        Log::info('*** $openLeads new logic ***');
+        Log::info($openLeads);
+
+
+        // $openLeads = Lead::where('is_accepted', 0)->get(); //Old Logic
         Log::info('*** open leads start ***');
         Log::info($openLeads);
         Log::info('*** open leads end ***');
         foreach ($openLeads as $openLead) {
+            $alreadyAssignedEmployee = $openLead->employee_id;
             $lead = $openLead;
             $leadId = $lead->id;
             //For a lead, lead master is created with all masters
@@ -101,6 +127,10 @@ class OpenLeadsAssignment extends Command
             Log::info('***  ruleMatchingLeadMaster ***');
             Log::info($ruleMatchingLeadMaster);
             $employeeRules = EmployeeRule::wherein('rule_id', array_values($ruleMatchingLeadMaster))->where('status', 'true')->get();
+            if($alreadyAssignedEmployee) {
+                $employeeRules = EmployeeRule::wherein('rule_id', array_values($ruleMatchingLeadMaster))->where('status', 'true')->where('employee_id','!=', $alreadyAssignedEmployee )->get();
+            }
+            
             Log::info('***  employeeRules ***');
             Log::info($employeeRules);
             foreach ($employeeRules as $employeeRule) {

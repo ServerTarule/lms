@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Channels;
-
+use Illuminate\Support\Facades\DB;
 class WaclubWhatsApp
 {
 
@@ -41,14 +41,19 @@ class WaclubWhatsApp
         
     }
 
-    public static function sendMessage($to, $msgtext)
+    public static function sendMessage($to, $msgtext, $sender = '918826134489')
     {
         try {
-
+            $query = "SELECT * FROM whatsapp_settings where sender_contact=$sender";
+            $creds = DB::select($query);
+            $token = env('WACLUB_WHATSAPP_API_TOKE');
+            if(isset($creds) && count ($creds) > 0) {
+                $token =$creds[0]->token;
+            }
             $data = [
                 'receiver'  => $to,
                 'msgtext'   => $msgtext,
-                'token'     => env('WACLUB_WHATSAPP_API_TOKE'),
+                'token'     => $token,//env('WACLUB_WHATSAPP_API_TOKE'),
                 // 'mediaurl'  => env('NODE_URL'), // delete this line if no media
                 // 'buttons'   => $buttons, // delete this line if no buttons
             ];

@@ -29,6 +29,7 @@ use Illuminate\View\View;
 use Maatwebsite\Excel\Facades\Excel;
 use function PHPUnit\Framework\isNull;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class LeadController extends Controller
 {
@@ -703,7 +704,22 @@ class LeadController extends Controller
 
 
     public function assigned() {
-        $leads = Lead::where('employee_id','<>', null)->get();
+        $user = Auth::user();
+        $userId = $user?$user->id:0;
+        $userAssignedLead = [];
+        $userAssignedLeadsCount = 0;
+        if($userId){
+            $currentEmployee=Employee::where('user_id',$userId)->get();
+            if(count($currentEmployee) > 0) {
+                $currentEmployeeId=$currentEmployee[0]->id;
+                $userAssignedLeads = Lead::where("employee_id",$currentEmployeeId)->get();
+            }
+            
+        }
+        $leads = [];
+        if($currentEmployeeId > 0) {
+            $leads = Lead::where("employee_id",$currentEmployeeId)->get();
+        }  
         return view('leads.assigned', compact('leads'));
     }
 

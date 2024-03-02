@@ -22,11 +22,13 @@
     <link href="{{ asset('assets/dist/css/stylecrm.css') }}" rel="stylesheet" type="text/css" />
     
 {{--    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.min.css" rel="stylesheet" />--}}
-    <link href="http://lasik.tarule.in/css/dataTables.bootstrap.min.css" rel="stylesheet" />
+    {{-- <link href="http://lasik.tarule.in/css/dataTables.bootstrap.min.css" rel="stylesheet" /> --}}
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:ital,wght@0,200;0,300;0,400;0,600;0,700;0,900;1,200;1,300;1,400;1,600;1,700;1,900&display=swap" rel="stylesheet" />
+    <link href="https://cdn.datatables.net/2.0.1/css/dataTables.dataTables.min.css" rel="stylesheet" type="text/css" />
 
+    
     <style>
         .username {
             margin-top: 15px;
@@ -275,6 +277,9 @@
         </div>
     </div>
     @livewireScripts
+    <script type="text/javascript">
+        console.log("--helloooo---");
+    </script>
     <script src="{{ asset('assets//plugins/jQuery/jquery-1.12.4.min.js') }}" type="text/javascript"></script>
     <script src="{{ asset('assets//plugins/jquery-ui-1.12.1/jquery-ui.min.js') }}" type="text/javascript"></script>
     <script src="{{ asset('assets//bootstrap/js/bootstrap.min.js') }}" type="text/javascript"></script>
@@ -289,8 +294,11 @@
     <script src="{{ asset('assets//plugins/monthly/monthly.js') }}" type="text/javascript"></script>
     <script src="{{ asset('assets//dist/js/dashboard.js') }}" type="text/javascript"></script>
 {{--    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js"></script>--}}
-    <script src="http://lasik.tarule.in/js/jquery.dataTables.min.js"></script>
-    <script src="http://lasik.tarule.in/js/dataTables.bootstrap.min.js"></script>
+    
+    {{-- <script src="http://lasik.tarule.in/js/jquery.dataTables.min.js"></script> --}}
+    {{-- <script src="http://lasik.tarule.in/js/dataTables.bootstrap.min.js"></script> --}}
+
+<script src="https://cdn.datatables.net/2.0.1/js/dataTables.min.js"></script>
     <script src="http://lasik.tarule.in/ckeditor/samples/js/sample.js"></script>
     <script src="http://lasik.tarule.in/ckeditor/styles.js"></script>
     <script src="http://lasik.tarule.in/ckeditor/ckeditor.js"></script>
@@ -303,7 +311,9 @@
 <script src="//cdn.ckeditor.com/4.14.1/standard/ckeditor.js"></script>
 <script type="text/javascript">
     const NOT_AUTHORIZED_TO_PERFORM_ACTION = `You are not allowed to perform this action!`;
+    console.log("--NOT_AUTHORIZED_TO_PERFORM_ACTION---");
     $(document).ready(function() {
+        console.log("----I am inside document---",$(document));
         $('.defaultDataTable').dataTable( {
             paginate: true,
             pageLength: 10,
@@ -317,28 +327,28 @@
         //     }
         // });
         var groupColumn = 0;
-        var table = $('#example-group').DataTable({
-            "columnDefs": [
-                { "visible": false, "targets": groupColumn }
-            ],
-            "order": [[ groupColumn, 'asc' ]],
-            "displayLength": 10,
-            "drawCallback": function ( settings ) {
-                var api = this.api();
-                var rows = api.rows( {page:'current'} ).nodes();
-                var last=null;
+        // var table = $('#example-group').dataTable({
+        //     "columnDefs": [
+        //         { "visible": false, "targets": groupColumn }
+        //     ],
+        //     "order": [[ groupColumn, 'asc' ]],
+        //     "displayLength": 10,
+        //     "drawCallback": function ( settings ) {
+        //         var api = this.api();
+        //         var rows = api.rows( {page:'current'} ).nodes();
+        //         var last=null;
     
-                api.column(groupColumn, {page:'current'} ).data().each( function ( group, i ) {
-                    if ( last !== group ) {
-                        $(rows).eq( i ).before(
-                            '<tr class="group"><td colspan="12">'+group+'</td></tr>'
-                        );
+        //         api.column(groupColumn, {page:'current'} ).data().each( function ( group, i ) {
+        //             if ( last !== group ) {
+        //                 $(rows).eq( i ).before(
+        //                     '<tr class="group"><td colspan="12">'+group+'</td></tr>'
+        //                 );
     
-                        last = group;
-                    }
-                } );
-            }
-        } );
+        //                 last = group;
+        //             }
+        //         } );
+        //     }
+        // } );
         // var table = $('#example-group').DataTable( {
         //     order: [
         //         [2, 'asc'],

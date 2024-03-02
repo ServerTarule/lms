@@ -178,14 +178,14 @@
                                 @csrf
                                 <fieldset>
                                     <!-- <span class="required text-danger"> * </span> -->
-                                    <div class="col-md-12 form-group">
+                                    {{-- <div class="col-md-12 form-group">
                                         <label>Admin Name (User)</label>
                                         <select class="form-control" name="admin_name" id="admin_name" multiple>
                                           @foreach ($user as $users )
                                             <option value="{{$users->id}}">{{$users->name}}</option>
                                           @endforeach
                                         </select>
-                                    </div>
+                                    </div> --}}
                                     <div class="col-md-6 form-group">
                                         <label class="control-label">Employee Name <span class="required text-danger"> * </span></label>
                                         <input type="text" placeholder="Enter Employee Name" name="name" id="emp_name" class="form-control">
@@ -226,7 +226,7 @@
                                     </div>
                                    
                                     <div class="col-md-6 form-group">
-                                        <label class="control-label">Designation Type</label>
+                                        <label class="control-label">Designation Type <span class="required text-danger"> * </span></label>
                                        <select class="form-control" name="designation_id" id="designation_id">
                                             @foreach ($designation as $designations )
                                               <option value="{{$designations->id}}">{{$designations->name}}</option>
@@ -282,14 +282,14 @@
                               <div class="col-md-12">
                                  <form class="form-horizontal" id="updateEmployeeForm">
                                     <fieldset>
-                                        <div class="col-md-12 form-group">
+                                        {{-- <div class="col-md-12 form-group">
                                             <label>Admin Name (User) </label>
                                             <select class="form-control" name="admin_name" id="admin_name_edit" multiple>
                                             @foreach ($user as $users )
                                                 <option value="{{$users->id}}">{{$users->name}}</option>
                                             @endforeach
                                             </select>
-                                        </div>
+                                        </div> --}}
                                         <!-- <div class="form-group col-sm-12">
                                          <label>Admin Name <span class="required"> * </span></label>
                                          <select class="form-control" name="ConnectStatus" multiple>
@@ -486,6 +486,7 @@ function validateForm(isEdit=false) {
     let isValid = true;
     let validationMessage = "<b>Please follow below instruction before submitting form.</b><ul>";
     const admin_name = (isEdit)?$("#admin_name_edit").val():$("#admin_name").val();
+    const designation = (isEdit)?$("#designation_id_edit").val():$("#designation_id").val();
     const role_id = (isEdit)?$("#role_id_edit").val():$("#role_id").val();
     const emp_name = (isEdit)?$("#emp_name_edit").val():$("#emp_name").val();
     const contact = (isEdit)?$("#contact_edit").val():$("#contact").val();
@@ -500,7 +501,10 @@ function validateForm(isEdit=false) {
     //     validationMessage += `<li>Please select an admin. </li>`; 
     //     isValid=false;
     // }
-
+    if(designation == null || designation=="" || designation?.length < 1) {
+        validationMessage += `<li>Please select an designation. </li>`; 
+        isValid=false;
+    }
     if(role_id == null ||role_id == 0 || role_id?.length < 1) {
         validationMessage += `<li>Please select an user type. </li>`; 
         isValid=false;

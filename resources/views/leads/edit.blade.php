@@ -212,5 +212,5 @@
     const masterDependentObjName = {7:"Cities",3:'Lead Stages'};
     const leadMasterKeyValueArray =  {{ Js::from($leadMasterKeyValueArray) }};
 </script>
-<script type="text/javascript" src="{{ URL::asset('/customjs/lead-edit.js') }}"></script>
+<script type="text/javascript" src="{{ URL::asset('public//customjs/lead-edit.js') }}"></script>
 @endpush
