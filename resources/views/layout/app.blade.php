@@ -108,11 +108,15 @@
                             <ul class="dropdown-menu">
                                 <li>
                                     <a href="/users/profile">
-                                        <i class="fa fa-user"></i> profile</a>
+                                        <i class="fa fa-user"></i> Profile</a>
                                 </li>
                                 <li>
                                     <a href="/users/change-password">
                                         <i class="fa fa-lock"></i> Change Password</a>
+                                </li>
+                                <li>
+                                    <a href="/global-settings">
+                                        <i class="fa fa-cog"></i> Global Settings</a>
                                 </li>
                                 <li><a href="/logout">
                                         <i class="fa fa-sign-out"></i> Signout</a>
