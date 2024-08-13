@@ -3,7 +3,11 @@
 @section('subtitle','Very detailed & featured admin')
 @section('content')
     <div class="row">
+        @if ($roleId==6)
+            
+        
         <div class="col-xs-12 col-sm-6 col-md-6 col-lg-3">
+            <a href="/leads">
             <div id="cardbox1">
                 <div class="statistic-box">
                     <div class="counter-number pull-right">
@@ -11,13 +15,16 @@
                         <span class="slight"><i class="fa fa-play fa-rotate-270"> </i>
                      </span>
                     </div>
-                    <h3>Total Leads</h3>
+                     <h3>Total Leads</h3>
                 </div>
             </div>
+        </a>
         </div>
+        @endif
         <div class="col-xs-12 col-sm-6 col-md-6 col-lg-3">
+            <a href="/leads/assigned"> 
             <div id="cardbox1">
-                <a href="/leads/assigned"> 
+                
                     <div class="statistic-box">
                         <div class="counter-number pull-right">
                             <span class="count-number">{{$userAssignedLeadsCount}}</span>
@@ -26,8 +33,9 @@
                         </div>
                         <h3>Assigned Leads</h3>
                     </div>
-                </a>
+                
             </div>
+        </a>
         </div>
         {{-- <div class="col-xs-12 col-sm-6 col-md-6 col-lg-3">
             <div id="cardbox2">

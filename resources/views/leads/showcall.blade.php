@@ -65,13 +65,13 @@
                                     @endphp
                                     <input type="hidden" id="leadId" name="leadId" value="{{$leadKVForEditId}}" />
                                     <td>
-                                        @if ((isset($userCrudPermissions['edit_permission'] ) &&  $userCrudPermissions['edit_permission'] != 1))
+                                        {{-- @if ((isset($userCrudPermissions['edit_permission'] ) &&  $userCrudPermissions['edit_permission'] != 1))
                                             <button onclick="return showMessage(1)" class="btn btn-xs btn-success btn-flat show_confirm disabled"><i class="fa fa-edit"></i></button>
-                                        @else
+                                        @else --}}
                                             <button  id="lead-edit-button"  class="btn btn-xs btn-success btn-flat show_confirm">
                                                 <i class="fa fa-edit"></i>
                                             </button> 
-                                        @endif
+                                        {{-- @endif --}}
                                     </td>
                                 </tr>
                             </tbody>
@@ -322,11 +322,11 @@
                         <div class="panel-body">
                             <div class="col-sm-12">
                                 <div class="form-group text-right">
-                                    @if ((isset($userCrudPermissions['edit_permission'] ) &&  $userCrudPermissions['edit_permission'] != 1))
+                                    {{-- @if ((isset($userCrudPermissions['edit_permission'] ) &&  $userCrudPermissions['edit_permission'] != 1))
                                         <button onclick="return showMessage(1)" class="btn btn-success btn-flat show_confirm disabled">
                                             <i class="fa fa-save"> Save Lead Information</i>
                                         </button>
-                                    @else
+                                    @else --}}
                                         <button type="button" id="leadMasterSubmitUpdate"  class="btn btn-success btn-flat show_confirm">
                                             <i class="fa fa-save "> Save Lead Information</i>
                                         </button>
@@ -336,7 +336,7 @@
                                         </button>  --}}
                                         {{-- onclick="return editLeadCheckPermission({{ $lead->id }})" --}}
                                     {{-- <a href="#" id="lead-edit-button" class="btn btn-primary"><i class="fa fa-edit"></i></a> --}}
-                                    @endif
+                                    {{-- @endif --}}
                                     {{-- <button type="reset" id="leadMasterReset" class="btn btn-danger btn-sm">Clear</button> --}}
                                 </div>
                             </div>
@@ -356,7 +356,7 @@
                                             
                                         </div>
                                         <div class="form-group col-sm-4">
-                                            <select class="form-control" name="leadEmployeeId" id="leadEmployeeId">
+                                            <select class="form-control" name="leadEmployeeId" id="leadEmployeeId" @disabled($roleId!=6)>
                                                 <option value="">-- Select Owner --</option>
                                                 @foreach ($employees as $employee )
                                                     @php
@@ -368,6 +368,7 @@
                                                     <option value="{{$employee->id}}" {{$selectedStateStr}}>{{$employee->name}}</option>
                                                 @endforeach
                                             </select>
+                                            
                                         </div>
                                         <div class="col-sm-2 form-group">
                                             <label>Description</label>
@@ -381,6 +382,24 @@
                                         <div class="col-sm-4">
                                             <div class="form-group">
                                                 <input type="date" class="form-control NextReminderDate reg" id="leadNextReminderDate" name="leadNextReminderDate" placeholder="dd/mm/yyyy" autocomplete="off" />
+                                            </div>
+                                        </div>
+                                        <div class="form-group col-sm-2">
+                                            <label>Connected? <span class="text-danger required"> * </span></label>                        
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <div class="form-group">
+                                                <label class="switch">
+                                                    <input id="input_connected" type="hidden" @disabled($roleId!=6 && !$lead->is_accepted)>
+                                                    <input id="toggle_connected" type="checkbox" @disabled($roleId!=6 && !$lead->is_accepted) />
+                                                    <span class="slider round"></span>
+                                                </label>
+                                                {{-- <input type="checkbox" id="leadConnected" name="leadConnected" autocomplete="off" @disabled($roleId!=6 && !$lead->is_accepted)/> --}}
+                                                @if($roleId!=6 && !$lead->is_accepted)
+                                                <i class="fa fa-info-circle" title='To enable this toggle, agent need to accpet the assigned lead.' aria-hidden="true">
+                                                    To enable this toggle, agent need to accpet the assigned lead
+                                                </i>
+                                                @endif
                                             </div>
                                         </div>
                                         <div class="col-sm-12 text-center">
@@ -417,6 +436,8 @@
                                 <th>Employee</th>
                                 <th>Calling Date</th>
                                 <th>Next Reminder Date</th>
+                                <th>Connected?</th>
+                                <th>Connected Date</th>
                                 <th>Remark</th>
                             </tr>
                         </thead>
@@ -427,6 +448,13 @@
                                 <td>{{ $leadCall->employee?->name }}</td>
                                 <td>{{ \Carbon\Carbon::parse($leadCall->called_at)->format('d/m/Y') }}</td>
                                 <td>{{ \Carbon\Carbon::parse($leadCall->remind_at)->format('d/m/Y') }}</td>
+                                <td>
+                                    @if($leadCall->connected==1)
+                                        <b style="color:green">Yes ({{$leadCall->connection_number}})</b>
+                                    @else
+                                        <b style="color:red">No</b>
+                                    @endif
+                                <td>{{ \Carbon\Carbon::parse($leadCall->connected_at)->format('d/m/Y') }}</td>
                                 <td>{{ $leadCall->remark }}</td>
                             </tr>
                             @endforeach
@@ -572,7 +600,7 @@ No Information Found
         const validation =  {"isValid":isValid,"message":message};
         const employeeId = $("#leadEmployeeId").val();
         const reminderDate = $("#leadNextReminderDate").val();
-        
+        const connetced = $('#toggle_connected').is(':checked') ? 1 :0//$('#leadConnected').val();
         //Send WhatsApp Fields
         const templateId = $("#leadWhatsAppTemplateId").val();
         const mobileno = $("#leadWhatsAppMobileNo").val();
@@ -642,7 +670,6 @@ No Information Found
         let emailId = $("#leadEmailId").val();
         let remark = $("#leadCallRemark").val();
         let reminderDate = $("#leadNextReminderDate").val();
-
         const validation = validateLeadOwnerInformation(3);
         console.log("--validation--".validation);
         if(!validation.isValid) {
@@ -667,8 +694,7 @@ No Information Found
                         'templateId': templateId,
                         'emailId': emailId,
                         'type': 'Email',
-                        'remark': remark,
-                        'reminderDate': reminderDate
+                        'remark': remark
                     },
                     dataType: 'JSON',
                     success: function (data) {
@@ -747,8 +773,9 @@ No Information Found
         let leadId = $('#leadId').val();
         let employeeId = $("#leadEmployeeId").val();
         let reminderDate = $("#leadNextReminderDate").val();
+        const connected = $('#toggle_connected').is(':checked') ? 1 :0;//f$('#leadConnected').is(':checked') ? 1 :0//$("#leadConnected").attr('checked');
+        console.log("--connected-----",connected)
         const validation = validateLeadOwnerInformation();
-        console.log("--validation--".validation);
         if(!validation.isValid) {
             bootbox.alert(validation.message);
             return false;
@@ -769,10 +796,14 @@ No Information Found
                     'leadId': leadId,
                     'employeeId': employeeId,
                     'remark': remark,
-                    'reminderDate': reminderDate
+                    'reminderDate': reminderDate,
+                    'connected':connected,
                 },
                 dataType: 'JSON',
                 success: function (data) {
+                    if(conneted == 1) {
+                        window.location.href = 'leads/assigned';
+                    }
                     window.location.href = '/leads/calls/'+leadId+'';
                 },
                 error:function(xhr, status, error) {

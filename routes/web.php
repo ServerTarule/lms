@@ -192,6 +192,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/leads/calls/edit/{id}', [LeadController::class, 'showcalledit'])->name('leads.showcalledit')->middleware('check_page_permission:/leads,edit_permission,0');//->middleware('can:read master');;//->middleware('can:read master');
     Route::post('/leads/calls/{id}/email', [LeadController::class, 'email'])->name('leads.email')->middleware('check_page_permission:/leads,edit_permission,0');
     Route::post('/leads/calls/{id}/whatsapp', [LeadController::class, 'whatsapp'])->name('leads.whatsapp')->middleware('check_page_permission:/leads,edit_permission,0');
+    //Update followp for owner
     Route::post('/leads/calls/{id}/call', [LeadController::class, 'leadcall'])->name('leads.leadcall')->middleware('check_page_permission:/leads,edit_permission,0');//->middleware('can:read master');
     Route::post('/leads/upload', [LeadController::class, 'upload'])->name('leads.upload')->middleware('check_page_permission:/leads,add_permission,0');//->middleware('can:read master');
     Route::get('/leads/export', [LeadController::class, 'export'])->name('leads.export')->middleware('check_page_permission:/leads,view_permission,0');//->middleware('can:read master');
@@ -278,6 +279,10 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/global-settings', [GlobalSettingsController::class, 'index'])->name('index');//->middleware('check_page_permission:/global-settings,view_permission,0, 1');//NOT DONE YET Because  Page Not Working
     Route::post('/global-settings/edit', [GlobalSettingsController::class, 'edit'])->name('edit');//->middleware('check_page_permission:/global-settings,view_permission,0, 1');//NOT DONE YET Because  Page Not Working
     Route::post('/global-settings/update-settings/{id}', [GlobalSettingsController::class, 'update'])->name('update');//->middleware('check_page_permission:/global-settings,view_permission,0, 1');//NOT DONE YET Because  Page Not Working
+    Route::get('/global-settings/folloups', [GlobalSettingsController::class, 'folloups'])->name('folloups');//->middleware('check_page_permission:/global-settings,view_permission,0, 1');//NOT DONE YET Because  Page Not Working
+    Route::get('/global-settings/followup/edit/{id}', [GlobalSettingsController::class, 'editFolloups'])->name('editFolloups');//->middleware('check_page_permission:/global-settings,view_permission,0, 1');//NOT DONE YET Because  Page Not Working
+    
+
     //'/employee/updateemployee/{id}'
 });
 

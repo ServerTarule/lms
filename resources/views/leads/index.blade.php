@@ -14,7 +14,7 @@
                 </div>
                 <div class="panel-body">
                     <div class="text-center">
-
+                        @if($roleId==6)
                         @if ((isset($userCrudPermissions['add_permission'] ) &&  $userCrudPermissions['add_permission'] != 1))
                             <a onclick="document.getElementById('modal-18').classList.toggle('transformX-0');" class="btn btn-primary btn-sm"><i class="fa fa-eye"></i> Filter</a>
                             <a class="btn btn-success btn-sm" onclick="return showMessage()"><i class="fa fa-upload"></i> Bulk Upload</a>
@@ -27,6 +27,7 @@
                             <a onclick="document.getElementById('modal-18').classList.toggle('transformX-0');" class="btn btn-primary btn-sm"><i class="fa fa-eye"></i> Filter</a>
                             <a class="btn btn-success btn-sm" data-toggle="modal" data-target="#upload"><i class="fa fa-upload"></i> Bulk Upload</a>
                             <a onclick="return addLead()" class="btn btn-info btn-sm"><i class="fa fa-plus"></i> Add lead</a>
+                        @endif
                         @endif
                         
                     </div>
@@ -77,15 +78,15 @@
 {{--                                                class="fa fa-edit"></i> </a>--}}
 {{--                                    </td>--}}
                                     <td>
-                                    @if ((isset($userCrudPermissions['edit_permission'] ) &&  $userCrudPermissions['edit_permission'] != 1))
+                                    {{-- @if ((isset($userCrudPermissions['edit_permission'] ) &&  $userCrudPermissions['edit_permission'] != 1))
                                         <button  onclick="return showMessage(1)"  class="btn btn-xs btn-success btn-flat show_confirm disabled"> 
                                             <i class="fa fa-edit" title='Edit'></i>
                                         </button>
-                                    @else
+                                    @else --}}
                                         <a data-toggle="modal" onclick="return editLeadCheckPermission({{ $lead->id }})" class="btn btn-xs btn-success btn-flat show_confirm">
                                             <i class="fa fa-edit"></i>
                                         </a> 
-                                    @endif     
+                                    {{-- @endif      --}}
                                     {{-- <a href="/leads/edit/{{$lead->id}}" id="editLead" class="btn-xs btn-info"><i class="fa fa-edit"></i></a> --}}
                                     <!-- <a href="#" id="editLead" onclick="editLead( {{ $lead->id }})" class="btn-xs btn-info">Pop<i class="fa fa-edit"></i></a> -->
                                     </td>
@@ -356,14 +357,15 @@
 @push('custom-scripts')
 <script type="text/javascript">
 function editLeadCheckPermission(id) {
-    const editPermission  = "{{$userCrudPermissions['edit_permission']}}";
-    if(!editPermission) {
-        toastr.error("You are not allowed to edit lead!");
-        return false;
-    }
-    else {
-        window.location.href =  `/leads/calls/${id}`;
-    }
+    window.location.href =  `/leads/calls/${id}`;
+    // const editPermission  = "{{$userCrudPermissions['edit_permission']}}";
+    // if(!editPermission) {
+    //     toastr.error("You are not allowed to edit lead!");
+    //     return false;
+    // }
+    // else {
+    //     window.location.href =  `/leads/calls/${id}`;
+    // }
 }
 function addLead() {
     const addPermission  = "{{$userCrudPermissions['add_permission']}}";

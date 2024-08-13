@@ -29,6 +29,43 @@ class GlobalSettingsController extends Controller
 
     }
 
+    public function folloups()
+    {
+        $userDetail = auth()->user();
+        $users = User::all()->where('role_id', '!=',null);
+        $followupsSettings = [];
+        if($userDetail->role_id == $_ENV['ADMIN_ROLE']) {
+            $query = "SELECT * from  follow_up_settings;";
+            $followupsSettings= DB::select($query);
+            return view('global-settings.followups',compact( 'users','followupsSettings'));
+        }
+        abort(403, "You are not allowed to perform this action!");
+
+    }
+    public function editFolloups($folloupId)
+    {
+        $userDetail = auth()->user();
+        $users = User::all()->where('role_id', '!=',null);
+        $followupsSettings = [];
+        if($userDetail->role_id == $_ENV['ADMIN_ROLE']) {
+
+            $query = "SELECT * from  follow_up_settings where id = '$folloupId'";
+            $followupsSetting= DB::select($query);
+            // print_r($followupsSetting);
+            if(isset($followupsSetting)) {
+                return response()->json(['followupsSetting'=>reset($followupsSetting)]);
+            }
+            return response()->json(['followupsSetting'=>[]]);
+
+            
+            // $query = "SELECT * from  follow_up_settings;";
+            // $followupsSettings= DB::select($query);
+            // return view('global-settings.followups',compact( 'users','followupsSettings'));
+        }
+        abort(403, "You are not allowed to perform this action!");
+
+    }
+    
     public function edit(Request $request): JsonResponse {
         $userDetail = auth()->user();
         $setting = [];

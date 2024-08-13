@@ -1,5 +1,5 @@
 @extends('layout.app')
-@section('title', 'View List Of All Leads')
+@section('title', 'View List Of Assigned Leads')
 @section('subtitle', 'List of leads')
 @section('content')
     <div class="row">
@@ -8,7 +8,9 @@
                 <div class="panel-heading">
                     <div class="btn-group" id="buttonexport">
                         <a href="#">
-                        <h4>Assigned Lead Listing For {{$currentEmployeeDetails->name}}</h4>
+                            @if ($currentEmployeeDetails)
+                            <h4>Assigned Lead Listing For {{$currentEmployeeDetails->name}}</h4>
+                            @endif
                         </a>
                     </div>
                 </div>
@@ -48,6 +50,9 @@
                                 <th scope="col">
                                     <a>Accept</a>
                                 </th>
+                                <th scope="col">
+                                    <a>Edit</a>
+                                </th>
                             </tr>
                             </thead>
                             <tbody>
@@ -66,6 +71,11 @@
                                             <input id="action_toggle_{{ $lead->id }}" {{$lead->is_accepted == 1 ? 'checked':''}} type="checkbox" value="{{ $lead->is_accepted}}" onchange="toggleleadacceptancestatus(this, {{ $lead->id}}, {{$currentEmployeeDetails->id }});" @checked( $lead->is_accepted === 'true') />
                                             <span class="slider round"></span>
                                         </label>
+                                    </td>
+                                    <td>
+                                        <a data-toggle="modal" href="/leads/calls/{{$lead->id}}" class="btn btn-xs btn-success btn-flat show_confirm">
+                                            <i class="fa fa-edit"></i>
+                                        </a> 
                                     </td>
                             @endforeach
                             </tbody>

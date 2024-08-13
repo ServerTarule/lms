@@ -36,6 +36,8 @@ class Kernel extends ConsoleKernel
             }
         }
         $schedule->command('openleadsassignment:cron')->everyMinute();
+
+        $schedule->command('apply:follow-up-rules')->everyMinute();
     }
 
     /**

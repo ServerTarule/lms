@@ -23,6 +23,10 @@ class DashboardController extends Controller
         $userId = $user?$user->id:0;
         $userAssignedLead = [];
         $userAssignedLeadsCount = 0;
+        if(isset($user)) {
+            $userArray= $user->toArray();
+            $roleId = $userArray['role_id'];
+        }
         if($userId){
             $currentEmployee=Employee::where('user_id',$userId)->get();
             // print_r($currentEmployee);
@@ -33,7 +37,7 @@ class DashboardController extends Controller
             }
             
         }
-        return view('home', compact('leadsCount','userAssignedLeadsCount'));
+        return view('home', compact('leadsCount','userAssignedLeadsCount','roleId'));
         //
     }
 
