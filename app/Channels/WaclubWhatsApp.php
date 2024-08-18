@@ -2,6 +2,7 @@
 
 namespace App\Channels;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 class WaclubWhatsApp
 {
 
@@ -44,6 +45,10 @@ class WaclubWhatsApp
     public static function sendMessage($to, $msgtext, $sender = '918826134489')
     {
         try {
+            
+            Log::info("To ==".$to);
+            Log::info("msgtext==".$msgtext);
+            Log::info("Sender ==".$sender);
             $query = "SELECT * FROM whatsapp_settings where sender_contact=$sender";
             $creds = DB::select($query);
             $token = env('WACLUB_WHATSAPP_API_TOKE');

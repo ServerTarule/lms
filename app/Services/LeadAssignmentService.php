@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\DB;
 
 class LeadAssignmentService
 {
-    public function assignOpenLeads($openLeads)
+public function assignOpenLeads($openLeads, $isFreshLeadAssignment = 1)
     {
         Log::info('*** LeadAssignmentService ***'.count($openLeads));
         Log::info($openLeads);
@@ -83,25 +83,10 @@ class LeadAssignmentService
                 Log::info('***  ruleMatchingLeadMaster ***');
                 Log::info($ruleMatchingLeadMaster);
                 Log::info(array_values($ruleMatchingLeadMaster));
-                $ruleIds = implode(",",$ruleMatchingLeadMaster);
-                if($ruleIds !=='' ) {
-                    $employeeRulesprevQuery ="SELECT * from employeerules where rule_id IN ($ruleIds) and status='true'";
-                    Log::info($employeeRulesprevQuery);
-                    $employeeRulesNew = DB::select($employeeRulesprevQuery);
-                    Log::info('***  employeeRulesNew ***');
-                    Log::info($employeeRulesNew);
-                }
+                
                 $employeeRules= EmployeeRule::wherein('rule_id', array_values($ruleMatchingLeadMaster))->where('status', '=', "true")->get();
                 
-                
-                
-                if($alreadyAssignedEmployee) {
-                    if($ruleIds !=='' ) {
-                        $addCond = " and employee_id != '$alreadyAssignedEmployee' ";
-                        $employeeRulesprevQuery = $employeeRulesprevQuery.$addCond;
-                        Log::info("==employeeRulesprevQuery full==".$employeeRulesprevQuery);
-                        $employeeRulesNew = DB::select($employeeRulesprevQuery);
-                    }
+                if($alreadyAssignedEmployee && $isFreshLeadAssignment==1) {
                     $employeeRules = EmployeeRule::wherein('rule_id', array_values($ruleMatchingLeadMaster))->where('status', "true")->where('employee_id','!=', $alreadyAssignedEmployee )->get();
                 }
                 

@@ -49,7 +49,7 @@
                             @foreach ($followupsSettings as $followupsSetting)
                                 <tr>
                                     <td>{{ $followupsSetting->id }}</td>
-                                    <td>{{ $followupsSetting->follow_up_no }}</td>
+                                    <td>{{ $followupsSetting->follow_up_sequence }}</td>
                                     <td>{{ $followupsSetting->follow_up_desc }}</td>
                                     <td>{{ $followupsSetting->follow_up_interval }}</td>
                                     <td>{{ $followupsSetting->follow_up_type ==1 ?'Promotional' : 'Non Promotional'}}</td>
@@ -180,7 +180,7 @@
                 
                 const followupsSetting = data.followupsSetting;
                 const follow_up_type = data.followupsSetting.follow_up_type;
-                $("#follo_up_no").val(followupsSetting.follow_up_no);
+                $("#follo_up_no").val(followupsSetting.follow_up_sequence);
                 $("#follo_up_desc").val(followupsSetting.follow_up_desc);
                 console.log("Setting follow_up_type to:", followupsSetting.follow_up_type);
                 $('#follow_up_type').val(follow_up_type).change();

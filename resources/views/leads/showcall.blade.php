@@ -801,10 +801,12 @@ No Information Found
                 },
                 dataType: 'JSON',
                 success: function (data) {
-                    if(conneted == 1) {
+
+                    console.log("---I am here--");
+                    if(connected == 1) {
                         window.location.href = 'leads/assigned';
                     }
-                    window.location.href = '/leads/calls/'+leadId+'';
+                    window.location.href = '/leads/calls/'+leadId;
                 },
                 error:function(xhr, status, error) {
                     const resText = JSON.parse(xhr.responseText);

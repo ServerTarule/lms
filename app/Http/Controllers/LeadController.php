@@ -712,9 +712,6 @@ class LeadController extends Controller
     }
 
     public function leadcall(Request $request) : JsonResponse {
-        // $mobileNo='+918010078232';
-        // $message="test promotional message";
-        // WaclubWhatsApp::sendMessage($mobileNo,$message);
         $leadId = $request->get('leadId');
         $employeeId = $request->get('employeeId');
         $reminderDate = $request->get('reminderDate');
@@ -722,7 +719,7 @@ class LeadController extends Controller
         $connected=$request->get('connected');
         
         $queryToGetLastConnectedNumber= "SELECT max(connection_number) as connection_number
-        from leadcalls where lead_id = $leadId and connected=1 and employee_id = $employeeId";
+        from leadcalls where lead_id = $leadId and connected=1";
         $queryToGetLastConnectedNumberData = DB::select($queryToGetLastConnectedNumber);
         $data = [
             'lead_id'=>$leadId,
@@ -750,7 +747,7 @@ class LeadController extends Controller
         }
         $leadUpdateData = ['employee_id' => $employeeId,'connected_count'=>$leadConnectedCount];
         if($connected==1) {
-            $leadUpdateData = ['employee_id' => null, 'is_accepted'=>0,'connected_count'=>$leadConnectedCount];
+            $leadUpdateData = ['connected_count'=>$leadConnectedCount];
         }
         Lead::where('id', $leadId)->update($leadUpdateData);
         return response()->json(['success' => 'Lead call saved succesfully.']);
