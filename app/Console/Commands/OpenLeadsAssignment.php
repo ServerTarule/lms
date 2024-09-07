@@ -57,10 +57,20 @@ class OpenLeadsAssignment extends Command
         }
         Log::info('*** $timeint ***');
         Log::info($timeint);
+
+        //Recent Query With conversion of updated_at field in IST timezone as NOW() comes in IST
         $query = "SELECT l.*, NOW() as now, 
-        TIMESTAMPDIFF(MINUTE, updated_at, NOW()) as diffinminute FROM leads as l 
-        where is_accepted = 0 && TIMESTAMPDIFF(MINUTE, updated_at, NOW()) >= $timeint
+        TIMESTAMPDIFF(MINUTE, CONVERT_TZ(updated_at, '+05:30', @@session.time_zone), NOW()) as diffinminute FROM leads as l 
+        where is_accepted = 0 && TIMESTAMPDIFF(MINUTE, CONVERT_TZ(updated_at, '+05:30', @@session.time_zone), NOW()) >= $timeint
         and connected_count=0";
+
+        //Query Before 8 Sept 2024
+        // $query = "SELECT l.*, NOW() as now, 
+        // TIMESTAMPDIFF(MINUTE, updated_at, NOW()) as diffinminute FROM leads as l 
+        // where is_accepted = 0 && TIMESTAMPDIFF(MINUTE, updated_at, NOW()) >= $timeint
+        // and connected_count=0";
+
+        //Very Old Logic Query
         // $query = "SELECT *  FROM  leads where TIMEDIFF(CURDATE(), updated_at) <= $timeint";
         // echo "\n Query =".$query;
         Log::info('*** $query ***');

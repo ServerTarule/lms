@@ -186,14 +186,14 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/leads/edit/{id}', [LeadController::class, 'edit'])->name('leads.edit')->middleware('check_page_permission:/leads,edit_permission,0');//->middleware('can:read master');
     Route::post('/leads/updatelead/{id}', [LeadController::class, 'updatelead'])->name('leads.updatelead')->middleware('check_page_permission:/leads,edit_permission,0');//->middleware('can:read master');
     Route::get('/leads/calls', [LeadController::class, 'call'])->name('leads.call')->middleware('check_page_permission:/leads/calls,view_permission,0');//->middleware('can:read master');
-    Route::get('/leads/calls/{id}', [LeadController::class, 'showcall'])->name('leads.showcall')->middleware('check_page_permission:/leads,view_permission,0');//->middleware('can:read master');
-    Route::post('/leads/calls/{id}', [LeadController::class, 'update'])->name('leads.update')->middleware('check_page_permission:/leads,edit_permission,0');
+    Route::get('/leads/calls/{id}', [LeadController::class, 'showcall'])->name('leads.showcall')->middleware('check_page_permission:/leads/calls,view_permission,0');//->middleware('can:read master');
+    Route::post('/leads/calls/{id}', [LeadController::class, 'update'])->name('leads.update')->middleware('check_page_permission:/leads/calls,edit_permission,0');
     Route::get('/leads/followup', [LeadController::class, 'followup'])->middleware('check_page_permission:/leads/followup,view_permission,0');;//->middleware('can:read master');
-    Route::get('/leads/calls/edit/{id}', [LeadController::class, 'showcalledit'])->name('leads.showcalledit')->middleware('check_page_permission:/leads,edit_permission,0');//->middleware('can:read master');;//->middleware('can:read master');
-    Route::post('/leads/calls/{id}/email', [LeadController::class, 'email'])->name('leads.email')->middleware('check_page_permission:/leads,edit_permission,0');
-    Route::post('/leads/calls/{id}/whatsapp', [LeadController::class, 'whatsapp'])->name('leads.whatsapp')->middleware('check_page_permission:/leads,edit_permission,0');
+    Route::get('/leads/calls/edit/{id}', [LeadController::class, 'showcalledit'])->name('leads.showcalledit')->middleware('check_page_permission:/leads/calls,edit_permission,0');//->middleware('can:read master');;//->middleware('can:read master');
+    Route::post('/leads/calls/{id}/email', [LeadController::class, 'email'])->name('leads.email')->middleware('check_page_permission:/leads/calls,edit_permission,0');
+    Route::post('/leads/calls/{id}/whatsapp', [LeadController::class, 'whatsapp'])->name('leads.whatsapp')->middleware('check_page_permission:/leads/calls,edit_permission,0');
     //Update followp for owner
-    Route::post('/leads/calls/{id}/call', [LeadController::class, 'leadcall'])->name('leads.leadcall')->middleware('check_page_permission:/leads,edit_permission,0');//->middleware('can:read master');
+    Route::post('/leads/calls/{id}/call', [LeadController::class, 'leadcall'])->name('leads.leadcall')->middleware('check_page_permission:/leads/calls,edit_permission,0');//->middleware('can:read master');
     Route::post('/leads/upload', [LeadController::class, 'upload'])->name('leads.upload')->middleware('check_page_permission:/leads,add_permission,0');//->middleware('can:read master');
     Route::get('/leads/export', [LeadController::class, 'export'])->name('leads.export')->middleware('check_page_permission:/leads,view_permission,0');//->middleware('can:read master');
     Route::get('/leads/assigned', [LeadController::class, 'assigned'])->name('leads.assigned');//->middleware('check_page_permission:/leads,view_permission,0');//->middleware('can:read master');

@@ -19,7 +19,7 @@ use App\Services\LeadAssignmentService;
 
 class ApplyFollowUpRules19Aug24 extends Command
 {
-    protected $signature = 'apply:follow-up-rules';
+    protected $signature = 'apply:follow-up-rulesss';
 
     // protected $signature = 'leads:reassign';
     protected $description = 'Apply follow-up rules to leads based on follow-up settings';
