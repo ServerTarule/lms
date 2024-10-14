@@ -36,6 +36,14 @@ class Kernel extends ConsoleKernel
             }
         }
         $schedule->command('openleadsassignment:cron')->everyMinute();
+
+        $schedule->command('apply:follow-up-rules')->everyMinute(); // When it will go live it will run on every day basis
+
+        // $schedule->command('apply:send-promotional-and-reminder-messages')->everyMinute(); // When it will go live it will run on every day basis
+
+        $schedule->command('apply:send-promotional-and-reminder-messages')->twiceMonthly(
+            1, 20,'02:28'
+        );// When it will go live it will run on every fortnight say on 1st of month at 00:00 and at 16 of month at 00:00
     }
 
     /**

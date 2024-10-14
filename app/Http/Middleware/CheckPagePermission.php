@@ -75,7 +75,7 @@ class CheckPagePermission
                 where mp.role_id = $roleId and m.url = '$currentPath'";
                 $menuPermissions = DB::select($query);
                 $menuPermissionsArray =  (isset($menuPermissions) && isset($menuPermissions[0]))?json_decode(json_encode($menuPermissions[0]),true):[];
-                // print_r($menuPermissionsArray );die;
+                // echo "<pre>";print_r($menuPermissionsArray );die;
                 if(!isset($menuPermissionsArray) || empty($menuPermissionsArray) || !isset($menuPermissionsArray[$permisionToCheck]) || $menuPermissionsArray[$permisionToCheck]==0 ) {
                     if($returnJsonRespone == 0) {
                         abort(403, "You are not allowed to perform this action!");

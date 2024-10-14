@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Lead;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
+use Illuminate\Support\Facades\Auth;
+use App\Models\Employee;
 
 class DashboardController extends Controller
 {
@@ -17,7 +19,25 @@ class DashboardController extends Controller
     {
         $leads = Lead::all();
         $leadsCount = count($leads);
-        return view('home', compact('leadsCount'));
+        $user = Auth::user();
+        $userId = $user?$user->id:0;
+        $userAssignedLead = [];
+        $userAssignedLeadsCount = 0;
+        if(isset($user)) {
+            $userArray= $user->toArray();
+            $roleId = $userArray['role_id'];
+        }
+        if($userId){
+            $currentEmployee=Employee::where('user_id',$userId)->get();
+            // print_r($currentEmployee);
+            if(count($currentEmployee) > 0) {
+                $currentEmployeeId=$currentEmployee[0]->id;
+                $userAssignedLeads = Lead::where("employee_id",$currentEmployeeId)->get();
+                $userAssignedLeadsCount = count($userAssignedLeads);
+            }
+            
+        }
+        return view('home', compact('leadsCount','userAssignedLeadsCount','roleId'));
         //
     }
 

@@ -105,7 +105,6 @@ class AssignLead
                 $ruleMatchingLeadMaster[] = $ruleId;
             }
         }
-
         $employeeRules = EmployeeRule::wherein('rule_id', array_values($ruleMatchingLeadMaster))->where('status', 'true')->get();
         foreach ($employeeRules as $employeeRule) {
             Lead::where('id', $lead->id)->update(['employee_id' => $employeeRule->employee_id]);

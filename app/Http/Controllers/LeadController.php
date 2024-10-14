@@ -29,21 +29,53 @@ use Illuminate\View\View;
 use Maatwebsite\Excel\Facades\Excel;
 use function PHPUnit\Framework\isNull;
 use Illuminate\Support\Facades\DB;
-
+use Illuminate\Support\Facades\Auth;
+use App\Channels\WaclubWhatsApp;
 class LeadController extends Controller
 {
     private $isFirstCalling = false;
+    private $currentEmId = 0;
     public function index() : View
     {
+        $user = Auth::user();
+        if(isset($user)) {
+            $userArray= $user->toArray();
+            $roleId = $userArray['role_id'];
+        }
         $leads = Lead::all();
-        //Get all Masters
+        if($roleId !== 6){
+           $currentEmployee=Employee::where('user_id',$user->id)->get();
+            if(count($currentEmployee) > 0) {
+                $this->currentEmId=$currentEmployee[0]->id;
+            }
+            $leads = Lead::all()->where('employee_id',$this->currentEmId);
+        }
+        
         $masters=DynamicMain::where('master', '1')->get();
-        return view('leads.index', compact('leads', 'masters'));
+        return view('leads.index', compact('leads', 'masters','roleId'));
     }
 
     public function show($id) : View
     {
+
+        $user = Auth::user();
+        $roleId =0;
+        if(isset($user)) {
+            $userArray= $user->toArray();
+            $roleId = $userArray['role_id'];
+        }
         $lead = Lead::where('id', $id)->get();
+        
+        if($roleId !== 6){
+           $currentEmployee=Employee::where('user_id',$user->id)->get();
+            if(count($currentEmployee) > 0) {
+                $this->currentEmId=$currentEmployee[0]->id;
+            }
+            $lead = Lead::where('id', $id)->get()->where('employee_id',$this->currentEmId);
+        }
+        if(count($lead)==0)  {
+            abort(403, "You are not allowed to edit this lead!");
+        }
         $leadmaster = LeadMaster::where('lead_id', $id)->get();
         $leadKV = array();
         foreach ($lead as $l) {
@@ -118,7 +150,7 @@ class LeadController extends Controller
         // die;
         $isFirstCalling = true;
         $state=DB::table('dynamic_values as dm')->select('dm.*')->where('dm.parent_id','7')->join('dynamic_mains as dym', 'dm.parent_id', '=', 'dym.id')->get();
-        return view('leads.edit', compact('masters','lead','state','leadmasters','leadMasterKeyValueArray','masterIdsToMakeDynamic','isFirstCalling'));
+        return view('leads.edit', compact('masters','lead','state','leadmasters','leadMasterKeyValueArray','masterIdsToMakeDynamic','isFirstCalling','roleId'));
     }
 
     public function showtoedit($id) : JsonResponse {
@@ -481,8 +513,27 @@ class LeadController extends Controller
     public function showcall($id) : View
     {
         // die("asasas");
-        $isFirstCalling = $_GET['firstcalling']??false;
+        $user = Auth::user();
+        $roleId =0;
+        if(isset($user)) {
+            $userArray= $user->toArray();
+            $roleId = $userArray['role_id'];
+        }
         $leads = Lead::where('id', $id)->get();
+        
+        if($roleId !== 6){
+           $currentEmployee=Employee::where('user_id',$user->id)->get();
+            if(count($currentEmployee) > 0) {
+                $this->currentEmId=$currentEmployee[0]->id;
+            }
+            $leads = Lead::where('id', $id)->get()->where('employee_id',$this->currentEmId);
+        }
+        if(count($leads)==0)  {
+            abort(403, "You are not allowed to edit this lead!");
+        }
+        
+        $isFirstCalling = $_GET['firstcalling']??false;
+        
         $leadmaster = LeadMaster::where('lead_id', $id)->get();
         $leadKV = array();
         $leadKVForEdit = array();
@@ -535,7 +586,7 @@ class LeadController extends Controller
         $whatsappTemplates = Template::where('type', 'WhatsApp')->get();
 
         //Lead Calls
-        $leadCalls = LeadCall::where('lead_id', $leadId)->orderBy('created_at', 'DESC')->get();
+        $leadCalls =  LeadCall::where('lead_id', $leadId)->orderBy('created_at', 'DESC')->get();
 
         //Get all Masters
         $masters=DynamicMain::where('master', '1')->get();
@@ -570,8 +621,8 @@ class LeadController extends Controller
             'leadKVForEdit',
             'masters',
             'leadMasters',
-
             'masters',
+            'roleId',
             'lead','state','leadmasters','leadMasterKeyValueArray','masterIdsToMakeDynamic','isFirstCalling'
         ));
     }
@@ -661,25 +712,45 @@ class LeadController extends Controller
     }
 
     public function leadcall(Request $request) : JsonResponse {
-
         $leadId = $request->get('leadId');
         $employeeId = $request->get('employeeId');
         $reminderDate = $request->get('reminderDate');
         $remark = $request->get('remark');
-
-        $leadCall = LeadCall::create([
+        $connected=$request->get('connected');
+        
+        $queryToGetLastConnectedNumber= "SELECT max(connection_number) as connection_number
+        from leadcalls where lead_id = $leadId and connected=1";
+        $queryToGetLastConnectedNumberData = DB::select($queryToGetLastConnectedNumber);
+        $data = [
             'lead_id'=>$leadId,
             'employee_id'=>$employeeId,
             'remind_at'=>$reminderDate,
             'remark'=>$remark,
-            'called_at'=>now()
-        ]);
-
-        Lead::where('id', $leadId)->update(['employee_id' => $employeeId]);
-
-        $lead = Lead::where('id', $leadId)->first();
-
-        return response()->json(['success' => 'WhatsApp message sent']);
+            'called_at'=>now(),
+            'connected'=>$connected,
+            'conected_at'=>now(),
+            'connection_number'=>0
+        ];
+        
+        if(isset($queryToGetLastConnectedNumberData) && $connected==1){
+            $data['connection_number'] = $queryToGetLastConnectedNumberData[0]->connection_number +1;
+        }
+        else if($connected==1)  {
+            $data['connection_number'] = 1;
+        }
+        LeadCall::create($data);
+        $queryIfLeadWasConnected = "SELECT count(id) as connected_count from leadcalls where lead_id = $leadId and connected=1";
+        $queryIfLeadWasConnectedData = DB::select($queryIfLeadWasConnected);
+        $leadConnectedCount = 0;
+        if(isset($queryIfLeadWasConnectedData[0]->connected_count)) {
+            $leadConnectedCount = $queryIfLeadWasConnectedData[0]->connected_count;
+        }
+        $leadUpdateData = ['employee_id' => $employeeId,'connected_count'=>$leadConnectedCount];
+        if($connected==1) {
+            $leadUpdateData = ['connected_count'=>$leadConnectedCount];
+        }
+        Lead::where('id', $leadId)->update($leadUpdateData);
+        return response()->json(['success' => 'Lead call saved succesfully.']);
     }
 
     public function followup() : View {
@@ -702,4 +773,53 @@ class LeadController extends Controller
     }
 
 
+    public function assigned() {
+        $user = Auth::user();
+        $userId = $user?$user->id:0;
+        $userAssignedLead = [];
+        $userAssignedLeadsCount = 0;
+        $currentEmployeeId=0;
+        if($userId){
+            $currentEmployee=Employee::where('user_id',$userId)->get();
+            if(count($currentEmployee) > 0) {
+                $currentEmployeeId=$currentEmployee[0]->id;
+                $userAssignedLeads = Lead::where("employee_id",$currentEmployeeId)->get();
+            }
+            
+        }
+        $leads = [];
+        if($currentEmployeeId > 0) {
+            $leads = Lead::where("employee_id",$currentEmployeeId)->get();
+        }  
+        return view('leads.assigned', compact('leads'));
+    }
+
+
+    public function toggleadacceptancestatus(Request $request,$leadId, $employeeId): JsonResponse {
+        $lead = Lead::find($leadId);
+        if(!$request->status || $request->status == 'false' || $request->status === false) {
+            return response()->json(['status'=>false, 'message'=>'Accepted lead can not be reverted!']);
+        }
+        if(!isset($lead) && empty($lead)) {
+            return response()->json(['status'=>false, 'message'=>'Lead with given id does not exists.!']);
+        }
+        else {
+            $assignedLead = Lead::where("id",$leadId)->where("employee_id",$employeeId)->get();
+            if(!isset($assignedLead) || empty($assignedLead) || count($assignedLead) == 0) {
+                return response()->json(['status'=>false, 'message'=>'Lead is not assigned.!']);
+            }
+            else {
+                if($assignedLead[0]->is_accepted == 1 || $assignedLead[0]->is_accepted == 2) {
+                    return response()->json(['status'=>false, 'message'=>'Lead is already accepted or rejected.!']); 
+                }
+                else {
+                    $leadUpdateStatus =DB::table('leads')->where('id', $leadId)->where('employee_id', $employeeId)->update(['is_accepted' => 1]);
+                    if($leadUpdateStatus){
+                        return response()->json(['status'=>true, 'message'=>"Lead accepted successfully."]);
+                    }
+                }
+            }
+        }
+        return response()->json(['status'=>false, 'message'=>'Some Error Occured']);
+    }
 }

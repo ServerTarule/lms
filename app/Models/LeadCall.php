@@ -18,6 +18,9 @@ class LeadCall extends Model
         'employee_id',
         'leadstatus_id',
         'remark',
+        'connected',
+        'connected_at',
+        'connection_number',
         'called_at',
         'remind_at',
     ];

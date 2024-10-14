@@ -117,7 +117,7 @@
                      <div class="modal-content">
                         <div class="modal-header modal-header-primary">
                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                           <h3><i class="fa fa-plus m-r-5"></i> Edit Leave</h3>
+                           <h3><i class="fa fa-plus m-r-5"></i> Edit Leaves</h3>
                         </div>
                         <div class="modal-body">
                             <div class="row">
@@ -251,7 +251,8 @@ function getDataForEdit(leaveId) {
         success: function (data) {
             const leaveDetails = data.leave;
             const employeeDetails = data.employee;
-            $("#employeeid").val(employeeDetails.id);
+            console.log("******employeeDetails******",employeeDetails);
+            $("#employeeid_edit").val(employeeDetails.id);
             $("#employee-mame").val(employeeDetails.name);
             $("#leave-from").val(leaveDetails.start_time);
             $("#leave-to").val(leaveDetails.end_time);

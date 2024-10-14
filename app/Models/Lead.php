@@ -59,6 +59,7 @@ class Lead extends Model implements Auditable
         'receiveddate',
         'remark',
         'employee_id',
+        'connected_count',
         'state',
         'city',
         'center_id'

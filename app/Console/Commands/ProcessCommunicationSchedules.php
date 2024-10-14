@@ -41,41 +41,42 @@ class ProcessCommunicationSchedules extends Command
     public function handle(Request $request)
     {
 
-        // Log::info("I am handling");
+        
+        Log::info("I am handling");
         $communicationSchedule = $this->argument('communicationSchedule');
-        // Log::info("#############################START#############");
-        // Log::info($communicationSchedule);
-        // Log::info("#############################END#############");
+        Log::info("#############################START#############");
+        Log::info($communicationSchedule);
+        Log::info("#############################END#############");
         $communicationSchedule = json_decode($communicationSchedule, true);
         $ruleId = $communicationSchedule['rule_id'];
         // Log::info("*** Communication Schedule JSON Decode ***");
         // Log::info($communicationSchedule);
        
         $leadMatchingRuleOld = $this->getLeadMatchingRuleOld($ruleId);
-        Log::info("*** leadMatchingRuleOld ***");
-        Log::info($leadMatchingRuleOld);
+        // Log::info("*** leadMatchingRuleOld ***");
+        // Log::info($leadMatchingRuleOld);
         $leadMatchingRule = $this->getLeadMatchingRule($ruleId);
 
         Log::info(" ***********leadMatchingRuleNew***********");
         Log::info($leadMatchingRule);
         if (!empty($leadMatchingRule)) {
-            Log::info("******leadMatchingRule is noot empty****");
+            // Log::info("******leadMatchingRule is noot empty****");
             foreach ($leadMatchingRule as $key => $value) {
                 $employee=CommunicationLead::create([
                     'communication_id'=>$communicationSchedule['id'],
                     'rule_id'=>$ruleId,
                     'lead_id'=>$value
                 ]);
-                Log::info("******Logging Employee ****");
-                Log::info($employee);
+                // Log::info("******Logging Employee ****");
+                // Log::info($employee);
             }
-            Log::info("******type ****");
-            Log::info($communicationSchedule['type']);
+            // Log::info("******type ****");
+            // Log::info($communicationSchedule['type']);
             if($communicationSchedule['type'] == 'SMS') {
-                Log::info("******SMS condition ****");
+                // Log::info("******SMS condition ****");
                 //SEND SMS HERE
             } else if ($communicationSchedule['type'] == 'Email') {
-                Log::info("******Email condition ****");
+                // Log::info("******Email condition ****");
                 $templateId = $communicationSchedule['template_id'];
                 $template = Template::where('id', $templateId)->first();
 
@@ -84,15 +85,15 @@ class ProcessCommunicationSchedules extends Command
                     //TODO Validate email
                     
                     if($lead && $lead->email) {
-                        Log::info($lead->email);
+                        // Log::info($lead->email);
                         //."--------The Id is----".$communicationSchedule['id'];
                         $template->message = $communicationSchedule['content'];
                         $template->body = $communicationSchedule['content'];
                         $template->subject = $communicationSchedule['subject'];
 
-                        Log::info("******Final Template Content Start****");
-                        Log::info($template);
-                        Log::info("******Final Template Content End****");
+                        // Log::info("******Final Template Content Start****");
+                        // Log::info($template);
+                        // Log::info("******Final Template Content End****");
 
                         $mailableObj = new Campaign($template);
                         try{
@@ -109,37 +110,37 @@ class ProcessCommunicationSchedules extends Command
                 }
 
             } else if ($communicationSchedule['type'] == 'WhatsApp') {
-                Log::info("******WhatsApp condition ****");
-                echo '------Whatsapp leadMatchingRule found-------';
+                // Log::info("******WhatsApp condition ****");
+                // echo '------Whatsapp leadMatchingRule found-------';
                 foreach ($leadMatchingRule as $key => $value) {
-                    Log::info("====value=====");
-                    Log::info($value);
+                    // Log::info("====value=====");
+                    // Log::info($value);
                     $lead = Lead::where('id', $value)->first();
                     //TODO Validate mobile
                     // if($lead->mobileno) {
                     //     Notification::send($lead, new LeadConnect($lead));
                     // }
-                    Log::info("====lead=====");
-                    Log::info($lead);
+                    // Log::info("====lead=====");
+                    // Log::info($lead);
 
                    
                     if($lead && $lead->mobileno) {
-                        Log::info("====mobileno=====");
-                        Log::info($lead->mobileno);
+                        // Log::info("====mobileno=====");
+                        // Log::info($lead->mobileno);
                         $mobileNo = '+91'.$lead->mobileno;
 
-                        Log::info("====final mobileNo=====");
-                        Log::info($mobileNo);
+                        // Log::info("====final mobileNo=====");
+                        // Log::info($mobileNo);
                         $message = $communicationSchedule['message'];
-                        Log::info("====final message=====");
-                        Log::info($message);
+                        // Log::info("====final message=====");
+                        // Log::info($message);
                         try{
                             $response = WaclubWhatsApp::sendMessage($mobileNo,$message);
                         }
                         catch (Request $e) {
-                            Log::info("====Exception Message for=====".$lead->id."=====");
+                            // Log::info("====Exception Message for=====".$lead->id."=====");
 
-                            Log::info($e->getMessage);
+                            // Log::info($e->getMessage);
                             throw new \Exception($e->getMessage());
                         }
                     }
@@ -176,7 +177,7 @@ class ProcessCommunicationSchedules extends Command
         $dateDiffCount = $dateDiffResult["count"];
         $query = "SELECT id, DATEDIFF(CURDATE(), updated_at) AS days,updated_at FROM  leads where DATEDIFF(CURDATE(), updated_at) = $dateDiffCount";
         $leadsWithDateCondotion = DB::select($query);
-        Log::info("====query=====");
+        // Log::info("====query=====");
         Log::info($query);
         $dateCondtionSaisfyingLead = [];
         foreach($leadsWithDateCondotion as $leadWithDateCondotion) {
@@ -238,15 +239,15 @@ class ProcessCommunicationSchedules extends Command
         $dateDiffCount = $dateDiffResult["count"];
         $query = "SELECT id, DATEDIFF(CURDATE(), updated_at) AS days,updated_at FROM  leads where DATEDIFF(CURDATE(), updated_at) = $dateDiffCount";
         $leadsWithDateCondotion = DB::select($query);
-        Log::info("====query=====");
-        Log::info($query);
+        // Log::info("====query=====");
+        // Log::info($query);
         $dateCondtionSaisfyingLead = [];
         foreach($leadsWithDateCondotion as $leadWithDateCondotion) {
             $dateCondtionSaisfyingLead[] = $leadWithDateCondotion->id;
         }
 
-        Log::info("I am dateCondtionSaisfyingLead ------");
-        Log::info($dateCondtionSaisfyingLead);
+        // Log::info("I am dateCondtionSaisfyingLead ------");
+        // Log::info($dateCondtionSaisfyingLead);
 
         $ruleConditions = RuleCondition::where('rule_id', $ruleId)->orderBy('master_id', 'asc')->get();
         //Log::info("*** Rule Conditions ***");
@@ -264,15 +265,15 @@ class ProcessCommunicationSchedules extends Command
         $uniqueLeadIdsMatchingRuleCondition = collect($leadIdsMatchingRuleCondition)->unique();
         
         $leadMatchingRule = array();
-        Log::info("I am uniqueLeadIdsMatchingRuleCondition ------");
-        Log::info($uniqueLeadIdsMatchingRuleCondition);
+        // Log::info("I am uniqueLeadIdsMatchingRuleCondition ------");
+        // Log::info($uniqueLeadIdsMatchingRuleCondition);
         $leadIdsWithDateAndRuleConditions = array_intersect($dateCondtionSaisfyingLead,$uniqueLeadIdsMatchingRuleCondition->toArray());
         
-        Log::info("I am intersect result i.e. leadIdsWithDateAndRuleConditions >>>>>------");
-        Log::info($leadIdsWithDateAndRuleConditions);
+        // Log::info("I am intersect result i.e. leadIdsWithDateAndRuleConditions >>>>>------");
+        // Log::info($leadIdsWithDateAndRuleConditions);
 
-        Log::info("Old Was >>>>>------");
-        Log::info($uniqueLeadIdsMatchingRuleCondition);
+        // Log::info("Old Was >>>>>------");
+        // Log::info($uniqueLeadIdsMatchingRuleCondition);
 
         foreach ($leadIdsWithDateAndRuleConditions as $leadId) {
         // foreach ($uniqueLeadIdsMatchingRuleCondition as $leadId) {

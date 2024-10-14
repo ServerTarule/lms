@@ -177,12 +177,13 @@ class CommunicationController extends Controller
                         'lead_id'=>$value
                     ]);
                     $lead = Lead::where('id', $value)->first();
-                    // print_r($lead->toArray());
+                    $senderContact =  $lead->employee->contact;
+                    $sender =  $senderContact;
                     //TODO Validate mobile
                     if($lead && $lead->mobileno) {
                         // echo "\n --mobileno-".$lead->mobileno."\n";
                         try{
-                            WaclubWhatsApp::sendMessage('+91'.$lead->mobileno,$request->communicationTemplateMessage);
+                            WaclubWhatsApp::sendMessage('+91'.$lead->mobileno,$request->communicationTemplateMessage, $sender);
                             // return response()->json(['status'=>false, 'message'=>`Communication schedule has been saved successfully, and whatsapp message has also been sent `]);
                         }
                         catch (Request $e) {

@@ -35,6 +35,7 @@ class Menus extends Component
             else {
                 $menuHtml = (!empty($menuPermittendForRole))?$menu->getHTML($menuPermittendForRole):'';  
             }
+            
             $html = '
             <ul class="sidebar-menu">
                 <li class="active">
@@ -70,8 +71,9 @@ class Menus extends Component
             </ul>
             ';
         }
-
-        
+        // echo "---#####".$menuHtml."#########";
+        // echo "Menu Html ==".$menuHtml; die("died");
+        //return view('livewire.menus',["menus"=>$menus, "dynamichtml"=>$html, "nestedMenu"=>$menuHtml]);
         return view('livewire.menus',["menus"=>$menus, "dynamichtml"=>$html, "nestedMenu"=>$menuHtml]);
     }
 }

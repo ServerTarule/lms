@@ -32,7 +32,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\MenusController;
 use App\Http\Controllers\MenusPermissionController;
-
+use App\Http\Controllers\GlobalSettingsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -186,15 +186,18 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/leads/edit/{id}', [LeadController::class, 'edit'])->name('leads.edit')->middleware('check_page_permission:/leads,edit_permission,0');//->middleware('can:read master');
     Route::post('/leads/updatelead/{id}', [LeadController::class, 'updatelead'])->name('leads.updatelead')->middleware('check_page_permission:/leads,edit_permission,0');//->middleware('can:read master');
     Route::get('/leads/calls', [LeadController::class, 'call'])->name('leads.call')->middleware('check_page_permission:/leads/calls,view_permission,0');//->middleware('can:read master');
-    Route::get('/leads/calls/{id}', [LeadController::class, 'showcall'])->name('leads.showcall')->middleware('check_page_permission:/leads,view_permission,0');//->middleware('can:read master');
-    Route::post('/leads/calls/{id}', [LeadController::class, 'update'])->name('leads.update')->middleware('check_page_permission:/leads,edit_permission,0');
+    Route::get('/leads/calls/{id}', [LeadController::class, 'showcall'])->name('leads.showcall')->middleware('check_page_permission:/leads/calls,view_permission,0');//->middleware('can:read master');
+    Route::post('/leads/calls/{id}', [LeadController::class, 'update'])->name('leads.update')->middleware('check_page_permission:/leads/calls,edit_permission,0');
     Route::get('/leads/followup', [LeadController::class, 'followup'])->middleware('check_page_permission:/leads/followup,view_permission,0');;//->middleware('can:read master');
-    Route::get('/leads/calls/edit/{id}', [LeadController::class, 'showcalledit'])->name('leads.showcalledit')->middleware('check_page_permission:/leads,edit_permission,0');//->middleware('can:read master');;//->middleware('can:read master');
-    Route::post('/leads/calls/{id}/email', [LeadController::class, 'email'])->name('leads.email')->middleware('check_page_permission:/leads,edit_permission,0');
-    Route::post('/leads/calls/{id}/whatsapp', [LeadController::class, 'whatsapp'])->name('leads.whatsapp')->middleware('check_page_permission:/leads,edit_permission,0');
-    Route::post('/leads/calls/{id}/call', [LeadController::class, 'leadcall'])->name('leads.leadcall')->middleware('check_page_permission:/leads,edit_permission,0');//->middleware('can:read master');
+    Route::get('/leads/calls/edit/{id}', [LeadController::class, 'showcalledit'])->name('leads.showcalledit')->middleware('check_page_permission:/leads/calls,edit_permission,0');//->middleware('can:read master');;//->middleware('can:read master');
+    Route::post('/leads/calls/{id}/email', [LeadController::class, 'email'])->name('leads.email')->middleware('check_page_permission:/leads/calls,edit_permission,0');
+    Route::post('/leads/calls/{id}/whatsapp', [LeadController::class, 'whatsapp'])->name('leads.whatsapp')->middleware('check_page_permission:/leads/calls,edit_permission,0');
+    //Update followp for owner
+    Route::post('/leads/calls/{id}/call', [LeadController::class, 'leadcall'])->name('leads.leadcall')->middleware('check_page_permission:/leads/calls,edit_permission,0');//->middleware('can:read master');
     Route::post('/leads/upload', [LeadController::class, 'upload'])->name('leads.upload')->middleware('check_page_permission:/leads,add_permission,0');//->middleware('can:read master');
     Route::get('/leads/export', [LeadController::class, 'export'])->name('leads.export')->middleware('check_page_permission:/leads,view_permission,0');//->middleware('can:read master');
+    Route::get('/leads/assigned', [LeadController::class, 'assigned'])->name('leads.assigned');//->middleware('check_page_permission:/leads,view_permission,0');//->middleware('can:read master');
+    Route::post('/leads/toggleadacceptancestatus/{id}/{employeeId}', [LeadController::class, 'toggleadacceptancestatus'])->name('toggleadacceptancestatus');//->middleware('check_page_permission:/employee,edit_permission,0');//->middleware('can:update employee'); //NOT YET CHECKED AS IT IS NOT WORKING
 
     //Logs
     Route::get('/logs', [LogController::class, 'index'])->name('logs.index')->middleware('check_page_permission:/logs,view_permission,0');;//->middleware('can:read master');
@@ -272,6 +275,15 @@ Route::middleware(['auth'])->group(function () {
     // Template Master
 
 
+     // NOt Functional Even ON QA
+    Route::get('/global-settings', [GlobalSettingsController::class, 'index'])->name('index');//->middleware('check_page_permission:/global-settings,view_permission,0, 1');//NOT DONE YET Because  Page Not Working
+    Route::post('/global-settings/edit', [GlobalSettingsController::class, 'edit'])->name('edit');//->middleware('check_page_permission:/global-settings,view_permission,0, 1');//NOT DONE YET Because  Page Not Working
+    Route::post('/global-settings/update-settings/{id}', [GlobalSettingsController::class, 'update'])->name('update');//->middleware('check_page_permission:/global-settings,view_permission,0, 1');//NOT DONE YET Because  Page Not Working
+    Route::get('/global-settings/folloups', [GlobalSettingsController::class, 'folloups'])->name('folloups');//->middleware('check_page_permission:/global-settings,view_permission,0, 1');//NOT DONE YET Because  Page Not Working
+    Route::get('/global-settings/followup/edit/{id}', [GlobalSettingsController::class, 'editFolloups'])->name('editFolloups');//->middleware('check_page_permission:/global-settings,view_permission,0, 1');//NOT DONE YET Because  Page Not Working
+    
+
+    //'/employee/updateemployee/{id}'
 });
 
 

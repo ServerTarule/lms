@@ -19,27 +19,15 @@
             @endif
                 <div class="panel-body">
                     <div class="text-right">
-                        {{-- @if ((isset($userCrudPermissions['add_permission'] ) &&  $userCrudPermissions['add_permission'] != 1))
-                        <span class="text-danger"><i class="fa fa-xs fa fa-exclamation-triangle" aria-hidden="true" title="You are not authorized to perform this action."> Unauthorized to add employee(s).  </i></span>
-                        <a class="btn btn-exp btn-sm" onclick="return showMessage()" {{ (isset($userCrudPermissions['add_permission'] ) &&  $userCrudPermissions['add_permission'] != 1) ? ' disabled' : '' }}>
-                            <i class="fa fa-plus"></i>Add Employee
-                        </a>
-                    @else
-                        <a class="btn btn-exp btn-sm" href="/rules/create"  {{ (isset($userCrudPermissions['add_permission'] ) &&  $userCrudPermissions['add_permission'] != 1) ? ' disabled' : '' }}>
-                            <i class="fa fa-plus"></i>Add Employee
-                        </a>
-                    @endif --}}
-
-
-                    @if ((isset($userCrudPermissions['add_permission'] ) &&  $userCrudPermissions['add_permission'] != 1))
-                        <span class="text-danger"><i class="fa fa-xs fa fa-exclamation-triangle" aria-hidden="true" title="You are not authorized to perform this action."> Unauthorized to add employee(s).  </i></span>
-                        <a class="btn btn-exp btn-sm" onclick="return showMessage()"><i class="fa fa-plus"></i>Add Employee</a>
-                    @else
-                        <a class="btn btn-exp btn-sm" data-toggle="modal" data-target="#additem"><i class="fa fa-plus"></i>Add Employee</a>
-                    @endif
+                        @if ((isset($userCrudPermissions['add_permission'] ) &&  $userCrudPermissions['add_permission'] != 1))
+                            <span class="text-danger"><i class="fa fa-xs fa fa-exclamation-triangle" aria-hidden="true" title="You are not authorized to perform this action."> Unauthorized to add employee(s).  </i></span>
+                            <a class="btn btn-exp btn-sm" onclick="return showMessage()"><i class="fa fa-plus"></i>Add Employee</a>
+                        @else
+                            <a class="btn btn-exp btn-sm" data-toggle="modal" data-target="#additem"><i class="fa fa-plus"></i>Add Employee</a>
+                        @endif
                     </div>
                     <div class="table-responsive">
-                        <table id="dataTableExample1" class="table table-bordered table-striped table-hover">
+                        <table id="dataTableExample1" class="defaultDataTable table table-bordered table-striped table-hover">
                             <thead>
                                 <tr class="tblheadclr1">
                                     <th scope="col">
@@ -66,9 +54,6 @@
                                     <th scope="col">
                                         <a>Email id</a>
                                     </th>
-                                    <!-- <th scope="col">
-                                        <a>Password</a>
-                                    </th> -->
                                     <th scope="col">
                                         <a>DOB</a>
                                     </th>
@@ -78,30 +63,16 @@
                                     <th scope="col">
                                         <a>Alternate Mobile No</a>
                                     </th>
-                                    <!-- <th scope="col">
-                                        <a>Designation Type</a>
-                                    </th> -->
-
-                                    
-
+                                  
                                     <th scope="col">
                                         <a>Profile Image</a>
                                     </th>
-                                    <!--  <th scope="col">
-                              <a>Max/Per Day</a>
-                          </th>
-                          <th scope="col">
-                              <a>Max/Per Weekly</a>
-                          </th> -->
                                     <th scope="col">
                                         <a>Edit</a>
                                     </th>
                                     <th scope="col">
                                         <a>Activate/Deactivate</a>
                                     </th>
-                                    {{-- <th scope="col">
-                                        <a>Block/Unblock</a>
-                                    </th> --}}
                                 </tr>
                             </thead>
                             <tbody>
@@ -124,14 +95,9 @@
                                         <td>
                                             {{$employe->user->email}}
                                         </td>
-                                        <!-- <td>*******</td> -->
                                         <td>{{$employe->dob}}</td>
                                         <td>{{$employe->doj}}</td>
                                         <td>{{$employe->alternate_contact}}</td>
-
-                                        <!-- <td>
-                                            {{$employe->designation->name}}
-                                        </td> -->
                                         <td>
                                             @if ($employe->profile_img)
                                                 <img src="{{$employe->profile_img}}" height="40px" width="40px" />
@@ -212,14 +178,14 @@
                                 @csrf
                                 <fieldset>
                                     <!-- <span class="required text-danger"> * </span> -->
-                                    <div class="col-md-12 form-group">
+                                    {{-- <div class="col-md-12 form-group">
                                         <label>Admin Name (User)</label>
                                         <select class="form-control" name="admin_name" id="admin_name" multiple>
                                           @foreach ($user as $users )
                                             <option value="{{$users->id}}">{{$users->name}}</option>
                                           @endforeach
                                         </select>
-                                    </div>
+                                    </div> --}}
                                     <div class="col-md-6 form-group">
                                         <label class="control-label">Employee Name <span class="required text-danger"> * </span></label>
                                         <input type="text" placeholder="Enter Employee Name" name="name" id="emp_name" class="form-control">
@@ -260,7 +226,7 @@
                                     </div>
                                    
                                     <div class="col-md-6 form-group">
-                                        <label class="control-label">Designation Type</label>
+                                        <label class="control-label">Designation Type <span class="required text-danger"> * </span></label>
                                        <select class="form-control" name="designation_id" id="designation_id">
                                             @foreach ($designation as $designations )
                                               <option value="{{$designations->id}}">{{$designations->name}}</option>
@@ -316,14 +282,14 @@
                               <div class="col-md-12">
                                  <form class="form-horizontal" id="updateEmployeeForm">
                                     <fieldset>
-                                        <div class="col-md-12 form-group">
+                                        {{-- <div class="col-md-12 form-group">
                                             <label>Admin Name (User) </label>
                                             <select class="form-control" name="admin_name" id="admin_name_edit" multiple>
                                             @foreach ($user as $users )
                                                 <option value="{{$users->id}}">{{$users->name}}</option>
                                             @endforeach
                                             </select>
-                                        </div>
+                                        </div> --}}
                                         <!-- <div class="form-group col-sm-12">
                                          <label>Admin Name <span class="required"> * </span></label>
                                          <select class="form-control" name="ConnectStatus" multiple>
@@ -520,6 +486,7 @@ function validateForm(isEdit=false) {
     let isValid = true;
     let validationMessage = "<b>Please follow below instruction before submitting form.</b><ul>";
     const admin_name = (isEdit)?$("#admin_name_edit").val():$("#admin_name").val();
+    const designation = (isEdit)?$("#designation_id_edit").val():$("#designation_id").val();
     const role_id = (isEdit)?$("#role_id_edit").val():$("#role_id").val();
     const emp_name = (isEdit)?$("#emp_name_edit").val():$("#emp_name").val();
     const contact = (isEdit)?$("#contact_edit").val():$("#contact").val();
@@ -534,7 +501,10 @@ function validateForm(isEdit=false) {
     //     validationMessage += `<li>Please select an admin. </li>`; 
     //     isValid=false;
     // }
-
+    if(designation == null || designation=="" || designation?.length < 1) {
+        validationMessage += `<li>Please select an designation. </li>`; 
+        isValid=false;
+    }
     if(role_id == null ||role_id == 0 || role_id?.length < 1) {
         validationMessage += `<li>Please select an user type. </li>`; 
         isValid=false;

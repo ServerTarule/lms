@@ -87,7 +87,7 @@ class Menu extends Model
 
     public function buildMenu($array,$parent_id = 0)
     {
-      $menu_html = null;
+      $menu_html = '<li>';
       $menuArray = json_decode(json_encode($array),true);
       foreach($array as $element)
       {
