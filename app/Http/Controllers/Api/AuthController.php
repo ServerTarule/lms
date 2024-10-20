@@ -19,15 +19,28 @@ class AuthController extends Controller
     {
         $request->validated($request->all());
 
-        if(!Auth::attempt($request->only('email','password'))){
-            return $this->error('','Credentials Do Not Match', 401);
+        if (!Auth::attempt($request->only('email', 'password'))) {
+            return $this->error('', 'Credentials Do Not Match', 401);
         }
 
-        $user= User::where('email',$request->email)->first();
-        return $this->success([
-            'user'=> $user,
-            'token'=> $user->createToken('Api Token '.$user->name)->plainTextToken
-        ]);
+        $user = User::where('email', $request->email)->where('role_id', 16)->first();
+
+        //echo $user;
+        // echo $user  == null;
+        if ($user == null) {
+            return [
+
+                "status" => false,
+                "message" => "User not Found"
+            ];
+        } else {
+            // echo $user->createToken('Api Token '.$user->name)->plainTextToken;
+            return $this->success([
+                'user' => $user,
+                // 'token'=> $user->createToken('Api Token '.$user->name)->plainTextToken
+            ]);
+        }
+
     }
     public function register(StoreUserRequest $request)
     {
@@ -44,7 +57,8 @@ class AuthController extends Controller
         ]);
     }
 
-    public function logout(){
+    public function logout()
+    {
 
         return 'test';
     }
