@@ -22,6 +22,7 @@ Route::post('/createLeave', [LeaveManagementController::class, 'create']);
 Route::post('/listLeave', [LeaveManagementController::class, 'getLeave']);
 Route::post('/getLeadType', [ApiLeadsController::class, 'getLeadTypes']);
 Route::post('/getDependentLeadTypes', [ApiLeadsController::class, 'getDependentLeadTypes']);
+Route::post('/getLeadCount', [ApiLeadsController::class, 'getLeadCountData']);
 
 
 Route::post('/createNewLead', [ApiLeadsController::class, 'createNewLead']);
