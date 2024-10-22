@@ -16,20 +16,46 @@ class ApiLeadsController extends Controller
     public function getLeadCountData(Request $request)
     {
         // $request->validated($request->aLL());
-        $leadTypeData = Lead::where('parent_id', $request->lead_id)->get();
-
-        if ($leadTypeData == null) {
+        if ($request->employee_id == "") {
             return [
 
                 "status" => false,
-                "message" => "Data not Found"
+                "message" => "Pass Employee Id"
             ];
-        } else {
+        }
+
+
+        $allLeadCount = Lead::where('employee_id', $request->employee_id)->count();
+
+        $superHotLeadIds = LeadMaster::where('mastervalue_id', '85')->pluck('lead_id');
+
+        if ($superHotLeadIds->isNotEmpty()) {
+            $superHotLeadCount = Lead::where('employee_id', $request->employee_id)
+                ->whereIn('id', $superHotLeadIds)
+                ->count();
+        }
+
+        $hotLeadIds = LeadMaster::where('mastervalue_id', '38')->pluck('lead_id');
+        if ($hotLeadIds->isNotEmpty()) {
+            $hotLeadCounts = Lead::where('employee_id', $request->employee_id)
+                ->whereIn('id', $hotLeadIds)
+                ->count();
+        }
+
+        if ($allLeadCount) {
             return [
 
                 "status" => true,
                 "message" => "Data Found",
-                "data" => $leadTypeData
+                "allLeadCount" => $allLeadCount,
+                "superHotLeadCount" => $superHotLeadCount,
+                "hotLeadIds" => $hotLeadCounts
+            ];
+        } else {
+            return [
+
+                "status" => false,
+                "message" => "Data not Found"
             ];
         }
     }
@@ -88,6 +114,7 @@ class ApiLeadsController extends Controller
             ];
         }
     }
+
 
     public function createNewLead(Request $request)
     {
@@ -191,9 +218,17 @@ class ApiLeadsController extends Controller
 
         }
 
+        // $hotLeadIds = LeadMaster::where('mastervalue_id', '38')->pluck('lead_id');
+        // if ($hotLeadIds->isNotEmpty()) {
+        //     $hotLeadData = Lead::where('employee_id', $request->employee_id)
+        //         ->whereIn('id', $hotLeadIds)
+        //         ->get();
+        // }
 
 
-        if ($leadList == null) {
+
+        if ($leadList->count() == 0) {
+
             return [
 
                 "status" => false,
@@ -206,6 +241,7 @@ class ApiLeadsController extends Controller
                 "message" => "Data Found",
                 "data" => $leadList
             ];
+
         }
 
     }

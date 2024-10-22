@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\LoginUserRequest;
 use App\Http\Requests\StoreUserRequest;
 use App\Models\User;
+use App\Models\Employee;
 use App\Traits\HttpResponses;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -34,9 +35,11 @@ class AuthController extends Controller
                 "message" => "User not Found"
             ];
         } else {
+            $emplyeeData = Employee::where('user_id', $user->id)->first();
+
             // echo $user->createToken('Api Token '.$user->name)->plainTextToken;
             return $this->success([
-                'user' => $user,
+                'user' => $emplyeeData,
                 // 'token'=> $user->createToken('Api Token '.$user->name)->plainTextToken
             ]);
         }
