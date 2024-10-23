@@ -26,6 +26,8 @@ class ApiLeadsController extends Controller
 
 
         $allLeadCount = Lead::where('employee_id', $request->employee_id)->count();
+        $leadConnectedData = Lead::where('employee_id', $request->employee_id)->
+            where('is_accepted', '1')->count();
 
         $superHotLeadIds = LeadMaster::where('mastervalue_id', '85')->pluck('lead_id');
 
@@ -48,6 +50,7 @@ class ApiLeadsController extends Controller
                 "status" => true,
                 "message" => "Data Found",
                 "allLeadCount" => $allLeadCount,
+                "leadConnectedCount" => $leadConnectedData,
                 "superHotLeadCount" => $superHotLeadCount,
                 "hotLeadIds" => $hotLeadCounts
             ];
@@ -213,19 +216,30 @@ class ApiLeadsController extends Controller
                 "status" => false,
                 "message" => "Pass Employee Id"
             ];
-        } else if ($request->leadparentId == "") {
+        } else if ($request->whichLead == "all" || $request->whichLead == "") {
+
             $leadList = Lead::where('employee_id', $request->employee_id)->get();
 
+        } else if ($request->whichLead == "superHot") {
+            $superHotLeadIds = LeadMaster::where('mastervalue_id', '85')->pluck('lead_id');
+
+            if ($superHotLeadIds->isNotEmpty()) {
+                $leadList = Lead::where('employee_id', $request->employee_id)
+                    ->whereIn('id', $superHotLeadIds)
+                    ->get();
+            }
+        } else if ($request->whichLead == "hot") {
+            $hotLeadIds = LeadMaster::where('mastervalue_id', '38')->pluck('lead_id');
+            if ($hotLeadIds->isNotEmpty()) {
+                $leadList = Lead::where('employee_id', $request->employee_id)
+                    ->whereIn('id', $hotLeadIds)
+                    ->get();
+            }
+        } else if ($request->whichLead == "connected") {
+            $leadList = Lead::where('employee_id', $request->employee_id)->
+                where('is_accepted', '1')->get();
+
         }
-
-        // $hotLeadIds = LeadMaster::where('mastervalue_id', '38')->pluck('lead_id');
-        // if ($hotLeadIds->isNotEmpty()) {
-        //     $hotLeadData = Lead::where('employee_id', $request->employee_id)
-        //         ->whereIn('id', $hotLeadIds)
-        //         ->get();
-        // }
-
-
 
         if ($leadList->count() == 0) {
 
@@ -242,6 +256,60 @@ class ApiLeadsController extends Controller
                 "data" => $leadList
             ];
 
+        }
+
+    }
+
+
+    public function getLeadsByDetailsByLeadId(Request $request)
+    {
+
+
+        if ($request->leadId == "") {
+            return [
+
+                "status" => false,
+                "message" => "Pass Lead Id"
+            ];
+
+        }
+
+        $leadData = Lead::where('id', $request->leadId)->get();
+        if ($leadData->count() == 0) {
+            return [
+
+                "status" => false,
+                "message" => "Data not Found"
+            ];
+        } else {
+            $leadMasterData = LeadMaster::where('lead_id', $leadData[0]->id)->pluck('mastervalue_id');
+            $dynamicValueData = [];
+            if ($leadMasterData->isNotEmpty()) {
+                $dynamicValueData = DynamicValue::whereIn('id', $leadMasterData)
+                    ->pluck('name', 'id') // Get name indexed by ID
+                    ->toArray();
+            }
+            
+            
+            $finalDynamicValueData = [];
+            foreach ($leadMasterData as $id) {
+                if (isset($dynamicValueData[$id])) {
+                    $finalDynamicValueData[] = $dynamicValueData[$id];
+                } else {
+                    $finalDynamicValueData[] = "NA";
+                }
+            }
+            
+            $leadDataArray = $leadData->toArray(); 
+            
+            $mergedData = array_merge($leadDataArray, $finalDynamicValueData);
+            
+            return [
+                "status" => true,
+                "message" => "Data Found",
+                "data" => $mergedData 
+            ];
+            
         }
 
     }
