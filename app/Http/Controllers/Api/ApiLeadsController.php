@@ -282,44 +282,94 @@ class ApiLeadsController extends Controller
                 "message" => "Data not Found"
             ];
         } else {
-            
+
             $leadMasterData = LeadMaster::where('lead_id', $leadData[0]->id)->pluck('mastervalue_id');
             $dynamicValueData = [];
-            $masters = []; 
-            
+            $masters = []; // Initialize masters array
+
             if ($leadMasterData->isNotEmpty()) {
                 $dynamicValueData = DynamicValue::whereIn('id', $leadMasterData)
                     ->pluck('name', 'id')
                     ->toArray();
-            
+
                 $masters = DynamicMain::where('master', '1')->pluck('name')->toArray(); // Fetch masters
             }
-            
+
             $finalDynamicValueData = [];
-            $mastersCount = count($masters); 
-            
+            $mastersCount = count($masters);
+
             foreach ($leadMasterData as $index => $id) {
                 if ($index < $mastersCount) {
-                    $key = $masters[$index]; 
+                    $key = $masters[$index];
+
                     if (isset($dynamicValueData[$id])) {
-                        $finalDynamicValueData[$key] = $dynamicValueData[$id]; 
+                        $finalDynamicValueData[$key] = $dynamicValueData[$id];
                     } else {
-                        $finalDynamicValueData[$key] = "NA"; 
+                        $finalDynamicValueData[$key] = "NA";
                     }
                 }
             }
-            
-            $leadDataArray = $leadData->toArray(); 
-            
-            $mergedData = array_merge($leadDataArray, $finalDynamicValueData);
-            
+
+            $leadDataArray = $leadData->first()->toArray();
+
+            $responseData = array_merge($leadDataArray, $finalDynamicValueData);
+
             return [
                 "status" => true,
                 "message" => "Data Found",
-                "data" => $mergedData 
+                "data" => $responseData
             ];
-            
+
+
+
         }
+
+    }
+
+
+    public function acceptLeadStatus(Request $request)
+    {
+
+
+        if ($request->leadId == "") {
+            return [
+
+                "status" => false,
+                "message" => "Pass Lead Id"
+            ];
+
+        } else if ($request->employeeId == "") {
+            return [
+
+                "status" => false,
+                "message" => "Pass Employee Id"
+            ];
+
+        } else if ($request->is_accepted == "") {
+            return [
+
+                "status" => false,
+                "message" => "Pass Accepted Value Id"
+            ];
+
+        }
+
+        $lead = Lead::where('employee_id', $request->employeeId)->
+            where('id', $request->leadId)->first();
+        if (!$lead) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Lead not found'
+            ], 200);
+        }
+
+        $lead->is_accepted = $request->is_accepted;
+        $lead->save();
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Lead Update Success'
+        ], 200);
 
     }
 

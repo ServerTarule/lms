@@ -24,6 +24,7 @@ Route::post('/getLeadType', [ApiLeadsController::class, 'getLeadTypes']);
 Route::post('/getDependentLeadTypes', [ApiLeadsController::class, 'getDependentLeadTypes']);
 Route::post('/getLeadCount', [ApiLeadsController::class, 'getLeadCountData']);
 Route::post('/getLeadsByDetailsByLeadId', [ApiLeadsController::class, 'getLeadsByDetailsByLeadId']);
+Route::post('/acceptLead', [ApiLeadsController::class, 'acceptLeadStatus']);
 
 
 Route::post('/createNewLead', [ApiLeadsController::class, 'createNewLead']);
