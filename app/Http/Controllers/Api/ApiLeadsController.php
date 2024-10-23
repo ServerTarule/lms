@@ -282,21 +282,30 @@ class ApiLeadsController extends Controller
                 "message" => "Data not Found"
             ];
         } else {
+            
             $leadMasterData = LeadMaster::where('lead_id', $leadData[0]->id)->pluck('mastervalue_id');
             $dynamicValueData = [];
+            $masters = []; 
+            
             if ($leadMasterData->isNotEmpty()) {
                 $dynamicValueData = DynamicValue::whereIn('id', $leadMasterData)
-                    ->pluck('name', 'id') // Get name indexed by ID
+                    ->pluck('name', 'id')
                     ->toArray();
+            
+                $masters = DynamicMain::where('master', '1')->pluck('name')->toArray(); // Fetch masters
             }
             
-            
             $finalDynamicValueData = [];
-            foreach ($leadMasterData as $id) {
-                if (isset($dynamicValueData[$id])) {
-                    $finalDynamicValueData[] = $dynamicValueData[$id];
-                } else {
-                    $finalDynamicValueData[] = "NA";
+            $mastersCount = count($masters); 
+            
+            foreach ($leadMasterData as $index => $id) {
+                if ($index < $mastersCount) {
+                    $key = $masters[$index]; 
+                    if (isset($dynamicValueData[$id])) {
+                        $finalDynamicValueData[$key] = $dynamicValueData[$id]; 
+                    } else {
+                        $finalDynamicValueData[$key] = "NA"; 
+                    }
                 }
             }
             
